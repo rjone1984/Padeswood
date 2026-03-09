@@ -5906,6 +5906,8 @@ window.addEventListener("load",()=>{
       localStorage.removeItem('kbl_session');
       localStorage.removeItem('kbl_refresh');
     }
+    // No valid session — redirect to platform login
+    window.location.href = '../index.html';
   });
 });
 </script>
