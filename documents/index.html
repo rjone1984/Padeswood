@@ -722,18 +722,21 @@ function showLicenceError(text){
 
 /* ── AUTH SCREEN ─────────────────────────────────────────────────── */
 function showAuthScreen(){
-  // Check for existing session first
+  // Check for existing Supabase session
   if(sb){
     sb.auth.getSession().then(function(result){
       const session = result.data&&result.data.session;
       if(session&&session.user){
+        // Session exists — go straight into app
         currentUser = session.user;
         loadProfileAndLaunch();
       } else {
-        showSplash();
+        // No session — redirect to platform login
+        window.location.href = '../index.html';
       }
     });
   } else {
+    // No Supabase configured — show local splash as fallback
     showSplash();
   }
 }
