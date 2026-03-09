@@ -9,615 +9,340 @@
 <meta name="theme-color" content="#111418">
 <title>Padeswood Works — Documents</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Figtree:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&display=swap" rel="stylesheet">
-
-<!--
-  =====================================================================
-  PADESWOOD WORKS — DOCUMENTS APP
-  Supabase project: replace SUPABASE_URL and SUPABASE_ANON_KEY below.
-
-  Required Supabase tables (SQL in /supabase/schema.sql):
-    profiles         — id (uuid, FK auth.users), email, full_name, role
-    risk_assessments — id, ref, title, area, equipment_tags[], owner,
-                       review_date, next_review_date, status, version,
-                       created_at, updated_at, created_by, updated_by
-    coshh_sheets     — id, product_name, manufacturer, hazard_categories[],
-                       location, review_date, next_review_date, status,
-                       created_at, updated_at, created_by, updated_by
-    equipment        — id, asset_tag, name, manufacturer, model, serial,
-                       location, category, linked_ra_ids[], linked_coshh_ids[],
-                       created_at, updated_at
-    audit_trail      — id, table_name, record_id, action, changed_by,
-                       changed_at, old_data (jsonb), new_data (jsonb)
-
-  Roles (stored in profiles.role):
-    viewer   — read only
-    editor   — add / edit records
-    reviewer — mark RAs reviewed + editor permissions
-    admin    — full access including user management
-  =====================================================================
--->
-
 <style>
 /* =====================================================================
-   DOCUMENTS APP — DESIGN SYSTEM v4
-   Precision Industrial · matches kiln log exactly
+   PADESWOOD WORKS — DOCUMENTS APP — Design System v4
+   Tables: pw_profiles, pw_risk_assessments, pw_coshh_sheets,
+           pw_equipment, pw_audit_trail
+   Supabase project: xnkwrkoxvgptobnmekgv
 ===================================================================== */
-
-/* ── TOKENS ──────────────────────────────────────────────────────── */
 :root {
-  --ff-head: 'Outfit', sans-serif;
-  --ff-body: 'Figtree', sans-serif;
-  --ff-mono: 'Fira Code', monospace;
-
-  --bg:   #111418;
-  --sf:   #16191f;
-  --sf2:  #1c2028;
-  --sf3:  #222830;
-  --sf4:  #282f3a;
-  --bd:   #252c38;
-  --bd2:  #2f3a4a;
-  --bd3:  #3d4e62;
-
-  --ac:   #1a7a35;
-  --ac2:  #22a847;
-  --ac3:  #2ecc5c;
-  --acd1: rgba(26,122,53,0.10);
-  --acd2: rgba(26,122,53,0.18);
-  --acd3: rgba(26,122,53,0.28);
-  --acgl: rgba(46,204,92,0.38);
-
-  --tx:   #dde4ee;
-  --tx2:  #6b7a96;
-  --tx3:  #323d50;
-
-  --red:  #f0524f;  --redd: rgba(240,82,79,.10);  --redb: rgba(240,82,79,.28);
-  --grn:  #21c27a;  --grnd: rgba(33,194,122,.10); --grnb: rgba(33,194,122,.28);
-  --amb:  #f5a623;  --ambd: rgba(245,166,35,.10); --ambb: rgba(245,166,35,.28);
-  --pur:  #9b74e8;  --purd: rgba(155,116,232,.10);--purb: rgba(155,116,232,.28);
-
-  --r:   10px; --rsm: 7px; --rxs: 5px;
-  --e1: 0 1px 3px rgba(0,0,0,.55), 0 1px 2px rgba(0,0,0,.4);
-  --e2: 0 4px 18px rgba(0,0,0,.6);
-  --e3: 0 20px 56px rgba(0,0,0,.72);
-  --eac: 0 4px 22px rgba(26,122,53,.35);
-  --inp: var(--sf3);
+  --ff-head:'Outfit',sans-serif; --ff-body:'Figtree',sans-serif; --ff-mono:'Fira Code',monospace;
+  --bg:#111418; --sf:#16191f; --sf2:#1c2028; --sf3:#222830; --sf4:#282f3a;
+  --bd:#252c38; --bd2:#2f3a4a; --bd3:#3d4e62;
+  --ac:#1a7a35; --ac2:#22a847; --ac3:#2ecc5c;
+  --acd1:rgba(26,122,53,.10); --acd2:rgba(26,122,53,.18); --acd3:rgba(26,122,53,.28);
+  --tx:#dde4ee; --tx2:#6b7a96; --tx3:#323d50;
+  --red:#f0524f; --redd:rgba(240,82,79,.10); --redb:rgba(240,82,79,.28);
+  --grn:#21c27a; --grnd:rgba(33,194,122,.10); --grnb:rgba(33,194,122,.28);
+  --amb:#f5a623; --ambd:rgba(245,166,35,.10); --ambb:rgba(245,166,35,.28);
+  --pur:#9b74e8; --purd:rgba(155,116,232,.10); --purb:rgba(155,116,232,.28);
+  --r:10px; --rsm:7px; --rxs:5px;
+  --e1:0 1px 3px rgba(0,0,0,.55),0 1px 2px rgba(0,0,0,.4);
+  --e2:0 4px 18px rgba(0,0,0,.6); --e3:0 20px 56px rgba(0,0,0,.72);
+  --eac:0 4px 22px rgba(26,122,53,.35); --inp:var(--sf3);
 }
 .light-mode {
-  --bg:   #f0f3f8; --sf: #ffffff; --sf2: #f5f7fc; --sf3: #eaeef6; --sf4: #e0e6f2;
-  --bd:   #d0d8ea; --bd2: #b8c4db; --bd3: #98a8c4;
-  --ac:   #155c28; --ac2: #1a7a35; --ac3: #22a847;
-  --acd1: rgba(21,92,40,.07); --acd2: rgba(21,92,40,.14); --acd3: rgba(21,92,40,.24); --acgl: rgba(21,92,40,.32);
-  --tx:   #0d1526; --tx2: #4a5870; --tx3: #9aaabf;
-  --red:  #d93f3c; --redd: rgba(217,63,60,.07);  --redb: rgba(217,63,60,.22);
-  --grn:  #15924f; --grnd: rgba(21,146,79,.07);  --grnb: rgba(21,146,79,.22);
-  --amb:  #c97d10; --ambd: rgba(201,125,16,.07); --ambb: rgba(201,125,16,.22);
-  --pur:  #7a50c8; --purd: rgba(122,80,200,.07); --purb: rgba(122,80,200,.22);
-  --e1: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
-  --e2: 0 4px 18px rgba(0,0,0,.08);
-  --e3: 0 20px 56px rgba(0,0,0,.12);
-  --eac: 0 4px 22px rgba(10,138,134,.20);
-  --inp: #edf0f8;
+  --bg:#f0f3f8; --sf:#ffffff; --sf2:#f5f7fc; --sf3:#eaeef6; --sf4:#e0e6f2;
+  --bd:#d0d8ea; --bd2:#b8c4db; --bd3:#98a8c4;
+  --ac:#155c28; --ac2:#1a7a35; --ac3:#22a847;
+  --acd1:rgba(21,92,40,.07); --acd2:rgba(21,92,40,.14); --acd3:rgba(21,92,40,.24);
+  --tx:#0d1526; --tx2:#4a5870; --tx3:#9aaabf;
+  --red:#d93f3c; --redd:rgba(217,63,60,.07); --redb:rgba(217,63,60,.22);
+  --grn:#15924f; --grnd:rgba(21,146,79,.07); --grnb:rgba(21,146,79,.22);
+  --amb:#c97d10; --ambd:rgba(201,125,16,.07); --ambb:rgba(201,125,16,.22);
+  --pur:#7a50c8; --purd:rgba(122,80,200,.07); --purb:rgba(122,80,200,.22);
+  --e1:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --e2:0 4px 18px rgba(0,0,0,.08); --e3:0 20px 56px rgba(0,0,0,.12);
+  --eac:0 4px 22px rgba(10,138,134,.20); --inp:#edf0f8;
 }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--ff-body);background:var(--bg);color:var(--tx);min-height:100vh;
+  font-size:13.5px;line-height:1.55;-webkit-font-smoothing:antialiased;
+  transition:background .28s,color .28s;display:flex;flex-direction:column;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:radial-gradient(circle,rgba(14,165,160,.06) 1px,transparent 1px);
+  background-size:28px 28px;}
+.light-mode::before{background-image:radial-gradient(circle,rgba(10,138,134,.05) 1px,transparent 1px);}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--sf)}
+::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--bd3)}
 
-/* ── RESET ───────────────────────────────────────────────────────── */
-*,*::before,*::after { box-sizing:border-box; margin:0; padding:0 }
-html { scroll-behavior:smooth }
-body {
-  font-family:var(--ff-body); background:var(--bg); color:var(--tx);
-  min-height:100vh; font-size:13.5px; line-height:1.55;
-  -webkit-font-smoothing:antialiased;
-  transition:background .28s, color .28s;
-  display:flex; flex-direction:column;
+/* ── LICENCE OVERLAY ────────────────────────────────────────────── */
+#licenceOverlay{
+  position:fixed;inset:0;background:var(--bg);z-index:10000;
+  display:flex;align-items:center;justify-content:center;
 }
-body::before {
-  content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
-  background-image: radial-gradient(circle, rgba(14,165,160,.06) 1px, transparent 1px);
-  background-size:28px 28px;
+.lic-inner{
+  width:360px;max-width:92vw;text-align:center;
+  background:var(--sf);border:1px solid var(--bd);border-radius:14px;
+  padding:36px 32px 32px;box-shadow:var(--e3);position:relative;overflow:hidden;
 }
-.light-mode::before {
-  background-image: radial-gradient(circle, rgba(10,138,134,.05) 1px, transparent 1px);
-}
-::-webkit-scrollbar { width:5px; height:5px }
-::-webkit-scrollbar-track { background:var(--sf) }
-::-webkit-scrollbar-thumb { background:var(--bd2); border-radius:3px }
-::-webkit-scrollbar-thumb:hover { background:var(--bd3) }
+.lic-inner::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--ac3),transparent);}
+.lic-logo{width:48px;height:48px;background:linear-gradient(135deg,var(--ac),var(--ac3));
+  border-radius:11px;display:flex;align-items:center;justify-content:center;
+  margin:0 auto 16px;box-shadow:var(--eac);
+  font-family:var(--ff-head);font-weight:800;font-size:16px;color:#fff;letter-spacing:-1px;}
 
-/* ── LICENCE OVERLAY ─────────────────────────────────────────────── */
-#licenceOverlay {
-  position:fixed; inset:0; background:var(--bg); z-index:10000;
-  display:flex; align-items:center; justify-content:center;
-  opacity:1; transition:opacity .3s ease;
-}
-.lic-inner {
-  width:360px; max-width:92vw; text-align:center;
-  background:var(--sf); border:1px solid var(--bd); border-radius:14px;
-  padding:36px 32px 32px; box-shadow:var(--e3); position:relative; overflow:hidden;
-}
-.lic-inner::before {
-  content:''; position:absolute; top:0; left:0; right:0; height:1px;
-  background:linear-gradient(90deg, transparent, var(--ac3), transparent);
-}
-.lic-logo {
-  width:48px; height:48px; background:linear-gradient(135deg,var(--ac),var(--ac3));
-  border-radius:11px; display:flex; align-items:center; justify-content:center;
-  margin:0 auto 16px; box-shadow:var(--eac);
-  font-family:var(--ff-head); font-weight:800; font-size:16px; color:#fff; letter-spacing:-1px;
-}
-
-/* ── AUTH / SPLASH ───────────────────────────────────────────────── */
-#splash {
-  position:fixed; inset:0; background:var(--bg); z-index:9999;
-  display:none; align-items:center; justify-content:center;
-}
-#splash::after {
-  content:''; position:absolute; bottom:0; left:0; right:0; height:3px;
-  background:linear-gradient(90deg, transparent 0%, var(--ac) 50%, transparent 100%);
-  opacity:.5;
-}
-.splash-inner { width:380px; max-width:94vw; position:relative; z-index:1 }
-.splash-logo {
-  width:52px; height:52px;
-  background:linear-gradient(135deg,var(--ac),var(--ac3));
-  border-radius:12px; display:flex; align-items:center; justify-content:center;
-  margin:0 auto 18px; box-shadow:var(--eac);
-  font-family:var(--ff-head); font-weight:800; font-size:18px; color:#fff; letter-spacing:-1px;
-}
-.splash-title {
-  font-family:var(--ff-head); font-weight:700; font-size:24px;
-  text-align:center; letter-spacing:-.5px; margin-bottom:4px; color:var(--tx);
-}
-.splash-sub {
-  font-family:var(--ff-mono); font-size:9px; letter-spacing:2.5px;
-  text-transform:uppercase; color:var(--tx3); text-align:center; margin-bottom:28px;
-}
-.splash-card {
-  background:var(--sf); border:1px solid var(--bd);
-  border-radius:14px; padding:28px 28px 24px;
-  box-shadow:var(--e3); position:relative; overflow:hidden;
-}
-.splash-card::before {
-  content:''; position:absolute; top:0; left:0; right:0; height:1px;
-  background:linear-gradient(90deg, transparent, var(--ac3), transparent);
-}
-.splash-field { margin-bottom:16px }
-.splash-field label {
-  display:block; font-size:9px; font-weight:600; letter-spacing:1.5px;
-  text-transform:uppercase; color:var(--tx3); margin-bottom:7px;
-}
-.splash-input {
-  width:100%; height:40px; padding:0 12px;
-  background:var(--inp); border:1px solid var(--bd2); border-radius:var(--rsm);
-  color:var(--tx); font-family:var(--ff-body); font-size:13.5px;
-  transition:border-color .18s, box-shadow .18s; outline:none;
-}
-.splash-input:focus { border-color:var(--ac2); box-shadow:0 0 0 3px var(--acd1); }
-.splash-btn {
-  width:100%; height:42px; margin-top:8px;
-  background:linear-gradient(135deg,var(--ac),var(--ac3));
-  color:#fff; border:none; border-radius:var(--rsm);
-  font-family:var(--ff-head); font-weight:600; font-size:14px;
-  cursor:pointer; letter-spacing:.2px;
-  transition:opacity .18s, box-shadow .18s;
-  box-shadow:var(--eac);
-}
-.splash-btn:hover { opacity:.9; box-shadow:var(--eac),var(--e2); }
-.splash-btn:disabled { opacity:.5; cursor:not-allowed; }
-.splash-err {
-  font-size:12px; color:var(--red); background:var(--redd); border:1px solid var(--redb);
-  border-radius:var(--rsm); padding:8px 12px; margin-top:12px; display:none;
-}
-.splash-loader { height:3px; background:var(--bd); border-radius:2px; margin-bottom:20px; overflow:hidden; }
-.splash-loader-bar { height:100%; width:0; background:linear-gradient(90deg,var(--ac),var(--ac3)); border-radius:2px; }
+/* ── SPLASH / AUTH ──────────────────────────────────────────────── */
+#splash{position:fixed;inset:0;background:var(--bg);z-index:9999;
+  display:none;align-items:center;justify-content:center;}
+#splash::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,transparent 0%,var(--ac) 50%,transparent 100%);opacity:.5;}
+.splash-inner{width:380px;max-width:94vw;position:relative;z-index:1}
+.splash-logo{width:52px;height:52px;background:linear-gradient(135deg,var(--ac),var(--ac3));
+  border-radius:12px;display:flex;align-items:center;justify-content:center;
+  margin:0 auto 18px;box-shadow:var(--eac);
+  font-family:var(--ff-head);font-weight:800;font-size:22px;color:#fff;}
+.splash-title{font-family:var(--ff-head);font-weight:700;font-size:24px;
+  text-align:center;letter-spacing:-.5px;margin-bottom:4px;color:var(--tx);}
+.splash-sub{font-family:var(--ff-mono);font-size:9px;letter-spacing:2.5px;
+  text-transform:uppercase;color:var(--tx3);text-align:center;margin-bottom:28px;}
+.splash-loader{height:3px;background:var(--bd);border-radius:2px;margin-bottom:20px;overflow:hidden;}
+.splash-loader-bar{height:100%;width:0;background:linear-gradient(90deg,var(--ac),var(--ac3));border-radius:2px;}
+.splash-card{background:var(--sf);border:1px solid var(--bd);border-radius:14px;
+  padding:28px 28px 24px;box-shadow:var(--e3);position:relative;overflow:hidden;}
+.splash-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--ac3),transparent);}
+.splash-field{margin-bottom:16px}
+.splash-field label{display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--tx3);margin-bottom:7px;}
+.splash-input{width:100%;height:40px;padding:0 12px;background:var(--inp);
+  border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);
+  font-family:var(--ff-body);font-size:13.5px;transition:border-color .18s,box-shadow .18s;outline:none;}
+.splash-input:focus{border-color:var(--ac2);box-shadow:0 0 0 3px var(--acd1);}
+.splash-btn{width:100%;height:42px;margin-top:8px;
+  background:linear-gradient(135deg,var(--ac),var(--ac3));color:#fff;border:none;
+  border-radius:var(--rsm);font-family:var(--ff-head);font-weight:600;font-size:14px;
+  cursor:pointer;box-shadow:var(--eac);transition:opacity .18s;}
+.splash-btn:hover{opacity:.9;}
+.splash-btn:disabled{opacity:.5;cursor:not-allowed;}
+.splash-err{font-size:12px;color:var(--red);background:var(--redd);border:1px solid var(--redb);
+  border-radius:var(--rsm);padding:8px 12px;margin-top:12px;display:none;}
 
 /* ── HEADER ─────────────────────────────────────────────────────── */
-#mainHeader {
-  position:sticky; top:0; z-index:100;
-  border-bottom:1px solid var(--bd); background:var(--sf);
-  padding:0 20px; display:flex; align-items:center; gap:12px; height:56px;
-  flex-shrink:0;
-}
-.header-back {
-  width:32px; height:32px; border-radius:var(--rsm);
-  border:1px solid var(--bd); background:transparent; color:var(--tx2);
-  cursor:pointer; display:flex; align-items:center; justify-content:center;
-  font-size:14px; transition:border-color .18s, color .18s;
-  text-decoration:none;
-}
-.header-back:hover { border-color:var(--ac); color:var(--ac3); }
-.header-logo {
-  width:32px; height:32px; flex-shrink:0;
-  background:linear-gradient(135deg,var(--ac),var(--ac3));
-  border-radius:7px; display:flex; align-items:center; justify-content:center;
-  font-family:var(--ff-head); font-weight:800; font-size:12px; color:#fff; box-shadow:var(--eac);
-}
-.header-titles { flex:1 }
-.header-name { font-family:var(--ff-head); font-weight:700; font-size:14px; color:var(--tx); letter-spacing:-.2px; }
-.header-sub  { font-family:var(--ff-mono); font-size:9px; letter-spacing:1.8px; text-transform:uppercase; color:var(--tx3); }
-.header-right { display:flex; align-items:center; gap:8px }
-.header-user {
-  font-family:var(--ff-mono); font-size:10px; color:var(--tx3);
-  padding:4px 10px; border:1px solid var(--bd); border-radius:var(--rxs);
-  display:flex; align-items:center; gap:6px;
-}
-.role-badge {
-  font-size:8px; letter-spacing:1px; text-transform:uppercase;
-  padding:2px 6px; border-radius:3px; font-weight:600;
-}
-.role-admin    { background:var(--acd2); color:var(--ac3); }
-.role-reviewer { background:var(--purd);  color:var(--pur); }
-.role-editor   { background:var(--ambd); color:var(--amb); }
-.role-viewer   { background:var(--sf3);  color:var(--tx3); border:1px solid var(--bd); }
-
-.icon-btn {
-  width:32px; height:32px; border-radius:var(--rsm);
-  border:1px solid var(--bd); background:transparent; color:var(--tx2);
-  cursor:pointer; display:flex; align-items:center; justify-content:center;
-  font-size:13px; transition:border-color .18s, color .18s, background .18s;
-}
-.icon-btn:hover { border-color:var(--ac); color:var(--ac3); background:var(--acd1); }
+#mainHeader{position:sticky;top:0;z-index:100;border-bottom:1px solid var(--bd);
+  background:var(--sf);padding:0 20px;display:flex;align-items:center;gap:12px;
+  height:56px;flex-shrink:0;}
+.header-back{width:32px;height:32px;border-radius:var(--rsm);border:1px solid var(--bd);
+  background:transparent;color:var(--tx2);cursor:pointer;display:flex;align-items:center;
+  justify-content:center;font-size:14px;transition:border-color .18s,color .18s;text-decoration:none;}
+.header-back:hover{border-color:var(--ac);color:var(--ac3);}
+.header-logo{width:32px;height:32px;flex-shrink:0;background:linear-gradient(135deg,var(--ac),var(--ac3));
+  border-radius:7px;display:flex;align-items:center;justify-content:center;
+  font-size:16px;box-shadow:var(--eac);}
+.header-titles{flex:1}
+.header-name{font-family:var(--ff-head);font-weight:700;font-size:14px;color:var(--tx);letter-spacing:-.2px;}
+.header-sub{font-family:var(--ff-mono);font-size:9px;letter-spacing:1.8px;text-transform:uppercase;color:var(--tx3);}
+.header-right{display:flex;align-items:center;gap:8px}
+.header-user{font-family:var(--ff-mono);font-size:10px;color:var(--tx3);
+  padding:4px 10px;border:1px solid var(--bd);border-radius:var(--rxs);
+  display:flex;align-items:center;gap:6px;}
+.role-badge{font-size:8px;letter-spacing:1px;text-transform:uppercase;
+  padding:2px 6px;border-radius:3px;font-weight:600;}
+.role-admin{background:var(--acd2);color:var(--ac3);}
+.role-reviewer{background:var(--purd);color:var(--pur);}
+.role-editor{background:var(--ambd);color:var(--amb);}
+.role-viewer{background:var(--sf3);color:var(--tx3);border:1px solid var(--bd);}
+.icon-btn{width:32px;height:32px;border-radius:var(--rsm);border:1px solid var(--bd);
+  background:transparent;color:var(--tx2);cursor:pointer;display:flex;align-items:center;
+  justify-content:center;font-size:13px;transition:border-color .18s,color .18s,background .18s;}
+.icon-btn:hover{border-color:var(--ac);color:var(--ac3);background:var(--acd1);}
 
 /* ── TABS ────────────────────────────────────────────────────────── */
-#tabBar {
-  position:sticky; top:56px; z-index:90;
-  background:var(--sf2); border-bottom:1px solid var(--bd);
-  display:flex; align-items:center; padding:0 20px; gap:2px;
-  overflow-x:auto; flex-shrink:0;
-}
-#tabBar::-webkit-scrollbar { height:0 }
-.tab-btn {
-  height:46px; padding:0 16px; border:none; background:transparent;
-  color:var(--tx2); font-family:var(--ff-body); font-size:13px; font-weight:500;
-  cursor:pointer; border-bottom:2px solid transparent;
-  transition:color .18s, border-color .18s;
-  white-space:nowrap; display:flex; align-items:center; gap:7px;
-}
-.tab-btn:hover { color:var(--tx); }
-.tab-btn.active { color:var(--ac3); border-bottom-color:var(--ac3); font-weight:600; }
-.tab-count {
-  font-family:var(--ff-mono); font-size:9px; color:var(--tx3);
-  background:var(--sf3); border:1px solid var(--bd); padding:1px 5px; border-radius:3px;
-}
+#tabBar{position:sticky;top:56px;z-index:90;background:var(--sf2);
+  border-bottom:1px solid var(--bd);display:flex;align-items:center;
+  padding:0 20px;gap:2px;overflow-x:auto;flex-shrink:0;}
+#tabBar::-webkit-scrollbar{height:0}
+.tab-btn{height:46px;padding:0 16px;border:none;background:transparent;
+  color:var(--tx2);font-family:var(--ff-body);font-size:13px;font-weight:500;
+  cursor:pointer;border-bottom:2px solid transparent;transition:color .18s,border-color .18s;
+  white-space:nowrap;display:flex;align-items:center;gap:7px;}
+.tab-btn:hover{color:var(--tx);}
+.tab-btn.active{color:var(--ac3);border-bottom-color:var(--ac3);font-weight:600;}
+.tab-count{font-family:var(--ff-mono);font-size:9px;color:var(--tx3);
+  background:var(--sf3);border:1px solid var(--bd);padding:1px 5px;border-radius:3px;}
 
 /* ── MAIN ────────────────────────────────────────────────────────── */
-#mainContent {
-  flex:1; position:relative; z-index:1;
-  padding:24px 20px 48px;
-  max-width:1200px; margin:0 auto; width:100%;
-}
-
-/* Tab panels */
-.tab-panel { display:none }
-.tab-panel.active { display:block }
+#mainContent{flex:1;position:relative;z-index:1;padding:24px 20px 48px;
+  max-width:1200px;margin:0 auto;width:100%;}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
 
 /* ── DASHBOARD ───────────────────────────────────────────────────── */
-.dash-grid {
-  display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:14px; margin-bottom:28px;
-}
-.stat-card {
-  background:var(--sf); border:1px solid var(--bd); border-radius:var(--r);
-  padding:16px 18px; position:relative; overflow:hidden;
-}
-.stat-card::before {
-  content:''; position:absolute; top:0; left:0; bottom:0; width:3px;
-}
-.stat-card.overdue::before { background:var(--red); }
-.stat-card.due-soon::before { background:var(--amb); }
-.stat-card.current::before { background:var(--grn); }
-.stat-card.total::before   { background:var(--ac); }
-.stat-label {
-  font-family:var(--ff-mono); font-size:9px; letter-spacing:1.5px;
-  text-transform:uppercase; color:var(--tx3); margin-bottom:8px;
-}
-.stat-num {
-  font-family:var(--ff-head); font-weight:800; font-size:28px;
-  line-height:1; letter-spacing:-1px;
-}
-.stat-card.overdue  .stat-num { color:var(--red); }
-.stat-card.due-soon .stat-num { color:var(--amb); }
-.stat-card.current  .stat-num { color:var(--grn); }
-.stat-card.total    .stat-num { color:var(--ac3); }
-.stat-sub { font-size:11px; color:var(--tx3); margin-top:4px; }
+.dash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-bottom:28px;}
+.stat-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);
+  padding:16px 18px;position:relative;overflow:hidden;}
+.stat-card::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px;}
+.stat-card.overdue::before{background:var(--red);}
+.stat-card.due-soon::before{background:var(--amb);}
+.stat-card.current::before{background:var(--grn);}
+.stat-card.total::before{background:var(--ac);}
+.stat-label{font-family:var(--ff-mono);font-size:9px;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--tx3);margin-bottom:8px;}
+.stat-num{font-family:var(--ff-head);font-weight:800;font-size:28px;line-height:1;letter-spacing:-1px;}
+.stat-card.overdue .stat-num{color:var(--red);}
+.stat-card.due-soon .stat-num{color:var(--amb);}
+.stat-card.current .stat-num{color:var(--grn);}
+.stat-card.total .stat-num{color:var(--ac3);}
+.stat-sub{font-size:11px;color:var(--tx3);margin-top:4px;}
+.dash-alerts{display:flex;flex-direction:column;gap:8px;margin-bottom:28px;}
+.alert-row{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rsm);
+  padding:10px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:border-color .18s;}
+.alert-row:hover{border-color:var(--bd3);}
+.alert-row.overdue{border-left:3px solid var(--red);}
+.alert-row.due-soon{border-left:3px solid var(--amb);}
+.alert-type{font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;
+  padding:2px 6px;border-radius:3px;flex-shrink:0;}
+.alert-type.ra{background:var(--acd1);color:var(--ac3);}
+.alert-type.coshh{background:var(--purd);color:var(--pur);}
+.alert-title{flex:1;font-size:12.5px;color:var(--tx);font-weight:500;}
+.alert-date{font-family:var(--ff-mono);font-size:10px;color:var(--tx3);flex-shrink:0;}
+.alert-status{font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;
+  padding:2px 7px;border-radius:3px;flex-shrink:0;}
+.status-overdue{background:var(--redd);color:var(--red);border:1px solid var(--redb);}
+.status-due-soon{background:var(--ambd);color:var(--amb);border:1px solid var(--ambb);}
+.status-current{background:var(--grnd);color:var(--grn);border:1px solid var(--grnb);}
 
-.dash-alerts { display:flex; flex-direction:column; gap:8px; margin-bottom:28px; }
-.alert-row {
-  background:var(--sf); border:1px solid var(--bd); border-radius:var(--rsm);
-  padding:10px 14px; display:flex; align-items:center; gap:12px;
-  cursor:pointer; transition:border-color .18s;
-}
-.alert-row:hover { border-color:var(--bd3); }
-.alert-row.overdue { border-left:3px solid var(--red); }
-.alert-row.due-soon { border-left:3px solid var(--amb); }
-.alert-type {
-  font-family:var(--ff-mono); font-size:9px; letter-spacing:1px;
-  text-transform:uppercase; padding:2px 6px; border-radius:3px;
-  flex-shrink:0;
-}
-.alert-type.ra    { background:var(--acd1); color:var(--ac3); }
-.alert-type.coshh { background:var(--purd);  color:var(--pur); }
-.alert-title { flex:1; font-size:12.5px; color:var(--tx); font-weight:500; }
-.alert-date  { font-family:var(--ff-mono); font-size:10px; color:var(--tx3); flex-shrink:0; }
-.alert-status {
-  font-family:var(--ff-mono); font-size:9px; letter-spacing:1px; text-transform:uppercase;
-  padding:2px 7px; border-radius:3px; flex-shrink:0;
-}
-.status-overdue  { background:var(--redd); color:var(--red); border:1px solid var(--redb); }
-.status-due-soon { background:var(--ambd); color:var(--amb); border:1px solid var(--ambb); }
-.status-current  { background:var(--grnd); color:var(--grn); border:1px solid var(--grnb); }
-
-/* ── TOOLBAR ─────────────────────────────────────────────────────── */
-.list-toolbar {
-  display:flex; align-items:center; gap:10px; margin-bottom:16px; flex-wrap:wrap;
-}
-.search-wrap {
-  flex:1; min-width:200px; position:relative;
-}
-.search-wrap svg {
-  position:absolute; left:11px; top:50%; transform:translateY(-50%);
-  color:var(--tx3); pointer-events:none;
-}
-.search-input {
-  width:100%; height:36px; padding:0 12px 0 34px;
-  background:var(--inp); border:1px solid var(--bd2); border-radius:var(--rsm);
-  color:var(--tx); font-family:var(--ff-body); font-size:13px;
-  transition:border-color .18s, box-shadow .18s; outline:none;
-}
-.search-input:focus { border-color:var(--ac2); box-shadow:0 0 0 3px var(--acd1); }
-.filter-select {
-  height:36px; padding:0 10px;
-  background:var(--inp); border:1px solid var(--bd2); border-radius:var(--rsm);
-  color:var(--tx); font-family:var(--ff-mono); font-size:11px;
-  outline:none; cursor:pointer;
-}
-.btn {
-  height:36px; padding:0 16px; border-radius:var(--rsm);
-  font-family:var(--ff-head); font-weight:600; font-size:13px;
-  cursor:pointer; display:flex; align-items:center; gap:6px;
-  transition:opacity .18s, box-shadow .18s; border:none; white-space:nowrap;
-}
-.btn-primary {
-  background:linear-gradient(135deg,var(--ac),var(--ac3)); color:#fff;
-  box-shadow:var(--eac);
-}
-.btn-primary:hover { opacity:.9; }
-.btn-ghost { background:transparent; border:1px solid var(--bd); color:var(--tx2); }
-.btn-ghost:hover { border-color:var(--ac); color:var(--ac3); background:var(--acd1); }
+/* ── TOOLBAR / BUTTONS ───────────────────────────────────────────── */
+.list-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.search-wrap{flex:1;min-width:200px;position:relative;}
+.search-wrap svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);
+  color:var(--tx3);pointer-events:none;}
+.search-input{width:100%;height:36px;padding:0 12px 0 34px;background:var(--inp);
+  border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);
+  font-family:var(--ff-body);font-size:13px;transition:border-color .18s,box-shadow .18s;outline:none;}
+.search-input:focus{border-color:var(--ac2);box-shadow:0 0 0 3px var(--acd1);}
+.filter-select{height:36px;padding:0 10px;background:var(--inp);border:1px solid var(--bd2);
+  border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-mono);font-size:11px;outline:none;cursor:pointer;}
+.btn{height:36px;padding:0 16px;border-radius:var(--rsm);font-family:var(--ff-head);
+  font-weight:600;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px;
+  transition:opacity .18s,box-shadow .18s;border:none;white-space:nowrap;}
+.btn-primary{background:linear-gradient(135deg,var(--ac),var(--ac3));color:#fff;box-shadow:var(--eac);}
+.btn-primary:hover{opacity:.9;}
+.btn-ghost{background:transparent;border:1px solid var(--bd);color:var(--tx2);}
+.btn-ghost:hover{border-color:var(--ac);color:var(--ac3);background:var(--acd1);}
 
 /* ── TABLE ───────────────────────────────────────────────────────── */
-.table-wrap { overflow-x:auto; border-radius:var(--r); border:1px solid var(--bd); }
-table { width:100%; border-collapse:collapse; }
-thead { background:var(--sf2); }
-th {
-  padding:10px 14px; text-align:left;
-  font-family:var(--ff-mono); font-size:9px; letter-spacing:1.5px;
-  text-transform:uppercase; color:var(--tx3); border-bottom:1px solid var(--bd);
-  white-space:nowrap; font-weight:500;
-}
-td { padding:11px 14px; border-bottom:1px solid var(--bd); vertical-align:middle; }
-tr:last-child td { border-bottom:none; }
-tbody tr { background:var(--sf); transition:background .14s; cursor:pointer; }
-tbody tr:hover { background:var(--sf2); }
-.td-ref {
-  font-family:var(--ff-mono); font-size:11px; color:var(--ac3); font-weight:500; white-space:nowrap;
-}
-.td-title { font-size:13px; font-weight:500; color:var(--tx); }
-.td-sub   { font-size:11px; color:var(--tx2); margin-top:2px; }
-.td-tag   {
-  font-family:var(--ff-mono); font-size:9px; letter-spacing:.8px; text-transform:uppercase;
-  padding:2px 6px; border-radius:3px; background:var(--sf3); border:1px solid var(--bd);
-  color:var(--tx3); display:inline-block; margin:1px 2px;
-}
-.td-date  { font-family:var(--ff-mono); font-size:11px; color:var(--tx2); white-space:nowrap; }
-
-/* Status pill */
-.pill {
-  display:inline-flex; align-items:center; gap:4px;
-  font-family:var(--ff-mono); font-size:9px; letter-spacing:1px; text-transform:uppercase;
-  padding:3px 8px; border-radius:4px; border:1px solid; white-space:nowrap; font-weight:600;
-}
-.pill-overdue  { background:var(--redd); color:var(--red); border-color:var(--redb); }
-.pill-due-soon { background:var(--ambd); color:var(--amb); border-color:var(--ambb); }
-.pill-current  { background:var(--grnd); color:var(--grn); border-color:var(--grnb); }
-.pill-draft    { background:var(--sf3);  color:var(--tx3); border-color:var(--bd); }
-.pill::before  { content:''; width:5px; height:5px; border-radius:50%; background:currentColor; }
-
-/* Empty state */
-.empty-state {
-  text-align:center; padding:60px 20px;
-  color:var(--tx3); font-size:13px;
-}
-.empty-state svg { opacity:.3; margin-bottom:14px; display:block; margin-left:auto; margin-right:auto; }
-.empty-state p   { color:var(--tx2); margin-bottom:16px; }
+.table-wrap{overflow-x:auto;border-radius:var(--r);border:1px solid var(--bd);}
+table{width:100%;border-collapse:collapse;}
+thead{background:var(--sf2);}
+th{padding:10px 14px;text-align:left;font-family:var(--ff-mono);font-size:9px;
+  letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);
+  border-bottom:1px solid var(--bd);white-space:nowrap;font-weight:500;}
+td{padding:11px 14px;border-bottom:1px solid var(--bd);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tbody tr{background:var(--sf);transition:background .14s;cursor:pointer;}
+tbody tr:hover{background:var(--sf2);}
+.td-ref{font-family:var(--ff-mono);font-size:11px;color:var(--ac3);font-weight:500;white-space:nowrap;}
+.td-title{font-size:13px;font-weight:500;color:var(--tx);}
+.td-sub{font-size:11px;color:var(--tx2);margin-top:2px;}
+.td-tag{font-family:var(--ff-mono);font-size:9px;letter-spacing:.8px;text-transform:uppercase;
+  padding:2px 6px;border-radius:3px;background:var(--sf3);border:1px solid var(--bd);
+  color:var(--tx3);display:inline-block;margin:1px 2px;}
+.td-date{font-family:var(--ff-mono);font-size:11px;color:var(--tx2);white-space:nowrap;}
+.pill{display:inline-flex;align-items:center;gap:4px;font-family:var(--ff-mono);font-size:9px;
+  letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:4px;
+  border:1px solid;white-space:nowrap;font-weight:600;}
+.pill-overdue{background:var(--redd);color:var(--red);border-color:var(--redb);}
+.pill-due-soon{background:var(--ambd);color:var(--amb);border-color:var(--ambb);}
+.pill-current{background:var(--grnd);color:var(--grn);border-color:var(--grnb);}
+.pill-draft{background:var(--sf3);color:var(--tx3);border-color:var(--bd);}
+.pill::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;}
+.empty-state{text-align:center;padding:60px 20px;color:var(--tx3);font-size:13px;}
+.empty-state svg{opacity:.3;margin-bottom:14px;display:block;margin-left:auto;margin-right:auto;}
+.empty-state p{color:var(--tx2);margin-bottom:16px;}
 
 /* ── MODAL ───────────────────────────────────────────────────────── */
-.modal-overlay {
-  position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:500;
-  display:none; align-items:center; justify-content:center; padding:20px;
-  backdrop-filter:blur(3px);
-}
-.modal-overlay.open { display:flex; }
-.modal {
-  background:var(--sf); border:1px solid var(--bd2); border-radius:14px;
-  width:100%; max-width:580px; max-height:90vh; overflow-y:auto;
-  box-shadow:var(--e3); position:relative;
-}
-.modal-header {
-  padding:20px 24px 16px; border-bottom:1px solid var(--bd);
-  display:flex; align-items:center; justify-content:space-between; position:sticky; top:0;
-  background:var(--sf); z-index:1;
-}
-.modal-title { font-family:var(--ff-head); font-weight:700; font-size:16px; color:var(--tx); }
-.modal-body  { padding:20px 24px 24px; display:flex; flex-direction:column; gap:14px; }
-.modal-close {
-  width:28px; height:28px; border-radius:6px; border:1px solid var(--bd);
-  background:transparent; color:var(--tx2); cursor:pointer; font-size:16px;
-  display:flex; align-items:center; justify-content:center; transition:border-color .18s,color .18s;
-}
-.modal-close:hover { border-color:var(--red); color:var(--red); }
-
-.field-group { display:flex; flex-direction:column; gap:6px; }
-.field-label {
-  font-size:9px; font-weight:600; letter-spacing:1.5px;
-  text-transform:uppercase; color:var(--tx3);
-}
-.field-input, .field-select, .field-textarea {
-  padding:9px 12px; background:var(--inp); border:1px solid var(--bd2);
-  border-radius:var(--rsm); color:var(--tx); font-family:var(--ff-body); font-size:13.5px;
-  transition:border-color .18s, box-shadow .18s; outline:none; width:100%;
-}
-.field-input:focus, .field-select:focus, .field-textarea:focus {
-  border-color:var(--ac2); box-shadow:0 0 0 3px var(--acd1);
-}
-.field-textarea { resize:vertical; min-height:80px; }
-.field-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-
-.modal-footer {
-  padding:14px 24px; border-top:1px solid var(--bd);
-  display:flex; justify-content:flex-end; gap:10px; position:sticky; bottom:0;
-  background:var(--sf);
-}
-
-/* ── AUDIT TRAIL ─────────────────────────────────────────────────── */
-.audit-list { display:flex; flex-direction:column; gap:1px; }
-.audit-row {
-  padding:10px 14px; background:var(--sf2); border-left:2px solid var(--bd3);
-  font-size:12px;
-}
-.audit-row:first-child { border-top-left-radius:6px; border-top-right-radius:6px; }
-.audit-row:last-child  { border-bottom-left-radius:6px; border-bottom-right-radius:6px; }
-.audit-meta { font-family:var(--ff-mono); font-size:10px; color:var(--tx3); margin-top:3px; }
-.audit-action-create { border-left-color:var(--grn); }
-.audit-action-update { border-left-color:var(--amb); }
-.audit-action-delete { border-left-color:var(--red); }
-
-/* ── TOAST ───────────────────────────────────────────────────────── */
-#toast {
-  position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(12px);
-  background:var(--sf3); color:var(--tx); border:1px solid var(--bd3);
-  border-radius:var(--rsm); padding:9px 18px; font-size:12.5px;
-  box-shadow:var(--e2); opacity:0; pointer-events:none;
-  transition:opacity .25s, transform .25s; z-index:9000;
-  font-family:var(--ff-mono); letter-spacing:.3px; white-space:nowrap;
-}
-#toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
-
-/* ── FOOTER ─────────────────────────────────────────────────────── */
-#mainFooter {
-  position:relative; z-index:1;
-  border-top:1px solid var(--bd); padding:12px 20px;
-  display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;
-  flex-shrink:0;
-}
-.footer-text { font-family:var(--ff-mono); font-size:10px; color:var(--tx3); letter-spacing:.5px; }
-.sync-dot {
-  width:7px; height:7px; border-radius:50%; flex-shrink:0;
-  background:var(--grn); box-shadow:0 0 5px var(--grn);
-}
-
-/* ── LOADING SKELETON ────────────────────────────────────────────── */
-.skeleton { background:var(--sf3); border-radius:4px; animation:pulse 1.4s ease-in-out infinite; }
-@keyframes pulse { 0%,100%{opacity:.4} 50%{opacity:.8} }
-
-@keyframes spin { to { transform:rotate(360deg) } }
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;
+  display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px);}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--sf);border:1px solid var(--bd2);border-radius:14px;
+  width:100%;max-width:580px;max-height:90vh;overflow-y:auto;box-shadow:var(--e3);}
+.modal-header{padding:20px 24px 16px;border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;background:var(--sf);z-index:1;}
+.modal-title{font-family:var(--ff-head);font-weight:700;font-size:16px;color:var(--tx);}
+.modal-body{padding:20px 24px 24px;display:flex;flex-direction:column;gap:14px;}
+.modal-close{width:28px;height:28px;border-radius:6px;border:1px solid var(--bd);
+  background:transparent;color:var(--tx2);cursor:pointer;font-size:16px;
+  display:flex;align-items:center;justify-content:center;transition:border-color .18s,color .18s;}
+.modal-close:hover{border-color:var(--red);color:var(--red);}
+.field-group{display:flex;flex-direction:column;gap:6px;}
+.field-label{font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);}
+.field-input,.field-select,.field-textarea{padding:9px 12px;background:var(--inp);
+  border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);
+  font-family:var(--ff-body);font-size:13.5px;transition:border-color .18s,box-shadow .18s;
+  outline:none;width:100%;}
+.field-input:focus,.field-select:focus,.field-textarea:focus{border-color:var(--ac2);box-shadow:0 0 0 3px var(--acd1);}
+.field-textarea{resize:vertical;min-height:80px;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.modal-footer{padding:14px 24px;border-top:1px solid var(--bd);
+  display:flex;justify-content:flex-end;gap:10px;position:sticky;bottom:0;background:var(--sf);}
+.form-err{font-size:12px;color:var(--red);background:var(--redd);border:1px solid var(--redb);
+  border-radius:var(--rsm);padding:8px 12px;display:none;}
 
 /* ── ADMIN PANEL ─────────────────────────────────────────────────── */
-#adminOverlay {
-  position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:800;
-  display:none; backdrop-filter:blur(3px);
-}
-#adminOverlay.open { display:block; }
-#adminPanel {
-  position:fixed; top:0; right:0; bottom:0; width:520px; max-width:96vw;
-  background:var(--sf); border-left:1px solid var(--bd2);
-  z-index:801; display:flex; flex-direction:column;
-  transform:translateX(100%); transition:transform .28s cubic-bezier(0.4,0,0.2,1);
-  box-shadow:var(--e3);
-}
-#adminPanel.open { transform:translateX(0); }
-.admin-header {
-  padding:18px 22px; border-bottom:1px solid var(--bd);
-  display:flex; align-items:center; justify-content:space-between; flex-shrink:0;
-}
-.admin-title {
-  font-family:var(--ff-head); font-weight:700; font-size:16px; color:var(--tx);
-  display:flex; align-items:center; gap:9px;
-}
-.admin-title-icon {
-  width:30px; height:30px; border-radius:7px;
-  background:var(--acd2); border:1px solid var(--acd3);
-  display:flex; align-items:center; justify-content:center; color:var(--ac3);
-}
-.admin-body {
-  flex:1; overflow-y:auto; padding:20px 22px;
-  display:flex; flex-direction:column; gap:22px;
-}
-.admin-section-label {
-  font-family:var(--ff-mono); font-size:9px; letter-spacing:2px;
-  text-transform:uppercase; color:var(--tx3); margin-bottom:10px;
-  display:flex; align-items:center; gap:10px;
-}
-.admin-section-label::after { content:''; flex:1; height:1px; background:var(--bd); }
+#adminOverlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:800;
+  display:none;backdrop-filter:blur(3px);}
+#adminOverlay.open{display:block;}
+#adminPanel{position:fixed;top:0;right:0;bottom:0;width:520px;max-width:96vw;
+  background:var(--sf);border-left:1px solid var(--bd2);z-index:801;
+  display:flex;flex-direction:column;
+  transform:translateX(100%);transition:transform .28s cubic-bezier(0.4,0,0.2,1);
+  box-shadow:var(--e3);}
+#adminPanel.open{transform:translateX(0);}
+.admin-header{padding:18px 22px;border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.admin-title{font-family:var(--ff-head);font-weight:700;font-size:16px;color:var(--tx);
+  display:flex;align-items:center;gap:9px;}
+.admin-title-icon{width:30px;height:30px;border-radius:7px;background:var(--acd2);
+  border:1px solid var(--acd3);display:flex;align-items:center;justify-content:center;color:var(--ac3);}
+.admin-body{flex:1;overflow-y:auto;padding:20px 22px;display:flex;flex-direction:column;gap:22px;}
+.admin-section-label{font-family:var(--ff-mono);font-size:9px;letter-spacing:2px;
+  text-transform:uppercase;color:var(--tx3);margin-bottom:10px;
+  display:flex;align-items:center;gap:10px;}
+.admin-section-label::after{content:'';flex:1;height:1px;background:var(--bd);}
+.invite-form{background:var(--sf2);border:1px solid var(--bd);border-radius:var(--r);
+  padding:16px 18px;display:flex;flex-direction:column;gap:12px;}
+.user-row{background:var(--sf2);border:1px solid var(--bd);border-radius:var(--rsm);
+  padding:12px 14px;display:flex;align-items:center;gap:12px;transition:border-color .15s;}
+.user-row:hover{border-color:var(--bd3);}
+.user-avatar{width:32px;height:32px;border-radius:8px;flex-shrink:0;
+  background:var(--sf3);border:1px solid var(--bd2);display:flex;align-items:center;
+  justify-content:center;font-family:var(--ff-head);font-weight:700;font-size:13px;color:var(--tx2);}
+.user-info{flex:1;min-width:0;}
+.user-email{font-size:12.5px;font-weight:500;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.user-name{font-size:11px;color:var(--tx3);margin-top:1px;}
+.user-actions{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.role-select{height:28px;padding:0 8px;font-size:11px;font-family:var(--ff-mono);
+  background:var(--inp);border:1px solid var(--bd2);border-radius:var(--rxs);
+  color:var(--tx);outline:none;cursor:pointer;transition:border-color .15s;}
+.role-select:focus{border-color:var(--ac2);}
+.btn-danger{height:28px;padding:0 10px;border-radius:var(--rxs);
+  background:transparent;border:1px solid var(--redb);color:var(--red);
+  font-size:11px;font-family:var(--ff-mono);cursor:pointer;transition:background .15s;}
+.btn-danger:hover{background:var(--redd);}
+.btn-sm-primary{height:36px;padding:0 16px;border-radius:var(--rsm);
+  font-family:var(--ff-head);font-weight:600;font-size:13px;cursor:pointer;border:none;
+  background:linear-gradient(135deg,var(--ac),var(--ac3));color:#fff;
+  display:flex;align-items:center;gap:6px;}
+.btn-sm-primary:hover{opacity:.9;}
+.admin-msg{font-size:12px;padding:8px 12px;border-radius:var(--rsm);display:none;}
+.admin-msg.ok{background:var(--grnd);color:var(--grn);border:1px solid var(--grnb);}
+.admin-msg.err{background:var(--redd);color:var(--red);border:1px solid var(--redb);}
 
-/* Invite form */
-.invite-form {
-  background:var(--sf2); border:1px solid var(--bd); border-radius:var(--r);
-  padding:16px 18px; display:flex; flex-direction:column; gap:12px;
-}
-.invite-row { display:grid; grid-template-columns:1fr auto; gap:10px; align-items:end; }
-
-/* User list */
-.user-row {
-  background:var(--sf2); border:1px solid var(--bd); border-radius:var(--rsm);
-  padding:12px 14px; display:flex; align-items:center; gap:12px;
-  transition:border-color .15s;
-}
-.user-row:hover { border-color:var(--bd3); }
-.user-avatar {
-  width:32px; height:32px; border-radius:8px; flex-shrink:0;
-  background:var(--sf3); border:1px solid var(--bd2);
-  display:flex; align-items:center; justify-content:center;
-  font-family:var(--ff-head); font-weight:700; font-size:13px; color:var(--tx2);
-}
-.user-info { flex:1; min-width:0; }
-.user-email {
-  font-size:12.5px; font-weight:500; color:var(--tx);
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-}
-.user-name { font-size:11px; color:var(--tx3); margin-top:1px; }
-.user-actions { display:flex; align-items:center; gap:6px; flex-shrink:0; }
-.role-select {
-  height:28px; padding:0 8px; font-size:11px; font-family:var(--ff-mono);
-  background:var(--inp); border:1px solid var(--bd2); border-radius:var(--rxs);
-  color:var(--tx); outline:none; cursor:pointer;
-  transition:border-color .15s;
-}
-.role-select:focus { border-color:var(--ac2); }
-.btn-danger {
-  height:28px; padding:0 10px; border-radius:var(--rxs);
-  background:transparent; border:1px solid var(--redb);
-  color:var(--red); font-size:11px; font-family:var(--ff-mono);
-  cursor:pointer; transition:background .15s;
-}
-.btn-danger:hover { background:var(--redd); }
-.btn-sm {
-  height:28px; padding:0 12px; border-radius:var(--rxs);
-  font-family:var(--ff-head); font-weight:600; font-size:12px;
-  cursor:pointer; border:none; white-space:nowrap;
-}
-.btn-sm-primary {
-  background:linear-gradient(135deg,var(--ac),var(--ac3)); color:#fff;
-}
-.btn-sm-primary:hover { opacity:.9; }
-.admin-msg {
-  font-size:12px; padding:8px 12px; border-radius:var(--rsm); display:none;
-}
-.admin-msg.ok  { background:var(--grnd); color:var(--grn); border:1px solid var(--grnb); }
-.admin-msg.err { background:var(--redd); color:var(--red); border:1px solid var(--redb); }
-
+/* ── FOOTER / TOAST ──────────────────────────────────────────────── */
+#mainFooter{position:relative;z-index:1;border-top:1px solid var(--bd);
+  padding:12px 20px;display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:8px;flex-shrink:0;}
+.footer-text{font-family:var(--ff-mono);font-size:10px;color:var(--tx3);letter-spacing:.5px;}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--grn);box-shadow:0 0 5px var(--grn);}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(12px);
+  background:var(--sf3);color:var(--tx);border:1px solid var(--bd3);
+  border-radius:var(--rsm);padding:9px 18px;font-size:12.5px;box-shadow:var(--e2);
+  opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:9000;
+  font-family:var(--ff-mono);letter-spacing:.3px;white-space:nowrap;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
 
-<!-- LICENCE OVERLAY -->
+<!-- ── LICENCE OVERLAY ─────────────────────────────────────────── -->
 <div id="licenceOverlay">
   <div class="lic-inner">
     <div class="lic-logo">PW</div>
@@ -634,7 +359,7 @@ tbody tr:hover { background:var(--sf2); }
   </div>
 </div>
 
-<!-- AUTH SPLASH -->
+<!-- ── AUTH SPLASH ─────────────────────────────────────────────── -->
 <div id="splash">
   <div class="splash-inner">
     <div class="splash-logo">📋</div>
@@ -656,10 +381,9 @@ tbody tr:hover { background:var(--sf2); }
   </div>
 </div>
 
-<!-- MAIN APP (shown after auth) -->
+<!-- ── MAIN APP ─────────────────────────────────────────────────── -->
 <div id="appWrapper" style="display:none;flex-direction:column;min-height:100vh">
 
-  <!-- HEADER -->
   <header id="mainHeader">
     <a href="../index.html" class="header-back" title="Back to platform">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="15 18 9 12 15 6"/></svg>
@@ -670,14 +394,14 @@ tbody tr:hover { background:var(--sf2); }
       <div class="header-sub">Risk Assessments · COSHH · Equipment</div>
     </div>
     <div class="header-right">
-      <div class="header-user" id="headerUser">
+      <div class="header-user">
         <span id="headerEmail">—</span>
         <span class="role-badge role-viewer" id="headerRole">Viewer</span>
       </div>
       <button class="icon-btn" id="adminPanelBtn" onclick="openAdminPanel()" title="User management" style="display:none">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       </button>
-      <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle theme">
+      <button class="icon-btn" onclick="toggleTheme()" title="Toggle theme">
         <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       </button>
       <button class="icon-btn" onclick="doLogout()" title="Sign out" style="color:var(--red)">
@@ -686,7 +410,6 @@ tbody tr:hover { background:var(--sf2); }
     </div>
   </header>
 
-  <!-- TAB BAR -->
   <nav id="tabBar">
     <button class="tab-btn active" data-tab="dashboard" onclick="switchTab('dashboard')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
@@ -694,47 +417,40 @@ tbody tr:hover { background:var(--sf2); }
     </button>
     <button class="tab-btn" data-tab="ra" onclick="switchTab('ra')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-      Risk Assessments
-      <span class="tab-count" id="raCount">—</span>
+      Risk Assessments <span class="tab-count" id="raCount">0</span>
     </button>
     <button class="tab-btn" data-tab="coshh" onclick="switchTab('coshh')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      COSHH
-      <span class="tab-count" id="coshhCount">—</span>
+      COSHH <span class="tab-count" id="coshhCount">0</span>
     </button>
     <button class="tab-btn" data-tab="equipment" onclick="switchTab('equipment')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 0-14.14 0"/><path d="M4.93 19.07a10 10 0 0 0 14.14 0"/></svg>
-      Equipment
-      <span class="tab-count" id="equipCount">—</span>
+      Equipment <span class="tab-count" id="equipCount">0</span>
     </button>
   </nav>
 
-  <!-- MAIN CONTENT -->
   <main id="mainContent">
 
-    <!-- ── DASHBOARD ─────────────────────────────────────────────── -->
+    <!-- DASHBOARD -->
     <div id="panel-dashboard" class="tab-panel active">
       <div style="margin-bottom:20px">
         <h2 style="font-family:var(--ff-head);font-weight:700;font-size:20px;color:var(--tx);letter-spacing:-.4px;margin-bottom:4px">Dashboard</h2>
         <p style="color:var(--tx2);font-size:13px">Overview of document status across Risk Assessments and COSHH sheets.</p>
       </div>
-
       <div style="margin-bottom:12px;font-family:var(--ff-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--tx3)">Risk Assessments</div>
-      <div class="dash-grid" id="raStats">
-        <div class="stat-card overdue"><div class="stat-label">Overdue</div><div class="stat-num" id="raOverdue">—</div><div class="stat-sub">Past review date</div></div>
-        <div class="stat-card due-soon"><div class="stat-label">Due Soon</div><div class="stat-num" id="raDueSoon">—</div><div class="stat-sub">Within 30 days</div></div>
-        <div class="stat-card current"><div class="stat-label">Current</div><div class="stat-num" id="raCurrent">—</div><div class="stat-sub">Up to date</div></div>
-        <div class="stat-card total"><div class="stat-label">Total</div><div class="stat-num" id="raTotal">—</div><div class="stat-sub">All assessments</div></div>
+      <div class="dash-grid">
+        <div class="stat-card overdue"><div class="stat-label">Overdue</div><div class="stat-num" id="raOverdue">0</div><div class="stat-sub">Past review date</div></div>
+        <div class="stat-card due-soon"><div class="stat-label">Due Soon</div><div class="stat-num" id="raDueSoon">0</div><div class="stat-sub">Within 30 days</div></div>
+        <div class="stat-card current"><div class="stat-label">Current</div><div class="stat-num" id="raCurrent">0</div><div class="stat-sub">Up to date</div></div>
+        <div class="stat-card total"><div class="stat-label">Total</div><div class="stat-num" id="raTotal">0</div><div class="stat-sub">All assessments</div></div>
       </div>
-
       <div style="margin-bottom:12px;font-family:var(--ff-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--tx3)">COSHH Sheets</div>
-      <div class="dash-grid" id="coshhStats">
-        <div class="stat-card overdue"><div class="stat-label">Overdue</div><div class="stat-num" id="coshhOverdue">—</div><div class="stat-sub">Past review date</div></div>
-        <div class="stat-card due-soon"><div class="stat-label">Due Soon</div><div class="stat-num" id="coshhDueSoon">—</div><div class="stat-sub">Within 30 days</div></div>
-        <div class="stat-card current"><div class="stat-label">Current</div><div class="stat-num" id="coshhCurrent">—</div><div class="stat-sub">Up to date</div></div>
-        <div class="stat-card total"><div class="stat-label">Total</div><div class="stat-num" id="coshhTotal">—</div><div class="stat-sub">All sheets</div></div>
+      <div class="dash-grid">
+        <div class="stat-card overdue"><div class="stat-label">Overdue</div><div class="stat-num" id="coshhOverdue">0</div><div class="stat-sub">Past review date</div></div>
+        <div class="stat-card due-soon"><div class="stat-label">Due Soon</div><div class="stat-num" id="coshhDueSoon">0</div><div class="stat-sub">Within 30 days</div></div>
+        <div class="stat-card current"><div class="stat-label">Current</div><div class="stat-num" id="coshhCurrent">0</div><div class="stat-sub">Up to date</div></div>
+        <div class="stat-card total"><div class="stat-label">Total</div><div class="stat-num" id="coshhTotal">0</div><div class="stat-sub">All sheets</div></div>
       </div>
-
       <div style="margin-bottom:12px;font-family:var(--ff-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--tx3)">Items Requiring Attention</div>
       <div class="dash-alerts" id="alertList">
         <div class="empty-state" style="padding:30px">
@@ -744,7 +460,7 @@ tbody tr:hover { background:var(--sf2); }
       </div>
     </div>
 
-    <!-- ── RISK ASSESSMENTS ───────────────────────────────────────── -->
+    <!-- RISK ASSESSMENTS -->
     <div id="panel-ra" class="tab-panel">
       <div class="list-toolbar">
         <div class="search-wrap">
@@ -758,33 +474,18 @@ tbody tr:hover { background:var(--sf2); }
           <option value="current">Current</option>
           <option value="draft">Draft</option>
         </select>
-        <select class="filter-select" id="raAreaFilter" onchange="filterRA()">
-          <option value="">All areas</option>
-        </select>
+        <select class="filter-select" id="raAreaFilter" onchange="filterRA()"><option value="">All areas</option></select>
         <button class="btn btn-primary" id="btnAddRA" onclick="openRAModal()" style="display:none">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Add RA
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add RA
         </button>
       </div>
       <div class="table-wrap">
-        <table id="raTable">
-          <thead>
-            <tr>
-              <th>Reference</th>
-              <th>Title / Area</th>
-              <th>Owner</th>
-              <th>Next Review</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="raBody">
-            <tr><td colspan="5"><div class="empty-state"><p>Loading risk assessments…</p></div></td></tr>
-          </tbody>
-        </table>
+        <table><thead><tr><th>Reference</th><th>Title / Area</th><th>Owner</th><th>Next Review</th><th>Status</th></tr></thead>
+        <tbody id="raBody"><tr><td colspan="5"><div class="empty-state"><p>Loading…</p></div></td></tr></tbody></table>
       </div>
     </div>
 
-    <!-- ── COSHH ──────────────────────────────────────────────────── -->
+    <!-- COSHH -->
     <div id="panel-coshh" class="tab-panel">
       <div class="list-toolbar">
         <div class="search-wrap">
@@ -798,264 +499,134 @@ tbody tr:hover { background:var(--sf2); }
           <option value="current">Current</option>
         </select>
         <button class="btn btn-primary" id="btnAddCOSHH" onclick="openCOSHHModal()" style="display:none">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Add COSHH
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add COSHH
         </button>
       </div>
       <div class="table-wrap">
-        <table id="coshhTable">
-          <thead>
-            <tr>
-              <th>Product</th>
-              <th>Manufacturer</th>
-              <th>Hazards</th>
-              <th>Location</th>
-              <th>Next Review</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="coshhBody">
-            <tr><td colspan="6"><div class="empty-state"><p>Loading COSHH sheets…</p></div></td></tr>
-          </tbody>
-        </table>
+        <table><thead><tr><th>Product</th><th>Manufacturer</th><th>Hazards</th><th>Location</th><th>Next Review</th><th>Status</th></tr></thead>
+        <tbody id="coshhBody"><tr><td colspan="6"><div class="empty-state"><p>Loading…</p></div></td></tr></tbody></table>
       </div>
     </div>
 
-    <!-- ── EQUIPMENT ──────────────────────────────────────────────── -->
+    <!-- EQUIPMENT -->
     <div id="panel-equipment" class="tab-panel">
       <div class="list-toolbar">
         <div class="search-wrap">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           <input type="search" class="search-input" id="equipSearch" placeholder="Search by asset tag, name, model, location…" oninput="filterEquipment()">
         </div>
-        <select class="filter-select" id="equipCatFilter" onchange="filterEquipment()">
-          <option value="">All categories</option>
-        </select>
+        <select class="filter-select" id="equipCatFilter" onchange="filterEquipment()"><option value="">All categories</option></select>
         <button class="btn btn-primary" id="btnAddEquip" onclick="openEquipModal()" style="display:none">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Add Equipment
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Equipment
         </button>
       </div>
       <div class="table-wrap">
-        <table id="equipTable">
-          <thead>
-            <tr>
-              <th>Asset Tag</th>
-              <th>Name / Model</th>
-              <th>Manufacturer</th>
-              <th>Location</th>
-              <th>Category</th>
-              <th>Linked Docs</th>
-            </tr>
-          </thead>
-          <tbody id="equipBody">
-            <tr><td colspan="6"><div class="empty-state"><p>Loading equipment…</p></div></td></tr>
-          </tbody>
-        </table>
+        <table><thead><tr><th>Asset Tag</th><th>Name / Model</th><th>Manufacturer</th><th>Location</th><th>Category</th><th>Linked Docs</th></tr></thead>
+        <tbody id="equipBody"><tr><td colspan="6"><div class="empty-state"><p>Loading…</p></div></td></tr></tbody></table>
       </div>
     </div>
 
-  </main><!-- /mainContent -->
+  </main>
 
   <footer id="mainFooter">
     <span class="footer-text">Padeswood Works · Documents · HeidelbergMaterials</span>
     <span style="display:flex;align-items:center;gap:6px;font-family:var(--ff-mono);font-size:10px;color:var(--tx3)">
-      <span class="sync-dot" id="syncDot"></span>
-      <span id="syncLabel">Connected</span>
+      <span class="sync-dot"></span><span>Connected</span>
     </span>
   </footer>
+</div>
 
-</div><!-- /appWrapper -->
-
-<!-- ── MODALS ──────────────────────────────────────────────────────── -->
-
-<!-- Risk Assessment Modal -->
+<!-- ── RA MODAL ─────────────────────────────────────────────────── -->
 <div class="modal-overlay" id="raModal" onclick="if(event.target===this)closeRAModal()">
   <div class="modal">
-    <div class="modal-header">
-      <span class="modal-title" id="raModalTitle">Add Risk Assessment</span>
-      <button class="modal-close" onclick="closeRAModal()">×</button>
-    </div>
+    <div class="modal-header"><span class="modal-title" id="raModalTitle">Add Risk Assessment</span><button class="modal-close" onclick="closeRAModal()">×</button></div>
     <div class="modal-body">
       <input type="hidden" id="raId">
       <div class="field-row">
-        <div class="field-group">
-          <label class="field-label">Reference *</label>
-          <input type="text" class="field-input" id="raRef" placeholder="e.g. RA-2024-001">
-        </div>
-        <div class="field-group">
-          <label class="field-label">Status</label>
-          <select class="field-select" id="raStatus">
-            <option value="draft">Draft</option>
-            <option value="current">Current</option>
-          </select>
-        </div>
+        <div class="field-group"><label class="field-label">Reference *</label><input type="text" class="field-input" id="raRef" placeholder="e.g. RA-2024-001"></div>
+        <div class="field-group"><label class="field-label">Status</label><select class="field-select" id="raStatus"><option value="draft">Draft</option><option value="current">Current</option></select></div>
       </div>
-      <div class="field-group">
-        <label class="field-label">Title *</label>
-        <input type="text" class="field-input" id="raTitle" placeholder="e.g. Kiln 1 Burner Maintenance">
-      </div>
+      <div class="field-group"><label class="field-label">Title *</label><input type="text" class="field-input" id="raTitle" placeholder="e.g. Kiln 1 Burner Maintenance"></div>
       <div class="field-row">
-        <div class="field-group">
-          <label class="field-label">Area / Location</label>
-          <input type="text" class="field-input" id="raArea" placeholder="e.g. Kiln Bay 1">
-        </div>
-        <div class="field-group">
-          <label class="field-label">Owner</label>
-          <input type="text" class="field-input" id="raOwner" placeholder="e.g. J. Smith">
-        </div>
+        <div class="field-group"><label class="field-label">Area / Location</label><input type="text" class="field-input" id="raArea" placeholder="e.g. Kiln Bay 1"></div>
+        <div class="field-group"><label class="field-label">Owner</label><input type="text" class="field-input" id="raOwner" placeholder="e.g. J. Smith"></div>
       </div>
-      <div class="field-group">
-        <label class="field-label">Equipment Tags (comma-separated)</label>
-        <input type="text" class="field-input" id="raEquipTags" placeholder="e.g. KLN-001, KLN-002">
-      </div>
+      <div class="field-group"><label class="field-label">Equipment Tags (comma-separated)</label><input type="text" class="field-input" id="raEquipTags" placeholder="e.g. KLN-001, KLN-002"></div>
       <div class="field-row">
-        <div class="field-group">
-          <label class="field-label">Review Date</label>
-          <input type="date" class="field-input" id="raReviewDate">
-        </div>
-        <div class="field-group">
-          <label class="field-label">Next Review Date *</label>
-          <input type="date" class="field-input" id="raNextReview">
-        </div>
+        <div class="field-group"><label class="field-label">Review Date</label><input type="date" class="field-input" id="raReviewDate"></div>
+        <div class="field-group"><label class="field-label">Next Review Date *</label><input type="date" class="field-input" id="raNextReview"></div>
       </div>
-      <div id="raErr" style="display:none;font-size:12px;color:var(--red);background:var(--redd);border:1px solid var(--redb);border-radius:var(--rsm);padding:8px 12px"></div>
+      <div class="form-err" id="raErr"></div>
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeRAModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="saveRA()">Save Risk Assessment</button>
-    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeRAModal()">Cancel</button><button class="btn btn-primary" onclick="saveRA()">Save</button></div>
   </div>
 </div>
 
-<!-- COSHH Modal -->
+<!-- ── COSHH MODAL ──────────────────────────────────────────────── -->
 <div class="modal-overlay" id="coshhModal" onclick="if(event.target===this)closeCOSHHModal()">
   <div class="modal">
-    <div class="modal-header">
-      <span class="modal-title" id="coshhModalTitle">Add COSHH Sheet</span>
-      <button class="modal-close" onclick="closeCOSHHModal()">×</button>
-    </div>
+    <div class="modal-header"><span class="modal-title" id="coshhModalTitle">Add COSHH Sheet</span><button class="modal-close" onclick="closeCOSHHModal()">×</button></div>
     <div class="modal-body">
       <input type="hidden" id="coshhId">
       <div class="field-row">
-        <div class="field-group">
-          <label class="field-label">Product Name *</label>
-          <input type="text" class="field-input" id="coshhProduct" placeholder="e.g. HydroLube 220">
-        </div>
-        <div class="field-group">
-          <label class="field-label">Manufacturer</label>
-          <input type="text" class="field-input" id="coshhMfr" placeholder="e.g. Shell">
-        </div>
+        <div class="field-group"><label class="field-label">Product Name *</label><input type="text" class="field-input" id="coshhProduct" placeholder="e.g. HydroLube 220"></div>
+        <div class="field-group"><label class="field-label">Manufacturer</label><input type="text" class="field-input" id="coshhMfr" placeholder="e.g. Shell"></div>
       </div>
-      <div class="field-group">
-        <label class="field-label">Hazard Categories (comma-separated)</label>
-        <input type="text" class="field-input" id="coshhHazards" placeholder="e.g. Flammable, Irritant">
-      </div>
-      <div class="field-group">
-        <label class="field-label">Storage Location</label>
-        <input type="text" class="field-input" id="coshhLocation" placeholder="e.g. Store Room B, Cabinet 3">
-      </div>
+      <div class="field-group"><label class="field-label">Hazard Categories (comma-separated)</label><input type="text" class="field-input" id="coshhHazards" placeholder="e.g. Flammable, Irritant"></div>
+      <div class="field-group"><label class="field-label">Storage Location</label><input type="text" class="field-input" id="coshhLocation" placeholder="e.g. Store Room B, Cabinet 3"></div>
       <div class="field-row">
-        <div class="field-group">
-          <label class="field-label">Review Date</label>
-          <input type="date" class="field-input" id="coshhReviewDate">
-        </div>
-        <div class="field-group">
-          <label class="field-label">Next Review Date *</label>
-          <input type="date" class="field-input" id="coshhNextReview">
-        </div>
+        <div class="field-group"><label class="field-label">Review Date</label><input type="date" class="field-input" id="coshhReviewDate"></div>
+        <div class="field-group"><label class="field-label">Next Review Date *</label><input type="date" class="field-input" id="coshhNextReview"></div>
       </div>
-      <div id="coshhErr" style="display:none;font-size:12px;color:var(--red);background:var(--redd);border:1px solid var(--redb);border-radius:var(--rsm);padding:8px 12px"></div>
+      <div class="form-err" id="coshhErr"></div>
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeCOSHHModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="saveCOSHH()">Save COSHH Sheet</button>
-    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeCOSHHModal()">Cancel</button><button class="btn btn-primary" onclick="saveCOSHH()">Save</button></div>
   </div>
 </div>
 
-<!-- Equipment Modal -->
+<!-- ── EQUIPMENT MODAL ──────────────────────────────────────────── -->
 <div class="modal-overlay" id="equipModal" onclick="if(event.target===this)closeEquipModal()">
   <div class="modal">
-    <div class="modal-header">
-      <span class="modal-title" id="equipModalTitle">Add Equipment</span>
-      <button class="modal-close" onclick="closeEquipModal()">×</button>
-    </div>
+    <div class="modal-header"><span class="modal-title" id="equipModalTitle">Add Equipment</span><button class="modal-close" onclick="closeEquipModal()">×</button></div>
     <div class="modal-body">
       <input type="hidden" id="equipId">
       <div class="field-row">
-        <div class="field-group">
-          <label class="field-label">Asset Tag *</label>
-          <input type="text" class="field-input" id="equipTag" placeholder="e.g. KLN-001">
-        </div>
-        <div class="field-group">
-          <label class="field-label">Category</label>
-          <input type="text" class="field-input" id="equipCat" placeholder="e.g. Kiln, Conveyor, Fan">
-        </div>
+        <div class="field-group"><label class="field-label">Asset Tag *</label><input type="text" class="field-input" id="equipTag" placeholder="e.g. KLN-001"></div>
+        <div class="field-group"><label class="field-label">Category</label><input type="text" class="field-input" id="equipCat" placeholder="e.g. Kiln, Conveyor, Fan"></div>
       </div>
-      <div class="field-group">
-        <label class="field-label">Name *</label>
-        <input type="text" class="field-input" id="equipName" placeholder="e.g. Kiln 1 Main Drive Motor">
+      <div class="field-group"><label class="field-label">Name *</label><input type="text" class="field-input" id="equipName" placeholder="e.g. Kiln 1 Main Drive Motor"></div>
+      <div class="field-row">
+        <div class="field-group"><label class="field-label">Manufacturer</label><input type="text" class="field-input" id="equipMfr" placeholder="e.g. ABB"></div>
+        <div class="field-group"><label class="field-label">Model</label><input type="text" class="field-input" id="equipModel" placeholder="e.g. M3BP 450SMB"></div>
       </div>
       <div class="field-row">
-        <div class="field-group">
-          <label class="field-label">Manufacturer</label>
-          <input type="text" class="field-input" id="equipMfr" placeholder="e.g. ABB">
-        </div>
-        <div class="field-group">
-          <label class="field-label">Model</label>
-          <input type="text" class="field-input" id="equipModel" placeholder="e.g. M3BP 450SMB">
-        </div>
+        <div class="field-group"><label class="field-label">Serial Number</label><input type="text" class="field-input" id="equipSerial"></div>
+        <div class="field-group"><label class="field-label">Location</label><input type="text" class="field-input" id="equipLocation" placeholder="e.g. Kiln Bay 1"></div>
       </div>
-      <div class="field-row">
-        <div class="field-group">
-          <label class="field-label">Serial Number</label>
-          <input type="text" class="field-input" id="equipSerial" placeholder="e.g. SN-2024-00123">
-        </div>
-        <div class="field-group">
-          <label class="field-label">Location</label>
-          <input type="text" class="field-input" id="equipLocation" placeholder="e.g. Kiln Bay 1 Drive End">
-        </div>
-      </div>
-      <div id="equipErr" style="display:none;font-size:12px;color:var(--red);background:var(--redd);border:1px solid var(--redb);border-radius:var(--rsm);padding:8px 12px"></div>
+      <div class="form-err" id="equipErr"></div>
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeEquipModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="saveEquip()">Save Equipment</button>
-    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeEquipModal()">Cancel</button><button class="btn btn-primary" onclick="saveEquip()">Save</button></div>
   </div>
 </div>
 
-
-<!-- ── ADMIN PANEL ────────────────────────────────────────────────── -->
+<!-- ── ADMIN PANEL ──────────────────────────────────────────────── -->
 <div id="adminOverlay" onclick="closeAdminPanel()"></div>
 <div id="adminPanel">
   <div class="admin-header">
     <div class="admin-title">
-      <div class="admin-title-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      </div>
+      <div class="admin-title-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
       User Management
     </div>
     <button class="modal-close" onclick="closeAdminPanel()">×</button>
   </div>
   <div class="admin-body">
-
-    <!-- Invite -->
     <div>
       <div class="admin-section-label">Invite New User</div>
       <div class="invite-form">
-        <div class="field-group">
-          <label class="field-label">Email Address</label>
-          <input type="email" class="field-input" id="inviteEmail" placeholder="name@heidelbergmaterials.com">
-        </div>
+        <div class="field-group"><label class="field-label">Email Address</label><input type="email" class="field-input" id="inviteEmail" placeholder="name@heidelbergmaterials.com"></div>
         <div class="field-row">
-          <div class="field-group">
-            <label class="field-label">Full Name</label>
-            <input type="text" class="field-input" id="inviteName" placeholder="e.g. John Smith">
-          </div>
-          <div class="field-group">
-            <label class="field-label">Role</label>
+          <div class="field-group"><label class="field-label">Full Name</label><input type="text" class="field-input" id="inviteName" placeholder="e.g. John Smith"></div>
+          <div class="field-group"><label class="field-label">Role</label>
             <select class="field-select" id="inviteRole">
               <option value="viewer">Viewer — read only</option>
               <option value="editor">Editor — add &amp; edit</option>
@@ -1065,729 +636,515 @@ tbody tr:hover { background:var(--sf2); }
           </div>
         </div>
         <div id="inviteMsg" class="admin-msg"></div>
-        <div>
-          <button class="btn btn-primary" onclick="inviteUser()" id="inviteBtn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Send Invite
-          </button>
-        </div>
+        <button class="btn-sm-primary" id="inviteBtn" onclick="inviteUser()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Send Invite
+        </button>
       </div>
     </div>
-
-    <!-- User list -->
     <div>
-      <div class="admin-section-label">All Users <span id="userCount" style="font-size:10px;color:var(--tx3)"></span></div>
+      <div class="admin-section-label">All Users <span id="userCount" style="font-size:10px;color:var(--tx3);font-weight:400"></span></div>
       <div id="userList" style="display:flex;flex-direction:column;gap:8px">
         <div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);padding:12px 0">Loading users…</div>
       </div>
     </div>
-
   </div>
 </div>
 
-<!-- TOAST -->
+<!-- ── TOAST ────────────────────────────────────────────────────── -->
 <div id="toast"></div>
 
-<!-- ── SUPABASE CDN ─────────────────────────────────────────────── -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script>
 /* ================================================================
    PADESWOOD WORKS — DOCUMENTS APP
-   ⚠  Replace SUPABASE_URL and SUPABASE_ANON_KEY with your project values
+   Supabase project: xnkwrkoxvgptobnmekgv
 ================================================================ */
 const SUPABASE_URL      = 'https://xnkwrkoxvgptobnmekgv.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhua3dya294dmdwdG9ibm1la2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NjAxNTQsImV4cCI6MjA4ODIzNjE1NH0.PrmnJ4eGepac41bQuNPG7TcBaunrfTWdjLtkGLr_2LY';
-
-/* Licence check re-uses the kiln log's licence table */
 const LICENCE_KEY = 'KBL-HEIDELBERG-PADESWOOD-2026';
 const SB_LIC_URL  = 'https://dviicnomxeibbuafbozp.supabase.co';
 const SB_LIC_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2aWljbm9teGVpYmJ1YWZib3pwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4ODM0MzcsImV4cCI6MjA4ODQ1OTQzN30.c1T3WXC225tdBbq_1R__9bhGFIZdSxim9dgxfvmkRjU';
 
-/* ── Init Supabase ─────────────────────────────────────────────── */
 let sb, currentUser = null, currentProfile = null;
+let _ra = [], _coshh = [], _equipment = [], _usersCache = [];
 
-function initSupabase() {
-  if (SUPABASE_URL === 'YOUR_SUPABASE_URL') {
-    console.warn('⚠ Supabase not configured — running in demo mode');
-    return null;
-  }
-  return supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-}
-
-/* ── State ─────────────────────────────────────────────────────── */
-let _ra = [], _coshh = [], _equipment = [];
-
-/* ── Helpers ───────────────────────────────────────────────────── */
+/* ── HELPERS ─────────────────────────────────────────────────────── */
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function calcStatus(d){ if(!d) return 'draft'; const diff=(new Date(d)-new Date())/(86400000); if(diff<0) return 'overdue'; if(diff<=30) return 'due-soon'; return 'current'; }
+function statusPill(s){ const m={'overdue':['pill-overdue','Overdue'],'due-soon':['pill-due-soon','Due Soon'],'current':['pill-current','Current'],'draft':['pill-draft','Draft']}; const [c,l]=m[s]||m.draft; return '<span class="pill '+c+'">'+l+'</span>'; }
+function fmtDate(d){ if(!d) return '—'; return new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); }
+function showToast(msg,dur=2800){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),dur); }
+function hasRole(...roles){ if(!currentProfile) return false; if(currentProfile.role==='admin') return true; return roles.includes(currentProfile.role); }
 
-function calcStatus(nextReviewDate) {
-  if (!nextReviewDate) return 'draft';
-  const now  = new Date();
-  const rev  = new Date(nextReviewDate);
-  const diff = (rev - now) / (1000 * 60 * 60 * 24);
-  if (diff < 0)  return 'overdue';
-  if (diff <= 30) return 'due-soon';
-  return 'current';
-}
-
-function statusPill(status) {
-  const map = {
-    'overdue':  ['pill-overdue',  'Overdue'],
-    'due-soon': ['pill-due-soon', 'Due Soon'],
-    'current':  ['pill-current',  'Current'],
-    'draft':    ['pill-draft',    'Draft'],
-  };
-  const [cls, label] = map[status] || map['draft'];
-  return `<span class="pill ${cls}">${label}</span>`;
-}
-
-function fmtDate(d) {
-  if (!d) return '—';
-  return new Date(d).toLocaleDateString('en-GB', {day:'2-digit', month:'short', year:'numeric'});
-}
-
-function showToast(msg, dur=2800) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), dur);
-}
-
-function hasRole(...roles) {
-  if (!currentProfile) return false;
-  if (currentProfile.role === 'admin') return true;
-  return roles.includes(currentProfile.role);
-}
-
-/* ── LICENCE CHECK ─────────────────────────────────────────────── */
-async function checkLicence() {
-  const overlay  = document.getElementById('licenceOverlay');
-  const msg      = document.getElementById('licMsg');
-  const spinner  = document.getElementById('licSpinner');
-  const retryBtn = document.getElementById('licRetryBtn');
-
-  spinner.style.display = 'flex'; msg.style.display = 'none'; retryBtn.style.display = 'none';
-  overlay.style.opacity = '0';
-  const showTimer = setTimeout(() => { overlay.style.opacity = '1'; }, 400);
-
+/* ── LICENCE ─────────────────────────────────────────────────────── */
+async function checkLicence(){
   try {
     const res = await fetch(
-      SB_LIC_URL + '/rest/v1/kiln_licences?licence_key=eq.' + encodeURIComponent(LICENCE_KEY)
-        + '&select=paid,expires_at,customer,site',
-      { method:'GET', mode:'cors', headers:{ 'apikey':SB_LIC_KEY, 'Authorization':'Bearer '+SB_LIC_KEY, 'Content-Type':'application/json' } }
+      SB_LIC_URL+'/rest/v1/kiln_licences?licence_key=eq.'+encodeURIComponent(LICENCE_KEY)+'&select=paid,expires_at,customer,site',
+      {method:'GET',mode:'cors',headers:{'apikey':SB_LIC_KEY,'Authorization':'Bearer '+SB_LIC_KEY,'Content-Type':'application/json'}}
     );
-    if (!res.ok) { showLicBlock(msg,spinner,retryBtn,'Unable to confirm licence. Please contact your administrator.'); return; }
-    const rows = await res.json();
-    if (!rows?.length) { showLicBlock(msg,spinner,retryBtn,'Licence not found. Please contact your administrator.'); return; }
-    const lic = rows[0];
-    if (!lic.paid) { showLicBlock(msg,spinner,retryBtn,'Licence not active. Once payment is received, access will resume automatically.'); return; }
-    if (new Date(lic.expires_at) < new Date()) {
-      const exp = new Date(lic.expires_at).toLocaleDateString('en-GB');
-      showLicBlock(msg,spinner,retryBtn,'Licence expired on '+exp+'. Once renewed, access will resume automatically.');
-      return;
+    if(res.ok){
+      const rows = await res.json();
+      if(rows&&rows.length&&rows[0].paid&&new Date(rows[0].expires_at)>=new Date()){
+        hideLicenceOverlay(); return;
+      }
+      const lic = rows&&rows[0];
+      if(lic&&new Date(lic.expires_at)<new Date()){
+        showLicenceError('Licence expired on '+new Date(lic.expires_at).toLocaleDateString('en-GB')+'. Please contact your administrator.'); return;
+      }
+      showLicenceError('Licence not active. Please contact your administrator.');
+    } else {
+      // Fail open on HTTP error
+      hideLicenceOverlay();
     }
-    clearTimeout(showTimer);
-    overlay.style.transition = 'opacity .3s';
-    overlay.style.opacity = '0';
-    setTimeout(() => { overlay.style.display = 'none'; }, 320);
-    revealAuth();
   } catch(e) {
-    console.warn('Licence check failed:', e.message);
-    clearTimeout(showTimer);
-    overlay.style.display = 'none';
-    revealAuth();
+    console.warn('Licence check network error — failing open:', e.message);
+    hideLicenceOverlay();
   }
 }
 
-function showLicBlock(msg, spinner, retryBtn, text) {
-  spinner.style.display = 'none';
-  msg.textContent = text; msg.style.display = 'block';
-  retryBtn.style.display = 'block';
-  document.getElementById('licenceOverlay').style.opacity = '1';
+function hideLicenceOverlay(){
+  const overlay = document.getElementById('licenceOverlay');
+  overlay.style.transition = 'opacity .3s ease';
+  overlay.style.opacity = '0';
+  setTimeout(function(){
+    overlay.style.display = 'none';
+    showAuthScreen();
+  }, 320);
 }
 
-function revealAuth() {
-  const splash = document.getElementById('splash');
-  splash.style.display = 'flex';
-  // Animate loader bar, then reveal card
-  const bar  = document.getElementById('splashBar');
-  const card = document.getElementById('splashCard');
-  bar.style.transition = 'none'; bar.style.width = '0%'; bar.style.opacity = '1';
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    bar.style.transition = 'width 2.4s cubic-bezier(0.4,0,0.2,1)';
-    bar.style.width = '100%';
-    setTimeout(() => { card.style.opacity = '1'; }, 1200);
-    setTimeout(() => { bar.style.transition = 'opacity .5s'; bar.style.opacity = '0'; }, 2500);
-  }));
+function showLicenceError(text){
+  document.getElementById('licSpinner').style.display = 'none';
+  document.getElementById('licMsg').textContent = text;
+  document.getElementById('licMsg').style.display = 'block';
+  document.getElementById('licRetryBtn').style.display = 'block';
+}
 
-  // If already signed in, skip login screen
-  if (sb) {
-    sb.auth.getSession().then(({ data }) => {
-      if (data?.session?.user) {
-        currentUser = data.session.user;
+/* ── AUTH SCREEN ─────────────────────────────────────────────────── */
+function showAuthScreen(){
+  // Check for existing session first
+  if(sb){
+    sb.auth.getSession().then(function(result){
+      const session = result.data&&result.data.session;
+      if(session&&session.user){
+        currentUser = session.user;
         loadProfileAndLaunch();
+      } else {
+        showSplash();
       }
     });
+  } else {
+    showSplash();
   }
-  setTimeout(() => document.getElementById('authEmail').focus(), 1300);
 }
 
-/* ── AUTH ─────────────────────────────────────────────────────────── */
-async function doLogin() {
+function showSplash(){
+  const splash = document.getElementById('splash');
+  splash.style.display = 'flex';
+  const bar  = document.getElementById('splashBar');
+  const card = document.getElementById('splashCard');
+  card.style.opacity = '0';
+  bar.style.transition = 'none'; bar.style.width = '0%'; bar.style.opacity = '1';
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){
+    bar.style.transition = 'width 2.4s cubic-bezier(0.4,0,0.2,1)';
+    bar.style.width = '100%';
+    setTimeout(function(){ card.style.opacity = '1'; }, 1200);
+    setTimeout(function(){ bar.style.transition = 'opacity .5s'; bar.style.opacity = '0'; }, 2500);
+  }); });
+  setTimeout(function(){ document.getElementById('authEmail').focus(); }, 1300);
+}
+
+async function doLogin(){
   const email = document.getElementById('authEmail').value.trim();
   const pass  = document.getElementById('authPass').value;
   const btn   = document.getElementById('authBtn');
   const err   = document.getElementById('authErr');
-
-  if (!email || !pass) { showAuthErr('Please enter your email and password.'); return; }
-  if (!sb) {
-    // Demo mode — skip auth, use viewer role
-    currentProfile = { email: email || 'demo@padeswood.com', full_name: 'Demo User', role: 'viewer' };
-    launchApp();
-    return;
-  }
-
-  btn.disabled = true; btn.textContent = 'Signing in…';
   err.style.display = 'none';
-
-  const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
-  btn.disabled = false; btn.textContent = 'Sign In';
-
-  if (error) { showAuthErr(error.message); return; }
+  if(!email||!pass){ err.textContent='Please enter your email and password.'; err.style.display='block'; return; }
+  btn.disabled=true; btn.textContent='Signing in…';
+  const {data, error} = await sb.auth.signInWithPassword({email, password:pass});
+  btn.disabled=false; btn.textContent='Sign In';
+  if(error){ err.textContent=error.message; err.style.display='block'; return; }
   currentUser = data.user;
   await loadProfileAndLaunch();
 }
 
-function showAuthErr(msg) {
-  const err = document.getElementById('authErr');
-  err.textContent = msg; err.style.display = 'block';
-}
-
-async function loadProfileAndLaunch() {
-  if (!sb) { launchApp(); return; }
-  const { data } = await sb.from('pw_profiles').select('*').eq('id', currentUser.id).single();
-  currentProfile = data || { email: currentUser.email, full_name: currentUser.email, role: 'viewer' };
+async function loadProfileAndLaunch(){
+  const {data} = await sb.from('pw_profiles').select('*').eq('id',currentUser.id).single();
+  currentProfile = data || {email:currentUser.email, full_name:currentUser.email, role:'viewer'};
   launchApp();
 }
 
-async function doLogout() {
-  if (sb) await sb.auth.signOut();
-  currentUser = null; currentProfile = null;
-  document.getElementById('appWrapper').style.display = 'none';
-  document.getElementById('appWrapper').style.flexDirection = 'column';
-  document.getElementById('splash').style.display = 'flex';
-  document.getElementById('authPass').value = '';
-  document.getElementById('authErr').style.display = 'none';
+async function doLogout(){
+  await sb.auth.signOut();
+  currentUser=null; currentProfile=null;
+  document.getElementById('appWrapper').style.display='none';
+  document.getElementById('splash').style.display='flex';
+  document.getElementById('authPass').value='';
+  document.getElementById('authErr').style.display='none';
 }
 
-function launchApp() {
-  document.getElementById('splash').style.display = 'none';
+function launchApp(){
+  document.getElementById('splash').style.display='none';
   const app = document.getElementById('appWrapper');
-  app.style.display = 'flex';
-
-  // Update header
-  const email = currentProfile?.full_name || currentProfile?.email || '—';
-  document.getElementById('headerEmail').textContent = email.split('@')[0];
-  const roleBadge = document.getElementById('headerRole');
-  const role = currentProfile?.role || 'viewer';
-  roleBadge.textContent = role.charAt(0).toUpperCase() + role.slice(1);
-  roleBadge.className = 'role-badge role-' + role;
-
-  // Show admin panel button
-  if (currentProfile?.role === 'admin') {
-    document.getElementById('adminPanelBtn').style.display = 'flex';
+  app.style.display='flex';
+  const name = currentProfile.full_name||currentProfile.email||'—';
+  document.getElementById('headerEmail').textContent = name.includes('@') ? name.split('@')[0] : name;
+  const role = currentProfile.role||'viewer';
+  const rb = document.getElementById('headerRole');
+  rb.textContent = role.charAt(0).toUpperCase()+role.slice(1);
+  rb.className = 'role-badge role-'+role;
+  if(currentProfile.role==='admin') document.getElementById('adminPanelBtn').style.display='flex';
+  if(hasRole('editor','reviewer','admin')){
+    document.getElementById('btnAddRA').style.display='flex';
+    document.getElementById('btnAddCOSHH').style.display='flex';
+    document.getElementById('btnAddEquip').style.display='flex';
   }
-
-  // Show add buttons based on role
-  if (hasRole('editor','reviewer','admin')) {
-    document.getElementById('btnAddRA').style.display = 'flex';
-    document.getElementById('btnAddCOSHH').style.display = 'flex';
-    document.getElementById('btnAddEquip').style.display = 'flex';
-  }
-
   loadAllData();
 }
 
-/* ── DATA LOADING ────────────────────────────────────────────────── */
-async function loadAllData() {
-  await Promise.all([loadRA(), loadCOSHH(), loadEquipment()]);
-  refreshDashboard();
-}
+/* ── DATA ────────────────────────────────────────────────────────── */
+async function loadAllData(){ await Promise.all([loadRA(),loadCOSHH(),loadEquipment()]); refreshDashboard(); }
 
-async function loadRA() {
-  if (!sb) { _ra = getDemoRA(); renderRA(); return; }
-  const { data, error } = await sb.from('pw_risk_assessments').select('*').order('next_review_date');
-  if (error) { console.error(error); return; }
-  _ra = (data || []).map(r => ({ ...r, _status: calcStatus(r.next_review_date) }));
+async function loadRA(){
+  const {data,error} = await sb.from('pw_risk_assessments').select('*').order('next_review_date');
+  if(error){ console.error(error); return; }
+  _ra = (data||[]).map(r=>({...r,_status:calcStatus(r.next_review_date)}));
   document.getElementById('raCount').textContent = _ra.length;
   renderRA();
 }
-
-async function loadCOSHH() {
-  if (!sb) { _coshh = getDemoCOSHH(); renderCOSHH(); return; }
-  const { data, error } = await sb.from('pw_coshh_sheets').select('*').order('next_review_date');
-  if (error) { console.error(error); return; }
-  _coshh = (data || []).map(r => ({ ...r, _status: calcStatus(r.next_review_date) }));
+async function loadCOSHH(){
+  const {data,error} = await sb.from('pw_coshh_sheets').select('*').order('next_review_date');
+  if(error){ console.error(error); return; }
+  _coshh = (data||[]).map(r=>({...r,_status:calcStatus(r.next_review_date)}));
   document.getElementById('coshhCount').textContent = _coshh.length;
   renderCOSHH();
 }
-
-async function loadEquipment() {
-  if (!sb) { _equipment = getDemoEquipment(); renderEquipment(); return; }
-  const { data, error } = await sb.from('pw_equipment').select('*').order('asset_tag');
-  if (error) { console.error(error); return; }
-  _equipment = data || [];
+async function loadEquipment(){
+  const {data,error} = await sb.from('pw_equipment').select('*').order('asset_tag');
+  if(error){ console.error(error); return; }
+  _equipment = data||[];
   document.getElementById('equipCount').textContent = _equipment.length;
   renderEquipment();
 }
 
-/* ── DEMO DATA (used when Supabase not configured) ─────────────── */
-function getDemoRA() {
-  const today = new Date();
-  const d = (offsetDays) => { const x = new Date(today); x.setDate(x.getDate()+offsetDays); return x.toISOString().slice(0,10); };
-  return [
-    { id:'1', ref:'RA-2024-001', title:'Kiln 1 Burner Maintenance', area:'Kiln Bay 1', owner:'J. Smith', equipment_tags:['KLN-001'], next_review_date:d(-45), _status:'overdue' },
-    { id:'2', ref:'RA-2024-002', title:'Coal Conveyor Belt Inspection', area:'Coal Store', owner:'M. Jones', equipment_tags:['CONV-003'], next_review_date:d(18), _status:'due-soon' },
-    { id:'3', ref:'RA-2024-003', title:'Cement Mill Access', area:'Mill 2', owner:'S. Davies', equipment_tags:[], next_review_date:d(90), _status:'current' },
-    { id:'4', ref:'RA-2024-004', title:'Hot Work Permit Procedure', area:'General', owner:'Admin', equipment_tags:[], next_review_date:d(180), _status:'current' },
-  ];
-}
-function getDemoCOSHH() {
-  const today = new Date();
-  const d = (offset) => { const x = new Date(today); x.setDate(x.getDate()+offset); return x.toISOString().slice(0,10); };
-  return [
-    { id:'1', product_name:'HydroLube 220', manufacturer:'Shell', hazard_categories:['Irritant'], location:'Store Room B', next_review_date:d(-20), _status:'overdue' },
-    { id:'2', product_name:'Kiln Fuel Additive', manufacturer:'Brenntag', hazard_categories:['Flammable','Harmful'], location:'Fuel Store', next_review_date:d(25), _status:'due-soon' },
-    { id:'3', product_name:'Dust Suppression Fluid', manufacturer:'Ecosol', hazard_categories:['Irritant'], location:'Workshop', next_review_date:d(120), _status:'current' },
-  ];
-}
-function getDemoEquipment() {
-  return [
-    { id:'1', asset_tag:'KLN-001', name:'Kiln 1 Main Drive Motor', manufacturer:'ABB', model:'M3BP 450SMB', serial:'SN-2019-00421', location:'Kiln Bay 1', category:'Kiln', linked_ra_ids:['1'], linked_coshh_ids:[] },
-    { id:'2', asset_tag:'KLN-002', name:'Kiln 2 Main Drive Motor', manufacturer:'ABB', model:'M3BP 450SMB', serial:'SN-2020-00108', location:'Kiln Bay 2', category:'Kiln', linked_ra_ids:[], linked_coshh_ids:[] },
-    { id:'3', asset_tag:'CONV-003', name:'Coal Conveyor Belt Drive', manufacturer:'Rexnord', model:'BC2100', serial:'SN-2018-00774', location:'Coal Store', category:'Conveyor', linked_ra_ids:['2'], linked_coshh_ids:[] },
-    { id:'4', asset_tag:'FAN-004', name:'Kiln ID Fan', manufacturer:'Howden', model:'HV-850', serial:'SN-2021-00032', location:'Kiln Bay 1', category:'Fan', linked_ra_ids:[], linked_coshh_ids:['1'] },
-  ];
+/* ── DASHBOARD ───────────────────────────────────────────────────── */
+function refreshDashboard(){
+  document.getElementById('raOverdue').textContent  = _ra.filter(r=>r._status==='overdue').length;
+  document.getElementById('raDueSoon').textContent  = _ra.filter(r=>r._status==='due-soon').length;
+  document.getElementById('raCurrent').textContent  = _ra.filter(r=>r._status==='current').length;
+  document.getElementById('raTotal').textContent    = _ra.length;
+  document.getElementById('coshhOverdue').textContent  = _coshh.filter(r=>r._status==='overdue').length;
+  document.getElementById('coshhDueSoon').textContent  = _coshh.filter(r=>r._status==='due-soon').length;
+  document.getElementById('coshhCurrent').textContent  = _coshh.filter(r=>r._status==='current').length;
+  document.getElementById('coshhTotal').textContent    = _coshh.length;
+  const alerts = [
+    ..._ra.filter(r=>r._status==='overdue'||r._status==='due-soon').map(r=>({...r,_type:'ra'})),
+    ..._coshh.filter(r=>r._status==='overdue'||r._status==='due-soon').map(r=>({...r,_type:'coshh'}))
+  ].sort((a,b)=>(a._status==='overdue'?0:1)-(b._status==='overdue'?0:1)||(new Date(a.next_review_date)-new Date(b.next_review_date)));
+  const al = document.getElementById('alertList');
+  if(!alerts.length){ al.innerHTML='<div class="empty-state" style="padding:30px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="36" height="36"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><p>No overdue or due-soon items. All documents are current.</p></div>'; return; }
+  al.innerHTML = alerts.map(a=>'<div class="alert-row '+a._status+'" onclick="switchTab(\''+a._type+'\')">'
+    +'<span class="alert-type '+a._type+'">'+(a._type==='ra'?'RA':'COSHH')+'</span>'
+    +'<span class="alert-title">'+esc(a.title||a.product_name)+'</span>'
+    +'<span class="alert-date">'+fmtDate(a.next_review_date)+'</span>'
+    +'<span class="alert-status status-'+a._status+'">'+(a._status==='overdue'?'Overdue':'Due Soon')+'</span>'
+    +'</div>').join('');
 }
 
 /* ── RENDER ──────────────────────────────────────────────────────── */
-function renderRA(data) {
-  const rows = data || _ra;
-  const body = document.getElementById('raBody');
-  document.getElementById('raCount').textContent = _ra.length;
-
-  // Populate area filter
-  const areas = [...new Set(_ra.map(r=>r.area).filter(Boolean))].sort();
-  const areaFilter = document.getElementById('raAreaFilter');
-  const prevArea = areaFilter.value;
-  areaFilter.innerHTML = '<option value="">All areas</option>' + areas.map(a=>`<option value="${esc(a)}"${a===prevArea?' selected':''}>${esc(a)}</option>`).join('');
-
-  if (!rows.length) {
-    body.innerHTML = `<tr><td colspan="5"><div class="empty-state">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="36" height="36"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-      <p>No risk assessments found.</p>
-      ${hasRole('editor','reviewer','admin') ? '<button class="btn btn-primary" onclick="openRAModal()">Add first Risk Assessment</button>' : ''}
-    </div></td></tr>`;
-    return;
-  }
-
-  body.innerHTML = rows.map(r => `
-    <tr onclick="viewRA('${esc(r.id)}')">
-      <td class="td-ref">${esc(r.ref||'—')}</td>
-      <td>
-        <div class="td-title">${esc(r.title)}</div>
-        <div class="td-sub">${esc(r.area||'—')}</div>
-      </td>
-      <td style="color:var(--tx2);font-size:12.5px">${esc(r.owner||'—')}</td>
-      <td class="td-date">${fmtDate(r.next_review_date)}</td>
-      <td>${statusPill(r._status)}</td>
-    </tr>`).join('');
+function renderRA(rows){
+  rows=rows||_ra;
+  const areas=[...new Set(_ra.map(r=>r.area).filter(Boolean))].sort();
+  const af=document.getElementById('raAreaFilter'); const pv=af.value;
+  af.innerHTML='<option value="">All areas</option>'+areas.map(a=>'<option value="'+esc(a)+'"'+(a===pv?' selected':'')+'>'+esc(a)+'</option>').join('');
+  const body=document.getElementById('raBody');
+  if(!rows.length){ body.innerHTML='<tr><td colspan="5"><div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="36" height="36"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><p>No risk assessments found.</p>'+(hasRole('editor','reviewer','admin')?'<button class="btn btn-primary" onclick="openRAModal()">Add first Risk Assessment</button>':'')+'</div></td></tr>'; return; }
+  body.innerHTML=rows.map(r=>'<tr onclick="openRAModal(\''+esc(r.id)+'\')">'
+    +'<td class="td-ref">'+esc(r.ref||'—')+'</td>'
+    +'<td><div class="td-title">'+esc(r.title)+'</div><div class="td-sub">'+esc(r.area||'—')+'</div></td>'
+    +'<td style="color:var(--tx2);font-size:12.5px">'+esc(r.owner||'—')+'</td>'
+    +'<td class="td-date">'+fmtDate(r.next_review_date)+'</td>'
+    +'<td>'+statusPill(r._status)+'</td></tr>').join('');
 }
 
-function renderCOSHH(data) {
-  const rows = data || _coshh;
-  const body = document.getElementById('coshhBody');
-  document.getElementById('coshhCount').textContent = _coshh.length;
-
-  if (!rows.length) {
-    body.innerHTML = `<tr><td colspan="6"><div class="empty-state">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="36" height="36"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      <p>No COSHH sheets found.</p>
-      ${hasRole('editor','reviewer','admin') ? '<button class="btn btn-primary" onclick="openCOSHHModal()">Add first COSHH Sheet</button>' : ''}
-    </div></td></tr>`;
-    return;
-  }
-
-  body.innerHTML = rows.map(r => {
-    const haz = Array.isArray(r.hazard_categories) ? r.hazard_categories : (r.hazard_categories||'').split(',').map(h=>h.trim()).filter(Boolean);
-    return `
-    <tr onclick="viewCOSHH('${esc(r.id)}')">
-      <td>
-        <div class="td-title">${esc(r.product_name)}</div>
-      </td>
-      <td style="color:var(--tx2);font-size:12.5px">${esc(r.manufacturer||'—')}</td>
-      <td>${haz.map(h=>`<span class="td-tag">${esc(h)}</span>`).join('')||'—'}</td>
-      <td style="color:var(--tx2);font-size:12.5px">${esc(r.location||'—')}</td>
-      <td class="td-date">${fmtDate(r.next_review_date)}</td>
-      <td>${statusPill(r._status)}</td>
-    </tr>`;
+function renderCOSHH(rows){
+  rows=rows||_coshh;
+  const body=document.getElementById('coshhBody');
+  if(!rows.length){ body.innerHTML='<tr><td colspan="6"><div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="36" height="36"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><p>No COSHH sheets found.</p>'+(hasRole('editor','reviewer','admin')?'<button class="btn btn-primary" onclick="openCOSHHModal()">Add first COSHH Sheet</button>':'')+'</div></td></tr>'; return; }
+  body.innerHTML=rows.map(r=>{
+    const haz=Array.isArray(r.hazard_categories)?r.hazard_categories:(r.hazard_categories||'').split(',').map(h=>h.trim()).filter(Boolean);
+    return '<tr onclick="openCOSHHModal(\''+esc(r.id)+'\')">'
+      +'<td><div class="td-title">'+esc(r.product_name)+'</div></td>'
+      +'<td style="color:var(--tx2);font-size:12.5px">'+esc(r.manufacturer||'—')+'</td>'
+      +'<td>'+(haz.map(h=>'<span class="td-tag">'+esc(h)+'</span>').join('')||'—')+'</td>'
+      +'<td style="color:var(--tx2);font-size:12.5px">'+esc(r.location||'—')+'</td>'
+      +'<td class="td-date">'+fmtDate(r.next_review_date)+'</td>'
+      +'<td>'+statusPill(r._status)+'</td></tr>';
   }).join('');
 }
 
-function renderEquipment(data) {
-  const rows = data || _equipment;
-  const body = document.getElementById('equipBody');
-  document.getElementById('equipCount').textContent = _equipment.length;
-
-  // Populate category filter
-  const cats = [...new Set(_equipment.map(r=>r.category).filter(Boolean))].sort();
-  const catFilter = document.getElementById('equipCatFilter');
-  const prevCat = catFilter.value;
-  catFilter.innerHTML = '<option value="">All categories</option>' + cats.map(c=>`<option value="${esc(c)}"${c===prevCat?' selected':''}>${esc(c)}</option>`).join('');
-
-  if (!rows.length) {
-    body.innerHTML = `<tr><td colspan="6"><div class="empty-state">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="36" height="36"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 0-14.14 0"/><path d="M4.93 19.07a10 10 0 0 0 14.14 0"/></svg>
-      <p>No equipment found.</p>
-      ${hasRole('editor','reviewer','admin') ? '<button class="btn btn-primary" onclick="openEquipModal()">Add first Equipment record</button>' : ''}
-    </div></td></tr>`;
-    return;
-  }
-
-  body.innerHTML = rows.map(r => {
-    const raCount  = (r.linked_ra_ids  ||[]).length;
-    const coshCount= (r.linked_coshh_ids||[]).length;
-    return `
-    <tr onclick="viewEquip('${esc(r.id)}')">
-      <td class="td-ref">${esc(r.asset_tag||'—')}</td>
-      <td>
-        <div class="td-title">${esc(r.name)}</div>
-        <div class="td-sub">${esc(r.model||'—')}</div>
-      </td>
-      <td style="color:var(--tx2);font-size:12.5px">${esc(r.manufacturer||'—')}</td>
-      <td style="color:var(--tx2);font-size:12.5px">${esc(r.location||'—')}</td>
-      <td><span class="td-tag">${esc(r.category||'—')}</span></td>
-      <td style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">
-        ${raCount ? `<span title="${raCount} RA(s)">📋 ${raCount}</span> ` : ''}
-        ${coshCount ? `<span title="${coshCount} COSHH">⚠️ ${coshCount}</span>` : ''}
-        ${(!raCount && !coshCount) ? '—' : ''}
-      </td>
-    </tr>`;
-  }).join('');
+function renderEquipment(rows){
+  rows=rows||_equipment;
+  const cats=[...new Set(_equipment.map(r=>r.category).filter(Boolean))].sort();
+  const cf=document.getElementById('equipCatFilter'); const pv=cf.value;
+  cf.innerHTML='<option value="">All categories</option>'+cats.map(c=>'<option value="'+esc(c)+'"'+(c===pv?' selected':'')+'>'+esc(c)+'</option>').join('');
+  const body=document.getElementById('equipBody');
+  if(!rows.length){ body.innerHTML='<tr><td colspan="6"><div class="empty-state"><p>No equipment found.</p>'+(hasRole('editor','reviewer','admin')?'<button class="btn btn-primary" onclick="openEquipModal()">Add first Equipment record</button>':'')+'</div></td></tr>'; return; }
+  body.innerHTML=rows.map(r=>'<tr onclick="openEquipModal(\''+esc(r.id)+'\')">'
+    +'<td class="td-ref">'+esc(r.asset_tag||'—')+'</td>'
+    +'<td><div class="td-title">'+esc(r.name)+'</div><div class="td-sub">'+esc(r.model||'—')+'</div></td>'
+    +'<td style="color:var(--tx2);font-size:12.5px">'+esc(r.manufacturer||'—')+'</td>'
+    +'<td style="color:var(--tx2);font-size:12.5px">'+esc(r.location||'—')+'</td>'
+    +'<td><span class="td-tag">'+esc(r.category||'—')+'</span></td>'
+    +'<td style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">'
+    +((r.linked_ra_ids||[]).length?'📋 '+(r.linked_ra_ids.length)+' ':'')+((r.linked_coshh_ids||[]).length?'⚠️ '+(r.linked_coshh_ids.length):'')+(!(r.linked_ra_ids||[]).length&&!(r.linked_coshh_ids||[]).length?'—':'')
+    +'</td></tr>').join('');
 }
 
-/* ── DASHBOARD ───────────────────────────────────────────────────── */
-function refreshDashboard() {
-  // RA stats
-  const raOv = _ra.filter(r=>r._status==='overdue').length;
-  const raDu = _ra.filter(r=>r._status==='due-soon').length;
-  const raCu = _ra.filter(r=>r._status==='current').length;
-  document.getElementById('raOverdue').textContent  = raOv;
-  document.getElementById('raDueSoon').textContent  = raDu;
-  document.getElementById('raCurrent').textContent  = raCu;
-  document.getElementById('raTotal').textContent    = _ra.length;
-
-  // COSHH stats
-  const cOv = _coshh.filter(r=>r._status==='overdue').length;
-  const cDu = _coshh.filter(r=>r._status==='due-soon').length;
-  const cCu = _coshh.filter(r=>r._status==='current').length;
-  document.getElementById('coshhOverdue').textContent  = cOv;
-  document.getElementById('coshhDueSoon').textContent  = cDu;
-  document.getElementById('coshhCurrent').textContent  = cCu;
-  document.getElementById('coshhTotal').textContent    = _coshh.length;
-
-  // Alerts list
-  const alerts = [
-    ..._ra.filter(r=>r._status==='overdue' || r._status==='due-soon').map(r=>({ type:'ra', label:'RA', ...r })),
-    ..._coshh.filter(r=>r._status==='overdue' || r._status==='due-soon').map(r=>({ type:'coshh', label:'COSHH', ...r })),
-  ].sort((a,b) => {
-    if (a._status==='overdue' && b._status!=='overdue') return -1;
-    if (b._status==='overdue' && a._status!=='overdue') return 1;
-    return new Date(a.next_review_date) - new Date(b.next_review_date);
-  });
-
-  const alertList = document.getElementById('alertList');
-  if (!alerts.length) {
-    alertList.innerHTML = `<div class="empty-state" style="padding:30px">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="36" height="36"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-      <p>No overdue or due-soon items. All documents are current.</p>
-    </div>`;
-    return;
-  }
-
-  alertList.innerHTML = alerts.map(a => `
-    <div class="alert-row ${a._status}" onclick="switchTab('${a.type==='ra'?'ra':'coshh'}')">
-      <span class="alert-type ${a.type}">${a.type==='ra'?'RA':'COSHH'}</span>
-      <span class="alert-title">${esc(a.title || a.product_name)}</span>
-      <span class="alert-date">${fmtDate(a.next_review_date)}</span>
-      <span class="alert-status status-${a._status}">${a._status==='overdue'?'Overdue':'Due Soon'}</span>
-    </div>`).join('');
+/* ── FILTERS ─────────────────────────────────────────────────────── */
+function filterRA(){
+  const q=document.getElementById('raSearch').value.toLowerCase();
+  const st=document.getElementById('raStatusFilter').value;
+  const ar=document.getElementById('raAreaFilter').value;
+  renderRA(_ra.filter(r=>(!q||[r.ref,r.title,r.area,r.owner].some(f=>(f||'').toLowerCase().includes(q)))&&(!st||r._status===st)&&(!ar||r.area===ar)));
 }
-
-/* ── FILTER ──────────────────────────────────────────────────────── */
-function filterRA() {
-  const q  = document.getElementById('raSearch').value.toLowerCase();
-  const st = document.getElementById('raStatusFilter').value;
-  const ar = document.getElementById('raAreaFilter').value;
-  const filtered = _ra.filter(r => {
-    const matchQ  = !q || [r.ref,r.title,r.area,r.owner].some(f=>(f||'').toLowerCase().includes(q));
-    const matchSt = !st || r._status === st;
-    const matchAr = !ar || r.area === ar;
-    return matchQ && matchSt && matchAr;
-  });
-  renderRA(filtered);
+function filterCOSHH(){
+  const q=document.getElementById('coshhSearch').value.toLowerCase();
+  const st=document.getElementById('coshhStatusFilter').value;
+  renderCOSHH(_coshh.filter(r=>(!q||[r.product_name,r.manufacturer,r.location].some(f=>(f||'').toLowerCase().includes(q)))&&(!st||r._status===st)));
 }
-
-function filterCOSHH() {
-  const q  = document.getElementById('coshhSearch').value.toLowerCase();
-  const st = document.getElementById('coshhStatusFilter').value;
-  const filtered = _coshh.filter(r => {
-    const matchQ  = !q || [r.product_name,r.manufacturer,r.location].some(f=>(f||'').toLowerCase().includes(q));
-    const matchSt = !st || r._status === st;
-    return matchQ && matchSt;
-  });
-  renderCOSHH(filtered);
-}
-
-function filterEquipment() {
-  const q   = document.getElementById('equipSearch').value.toLowerCase();
-  const cat = document.getElementById('equipCatFilter').value;
-  const filtered = _equipment.filter(r => {
-    const matchQ   = !q || [r.asset_tag,r.name,r.manufacturer,r.model,r.serial,r.location].some(f=>(f||'').toLowerCase().includes(q));
-    const matchCat = !cat || r.category === cat;
-    return matchQ && matchCat;
-  });
-  renderEquipment(filtered);
+function filterEquipment(){
+  const q=document.getElementById('equipSearch').value.toLowerCase();
+  const cat=document.getElementById('equipCatFilter').value;
+  renderEquipment(_equipment.filter(r=>(!q||[r.asset_tag,r.name,r.manufacturer,r.model,r.serial,r.location].some(f=>(f||'').toLowerCase().includes(q)))&&(!cat||r.category===cat)));
 }
 
 /* ── TABS ────────────────────────────────────────────────────────── */
-function switchTab(tab) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab===tab));
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id==='panel-'+tab));
+function switchTab(tab){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+tab));
 }
 
 /* ── RA MODAL ────────────────────────────────────────────────────── */
-function openRAModal(id) {
-  const modal = document.getElementById('raModal');
-  document.getElementById('raId').value = id || '';
-  document.getElementById('raErr').style.display = 'none';
-  if (id) {
-    const r = _ra.find(x=>x.id===id);
-    if (!r) return;
-    document.getElementById('raModalTitle').textContent = 'Edit Risk Assessment';
-    document.getElementById('raRef').value   = r.ref || '';
-    document.getElementById('raTitle').value = r.title || '';
-    document.getElementById('raArea').value  = r.area || '';
-    document.getElementById('raOwner').value = r.owner || '';
-    document.getElementById('raStatus').value= r.status || 'draft';
-    document.getElementById('raEquipTags').value = (r.equipment_tags||[]).join(', ');
-    document.getElementById('raReviewDate').value  = r.review_date || '';
-    document.getElementById('raNextReview').value  = r.next_review_date || '';
+function openRAModal(id){
+  document.getElementById('raId').value=id||'';
+  document.getElementById('raErr').style.display='none';
+  if(id){
+    const r=_ra.find(x=>x.id===id); if(!r) return;
+    document.getElementById('raModalTitle').textContent='Edit Risk Assessment';
+    document.getElementById('raRef').value=r.ref||'';
+    document.getElementById('raTitle').value=r.title||'';
+    document.getElementById('raArea').value=r.area||'';
+    document.getElementById('raOwner').value=r.owner||'';
+    document.getElementById('raStatus').value=r.status||'draft';
+    document.getElementById('raEquipTags').value=(r.equipment_tags||[]).join(', ');
+    document.getElementById('raReviewDate').value=r.review_date||'';
+    document.getElementById('raNextReview').value=r.next_review_date||'';
   } else {
-    document.getElementById('raModalTitle').textContent = 'Add Risk Assessment';
-    ['raRef','raTitle','raArea','raOwner','raEquipTags','raReviewDate','raNextReview'].forEach(id=>document.getElementById(id).value='');
-    document.getElementById('raStatus').value = 'draft';
+    document.getElementById('raModalTitle').textContent='Add Risk Assessment';
+    ['raRef','raTitle','raArea','raOwner','raEquipTags','raReviewDate','raNextReview'].forEach(i=>document.getElementById(i).value='');
+    document.getElementById('raStatus').value='draft';
   }
-  modal.classList.add('open');
+  document.getElementById('raModal').classList.add('open');
 }
-function closeRAModal() { document.getElementById('raModal').classList.remove('open'); }
-
-async function saveRA() {
-  const id    = document.getElementById('raId').value;
-  const ref   = document.getElementById('raRef').value.trim();
-  const title = document.getElementById('raTitle').value.trim();
-  const next  = document.getElementById('raNextReview').value;
-  const err   = document.getElementById('raErr');
-
-  if (!ref || !title) { err.textContent='Reference and title are required.'; err.style.display='block'; return; }
-
-  const payload = {
-    ref, title,
-    area:           document.getElementById('raArea').value.trim() || null,
-    owner:          document.getElementById('raOwner').value.trim() || null,
-    status:         document.getElementById('raStatus').value,
-    equipment_tags: document.getElementById('raEquipTags').value.split(',').map(t=>t.trim()).filter(Boolean),
-    review_date:    document.getElementById('raReviewDate').value || null,
-    next_review_date: next || null,
-    updated_at:     new Date().toISOString(),
-    updated_by:     currentProfile?.email || null,
-  };
-
-  if (!sb) {
-    // Demo mode
-    if (id) { const i=_ra.findIndex(r=>r.id===id); if(i>-1) _ra[i]={..._ra[i],...payload,_status:calcStatus(next)}; }
-    else     { _ra.push({...payload,id:String(Date.now()),created_at:new Date().toISOString(),_status:calcStatus(next)}); }
-    renderRA(); refreshDashboard(); closeRAModal(); showToast(id?'Risk Assessment updated ✓':'Risk Assessment added ✓');
-    return;
-  }
-
+function closeRAModal(){ document.getElementById('raModal').classList.remove('open'); }
+async function saveRA(){
+  const id=document.getElementById('raId').value;
+  const ref=document.getElementById('raRef').value.trim();
+  const title=document.getElementById('raTitle').value.trim();
+  const next=document.getElementById('raNextReview').value;
+  const err=document.getElementById('raErr');
+  if(!ref||!title){ err.textContent='Reference and title are required.'; err.style.display='block'; return; }
+  const payload={ref,title,area:document.getElementById('raArea').value.trim()||null,owner:document.getElementById('raOwner').value.trim()||null,
+    status:document.getElementById('raStatus').value,equipment_tags:document.getElementById('raEquipTags').value.split(',').map(t=>t.trim()).filter(Boolean),
+    review_date:document.getElementById('raReviewDate').value||null,next_review_date:next||null,
+    updated_at:new Date().toISOString(),updated_by:currentProfile?.email||null};
   let error;
-  if (id) {
-    ({ error } = await sb.from('pw_risk_assessments').update(payload).eq('id',id));
-  } else {
-    ({ error } = await sb.from('pw_risk_assessments').insert({ ...payload, created_at:new Date().toISOString(), created_by:currentProfile?.email||null }));
-  }
-  if (error) { err.textContent=error.message; err.style.display='block'; return; }
-  await loadRA(); refreshDashboard(); closeRAModal();
-  showToast(id?'Risk Assessment updated ✓':'Risk Assessment added ✓');
+  if(id){ ({error}=await sb.from('pw_risk_assessments').update(payload).eq('id',id)); }
+  else   { ({error}=await sb.from('pw_risk_assessments').insert({...payload,created_at:new Date().toISOString(),created_by:currentProfile?.email||null})); }
+  if(error){ err.textContent=error.message; err.style.display='block'; return; }
+  await loadRA(); refreshDashboard(); closeRAModal(); showToast(id?'Risk Assessment updated ✓':'Risk Assessment added ✓');
 }
-
-function viewRA(id) { openRAModal(id); } // Expand to a detail/audit view later
 
 /* ── COSHH MODAL ─────────────────────────────────────────────────── */
-function openCOSHHModal(id) {
-  const modal = document.getElementById('coshhModal');
-  document.getElementById('coshhId').value = id || '';
-  document.getElementById('coshhErr').style.display = 'none';
-  if (id) {
-    const r = _coshh.find(x=>x.id===id);
-    if (!r) return;
-    document.getElementById('coshhModalTitle').textContent = 'Edit COSHH Sheet';
-    document.getElementById('coshhProduct').value  = r.product_name || '';
-    document.getElementById('coshhMfr').value      = r.manufacturer || '';
-    document.getElementById('coshhLocation').value = r.location || '';
-    document.getElementById('coshhReviewDate').value = r.review_date || '';
-    document.getElementById('coshhNextReview').value = r.next_review_date || '';
-    const haz = Array.isArray(r.hazard_categories) ? r.hazard_categories : (r.hazard_categories||'').split(',').map(h=>h.trim()).filter(Boolean);
-    document.getElementById('coshhHazards').value = haz.join(', ');
+function openCOSHHModal(id){
+  document.getElementById('coshhId').value=id||'';
+  document.getElementById('coshhErr').style.display='none';
+  if(id){
+    const r=_coshh.find(x=>x.id===id); if(!r) return;
+    document.getElementById('coshhModalTitle').textContent='Edit COSHH Sheet';
+    document.getElementById('coshhProduct').value=r.product_name||'';
+    document.getElementById('coshhMfr').value=r.manufacturer||'';
+    document.getElementById('coshhLocation').value=r.location||'';
+    document.getElementById('coshhReviewDate').value=r.review_date||'';
+    document.getElementById('coshhNextReview').value=r.next_review_date||'';
+    const haz=Array.isArray(r.hazard_categories)?r.hazard_categories:(r.hazard_categories||'').split(',').map(h=>h.trim()).filter(Boolean);
+    document.getElementById('coshhHazards').value=haz.join(', ');
   } else {
-    document.getElementById('coshhModalTitle').textContent = 'Add COSHH Sheet';
-    ['coshhProduct','coshhMfr','coshhLocation','coshhHazards','coshhReviewDate','coshhNextReview'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('coshhModalTitle').textContent='Add COSHH Sheet';
+    ['coshhProduct','coshhMfr','coshhLocation','coshhHazards','coshhReviewDate','coshhNextReview'].forEach(i=>document.getElementById(i).value='');
   }
-  modal.classList.add('open');
+  document.getElementById('coshhModal').classList.add('open');
 }
-function closeCOSHHModal() { document.getElementById('coshhModal').classList.remove('open'); }
-
-async function saveCOSHH() {
-  const id      = document.getElementById('coshhId').value;
-  const product = document.getElementById('coshhProduct').value.trim();
-  const next    = document.getElementById('coshhNextReview').value;
-  const err     = document.getElementById('coshhErr');
-
-  if (!product) { err.textContent='Product name is required.'; err.style.display='block'; return; }
-
-  const payload = {
-    product_name:       product,
-    manufacturer:       document.getElementById('coshhMfr').value.trim()  || null,
-    location:           document.getElementById('coshhLocation').value.trim() || null,
-    hazard_categories:  document.getElementById('coshhHazards').value.split(',').map(h=>h.trim()).filter(Boolean),
-    review_date:        document.getElementById('coshhReviewDate').value || null,
-    next_review_date:   next || null,
-    updated_at:         new Date().toISOString(),
-    updated_by:         currentProfile?.email || null,
-  };
-
-  if (!sb) {
-    if (id) { const i=_coshh.findIndex(r=>r.id===id); if(i>-1) _coshh[i]={..._coshh[i],...payload,_status:calcStatus(next)}; }
-    else     { _coshh.push({...payload,id:String(Date.now()),created_at:new Date().toISOString(),_status:calcStatus(next)}); }
-    renderCOSHH(); refreshDashboard(); closeCOSHHModal(); showToast(id?'COSHH Sheet updated ✓':'COSHH Sheet added ✓');
-    return;
-  }
-
+function closeCOSHHModal(){ document.getElementById('coshhModal').classList.remove('open'); }
+async function saveCOSHH(){
+  const id=document.getElementById('coshhId').value;
+  const product=document.getElementById('coshhProduct').value.trim();
+  const next=document.getElementById('coshhNextReview').value;
+  const err=document.getElementById('coshhErr');
+  if(!product){ err.textContent='Product name is required.'; err.style.display='block'; return; }
+  const payload={product_name:product,manufacturer:document.getElementById('coshhMfr').value.trim()||null,
+    location:document.getElementById('coshhLocation').value.trim()||null,
+    hazard_categories:document.getElementById('coshhHazards').value.split(',').map(h=>h.trim()).filter(Boolean),
+    review_date:document.getElementById('coshhReviewDate').value||null,next_review_date:next||null,
+    updated_at:new Date().toISOString(),updated_by:currentProfile?.email||null};
   let error;
-  if (id) { ({ error } = await sb.from('pw_coshh_sheets').update(payload).eq('id',id)); }
-  else    { ({ error } = await sb.from('pw_coshh_sheets').insert({ ...payload, created_at:new Date().toISOString(), created_by:currentProfile?.email||null })); }
-  if (error) { err.textContent=error.message; err.style.display='block'; return; }
-  await loadCOSHH(); refreshDashboard(); closeCOSHHModal();
-  showToast(id?'COSHH Sheet updated ✓':'COSHH Sheet added ✓');
+  if(id){ ({error}=await sb.from('pw_coshh_sheets').update(payload).eq('id',id)); }
+  else   { ({error}=await sb.from('pw_coshh_sheets').insert({...payload,created_at:new Date().toISOString(),created_by:currentProfile?.email||null})); }
+  if(error){ err.textContent=error.message; err.style.display='block'; return; }
+  await loadCOSHH(); refreshDashboard(); closeCOSHHModal(); showToast(id?'COSHH Sheet updated ✓':'COSHH Sheet added ✓');
 }
-
-function viewCOSHH(id) { openCOSHHModal(id); }
 
 /* ── EQUIPMENT MODAL ─────────────────────────────────────────────── */
-function openEquipModal(id) {
-  const modal = document.getElementById('equipModal');
-  document.getElementById('equipId').value = id || '';
-  document.getElementById('equipErr').style.display = 'none';
-  if (id) {
-    const r = _equipment.find(x=>x.id===id);
-    if (!r) return;
-    document.getElementById('equipModalTitle').textContent = 'Edit Equipment';
-    document.getElementById('equipTag').value      = r.asset_tag || '';
-    document.getElementById('equipName').value     = r.name || '';
-    document.getElementById('equipMfr').value      = r.manufacturer || '';
-    document.getElementById('equipModel').value    = r.model || '';
-    document.getElementById('equipSerial').value   = r.serial || '';
-    document.getElementById('equipLocation').value = r.location || '';
-    document.getElementById('equipCat').value      = r.category || '';
+function openEquipModal(id){
+  document.getElementById('equipId').value=id||'';
+  document.getElementById('equipErr').style.display='none';
+  if(id){
+    const r=_equipment.find(x=>x.id===id); if(!r) return;
+    document.getElementById('equipModalTitle').textContent='Edit Equipment';
+    document.getElementById('equipTag').value=r.asset_tag||'';
+    document.getElementById('equipName').value=r.name||'';
+    document.getElementById('equipMfr').value=r.manufacturer||'';
+    document.getElementById('equipModel').value=r.model||'';
+    document.getElementById('equipSerial').value=r.serial||'';
+    document.getElementById('equipLocation').value=r.location||'';
+    document.getElementById('equipCat').value=r.category||'';
   } else {
-    document.getElementById('equipModalTitle').textContent = 'Add Equipment';
-    ['equipTag','equipName','equipMfr','equipModel','equipSerial','equipLocation','equipCat'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('equipModalTitle').textContent='Add Equipment';
+    ['equipTag','equipName','equipMfr','equipModel','equipSerial','equipLocation','equipCat'].forEach(i=>document.getElementById(i).value='');
   }
-  modal.classList.add('open');
+  document.getElementById('equipModal').classList.add('open');
 }
-function closeEquipModal() { document.getElementById('equipModal').classList.remove('open'); }
-
-async function saveEquip() {
-  const id   = document.getElementById('equipId').value;
-  const tag  = document.getElementById('equipTag').value.trim();
-  const name = document.getElementById('equipName').value.trim();
-  const err  = document.getElementById('equipErr');
-
-  if (!tag || !name) { err.textContent='Asset tag and name are required.'; err.style.display='block'; return; }
-
-  const payload = {
-    asset_tag:    tag,
-    name,
-    manufacturer: document.getElementById('equipMfr').value.trim()      || null,
-    model:        document.getElementById('equipModel').value.trim()     || null,
-    serial:       document.getElementById('equipSerial').value.trim()    || null,
-    location:     document.getElementById('equipLocation').value.trim()  || null,
-    category:     document.getElementById('equipCat').value.trim()       || null,
-    updated_at:   new Date().toISOString(),
-  };
-
-  if (!sb) {
-    if (id) { const i=_equipment.findIndex(r=>r.id===id); if(i>-1) _equipment[i]={..._equipment[i],...payload}; }
-    else     { _equipment.push({...payload,id:String(Date.now()),linked_ra_ids:[],linked_coshh_ids:[],created_at:new Date().toISOString()}); }
-    renderEquipment(); closeEquipModal(); showToast(id?'Equipment updated ✓':'Equipment added ✓');
-    return;
-  }
-
+function closeEquipModal(){ document.getElementById('equipModal').classList.remove('open'); }
+async function saveEquip(){
+  const id=document.getElementById('equipId').value;
+  const tag=document.getElementById('equipTag').value.trim();
+  const name=document.getElementById('equipName').value.trim();
+  const err=document.getElementById('equipErr');
+  if(!tag||!name){ err.textContent='Asset tag and name are required.'; err.style.display='block'; return; }
+  const payload={asset_tag:tag,name,manufacturer:document.getElementById('equipMfr').value.trim()||null,
+    model:document.getElementById('equipModel').value.trim()||null,serial:document.getElementById('equipSerial').value.trim()||null,
+    location:document.getElementById('equipLocation').value.trim()||null,category:document.getElementById('equipCat').value.trim()||null,
+    updated_at:new Date().toISOString()};
   let error;
-  if (id) { ({ error } = await sb.from('pw_equipment').update(payload).eq('id',id)); }
-  else    { ({ error } = await sb.from('pw_equipment').insert({ ...payload, created_at:new Date().toISOString() })); }
-  if (error) { err.textContent=error.message; err.style.display='block'; return; }
-  await loadEquipment(); closeEquipModal();
-  showToast(id?'Equipment updated ✓':'Equipment added ✓');
+  if(id){ ({error}=await sb.from('pw_equipment').update(payload).eq('id',id)); }
+  else   { ({error}=await sb.from('pw_equipment').insert({...payload,created_at:new Date().toISOString()})); }
+  if(error){ err.textContent=error.message; err.style.display='block'; return; }
+  await loadEquipment(); closeEquipModal(); showToast(id?'Equipment updated ✓':'Equipment added ✓');
 }
 
-function viewEquip(id) { openEquipModal(id); }
+/* ── ADMIN PANEL ─────────────────────────────────────────────────── */
+function openAdminPanel(){
+  document.getElementById('adminOverlay').classList.add('open');
+  document.getElementById('adminPanel').classList.add('open');
+  loadUsers();
+}
+function closeAdminPanel(){
+  document.getElementById('adminOverlay').classList.remove('open');
+  document.getElementById('adminPanel').classList.remove('open');
+}
+async function loadUsers(){
+  const list=document.getElementById('userList');
+  list.innerHTML='<div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);padding:12px 0">Loading users…</div>';
+  const {data,error}=await sb.from('pw_profiles').select('*').order('email');
+  if(error){ list.innerHTML='<div style="color:var(--red);font-size:12px;padding:12px 0">Error: '+error.message+'</div>'; return; }
+  _usersCache=data||[];
+  renderUsers();
+}
+function renderUsers(){
+  const list=document.getElementById('userList');
+  document.getElementById('userCount').textContent='('+_usersCache.length+')';
+  if(!_usersCache.length){ list.innerHTML='<div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);padding:12px 0">No users found.</div>'; return; }
+  const rc={admin:'var(--ac3)',reviewer:'var(--pur)',editor:'var(--amb)',viewer:'var(--tx3)'};
+  list.innerHTML=_usersCache.map(function(u){
+    const initials=(u.full_name||u.email||'?').split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase();
+    const isSelf=currentProfile&&u.id===currentProfile.id;
+    const col=rc[u.role]||'var(--tx3)';
+    return '<div class="user-row">'
+      +'<div class="user-avatar" style="color:'+col+';border-color:'+col+'33;background:'+col+'18">'+esc(initials)+'</div>'
+      +'<div class="user-info"><div class="user-email">'+esc(u.email||'—')+'</div><div class="user-name">'+esc(u.full_name||'—')+'</div></div>'
+      +'<div class="user-actions">'
+      +'<select class="role-select" onchange="updateUserRole(\''+esc(u.id)+'\',this.value)"'+(isSelf?' disabled title="Cannot change your own role"':'')+' >'
+      +'<option value="viewer"'+(u.role==='viewer'?' selected':'')+'>Viewer</option>'
+      +'<option value="editor"'+(u.role==='editor'?' selected':'')+'>Editor</option>'
+      +'<option value="reviewer"'+(u.role==='reviewer'?' selected':'')+'>Reviewer</option>'
+      +'<option value="admin"'+(u.role==='admin'?' selected':'')+'>Admin</option>'
+      +'</select>'
+      +(isSelf?'':'<button class="btn-danger" onclick="removeUser(\''+esc(u.id)+'\',\''+esc(u.email)+'\')">Remove</button>')
+      +'</div></div>';
+  }).join('');
+}
+async function updateUserRole(userId,newRole){
+  const {error}=await sb.from('pw_profiles').update({role:newRole}).eq('id',userId);
+  if(error){ showToast('Failed: '+error.message); return; }
+  const u=_usersCache.find(x=>x.id===userId); if(u) u.role=newRole;
+  renderUsers(); showToast('Role updated ✓');
+}
+async function removeUser(userId,email){
+  if(!confirm('Remove '+email+'? This will revoke their access immediately.')) return;
+  const {error}=await sb.from('pw_profiles').delete().eq('id',userId);
+  if(error){ showToast('Failed: '+error.message); return; }
+  try{ await sb.functions.invoke('pw-admin-user',{body:{action:'delete',userId}}); }catch(e){ console.warn('Edge fn:',e.message); }
+  _usersCache=_usersCache.filter(x=>x.id!==userId); renderUsers(); showToast('User removed ✓');
+}
+async function inviteUser(){
+  const email=document.getElementById('inviteEmail').value.trim();
+  const name=document.getElementById('inviteName').value.trim();
+  const role=document.getElementById('inviteRole').value;
+  const btn=document.getElementById('inviteBtn');
+  showInviteMsg('','');
+  if(!email){ showInviteMsg('err','Please enter an email address.'); return; }
+  btn.disabled=true; btn.textContent='Sending…';
+  try{
+    const {error}=await sb.functions.invoke('pw-admin-user',{body:{action:'invite',email,full_name:name,role}});
+    if(error) throw new Error(error.message);
+    document.getElementById('inviteEmail').value=''; document.getElementById('inviteName').value='';
+    showInviteMsg('ok','Invite sent to '+email); await loadUsers();
+  }catch(e){ showInviteMsg('err',e.message||'Failed to send invite.'); }
+  btn.disabled=false; btn.textContent='Send Invite';
+}
+function showInviteMsg(type,text){
+  const msg=document.getElementById('inviteMsg');
+  msg.textContent=text; msg.className='admin-msg'+(type?' '+type:''); msg.style.display=text?'block':'none';
+  if(type==='ok') setTimeout(function(){msg.style.display='none';},4000);
+}
 
 /* ── THEME ───────────────────────────────────────────────────────── */
-function applyTheme(light) {
-  document.body.classList.toggle('light-mode', light);
-  const icon = document.getElementById('themeIcon');
-  if (icon) {
-    icon.innerHTML = light
-      ? '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>'
-      : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
-  }
-  localStorage.setItem('pw_docs_theme', light ? 'light' : 'dark');
+function applyTheme(light){
+  document.body.classList.toggle('light-mode',light);
+  const icon=document.getElementById('themeIcon');
+  if(icon) icon.innerHTML=light
+    ?'<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>'
+    :'<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+  localStorage.setItem('pw_docs_theme',light?'light':'dark');
 }
-function toggleTheme() { applyTheme(!document.body.classList.contains('light-mode')); }
-(function initTheme() {
-  const saved = localStorage.getItem('pw_docs_theme');
-  if (saved) { applyTheme(saved==='light'); return; }
-  const h = new Date().getHours();
-  applyTheme(h >= 7 && h < 18);
-})();
+function toggleTheme(){ applyTheme(!document.body.classList.contains('light-mode')); }
+(function(){ const s=localStorage.getItem('pw_docs_theme'); if(s){applyTheme(s==='light');return;} applyTheme(new Date().getHours()>=7&&new Date().getHours()<18); })();
 
 /* ── KEYBOARD ────────────────────────────────────────────────────── */
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') {
-    ['raModal','coshhModal','equipModal'].forEach(id => document.getElementById(id).classList.remove('open'));
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){
+    ['raModal','coshhModal','equipModal'].forEach(function(id){document.getElementById(id).classList.remove('open');});
     closeAdminPanel();
   }
-  if (e.key === 'Enter' && document.getElementById('splash').style.display !== 'none') {
-    doLogin();
-  }
+  if(e.key==='Enter'&&document.getElementById('splash').style.display==='flex') doLogin();
 });
 
 /* ── INIT ────────────────────────────────────────────────────────── */
-window.addEventListener('load', async () => {
-  sb = initSupabase();
-  await checkLicence();
+window.addEventListener('load',function(){
+  sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  checkLicence();
 });
 </script>
 </body>
