@@ -781,10 +781,7 @@ async function loadProfileAndLaunch(){
 async function doLogout(){
   await sb.auth.signOut();
   currentUser=null; currentProfile=null;
-  document.getElementById('appWrapper').style.display='none';
-  document.getElementById('splash').style.display='flex';
-  document.getElementById('authPass').value='';
-  document.getElementById('authErr').style.display='none';
+  window.location.href = '../index.html';
 }
 
 function launchApp(){
