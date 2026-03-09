@@ -985,8 +985,11 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
     <div class="splash-sub">Padeswood Shift Record System</div>
     <div class="splash-card">
       <div class="splash-field">
-        <label>Username</label>
-        <input type="text" id="splashUser" placeholder="Enter username" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('splashPass').focus()">
+        <label>Email</label>
+        <div style="display:flex;align-items:center;gap:0">
+          <input type="text" id="splashUser" placeholder="username" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('splashPass').focus()" style="border-radius:var(--r) 0 0 var(--r);flex:1;min-width:0">
+          <span style="padding:0 10px;background:var(--bg2);border:1.5px solid var(--bd);border-left:none;border-radius:0 var(--r) var(--r) 0;font-size:13px;color:var(--tx3);white-space:nowrap;height:100%;display:flex;align-items:center;line-height:1;font-family:var(--ff-mono)">@heidelbergmaterials.com</span>
+        </div>
       </div>
       <div class="splash-field">
         <label>Password</label>
@@ -1585,6 +1588,8 @@ let lightMode = false;
 let currentDay = 'Monday';
 let weekStart  = null;
 let currentManageTab = 'equipment';
+let _sbSession = null;
+let _sbRefreshToken = null;
 
 // state
 const mkShift = () => ({burner:'',analyst:'',shiftManager:'',shift:'',notes:'',entries:[{equipment:'',issue:'',status:'',statusBy:'',statusAt:''},{equipment:'',issue:'',status:'',statusBy:'',statusAt:''},{equipment:'',issue:'',status:'',statusAt:'',statusBy:''},{equipment:'',issue:'',status:'',statusBy:'',statusAt:''},{equipment:'',issue:'',status:'',statusBy:'',statusAt:''}]});
@@ -1623,31 +1628,81 @@ async function doLogin(){
     return;
   }
   const u = document.getElementById('splashUser').value.trim().toLowerCase();
-  const p = document.getElementById('splashPass').value.trim().toLowerCase();
-  const hashed = await hashPassword(p);
-    const users = await sbLoadUsers();
-  const allUsers = users.length ? users : CREDENTIALS;   _pwCache = await sbLoadPasswords();
-  const match = allUsers.find(cr => {
-    const effectivePass = _pwCache[cr.user] !== undefined ? _pwCache[cr.user] : cr.pass;
-    return cr.user === u && effectivePass === hashed;
-  });
-  if(!match){ document.getElementById('splashErr').textContent='Invalid username or password.';
-  _loginAttempts++;
-  if(_loginAttempts >= 5){ _loginLockUntil = Date.now() + 30000; _loginAttempts = 0; }
-  return; }
-  _loginAttempts = 0; _loginLockUntil = 0;
-  if(match.locked && !match.admin){
-    document.getElementById('splashErr').textContent = 'This account has been locked. Please contact your administrator.';
+  const p = document.getElementById('splashPass').value.trim();
+  if(!u || !p){
+    document.getElementById('splashErr').textContent = 'Please enter your username and password.';
     return;
   }
-  currentUser    = match.user;
-  isAdmin         = match.admin;
-  isShiftManager  = match.shiftManager || false;
-  isCementAnalyst = match.cementAnalyst || false;
-  isBurner        = !match.admin && !match.readOnly && !match.dayStaff && match.isBurner === true;
-  isDayStaff      = match.dayStaff || false;
-  lockedName     = match.lockedName || null;
-  readOnly       = match.readOnly  || false;
+  const email = u + '@heidelbergmaterials.com';
+  document.getElementById('splashErr').textContent = '';
+
+  // Sign in via Supabase Auth
+  const authRes = await fetch(SB_URL + '/auth/v1/token?grant_type=password', {
+    method: 'POST',
+    headers: {
+      'apikey': SB_KEY,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ email, password: p })
+  });
+  const authData = await authRes.json();
+
+  if(!authRes.ok || !authData.access_token){
+    _loginAttempts++;
+    if(_loginAttempts >= 5){ _loginLockUntil = Date.now() + 30000; _loginAttempts = 0; }
+    document.getElementById('splashErr').textContent = 'Invalid username or password.';
+    return;
+  }
+
+  _loginAttempts = 0; _loginLockUntil = 0;
+
+  // Store session token
+  _sbSession = authData.access_token;
+  _sbRefreshToken = authData.refresh_token;
+  localStorage.setItem('kbl_session', authData.access_token);
+  localStorage.setItem('kbl_refresh', authData.refresh_token);
+
+  // Load user record from kiln_users using auth_user_id
+  const uid = authData.user.id;
+  const userRes = await fetch(SB_URL + '/rest/v1/kiln_users?auth_user_id=eq.' + uid + '&select=*&limit=1', {
+    headers: {
+      'apikey': SB_KEY,
+      'Authorization': 'Bearer ' + _sbSession
+    }
+  });
+  const userRows = await userRes.json();
+  if(!userRows || !userRows.length){
+    document.getElementById('splashErr').textContent = 'Account not found. Please contact your administrator.';
+    _sbSession = null;
+    localStorage.removeItem('kbl_session');
+    return;
+  }
+  const match = userRows[0];
+
+  if(match.is_locked && !match.is_admin){
+    document.getElementById('splashErr').textContent = 'This account has been locked. Please contact your administrator.';
+    _sbSession = null;
+    localStorage.removeItem('kbl_session');
+    return;
+  }
+
+  _applyUserSession(match);
+}
+
+async function _applyUserSession(match){
+  currentUser     = match.username;
+  isAdmin         = match.is_admin || false;
+  isShiftManager  = match.is_shift_manager || false;
+  isCementAnalyst = match.is_cement_analyst || false;
+  isBurner        = !match.is_admin && !match.is_readonly && !match.is_day_staff && (match.is_burner === true);
+  isDayStaff      = match.is_day_staff || false;
+  lockedName      = match.locked_name || null;
+  readOnly        = match.is_readonly || false;
+
+  // Cache users list
+  await sbLoadUsers();
+  _pwCache = {};
+
   document.getElementById('splash').style.display='none';
   document.getElementById('app').style.display='block';
   document.getElementById('userLabel').textContent = currentUser;
@@ -1663,13 +1718,10 @@ async function doLogin(){
   const _fbBtn = document.getElementById('btn-feedback');
   if(_fbBtn) _fbBtn.style.display = (isAdmin || isDayStaff || isBurner || isShiftManager) ? '' : 'none';
   const _stb = document.getElementById('searchTopbarBtn'); if(_stb) _stb.style.display = '';
-  // Mobile overflow — shown in 3-dot menu for all roles
   const _mwo = document.getElementById('mobileWeeklyOverview'); if(_mwo) _mwo.style.display = 'flex';
   const _mar = document.getElementById('mobileAiReporting'); if(_mar) _mar.style.display = 'flex';
   const _mwb = document.getElementById('mobileWhiteboard'); if(_mwb) _mwb.style.display = 'flex';
-  // Ensure wrap knows it has items
   const _mmw = document.getElementById('mobileMenuWrap'); if(_mmw) _mmw.dataset.hasItems = '1';
-  // Requests button — admin only, explicitly hide for everyone else
   const _rrBtnLogin = document.getElementById('resetRequestsBtn');
   if(_rrBtnLogin) _rrBtnLogin.style.display = 'none';
   const _mrrLogin = document.getElementById('mobileResetRequests');
@@ -1681,8 +1733,7 @@ async function doLogin(){
   initApp().then(function(){ });
   sbLoadUserTheme();
   loadResetBadge();
-  // Check if forced password reset required
-  if(match.mustResetPassword){
+  if(match.must_reset_password){
     setTimeout(()=>{
       document.getElementById('forceResetModal').style.display='flex';
       setTimeout(()=>document.getElementById('forceNewPw').focus(),100);
@@ -1690,10 +1741,26 @@ async function doLogin(){
   }
 }
 function doLogout(){
-  // Cancel any pending saves FIRST — prevents stale state overwriting Supabase after re-login
+  // Cancel any pending saves FIRST
   clearTimeout(_sbSaveTimer);
   _sbSaveTimer = null;
-  // Reset state so nothing stale lingers in memory
+
+  // Sign out of Supabase Auth
+  if(_sbSession){
+    fetch(SB_URL + '/auth/v1/logout', {
+      method: 'POST',
+      headers: {
+        'apikey': SB_KEY,
+        'Authorization': 'Bearer ' + _sbSession
+      }
+    }).catch(function(){});
+  }
+  _sbSession = null;
+  _sbRefreshToken = null;
+  localStorage.removeItem('kbl_session');
+  localStorage.removeItem('kbl_refresh');
+
+  // Reset state
   state = {}; smState = {}; caState = {};
   lockedName = null;
   readOnly   = false;
@@ -1705,12 +1772,10 @@ function doLogout(){
   GROQ_KEY = null;
   _reportHistory = [];
   _loginAttempts = 0;
-  // Reset theme to time-of-day default on logout
   const h = new Date().getHours();
   lightMode = h >= 7 && h < 18;
   document.body.classList.toggle('light-mode', lightMode);
   localStorage.removeItem('kbl_theme');
-  // Clear sensitive cached data
   ['kbl_pw5','kbl_users'].forEach(k => { try{ localStorage.removeItem(k); }catch(e){} });
   document.body.classList.remove('read-only-mode');
   const _wdLogout=document.getElementById('weekDate'); if(_wdLogout)_wdLogout.disabled=false;
@@ -4925,11 +4990,12 @@ const SB_URL = 'https://xnkwrkoxvgptobnmekgv.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhua3dya294dmdwdG9ibm1la2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NjAxNTQsImV4cCI6MjA4ODIzNjE1NH0.PrmnJ4eGepac41bQuNPG7TcBaunrfTWdjLtkGLr_2LY';
 
 async function sbFetch(path, options={}){
+  const token = _sbSession || SB_KEY;
   const res = await fetch(SB_URL + path, {
     ...options,
     headers: {
       'apikey': SB_KEY,
-      'Authorization': 'Bearer ' + SB_KEY,
+      'Authorization': 'Bearer ' + token,
       'Content-Type': 'application/json',
       'Prefer': 'return=minimal',
       ...(options.headers||{})
@@ -5805,7 +5871,42 @@ window.addEventListener("load",()=>{
   document.getElementById("searchModal").addEventListener("click",function(e){if(e.target===this)closeSearchModal();});
     const wd = document.getElementById('weekDate');
   if(wd) wd.addEventListener('click', function(){ try{ this.showPicker(); }catch(e){} });
-  checkLicence();
+  checkLicence().then(async function(ok){
+    if(!ok) return;
+    // Try to restore existing session
+    const savedSession = localStorage.getItem('kbl_session');
+    if(savedSession){
+      try {
+        // Verify session is still valid by fetching user
+        const verifyRes = await fetch(SB_URL + '/auth/v1/user', {
+          headers: {
+            'apikey': SB_KEY,
+            'Authorization': 'Bearer ' + savedSession
+          }
+        });
+        if(verifyRes.ok){
+          const authUser = await verifyRes.json();
+          _sbSession = savedSession;
+          _sbRefreshToken = localStorage.getItem('kbl_refresh');
+          // Load kiln_users row
+          const userRes = await fetch(SB_URL + '/rest/v1/kiln_users?auth_user_id=eq.' + authUser.id + '&select=*&limit=1', {
+            headers: {
+              'apikey': SB_KEY,
+              'Authorization': 'Bearer ' + _sbSession
+            }
+          });
+          const userRows = await userRes.json();
+          if(userRows && userRows.length && !userRows[0].is_locked){
+            await _applyUserSession(userRows[0]);
+            return;
+          }
+        }
+      } catch(e){ console.warn('Session restore failed:', e); }
+      // Session invalid — clear it
+      localStorage.removeItem('kbl_session');
+      localStorage.removeItem('kbl_refresh');
+    }
+  });
 });
 </script>
 </body>
