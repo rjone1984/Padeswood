@@ -404,7 +404,142 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .ai-dot:nth-child(2){animation-delay:.2s}
 .ai-dot:nth-child(3){animation-delay:.4s}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+/* ================================================================
+   PADESWOOD WORKS — PLATFORM
+   Flow: 1. Licence check  2. Login  3. App selector
+================================================================ */
+const SUPABASE_URL      = 'https://xnkwrkoxvgptobnmekgv.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhua3dya294dmdwdG9ibm1la2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NjAxNTQsImV4cCI6MjA4ODIzNjE1NH0.PrmnJ4eGepac41bQuNPG7TcBaunrfTWdjLtkGLr_2LY';
+const LICENCE_KEY = 'KBL-HEIDELBERG-PADESWOOD-2026';
+const SB_LIC_URL  = 'https://dviicnomxeibbuafbozp.supabase.co';
+const SB_LIC_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2aWljbm9teGVpYmJ1YWZib3pwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4ODM0MzcsImV4cCI6MjA4ODQ1OTQzN30.c1T3WXC225tdBbq_1R__9bhGFIZdSxim9dgxfvmkRjU';
+
+let sb;
+
+/* ── STEP 1: LICENCE CHECK ───────────────────────────────────────── */
+async function checkLicence() {
+  try {
+    const res = await fetch(
+      SB_LIC_URL + '/rest/v1/kiln_licences?licence_key=eq.' + encodeURIComponent(LICENCE_KEY) + '&select=paid,expires_at,customer,site',
+      { method:'GET', mode:'cors', headers:{ 'apikey':SB_LIC_KEY, 'Authorization':'Bearer '+SB_LIC_KEY, 'Content-Type':'application/json' } }
+    );
+    if (res.ok) {
+      const rows = await res.json();
+      const lic  = rows && rows[0];
+      if (lic && lic.paid && new Date(lic.expires_at) >= new Date()) {
+        const exp = new Date(lic.expires_at).toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'});
+        document.getElementById('licStatus').textContent = 'Licence active · expires ' + exp;
+        hideLicenceOverlay();
+        return;
+      }
+      if (lic && new Date(lic.expires_at) < new Date()) {
+        showLicenceError('Licence expired on ' + new Date(lic.expires_at).toLocaleDateString('en-GB') + '. Please contact your administrator.'); return;
+      }
+      showLicenceError('Licence not active. Please contact your administrator.'); return;
+    }
+    // HTTP error — fail open
+    hideLicenceOverlay();
+  } catch(e) {
+    console.warn('Licence check failed, failing open:', e.message);
+    hideLicenceOverlay();
+  }
+}
+
+function showLicenceError(text) {
+  document.getElementById('licSpinner').style.display = 'none';
+  document.getElementById('licMsg').textContent = text;
+  document.getElementById('licMsg').style.display = 'block';
+  document.getElementById('licRetryBtn').style.display = 'block';
+}
+
+function hideLicenceOverlay() {
+  const overlay = document.getElementById('licenceOverlay');
+  overlay.style.transition = 'opacity .3s ease';
+  overlay.style.opacity = '0';
+  setTimeout(function() {
+    overlay.style.display = 'none';
+    checkExistingSession();
+  }, 320);
+}
+
+/* ── STEP 2: CHECK SESSION / SHOW LOGIN ──────────────────────────── */
+function checkExistingSession() {
+  sb.auth.getSession().then(function(result) {
+    const session = result.data && result.data.session;
+    if (session && session.user) {
+      // Already logged in — go straight to app selector
+      showAppSelector(session.user);
+    } else {
+      // Need to log in
+      showLoginScreen();
+    }
+  });
+}
+
+function showLoginScreen() {
+  const screen = document.getElementById('loginScreen');
+  screen.style.display = 'flex';
+  setTimeout(function() { document.getElementById('loginEmail').focus(); }, 100);
+}
+
+async function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass  = document.getElementById('loginPass').value;
+  const btn   = document.getElementById('loginBtn');
+  const err   = document.getElementById('loginErr');
+  err.style.display = 'none';
+  if (!email || !pass) { err.textContent = 'Please enter your email and password.'; err.style.display = 'block'; return; }
+  btn.disabled = true; btn.textContent = 'Signing in…';
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+  btn.disabled = false; btn.textContent = 'Sign In';
+  if (error) { err.textContent = error.message; err.style.display = 'block'; return; }
+  document.getElementById('loginScreen').style.display = 'none';
+  showAppSelector(data.user);
+}
+
+/* ── STEP 3: APP SELECTOR ────────────────────────────────────────── */
+function showAppSelector(user) {
+  const name = user.email ? user.email.split('@')[0] : '—';
+  document.getElementById('headerEmail').textContent = name;
+  document.getElementById('headerUser').style.display = 'flex';
+  document.getElementById('logoutBtn').style.display = 'flex';
+  document.getElementById('mainWrapper').style.display = 'block';
+}
+
+async function doLogout() {
+  await sb.auth.signOut();
+  window.location.reload();
+}
+
+/* ── KEYBOARD ────────────────────────────────────────────────────── */
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && document.getElementById('loginScreen').style.display === 'flex') doLogin();
+});
+
+/* ── THEME ───────────────────────────────────────────────────────── */
+function applyTheme(light) {
+  document.body.classList.toggle('light-mode', light);
+  const icon = document.getElementById('themeIcon');
+  if (icon) icon.innerHTML = light
+    ? '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>'
+    : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+  localStorage.setItem('pw_platform_theme', light ? 'light' : 'dark');
+}
+function toggleTheme() { applyTheme(!document.body.classList.contains('light-mode')); }
+(function() {
+  const s = localStorage.getItem('pw_platform_theme');
+  if (s) { applyTheme(s === 'light'); return; }
+  applyTheme(new Date().getHours() >= 7 && new Date().getHours() < 18);
+})();
+
+/* ── INIT ────────────────────────────────────────────────────────── */
+window.addEventListener('load', function() {
+  sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  checkLicence();
+});
+
 /* ================================================================
    PLATFORM ADDITIONS — User Mgmt + AI Reporting
 ================================================================ */
@@ -666,137 +801,3 @@ showAppSelector = async function(user){
 </script>
 </body>
 </html>
-/* ================================================================
-   PADESWOOD WORKS — PLATFORM
-   Flow: 1. Licence check  2. Login  3. App selector
-================================================================ */
-const SUPABASE_URL      = 'https://xnkwrkoxvgptobnmekgv.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhua3dya294dmdwdG9ibm1la2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NjAxNTQsImV4cCI6MjA4ODIzNjE1NH0.PrmnJ4eGepac41bQuNPG7TcBaunrfTWdjLtkGLr_2LY';
-const LICENCE_KEY = 'KBL-HEIDELBERG-PADESWOOD-2026';
-const SB_LIC_URL  = 'https://dviicnomxeibbuafbozp.supabase.co';
-const SB_LIC_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2aWljbm9teGVpYmJ1YWZib3pwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4ODM0MzcsImV4cCI6MjA4ODQ1OTQzN30.c1T3WXC225tdBbq_1R__9bhGFIZdSxim9dgxfvmkRjU';
-
-let sb;
-
-/* ── STEP 1: LICENCE CHECK ───────────────────────────────────────── */
-async function checkLicence() {
-  try {
-    const res = await fetch(
-      SB_LIC_URL + '/rest/v1/kiln_licences?licence_key=eq.' + encodeURIComponent(LICENCE_KEY) + '&select=paid,expires_at,customer,site',
-      { method:'GET', mode:'cors', headers:{ 'apikey':SB_LIC_KEY, 'Authorization':'Bearer '+SB_LIC_KEY, 'Content-Type':'application/json' } }
-    );
-    if (res.ok) {
-      const rows = await res.json();
-      const lic  = rows && rows[0];
-      if (lic && lic.paid && new Date(lic.expires_at) >= new Date()) {
-        const exp = new Date(lic.expires_at).toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'});
-        document.getElementById('licStatus').textContent = 'Licence active · expires ' + exp;
-        hideLicenceOverlay();
-        return;
-      }
-      if (lic && new Date(lic.expires_at) < new Date()) {
-        showLicenceError('Licence expired on ' + new Date(lic.expires_at).toLocaleDateString('en-GB') + '. Please contact your administrator.'); return;
-      }
-      showLicenceError('Licence not active. Please contact your administrator.'); return;
-    }
-    // HTTP error — fail open
-    hideLicenceOverlay();
-  } catch(e) {
-    console.warn('Licence check failed, failing open:', e.message);
-    hideLicenceOverlay();
-  }
-}
-
-function showLicenceError(text) {
-  document.getElementById('licSpinner').style.display = 'none';
-  document.getElementById('licMsg').textContent = text;
-  document.getElementById('licMsg').style.display = 'block';
-  document.getElementById('licRetryBtn').style.display = 'block';
-}
-
-function hideLicenceOverlay() {
-  const overlay = document.getElementById('licenceOverlay');
-  overlay.style.transition = 'opacity .3s ease';
-  overlay.style.opacity = '0';
-  setTimeout(function() {
-    overlay.style.display = 'none';
-    checkExistingSession();
-  }, 320);
-}
-
-/* ── STEP 2: CHECK SESSION / SHOW LOGIN ──────────────────────────── */
-function checkExistingSession() {
-  sb.auth.getSession().then(function(result) {
-    const session = result.data && result.data.session;
-    if (session && session.user) {
-      // Already logged in — go straight to app selector
-      showAppSelector(session.user);
-    } else {
-      // Need to log in
-      showLoginScreen();
-    }
-  });
-}
-
-function showLoginScreen() {
-  const screen = document.getElementById('loginScreen');
-  screen.style.display = 'flex';
-  setTimeout(function() { document.getElementById('loginEmail').focus(); }, 100);
-}
-
-async function doLogin() {
-  const email = document.getElementById('loginEmail').value.trim();
-  const pass  = document.getElementById('loginPass').value;
-  const btn   = document.getElementById('loginBtn');
-  const err   = document.getElementById('loginErr');
-  err.style.display = 'none';
-  if (!email || !pass) { err.textContent = 'Please enter your email and password.'; err.style.display = 'block'; return; }
-  btn.disabled = true; btn.textContent = 'Signing in…';
-  const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
-  btn.disabled = false; btn.textContent = 'Sign In';
-  if (error) { err.textContent = error.message; err.style.display = 'block'; return; }
-  document.getElementById('loginScreen').style.display = 'none';
-  showAppSelector(data.user);
-}
-
-/* ── STEP 3: APP SELECTOR ────────────────────────────────────────── */
-function showAppSelector(user) {
-  const name = user.email ? user.email.split('@')[0] : '—';
-  document.getElementById('headerEmail').textContent = name;
-  document.getElementById('headerUser').style.display = 'flex';
-  document.getElementById('logoutBtn').style.display = 'flex';
-  document.getElementById('mainWrapper').style.display = 'block';
-}
-
-async function doLogout() {
-  await sb.auth.signOut();
-  window.location.reload();
-}
-
-/* ── KEYBOARD ────────────────────────────────────────────────────── */
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Enter' && document.getElementById('loginScreen').style.display === 'flex') doLogin();
-});
-
-/* ── THEME ───────────────────────────────────────────────────────── */
-function applyTheme(light) {
-  document.body.classList.toggle('light-mode', light);
-  const icon = document.getElementById('themeIcon');
-  if (icon) icon.innerHTML = light
-    ? '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>'
-    : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
-  localStorage.setItem('pw_platform_theme', light ? 'light' : 'dark');
-}
-function toggleTheme() { applyTheme(!document.body.classList.contains('light-mode')); }
-(function() {
-  const s = localStorage.getItem('pw_platform_theme');
-  if (s) { applyTheme(s === 'light'); return; }
-  applyTheme(new Date().getHours() >= 7 && new Date().getHours() < 18);
-})();
-
-/* ── INIT ────────────────────────────────────────────────────────── */
-window.addEventListener('load', function() {
-  sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  checkLicence();
-});
-</script>
