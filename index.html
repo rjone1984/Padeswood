@@ -97,6 +97,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);
   font-family:var(--ff-body);font-size:13.5px;transition:border-color .18s,box-shadow .18s;outline:none;}
 .login-input:focus{border-color:var(--ac2);box-shadow:0 0 0 3px var(--acd1);}
+#emailWrap:focus-within{border-color:var(--ac2);box-shadow:0 0 0 3px var(--acd1);}
 .login-btn{width:100%;height:42px;margin-top:8px;
   background:linear-gradient(135deg,var(--ac),var(--ac3));color:#fff;border:none;
   border-radius:var(--rsm);font-family:var(--ff-head);font-weight:600;font-size:14px;
@@ -207,7 +208,21 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     <div class="login-card">
       <div class="login-field">
         <label>Email Address</label>
-        <input type="email" id="loginEmail" class="login-input" placeholder="you@heidelbergmaterials.com" autocomplete="email">
+        <div style="display:flex;gap:0;border:1px solid var(--bd2);border-radius:var(--rsm);overflow:hidden;background:var(--sf3);transition:border-color .18s,box-shadow .18s" id="emailWrap">
+          <input type="text" id="loginEmailUser" class="login-input"
+            placeholder="username"
+            autocomplete="username"
+            style="border:none;border-radius:0;flex:1;min-width:0;background:transparent"
+            oninput="syncLoginEmail()"
+            onkeydown="if(event.key==='Enter')document.getElementById('loginPass').focus()">
+          <select id="loginDomain"
+            onchange="syncLoginEmail();if(this.value==='other'){document.getElementById('loginEmailUser').placeholder='full@address.com';document.getElementById('loginEmailUser').type='email';}else{document.getElementById('loginEmailUser').placeholder='username';document.getElementById('loginEmailUser').type='text';}"
+            style="height:40px;padding:0 8px 0 4px;background:var(--sf2);border:none;border-left:1px solid var(--bd2);color:var(--tx2);font-family:var(--ff-mono);font-size:10px;cursor:pointer;outline:none;flex-shrink:0;max-width:190px">
+            <option value="@heidelbergmaterials.com">@heidelbergmaterials.com</option>
+            <option value="other">other address…</option>
+          </select>
+        </div>
+        <input type="hidden" id="loginEmail">
       </div>
       <div class="login-field">
         <label>Password</label>
@@ -466,25 +481,62 @@ function hideLicenceOverlay() {
 
 /* ── STEP 2: CHECK SESSION / SHOW LOGIN ──────────────────────────── */
 function checkExistingSession() {
+  // Safety net: if nothing resolves in 5s, fall back to login screen
+  const safetyTimer = setTimeout(function() {
+    if (document.getElementById('loginScreen').style.display !== 'flex'
+        && document.getElementById('mainWrapper').style.display !== 'block') {
+      showLoginScreen();
+    }
+  }, 5000);
+
   sb.auth.getSession().then(function(result) {
     const session = result.data && result.data.session;
     if (session && session.user) {
-      // Already logged in — go straight to app selector
-      showAppSelector(session.user);
+      // Verify the token is genuinely valid with a lightweight API call
+      fetch('https://xnkwrkoxvgptobnmekgv.supabase.co/auth/v1/user', {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + session.access_token
+        }
+      }).then(function(res) {
+        clearTimeout(safetyTimer);
+        if (res.ok) {
+          showAppSelector(session.user);
+        } else {
+          // Token rejected — clear it and show login
+          Object.keys(localStorage).forEach(function(k) {
+            if (k.startsWith('sb-') || k.startsWith('supabase')) localStorage.removeItem(k);
+          });
+          showLoginScreen();
+        }
+      }).catch(function() {
+        clearTimeout(safetyTimer);
+        showLoginScreen();
+      });
     } else {
-      // Need to log in
+      clearTimeout(safetyTimer);
       showLoginScreen();
     }
+  }).catch(function() {
+    clearTimeout(safetyTimer);
+    showLoginScreen();
   });
+}
+
+function syncLoginEmail() {
+  const user   = document.getElementById('loginEmailUser').value.trim();
+  const domain = document.getElementById('loginDomain').value;
+  document.getElementById('loginEmail').value = (domain === 'other') ? user : user + domain;
 }
 
 function showLoginScreen() {
   const screen = document.getElementById('loginScreen');
   screen.style.display = 'flex';
-  setTimeout(function() { document.getElementById('loginEmail').focus(); }, 100);
+  setTimeout(function() { document.getElementById('loginEmailUser').focus(); }, 100);
 }
 
 async function doLogin() {
+  syncLoginEmail();
   const email = document.getElementById('loginEmail').value.trim();
   const pass  = document.getElementById('loginPass').value;
   const btn   = document.getElementById('loginBtn');
@@ -509,7 +561,11 @@ function showAppSelector(user) {
 }
 
 async function doLogout() {
-  await sb.auth.signOut();
+  try { await sb.auth.signOut(); } catch(e) { console.warn('signOut error:', e); }
+  // Manually clear all Supabase session keys so getSession() finds nothing on reload
+  Object.keys(localStorage).forEach(function(k) {
+    if (k.startsWith('sb-') || k.startsWith('supabase')) localStorage.removeItem(k);
+  });
   window.location.reload();
 }
 
