@@ -253,6 +253,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       <button class="icon-btn" id="adminPanelBtn" onclick="openAdminPanel()" title="User Management" style="display:none">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       </button>
+      <button class="icon-btn" id="changePwBtn" onclick="openChangePwModal()" title="Change Password" style="display:none">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><circle cx="12" cy="16" r="1" fill="currentColor" stroke="none"/></svg>
+      </button>
       <button class="icon-btn" onclick="toggleTheme()" title="Toggle theme">
         <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       </button>
@@ -311,7 +314,33 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 
 <!-- ── USER MANAGEMENT PANEL ────────────────────────────────────── -->
 <div id="adminOverlay" onclick="closeAdminPanel()" style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:800;display:none"></div>
-<div id="adminPanel" style="position:fixed;top:0;right:0;bottom:0;width:520px;max-width:96vw;background:var(--sf);border-left:1px solid var(--bd);z-index:801;transform:translateX(100%);transition:transform .28s ease;display:flex;flex-direction:column;overflow:hidden">
+<!-- ── CHANGE PASSWORD MODAL ─────────────────────────────────────── -->
+<div id="changePwOverlay" onclick="closeChangePwModal()" style="position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:900;display:none;align-items:center;justify-content:center"></div>
+<div id="changePwModal" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.96);opacity:0;width:380px;max-width:94vw;background:var(--sf);border:1px solid var(--bd);border-radius:14px;box-shadow:var(--e3);z-index:901;padding:28px;transition:transform .2s,opacity .2s;pointer-events:none">
+  <div style="font-family:var(--ff-head);font-weight:700;font-size:16px;color:var(--tx);margin-bottom:20px;display:flex;align-items:center;justify-content:space-between">
+    Change Password
+    <button onclick="closeChangePwModal()" style="width:26px;height:26px;border-radius:6px;border:1px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;font-size:16px;line-height:1">×</button>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:14px">
+    <div>
+      <label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Current Password</label>
+      <input type="password" id="cpwCurrent" placeholder="••••••••" style="width:100%;height:38px;padding:0 12px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none;box-sizing:border-box">
+    </div>
+    <div>
+      <label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">New Password</label>
+      <input type="password" id="cpwNew" placeholder="Min. 8 characters" style="width:100%;height:38px;padding:0 12px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none;box-sizing:border-box">
+    </div>
+    <div>
+      <label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Confirm New Password</label>
+      <input type="password" id="cpwConfirm" placeholder="Repeat new password" style="width:100%;height:38px;padding:0 12px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none;box-sizing:border-box">
+    </div>
+    <div id="cpwMsg" style="display:none;font-size:12px;padding:8px 12px;border-radius:var(--rsm)"></div>
+    <button id="cpwBtn" onclick="doChangePw()" style="height:40px;background:linear-gradient(135deg,var(--ac),var(--ac3));color:#fff;border:none;border-radius:var(--rsm);font-family:var(--ff-head);font-weight:600;font-size:14px;cursor:pointer;transition:opacity .18s">Update Password</button>
+  </div>
+</div>
+
+<div id="adminOverlay" onclick="closeAdminPanel()" style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:800;display:none"></div>
+<div id="adminPanel" style="position:fixed;top:0;right:0;bottom:0;width:560px;max-width:96vw;background:var(--sf);border-left:1px solid var(--bd);z-index:801;transform:translateX(100%);transition:transform .28s ease;display:flex;flex-direction:column;overflow:hidden">
   <div style="padding:18px 22px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
     <div style="display:flex;align-items:center;gap:10px;font-family:var(--ff-head);font-weight:700;font-size:16px;color:var(--tx)">
       <div style="width:30px;height:30px;border-radius:7px;background:var(--acd2);display:flex;align-items:center;justify-content:center">
@@ -321,7 +350,13 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     </div>
     <button onclick="closeAdminPanel()" style="width:28px;height:28px;border-radius:6px;border:1px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center">×</button>
   </div>
-  <div style="flex:1;overflow-y:auto;padding:20px 22px;display:flex;flex-direction:column;gap:22px">
+  <!-- Tabs -->
+  <div style="display:flex;border-bottom:1px solid var(--bd);flex-shrink:0;padding:0 22px">
+    <button id="adminTab1" onclick="switchAdminTab(1)" style="padding:10px 14px;font-family:var(--ff-mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;background:transparent;border:none;border-bottom:2px solid var(--ac);color:var(--ac3);cursor:pointer;margin-bottom:-1px">Platform</button>
+    <button id="adminTab2" onclick="switchAdminTab(2)" style="padding:10px 14px;font-family:var(--ff-mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--tx3);cursor:pointer;margin-bottom:-1px">Shift Log Roles</button>
+  </div>
+  <!-- Tab 1: Platform Users (pw_profiles) -->
+  <div id="adminTabContent1" style="flex:1;overflow-y:auto;padding:20px 22px;display:flex;flex-direction:column;gap:22px">
     <div>
       <div style="font-family:var(--ff-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--tx3);margin-bottom:12px;display:flex;align-items:center;gap:10px">Invite New User<span style="flex:1;height:1px;background:var(--bd)"></span></div>
       <div style="display:flex;flex-direction:column;gap:10px">
@@ -348,9 +383,21 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       </div>
     </div>
     <div>
-      <div style="font-family:var(--ff-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--tx3);margin-bottom:12px;display:flex;align-items:center;gap:10px">All Users <span id="userCount" style="font-weight:400"></span><span style="flex:1;height:1px;background:var(--bd)"></span></div>
+      <div style="font-family:var(--ff-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--tx3);margin-bottom:12px;display:flex;align-items:center;gap:10px">Platform Users <span id="userCount" style="font-weight:400"></span><span style="flex:1;height:1px;background:var(--bd)"></span></div>
       <div id="userList" style="display:flex;flex-direction:column;gap:8px">
         <div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);padding:12px 0">Loading users…</div>
+      </div>
+    </div>
+  </div>
+  <!-- Tab 2: Shift Log Roles (kiln_users) -->
+  <div id="adminTabContent2" style="flex:1;overflow-y:auto;padding:20px 22px;display:none;flex-direction:column;gap:14px">
+    <div style="font-size:12px;color:var(--tx2);line-height:1.6;padding:10px 14px;background:var(--sf2);border:1px solid var(--bd);border-radius:var(--rsm)">
+      These are the role flags for the <strong>Shift Log</strong> app. Each flag controls what a user can see and do within that app. Changes take effect on the user's next page load.
+    </div>
+    <div>
+      <div style="font-family:var(--ff-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--tx3);margin-bottom:12px;display:flex;align-items:center;gap:10px">Shift Log Users <span id="kilnUserCount" style="font-weight:400"></span><span style="flex:1;height:1px;background:var(--bd)"></span></div>
+      <div id="kilnUserList" style="display:flex;flex-direction:column;gap:10px">
+        <div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);padding:12px 0">Loading…</div>
       </div>
     </div>
   </div>
@@ -379,15 +426,17 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   </div>
   <div id="aiSuggestions" style="padding:12px 22px;border-bottom:1px solid var(--bd);display:flex;flex-wrap:wrap;gap:6px;flex-shrink:0">
     <button class="ai-suggestion" onclick="useAiSuggestion('Summarise this week\'s shifts')">Summarise this week's shifts</button>
-    <button class="ai-suggestion" onclick="useAiSuggestion('Which equipment had the most issues?')">Which equipment had the most issues?</button>
-    <button class="ai-suggestion" onclick="useAiSuggestion('Write a handover report for management')">Handover report for management</button>
+    <button class="ai-suggestion" onclick="useAiSuggestion('Which equipment had the most issues?')">Equipment issues</button>
+    <button class="ai-suggestion" onclick="useAiSuggestion('Which risk assessments are overdue or due for review soon?')">Overdue reviews</button>
+    <button class="ai-suggestion" onclick="useAiSuggestion('List any ongoing unresolved equipment feedback issues')">Ongoing faults</button>
     <button class="ai-suggestion" onclick="useAiSuggestion('Any recurring problems this month?')">Recurring problems</button>
-    <button class="ai-suggestion" onclick="useAiSuggestion('Give me a night shift summary')">Night shift summary</button>
+    <button class="ai-suggestion" onclick="useAiSuggestion('Write a handover report for management')">Handover report</button>
+    <button class="ai-suggestion" onclick="useAiSuggestion('Which COSHH sheets are overdue for review?')">COSHH review status</button>
   </div>
   <div id="aiHistory" style="flex:1;overflow-y:auto;padding:16px 22px;display:flex;flex-direction:column;gap:10px"></div>
   <div style="padding:12px 22px;border-top:1px solid var(--bd);flex-shrink:0">
     <div style="display:flex;gap:8px;align-items:flex-end">
-      <textarea id="aiPrompt" rows="2" placeholder="Ask anything about shift data… (⌘↵ to send)" onkeydown="if((event.ctrlKey||event.metaKey)&&event.key==='Enter'){event.preventDefault();sendAiReport();}" style="flex:1;padding:10px 12px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;resize:none;outline:none;line-height:1.5"></textarea>
+      <textarea id="aiPrompt" rows="2" placeholder="Ask anything about plant data — shifts, equipment, risk assessments, COSHH… (⌘↵ to send)" onkeydown="if((event.ctrlKey||event.metaKey)&&event.key==='Enter'){event.preventDefault();sendAiReport();}" style="flex:1;padding:10px 12px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;resize:none;outline:none;line-height:1.5"></textarea>
       <button id="aiSendBtn" onclick="sendAiReport()" style="width:38px;height:38px;background:linear-gradient(135deg,var(--ac),var(--ac3));border:none;border-radius:var(--rsm);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0">
         <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" width="14" height="14"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
       </button>
@@ -395,7 +444,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 /* ── User management rows ─────────────────────────────────────────── */
 .user-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--sf3);border:1px solid var(--bd);border-radius:var(--rsm)}
@@ -435,10 +483,14 @@ let sb;
 
 /* ── STEP 1: LICENCE CHECK ───────────────────────────────────────── */
 async function checkLicence() {
+  // Runs silently in background — overlay is already hidden on load
+  // Only shows a hard error if licence is explicitly expired/invalid
   try {
+    const controller = new AbortController();
+    setTimeout(function() { controller.abort(); }, 5000);
     const res = await fetch(
       SB_LIC_URL + '/rest/v1/kiln_licences?licence_key=eq.' + encodeURIComponent(LICENCE_KEY) + '&select=paid,expires_at,customer,site',
-      { method:'GET', mode:'cors', headers:{ 'apikey':SB_LIC_KEY, 'Authorization':'Bearer '+SB_LIC_KEY, 'Content-Type':'application/json' } }
+      { method:'GET', mode:'cors', signal: controller.signal, headers:{ 'apikey':SB_LIC_KEY, 'Authorization':'Bearer '+SB_LIC_KEY, 'Content-Type':'application/json' } }
     );
     if (res.ok) {
       const rows = await res.json();
@@ -446,19 +498,23 @@ async function checkLicence() {
       if (lic && lic.paid && new Date(lic.expires_at) >= new Date()) {
         const exp = new Date(lic.expires_at).toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'});
         document.getElementById('licStatus').textContent = 'Licence active · expires ' + exp;
-        hideLicenceOverlay();
         return;
       }
       if (lic && new Date(lic.expires_at) < new Date()) {
-        showLicenceError('Licence expired on ' + new Date(lic.expires_at).toLocaleDateString('en-GB') + '. Please contact your administrator.'); return;
+        // Hard block — licence genuinely expired
+        document.getElementById('mainWrapper').style.display = 'none';
+        document.getElementById('loginScreen').style.display = 'none';
+        const overlay = document.getElementById('licenceOverlay');
+        overlay.style.display = 'flex';
+        overlay.style.opacity = '1';
+        showLicenceError('Licence expired on ' + new Date(lic.expires_at).toLocaleDateString('en-GB') + '. Please contact your administrator.');
+        return;
       }
-      showLicenceError('Licence not active. Please contact your administrator.'); return;
+      // No record found or not paid — fail open silently
     }
-    // HTTP error — fail open
-    hideLicenceOverlay();
   } catch(e) {
-    console.warn('Licence check failed, failing open:', e.message);
-    hideLicenceOverlay();
+    // Network error or timeout — fail open silently
+    console.warn('Licence check failed silently:', e.message);
   }
 }
 
@@ -557,6 +613,7 @@ function showAppSelector(user) {
   document.getElementById('headerEmail').textContent = name;
   document.getElementById('headerUser').style.display = 'flex';
   document.getElementById('logoutBtn').style.display = 'flex';
+  document.getElementById('changePwBtn').style.display = 'flex';
   document.getElementById('mainWrapper').style.display = 'block';
 }
 
@@ -592,8 +649,24 @@ function toggleTheme() { applyTheme(!document.body.classList.contains('light-mod
 
 /* ── INIT ────────────────────────────────────────────────────────── */
 window.addEventListener('load', function() {
-  sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  // Immediately skip licence overlay and go to session check
+  // Licence is verified silently in the background
+  const overlay = document.getElementById('licenceOverlay');
+  overlay.style.display = 'none';
+
+  try {
+    sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  } catch(e) {
+    console.error('Supabase init failed:', e);
+    showLoginScreen();
+    return;
+  }
+
+  // Run licence check silently in background (only shows error if hard fail)
   checkLicence();
+
+  // Go straight to session check
+  checkExistingSession();
 });
 
 /* ================================================================
@@ -610,11 +683,23 @@ const SB_KEY_PLATFORM = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
 function openAdminPanel(){
   document.getElementById('adminOverlay').style.display='block';
   document.getElementById('adminPanel').style.transform='translateX(0)';
-  loadUsers();
+  switchAdminTab(1);
 }
 function closeAdminPanel(){
   document.getElementById('adminOverlay').style.display='none';
   document.getElementById('adminPanel').style.transform='translateX(100%)';
+}
+function switchAdminTab(n){
+  [1,2].forEach(function(i){
+    const btn=document.getElementById('adminTab'+i);
+    const content=document.getElementById('adminTabContent'+i);
+    const active=i===n;
+    btn.style.borderBottomColor=active?'var(--ac)':'transparent';
+    btn.style.color=active?'var(--ac3)':'var(--tx3)';
+    content.style.display=active?'flex':'none';
+  });
+  if(n===1) loadUsers();
+  if(n===2) loadKilnUsers();
 }
 async function loadUsers(){
   const list=document.getElementById('userList');
@@ -685,6 +770,152 @@ function showInviteMsg(type,text){
   msg.style.border=type==='ok'?'1px solid var(--grnb)':type==='err'?'1px solid var(--redb)':'none';
   if(type==='ok')setTimeout(function(){msg.style.display='none';},4000);
 }
+
+/* ── KILN USER MANAGEMENT (shift log roles) ─────────────────────── */
+let _kilnUsersCache=[];
+const KILN_FLAGS=[
+  {key:'is_admin',       label:'Admin',          desc:'Full access, manage users'},
+  {key:'is_burner',      label:'Kiln Burner',    desc:'Enter burner shift data'},
+  {key:'is_shift_manager',label:'Shift Manager', desc:'Enter SM notes'},
+  {key:'is_cement_analyst',label:'Cement Analyst',desc:'Enter analyst data'},
+  {key:'is_day_staff',   label:'Day Staff',      desc:'View + resolve feedback'},
+  {key:'is_readonly',    label:'Read Only',      desc:'View data only'},
+  {key:'is_locked',      label:'Locked',         desc:'Cannot log in'},
+];
+async function loadKilnUsers(){
+  const list=document.getElementById('kilnUserList');
+  list.innerHTML='<div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);padding:12px 0">Loading…</div>';
+  const {data,error}=await sb.from('kiln_users').select('username,locked_name,email,is_admin,is_burner,is_shift_manager,is_cement_analyst,is_day_staff,is_readonly,is_locked,must_reset_password,auth_user_id').order('username');
+  if(error){list.innerHTML='<div style="color:var(--red);font-size:12px;padding:12px 0">Error: '+error.message+'</div>';return;}
+  _kilnUsersCache=data||[];
+  renderKilnUsers();
+}
+function renderKilnUsers(){
+  const list=document.getElementById('kilnUserList');
+  document.getElementById('kilnUserCount').textContent='('+_kilnUsersCache.length+')';
+  if(!_kilnUsersCache.length){list.innerHTML='<div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);padding:12px 0">No shift log users found.</div>';return;}
+  list.innerHTML=_kilnUsersCache.map(function(u,idx){
+    const displayName=u.locked_name||u.username||'?';
+    const email=u.email||'—';
+    const activeFlagLabels=KILN_FLAGS.filter(function(f){return u[f.key];}).map(function(f){return f.label;});
+    const badgeColor=u.is_locked?'var(--red)':u.is_admin?'var(--ac3)':'var(--tx3)';
+    return '<div style="background:var(--sf2);border:1px solid var(--bd);border-radius:var(--rsm);padding:14px 16px">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">'
+        +'<div>'
+          +'<div style="font-family:var(--ff-head);font-weight:600;font-size:13px;color:var(--tx)">'+esc(displayName)+'</div>'
+          +'<div style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono);margin-top:2px">'+esc(email)+'</div>'
+        +'</div>'
+        +'<div style="display:flex;gap:6px;align-items:center">'
+          +(activeFlagLabels.length?'<span style="font-size:9px;font-family:var(--ff-mono);color:'+badgeColor+';border:1px solid '+badgeColor+'44;background:'+badgeColor+'15;padding:2px 7px;border-radius:4px">'+esc(activeFlagLabels[0])+'</span>':'')
+          +(u.must_reset_password?'<span style="font-size:9px;font-family:var(--ff-mono);color:var(--amb);border:1px solid var(--ambb);background:var(--ambd);padding:2px 7px;border-radius:4px">MUST RESET PW</span>':'')
+        +'</div>'
+      +'</div>'
+      +'<div style="display:flex;flex-wrap:wrap;gap:6px">'
+      +KILN_FLAGS.map(function(f){
+        const on=u[f.key]||false;
+        return '<label title="'+f.desc+'" style="display:flex;align-items:center;gap:5px;padding:4px 9px;border-radius:5px;border:1px solid '+(on?'var(--ac)':'var(--bd)')+';background:'+(on?'var(--acd1)':'var(--sf3)')+';cursor:pointer;font-size:11px;color:'+(on?'var(--ac3)':'var(--tx2)')+';font-family:var(--ff-body)">'
+          +'<input type="checkbox" '+(on?'checked':'')+' onchange="updateKilnFlag(\''+esc(u.username)+'\',\''+f.key+'\',this.checked)" style="accent-color:var(--ac);width:12px;height:12px;cursor:pointer">'
+          +f.label
+          +'</label>';
+      }).join('')
+      +'</div>'
+      +'<div style="display:flex;gap:8px;margin-top:10px">'
+        +'<button onclick="forceKilnPwReset(\''+esc(u.username)+'\')" title="Force this user to change password on next login" style="flex:1;height:30px;font-size:11px;font-family:var(--ff-body);background:var(--sf3);border:1px solid var(--bd);border-radius:var(--rsm);color:var(--tx2);cursor:pointer">Force PW Reset</button>'
+        +'<button onclick="resetKilnPassword(\''+esc(u.username)+'\',\''+esc(u.auth_user_id||'')+'\',\''+esc(email)+'\')" title="Set a new password for this user" style="flex:1;height:30px;font-size:11px;font-family:var(--ff-body);background:var(--sf3);border:1px solid var(--bd);border-radius:var(--rsm);color:var(--tx2);cursor:pointer">Reset Password</button>'
+      +'</div>'
+    +'</div>';
+  }).join('');
+}
+async function updateKilnFlag(username,flag,value){
+  const payload={};
+  payload[flag]=value;
+  const {error}=await sb.from('kiln_users').update(payload).eq('username',username);
+  if(error){showPlatformToast('Failed: '+error.message);return;}
+  const u=_kilnUsersCache.find(x=>x.username===username);
+  if(u){u[flag]=value;}
+  renderKilnUsers();
+  showPlatformToast('Role updated ✓');
+}
+async function forceKilnPwReset(username){
+  const {error}=await sb.from('kiln_users').update({must_reset_password:true}).eq('username',username);
+  if(error){showPlatformToast('Failed: '+error.message);return;}
+  const u=_kilnUsersCache.find(x=>x.username===username);
+  if(u) u.must_reset_password=true;
+  renderKilnUsers();
+  showPlatformToast(username+' will be prompted to reset password ✓');
+}
+async function resetKilnPassword(username,authUserId,email){
+  const newPw=prompt('Set new password for '+username+':\n(Min 8 characters)');
+  if(!newPw||newPw.length<8){if(newPw!==null)alert('Password must be at least 8 characters.');return;}
+  if(!authUserId){
+    alert('This user does not have a linked Supabase Auth account.\n\nThey need to log into the shift log app at least once after auth was set up, or be re-invited.');
+    return;
+  }
+  try{
+    const {error}=await sb.functions.invoke('pw-admin-user',{body:{action:'setPassword',userId:authUserId,password:newPw}});
+    if(error)throw new Error(error.message);
+    await sb.from('kiln_users').update({must_reset_password:false}).eq('username',username);
+    showPlatformToast('Password reset for '+username+' ✓');
+  }catch(e){
+    showPlatformToast('Failed: '+e.message);
+  }
+}
+
+/* ── CHANGE OWN PASSWORD ──────────────────────────────────────────── */
+function openChangePwModal(){
+  document.getElementById('changePwOverlay').style.display='flex';
+  const modal=document.getElementById('changePwModal');
+  modal.style.pointerEvents='auto';
+  requestAnimationFrame(function(){
+    modal.style.transform='translate(-50%,-50%) scale(1)';
+    modal.style.opacity='1';
+  });
+  setTimeout(function(){document.getElementById('cpwCurrent').focus();},120);
+}
+function closeChangePwModal(){
+  const modal=document.getElementById('changePwModal');
+  modal.style.transform='translate(-50%,-50%) scale(.96)';
+  modal.style.opacity='0';
+  modal.style.pointerEvents='none';
+  setTimeout(function(){
+    document.getElementById('changePwOverlay').style.display='none';
+    document.getElementById('cpwCurrent').value='';
+    document.getElementById('cpwNew').value='';
+    document.getElementById('cpwConfirm').value='';
+    document.getElementById('cpwMsg').style.display='none';
+  },200);
+}
+async function doChangePw(){
+  const current=document.getElementById('cpwCurrent').value;
+  const newPw=document.getElementById('cpwNew').value;
+  const confirm2=document.getElementById('cpwConfirm').value;
+  const btn=document.getElementById('cpwBtn');
+  const msg=document.getElementById('cpwMsg');
+  msg.style.display='none';
+  if(!current||!newPw||!confirm2){showCpwMsg('err','Please fill in all fields.');return;}
+  if(newPw.length<8){showCpwMsg('err','New password must be at least 8 characters.');return;}
+  if(newPw!==confirm2){showCpwMsg('err','New passwords do not match.');return;}
+  // Re-authenticate with current password first to verify it
+  const {data:session}=await sb.auth.getSession();
+  const userEmail=session&&session.session&&session.session.user&&session.session.user.email;
+  if(!userEmail){showCpwMsg('err','Could not determine current user email.');return;}
+  btn.disabled=true;btn.textContent='Updating…';
+  const {error:signInErr}=await sb.auth.signInWithPassword({email:userEmail,password:current});
+  if(signInErr){btn.disabled=false;btn.textContent='Update Password';showCpwMsg('err','Current password is incorrect.');return;}
+  const {error:updateErr}=await sb.auth.updateUser({password:newPw});
+  btn.disabled=false;btn.textContent='Update Password';
+  if(updateErr){showCpwMsg('err',updateErr.message);return;}
+  showCpwMsg('ok','Password updated successfully ✓');
+  setTimeout(function(){closeChangePwModal();},2000);
+}
+function showCpwMsg(type,text){
+  const msg=document.getElementById('cpwMsg');
+  msg.textContent=text;
+  msg.style.display='block';
+  msg.style.background=type==='ok'?'var(--grnd)':'var(--redd)';
+  msg.style.color=type==='ok'?'var(--grn)':'var(--red)';
+  msg.style.border='1px solid '+(type==='ok'?'var(--grnb)':'var(--redb)');
+}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
 /* ── AI reporting ──────────────────────────────────────────────── */
@@ -720,7 +951,7 @@ function useAiSuggestion(text){
 }
 function renderAiHistory(){
   const el=document.getElementById('aiHistory');
-  if(!_aiHistory.length){el.innerHTML='<div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);text-align:center;padding:40px 0">Ask anything about the shift log data across all weeks</div>';return;}
+  if(!_aiHistory.length){el.innerHTML='<div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);text-align:center;padding:40px 0">Ask anything about the full plant data across all apps</div>';return;}
   el.innerHTML=_aiHistory.map(function(msg){
     if(msg.role==='user') return '<div style="display:flex;justify-content:flex-end"><div class="ai-bubble-user">'+esc(msg.content)+'</div></div>';
     return '<div style="display:flex"><div class="ai-bubble-ai">'+esc(msg.content).replace(/\n/g,'<br>')+'</div></div>';
@@ -728,41 +959,49 @@ function renderAiHistory(){
   el.scrollTop=el.scrollHeight;
 }
 async function buildPlatformContext(){
-  const GROQ_URL='https://api.groq.com/openai/v1/chat/completions';
   const now=new Date();
   let sinceDate=null;
   if(_aiScope==='week'){const d=new Date(now);d.setDate(d.getDate()-7);sinceDate=d.toISOString().slice(0,10);}
   else if(_aiScope==='month'){const d=new Date(now);d.setMonth(d.getMonth()-1);sinceDate=d.toISOString().slice(0,10);}
   else if(_aiScope==='year'){const d=new Date(now);d.setFullYear(d.getFullYear()-1);sinceDate=d.toISOString().slice(0,10);}
+
+  const DAYS=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+  const lines=['PADESWOOD WORKS — FULL PLATFORM DATA','scope: '+_aiScope,'='.repeat(60)];
+
+  // ── 1. KILN SHIFT LOG ─────────────────────────────────────────────
   try{
-    let query=sb.from('kiln_log').select('week_key,data').order('week_key',{ascending:false}).limit(200).neq('week_key','__lists__');
-    if(sinceDate) query=query.gte('week_key',sinceDate);
-    const {data:rows}=await query;
-    const DAYS=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-    const lines=['KILN OPERATIONS SHIFT LOG DATA — scope: '+_aiScope,'='.repeat(50)];
+    let q=sb.from('kiln_log').select('week_key,data').order('week_key',{ascending:false}).limit(200).neq('week_key','__lists__');
+    if(sinceDate) q=q.gte('week_key',sinceDate);
+    const {data:rows}=await q;
+    lines.push('\n── SHIFT LOG DATA ──────────────────────────────────────');
     (rows||[]).forEach(function(r){
       if(!r.data) return;
       lines.push('\nWEEK: '+r.week_key);
-      const weekState=r.data.state||r.data;
-      const weekSmState=r.data.smState||null;
-      const weekCaState=r.data.caState||null;
-      if(weekState){
+      const st=r.data.state||r.data, smSt=r.data.smState||null, caSt=r.data.caState||null;
+      // Kiln Burners
+      if(st){
         DAYS.forEach(function(day){
-          const d=weekState[day];if(!d)return;
+          const d=st[day];if(!d)return;
           ['shift1','shift2'].forEach(function(sk,si){
             const s=d[sk];if(!s)return;
             const entries=(s.entries||[]).filter(function(e){return e.equipment||e.issue;});
-            const hasNotes=(s.notes||'').trim();
-            if(!entries.length&&!hasNotes)return;
-            lines.push('  [KILN BURNERS] '+day+' '+(si===0?'Day':'Night')+' Shift'+(s.shift?' | Shift: '+s.shift:'')+(s.burner?' | Burner: '+s.burner:'')+(s.shiftManager?' | Manager: '+s.shiftManager:''));
-            entries.forEach(function(e){lines.push('    Equipment: '+(e.equipment||'?')+' — '+(e.issue||'no detail'));});
-            if(hasNotes)lines.push('    Notes: '+hasNotes);
+            const notes=(s.notes||'').trim();
+            if(!entries.length&&!notes)return;
+            lines.push('  [KILN BURNERS] '+day+' '+(si===0?'Day':'Night')+' Shift'
+              +(s.shift?' | Shift: '+s.shift:'')+(s.burner?' | Burner: '+s.burner:'')
+              +(s.shiftManager?' | Manager: '+s.shiftManager:'')+(s.analyst?' | Analyst: '+s.analyst:''));
+            entries.forEach(function(e){
+              lines.push('    Equipment: '+(e.equipment||'?')+' — '+(e.issue||'no detail')
+                +(e.status?' [Status: '+e.status+(e.statusBy?' by '+e.statusBy:'')+(e.statusAt?' at '+e.statusAt:'')+']':''));
+            });
+            if(notes) lines.push('    Notes: '+notes);
           });
         });
       }
-      if(weekSmState){
+      // Shift Managers
+      if(smSt){
         DAYS.forEach(function(day){
-          const d=weekSmState[day];if(!d)return;
+          const d=smSt[day];if(!d)return;
           ['shift1','shift2'].forEach(function(sk,si){
             const s=d[sk];if(!s)return;
             const notes=(s.notes||'').trim();if(!notes)return;
@@ -771,24 +1010,107 @@ async function buildPlatformContext(){
           });
         });
       }
-      if(weekCaState){
+      // Cement Analysts — full detail
+      if(caSt){
         DAYS.forEach(function(day){
-          const d=weekCaState[day];if(!d)return;
+          const d=caSt[day];if(!d)return;
           ['shift1','shift2'].forEach(function(sk,si){
             const s=d[sk];if(!s)return;
             const analyst=(s.name||'').trim();
-            const hseItems=(s.hse||[]).filter(function(h){return h.type||h.details;});
+            const hse=(s.hse||[]).filter(function(h){return h.type||h.details;});
             const grind=(s.cemQuality||[]).filter(function(q){return (q.issues||'').trim();});
-            if(!analyst&&!hseItems.length&&!grind.length)return;
-            lines.push('  [CEMENT ANALYST] '+day+' '+(si===0?'Day':'Night')+' Shift'+(analyst?' | Analyst: '+analyst:''));
-            hseItems.forEach(function(h){lines.push('    HSE: '+(h.type||'?')+(h.details?' — '+h.details:''));});
+            const labBad=Object.entries(s.labEquip||{}).filter(function(x){return x[1].functional==='No'||x[1].functional==='N/A';});
+            const addCom=Object.entries(s.additives||{}).filter(function(x){return typeof x[1]==='object'&&(x[1].comments||'').trim();});
+            const grindLog=(s.grindingLog||[]).filter(function(g){return g.equipment||g.problem;});
+            if(!analyst&&!hse.length&&!grind.length&&!labBad.length&&!grindLog.length) return;
+            lines.push('  [CEMENT ANALYST] '+day+' '+(si===0?'Day':'Night')+' Shift'
+              +(s.shift?' | Shift: '+s.shift:'')+(analyst?' | Analyst: '+analyst:''));
+            hse.forEach(function(h){lines.push('    HSE: '+(h.type||'?')+(h.details?' — '+h.details:''));});
             grind.forEach(function(q){lines.push('    Cement quality (Mill '+q.mill+'): '+q.issues);});
+            labBad.forEach(function(x){lines.push('    Lab equipment issue: '+x[0]+' — '+x[1].functional+(x[1].details?' ('+x[1].details+')':''));});
+            addCom.forEach(function(x){lines.push('    Additive note ('+x[0]+'): '+x[1].comments);});
+            grindLog.forEach(function(g){lines.push('    Grinding log: '+(g.zone||'')+(g.equipment?' / '+g.equipment:'')+(g.problem?' — '+g.problem:'')+(g.comments?' ('+g.comments+')':''));});
           });
         });
       }
     });
-    return lines.join('\n');
-  }catch(e){return 'Error loading shift data: '+e.message;}
+  }catch(e){lines.push('  [Error loading shift log: '+e.message+']');}
+
+  // ── 2. FEEDBACK LOG (ongoing & resolved equipment issues) ─────────
+  try{
+    let fbUrl=sb.from('kiln_feedback_log').select('week_key,day,shift,equipment,issue,resolved_by,resolved_at').order('resolved_at',{ascending:false}).limit(200);
+    if(sinceDate) fbUrl=fbUrl.gte('week_key',sinceDate);
+    const {data:fbRows}=await fbUrl;
+    if(fbRows&&fbRows.length){
+      lines.push('\n── EQUIPMENT FEEDBACK LOG ───────────────────────────────');
+      const resolved=fbRows.filter(function(r){return r.resolved_at;});
+      const ongoing=fbRows.filter(function(r){return !r.resolved_at;});
+      if(ongoing.length){
+        lines.push('  ONGOING ISSUES ('+ongoing.length+'):');
+        ongoing.forEach(function(r){lines.push('    '+r.week_key+' '+r.day+' '+r.shift+' | '+r.equipment+' — '+r.issue);});
+      }
+      if(resolved.length){
+        lines.push('  RESOLVED ISSUES ('+resolved.length+'):');
+        resolved.forEach(function(r){lines.push('    '+r.week_key+' '+r.day+' '+r.shift+' | '+r.equipment+' — '+r.issue+' [Resolved by: '+r.resolved_by+' at '+r.resolved_at+']');});
+      }
+    }
+  }catch(e){lines.push('  [Error loading feedback log: '+e.message+']');}
+
+  // ── 3. AI KNOWLEDGE BASE (plant-specific facts added by admins) ────
+  try{
+    const {data:kbRows}=await sb.from('kiln_lists').select('items').eq('list_name','ai_knowledge').single();
+    if(kbRows&&kbRows.items&&kbRows.items.length){
+      lines.push('\n── PLANT KNOWLEDGE BASE ─────────────────────────────────');
+      kbRows.items.forEach(function(entry,i){lines.push('  '+(i+1)+'. '+entry);});
+    }
+  }catch(e){}// silently skip if no knowledge base
+
+  // ── 4. RISK ASSESSMENTS ────────────────────────────────────────────
+  try{
+    let raQ=sb.from('pw_risk_assessments').select('ref,title,area,owner,status,next_review_date,equipment_tags').order('next_review_date');
+    const {data:raRows}=await raQ;
+    if(raRows&&raRows.length){
+      lines.push('\n── RISK ASSESSMENTS ('+raRows.length+' records) ─────────────────');
+      const now2=new Date();
+      raRows.forEach(function(r){
+        const nrd=r.next_review_date?new Date(r.next_review_date):null;
+        const age=nrd?Math.round((nrd-now2)/86400000):null;
+        const flag=age===null?'draft':age<0?'OVERDUE by '+Math.abs(age)+'d':age<=30?'DUE IN '+age+'d':'current';
+        lines.push('  ['+flag+'] '+(r.ref||'—')+' — '+r.title+(r.area?' | Area: '+r.area:'')+(r.owner?' | Owner: '+r.owner:'')+(r.next_review_date?' | Review: '+r.next_review_date:''));
+        if((r.equipment_tags||[]).length) lines.push('    Equipment tags: '+r.equipment_tags.join(', '));
+      });
+    }
+  }catch(e){lines.push('  [Error loading risk assessments: '+e.message+']');}
+
+  // ── 5. COSHH SHEETS ───────────────────────────────────────────────
+  try{
+    const {data:coshhRows}=await sb.from('pw_coshh_sheets').select('product_name,manufacturer,location,hazard_categories,next_review_date').order('next_review_date');
+    if(coshhRows&&coshhRows.length){
+      lines.push('\n── COSHH DATA SHEETS ('+coshhRows.length+' records) ─────────────────');
+      const now2=new Date();
+      coshhRows.forEach(function(r){
+        const nrd=r.next_review_date?new Date(r.next_review_date):null;
+        const age=nrd?Math.round((nrd-now2)/86400000):null;
+        const flag=age===null?'draft':age<0?'OVERDUE':age<=30?'DUE SOON':'current';
+        const haz=Array.isArray(r.hazard_categories)?r.hazard_categories.join(', '):(r.hazard_categories||'—');
+        lines.push('  ['+flag+'] '+r.product_name+(r.manufacturer?' | '+r.manufacturer:'')+(r.location?' | Location: '+r.location:'')+(r.next_review_date?' | Review: '+r.next_review_date:'')+' | Hazards: '+haz);
+      });
+    }
+  }catch(e){lines.push('  [Error loading COSHH sheets: '+e.message+']');}
+
+  // ── 6. EQUIPMENT REGISTER ─────────────────────────────────────────
+  try{
+    const {data:eqRows}=await sb.from('pw_equipment').select('asset_tag,name,manufacturer,model,category,location').order('asset_tag');
+    if(eqRows&&eqRows.length){
+      lines.push('\n── EQUIPMENT REGISTER ('+eqRows.length+' records) ──────────────────');
+      eqRows.forEach(function(r){
+        lines.push('  '+( r.asset_tag||'—')+' — '+r.name+(r.model?' ('+r.model+')':'')+(r.manufacturer?' | '+r.manufacturer:'')+(r.category?' | Cat: '+r.category:'')+(r.location?' | Location: '+r.location:''));
+      });
+    }
+  }catch(e){lines.push('  [Error loading equipment register: '+e.message+']');}
+
+  return lines.join('\n');
+}
 }
 async function sendAiReport(){
   const promptEl=document.getElementById('aiPrompt');
@@ -809,9 +1131,9 @@ async function sendAiReport(){
   hist.scrollTop=hist.scrollHeight;
   try{
     const context=await buildPlatformContext();
-    const systemPrompt='You are an expert AI assistant for a cement plant (Padeswood Works, HeidelbergMaterials, Wales). Answer questions about shift log data. Be concise. Only answer from provided data — if something is not recorded, say so. Never refer to individuals by name, use roles only.';
-    const dataMsg={role:'user',content:'Here is the shift log data. Only answer from this data.\n\n'+context};
-    const dataAck={role:'assistant',content:'Understood. I will only answer from the shift log data provided.'};
+    const systemPrompt='You are an expert AI assistant for Padeswood Works, a HeidelbergMaterials cement plant in Wales. You have access to data from all plant systems: the kiln operations shift log (burner entries, shift manager notes, cement analyst reports), equipment feedback log (ongoing and resolved issues), the plant knowledge base, risk assessments, COSHH data sheets, and the equipment register. Answer questions accurately and concisely using only the data provided. If something is not in the data, say so clearly. Flag overdue reviews or recurring issues proactively when relevant. Never refer to individuals by name — use roles only (e.g. "a shift manager", "the cement analyst").';
+    const dataMsg={role:'user',content:'Here is the full plant data across all systems. Only answer from this data.\n\n'+context};
+    const dataAck={role:'assistant',content:'Understood. I have reviewed the full plant data including shift logs, feedback log, risk assessments, COSHH sheets, equipment register and knowledge base. I will only answer from this data.'};
     const messages=[{role:'system',content:systemPrompt},dataMsg,dataAck,..._aiHistory];
     const res=await fetch('https://api.groq.com/openai/v1/chat/completions',{
       method:'POST',
