@@ -50,7 +50,7 @@
 html{scroll-behavior:smooth}
 body{font-family:var(--ff-body);background:var(--bg);color:var(--tx);min-height:100vh;
   font-size:13.5px;line-height:1.55;-webkit-font-smoothing:antialiased;
-  transition:background .28s,color .28s;display:flex;flex-direction:column;}
+  transition:background .28s,color .28s;display:flex;flex-direction:column;overflow-x:hidden;}
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   background-image:radial-gradient(circle,rgba(14,165,160,.06) 1px,transparent 1px);
   background-size:28px 28px;}
@@ -346,6 +346,23 @@ tbody tr:hover{background:var(--sf2);}
 @keyframes aiDot{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
 .ai-suggestion{padding:5px 11px;font-size:11px;font-family:var(--ff-body);background:var(--sf3);border:1px solid var(--bd);border-radius:20px;color:var(--tx2);cursor:pointer;white-space:nowrap}
 .ai-suggestion:hover{border-color:var(--ac);color:var(--ac3)}
+
+/* ── MOBILE ──────────────────────────────────────────────────────── */
+@media(max-width:640px){
+  #mainHeader{padding:0 12px;height:auto;min-height:52px;flex-wrap:nowrap;gap:8px;}
+  .header-titles{min-width:0;flex:1;}
+  .header-name{font-size:13px;}
+  .header-sub{display:none;}
+  .header-right{gap:5px;flex-wrap:nowrap;overflow-x:auto;flex-shrink:0;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+  .header-right::-webkit-scrollbar{display:none;}
+  .header-user{display:none;}
+  .icon-btn{width:30px;height:30px;}
+  #mainContent,.tab-body{padding-left:12px;padding-right:12px;}
+  .table-wrap{font-size:12px;}
+}
+@media(max-width:400px){
+  .header-back,.header-logo{width:28px;height:28px;}
+}
 </style>
 </head>
 <body>
