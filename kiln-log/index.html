@@ -1672,7 +1672,7 @@ async function _applyUserSession(match){
   document.querySelectorAll('.write-only').forEach(el => el.style.display = readOnly ? 'none' : '');
   document.body.classList.toggle('read-only-mode', readOnly);
   const _wdLogin=document.getElementById('weekDate'); if(_wdLogin)_wdLogin.disabled=false;
-  initApp().then(function(){ });
+  initApp().then(function(){ goToToday(); });
   sbLoadUserTheme();
   if(match.must_reset_password){
     setTimeout(()=>{
@@ -1700,6 +1700,10 @@ function doLogout(){
   _sbRefreshToken = null;
   localStorage.removeItem('kbl_session');
   localStorage.removeItem('kbl_refresh');
+  // Also clear platform session so user must re-login there too
+  Object.keys(localStorage).forEach(function(k){
+    if(k.startsWith('sb-') || k.startsWith('supabase')) localStorage.removeItem(k);
+  });
 
   // Reset state
   state = {}; smState = {}; caState = {};
