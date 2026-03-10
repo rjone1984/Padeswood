@@ -48,7 +48,7 @@
 html{scroll-behavior:smooth}
 body{font-family:var(--ff-body);background:var(--bg);color:var(--tx);
   min-height:100vh;font-size:13.5px;line-height:1.55;-webkit-font-smoothing:antialiased;
-  transition:background .28s,color .28s;}
+  transition:background .28s,color .28s;overflow-x:hidden;}
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   background-image:radial-gradient(circle,rgba(14,165,160,.06) 1px,transparent 1px);
   background-size:28px 28px;}
@@ -497,6 +497,25 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .ai-dot{width:6px;height:6px;border-radius:50%;background:var(--tx3);animation:blink 1.4s infinite;display:inline-block}
 .ai-dot:nth-child(2){animation-delay:.2s}
 .ai-dot:nth-child(3){animation-delay:.4s}
+
+/* ── MOBILE ──────────────────────────────────────────────────────── */
+@media(max-width:640px){
+  #mainHeader{padding:0 14px;height:auto;min-height:52px;flex-wrap:wrap;row-gap:0;}
+  .header-titles{min-width:0;flex:1;}
+  .header-name{font-size:13px;}
+  .header-sub{display:none;}
+  .header-actions,.header-right{gap:6px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+  .header-actions::-webkit-scrollbar,.header-right::-webkit-scrollbar{display:none;}
+  .header-user{display:none;}
+  .icon-btn{width:30px;height:30px;}
+  #mainContent{padding:28px 14px 48px;}
+  .platform-hero h1{font-size:20px;}
+  .apps-grid{grid-template-columns:1fr;gap:12px;}
+  .card{padding:20px 16px;}
+}
+@media(max-width:400px){
+  .header-logo{width:28px;height:28px;font-size:11px;}
+}
 </style>
 <script>
 /* ================================================================
