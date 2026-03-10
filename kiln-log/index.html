@@ -138,6 +138,7 @@ body {
   min-height: 100vh; font-size: 13.5px; line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   transition: background .28s, color .28s;
+  overflow-x: hidden;
 }
 
 /* Subtle dot-grid texture */
@@ -836,7 +837,9 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
   button[onclick="openMyPwModal()"] { display:inline-flex !important }
   #clearDayBtn { display:none !important }
   .topbar-sub { display:none }
-  .page-header { top:90px; }
+  /* Page-header: stop trying to stick on mobile — topbar height is dynamic */
+  .page-header { position:static; top:auto; padding-top:10px; }
+  .page-header-actions { flex-wrap:wrap; gap:4px; }
 
   /* Make buttons slightly smaller on mobile */
   .btn { padding:5px 9px; font-size:10px; }
