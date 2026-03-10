@@ -1645,9 +1645,9 @@ async function _applyUserSession(match){
   lockedName      = match.locked_name || null;
   readOnly        = match.is_readonly || false;
 
-  // Cache users list
+  // Cache users list and password records
   await sbLoadUsers();
-  _pwCache = {};
+  _pwCache = (await sbLoadPasswords()) || {};
 
   document.getElementById('splash').style.display='none';
   document.getElementById('app').style.display='block';
