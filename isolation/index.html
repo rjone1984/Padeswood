@@ -5,14 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="PW Isolation">
+<meta name="apple-mobile-web-app-title" content="PW Isolation Matrix">
 <meta name="theme-color" content="#111418">
-<title>Padeswood Works — Isolation Matrices</title>
+<title>Padeswood Works — Isolation Matrix</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Figtree:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 /* =====================================================================
-   PADESWOOD WORKS — ISOLATION MATRICES — Design System v4
+   PADESWOOD WORKS — ISOLATION MATRIX — Design System v4
    Tables: pw_profiles, pw_equipment (shared with docs),
            pw_isolation_matrices, pw_isolation_points
    Supabase project: xnkwrkoxvgptobnmekgv
@@ -419,7 +419,7 @@ tbody tr:hover{background:var(--sf2);}
 <div id="splash">
   <div class="splash-inner">
     <div class="splash-logo"><img src="data:image/png;base64,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" style="width:44px;height:44px;object-fit:contain;display:block"></div>
-    <div class="splash-title">Isolation Matrices</div>
+    <div class="splash-title">Isolation Matrix</div>
     <div class="splash-sub">Padeswood Works · HeidelbergMaterials</div>
     <div class="splash-loader"><div class="splash-loader-bar" id="splashBar"></div></div>
     <div class="splash-card" id="splashCard" style="opacity:0;transition:opacity .5s ease">
@@ -458,7 +458,7 @@ tbody tr:hover{background:var(--sf2);}
     </a>
     <div class="header-logo"><img src="data:image/png;base64,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" style="width:26px;height:26px;object-fit:contain;display:block"></div>
     <div class="header-titles">
-      <div class="header-name">Isolation Matrices</div>
+      <div class="header-name">Isolation Matrix</div>
       <div class="header-sub">Equipment Isolation Procedures</div>
     </div>
     <div class="header-right">
@@ -801,7 +801,7 @@ tbody tr:hover{background:var(--sf2);}
     </div>
   </div>
   <div id="aiSuggestions" style="padding:12px 22px;border-bottom:1px solid var(--bd);display:flex;flex-wrap:wrap;gap:6px;flex-shrink:0">
-    <button class="ai-suggestion" onclick="useAiSuggestion('Summarise all active isolation matrices')">Active matrices</button>
+    <button class="ai-suggestion" onclick="useAiSuggestion('Summarise all active isolation matrix')">Active matrices</button>
     <button class="ai-suggestion" onclick="useAiSuggestion('Which equipment has the most isolation points?')">Most complex</button>
     <button class="ai-suggestion" onclick="useAiSuggestion('List all electrical isolation points across all matrices')">All electrical</button>
     <button class="ai-suggestion" onclick="useAiSuggestion('Which matrices are in draft or under review and need attention?')">Needs attention</button>
@@ -809,7 +809,7 @@ tbody tr:hover{background:var(--sf2);}
   <div id="aiHistory" style="flex:1;overflow-y:auto;padding:16px 22px;display:flex;flex-direction:column;gap:10px"></div>
   <div style="padding:12px 22px;border-top:1px solid var(--bd);flex-shrink:0">
     <div style="display:flex;gap:8px;align-items:flex-end">
-      <textarea id="aiPrompt" rows="2" placeholder="Ask about isolation matrices or equipment… (⌘↵ to send)"
+      <textarea id="aiPrompt" rows="2" placeholder="Ask about isolation matrix or equipment… (⌘↵ to send)"
         onkeydown="if((event.ctrlKey||event.metaKey)&&event.key==='Enter'){event.preventDefault();sendAiMessage();}"
         style="flex:1;padding:10px 12px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;resize:none;outline:none;line-height:1.5"></textarea>
       <button id="aiSendBtn" onclick="sendAiMessage()" style="width:38px;height:38px;background:linear-gradient(135deg,var(--ac),var(--ac3));border:none;border-radius:var(--rsm);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0">
@@ -823,7 +823,7 @@ tbody tr:hover{background:var(--sf2);}
 
 <script>
 /* ================================================================
-   PADESWOOD WORKS — ISOLATION MATRICES
+   PADESWOOD WORKS — ISOLATION MATRIX
    Supabase: xnkwrkoxvgptobnmekgv
    Tables: pw_profiles, pw_equipment (shared),
            pw_isolation_matrices, pw_isolation_points
@@ -843,8 +843,10 @@ let _openMatrixId = null;
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function fmtDate(d){ if(!d) return '—'; try{ return new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); }catch(e){ return '—'; } }
 function showToast(msg,dur=2800){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),dur); }
-function hasRole(...roles){ if(!currentProfile) return false; if(currentProfile.role==='admin') return true; return roles.includes(currentProfile.role); }
+function isoRole(){ if(!currentProfile) return 'none'; return currentProfile.isolation_role || currentProfile.role || 'viewer'; }
+function hasRole(...roles){ if(!currentProfile) return false; const r = isoRole(); if(r==='admin') return true; return roles.includes(r); }
 function canEdit(){ return hasRole('editor','admin'); }
+function canReview(){ return hasRole('reviewer','editor','admin'); }
 
 const STATUS_LABELS = {draft:'Draft',active:'Active',review:'Under Review',archived:'Archived'};
 const ISO_TYPES = {electrical:'Electrical',mechanical:'Mechanical',pneumatic:'Pneumatic',hydraulic:'Hydraulic',process:'Process',other:'Other'};
@@ -930,7 +932,15 @@ function launchApp(){
   const app=document.getElementById('appWrapper'); app.style.display='flex';
   const name=currentProfile.full_name||currentProfile.email||'—';
   document.getElementById('headerEmail').textContent=name.includes('@')?name.split('@')[0]:name;
-  const role=currentProfile.role||'viewer';
+  const role=isoRole();
+  if(role==='none'){
+    document.getElementById('splash').style.display='flex';
+    const err=document.getElementById('authErr');
+    err.textContent='You do not have access to Isolation Matrix. Contact your administrator.';
+    err.style.display='block';
+    await sb.auth.signOut(); currentUser=null; currentProfile=null;
+    return;
+  }
   const rb=document.getElementById('headerRole');
   rb.textContent=role.charAt(0).toUpperCase()+role.slice(1);
   rb.className='role-badge role-'+role;
@@ -1009,7 +1019,7 @@ function renderMatrices(){
   if(!list.length){
     grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="42" height="42"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
-      <p>${_matrices.length?'No matrices match your filters':'No isolation matrices yet'}</p>
+      <p>${_matrices.length?'No matrices match your filters':'No isolation matrix yet'}</p>
       ${canEdit()?'<button class="btn btn-iso" onclick="openMatrixModal()">Create First Matrix</button>':''}
     </div>`;
     return;
@@ -1101,7 +1111,7 @@ function renderEquipment(){
     <td style="font-size:12.5px;color:var(--tx2)">${esc(r.location||'—')}</td>
     <td><span class="pill-status ${statusClass[r.status]||statusClass.active}">${r.status||'active'}</span></td>
     <td style="font-family:var(--ff-mono);font-size:11px;color:var(--tx3)">${fmtDate(r.last_inspection)}</td>
-    <td>${canEdit()?`<button onclick="event.stopPropagation();openEquipModal('${r.id}')" style="padding:3px 9px;font-size:10px;border-radius:var(--rxs);border:1px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;font-family:var(--ff-mono)">Edit</button>`:''}
+    <td style="white-space:nowrap">${canEdit()?`<button onclick="event.stopPropagation();openEquipModal('${r.id}')" style="padding:3px 9px;font-size:10px;border-radius:var(--rxs);border:1px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;font-family:var(--ff-mono);margin-right:4px">Edit</button><button onclick="event.stopPropagation();deleteEquip('${r.id}','${r.name.replace(/'/g,\"\\'\")}')}" style="padding:3px 9px;font-size:10px;border-radius:var(--rxs);border:1px solid var(--redb);background:transparent;color:var(--red);cursor:pointer;font-family:var(--ff-mono)">Del</button>`:''}
     </td>
   </tr>`).join('');
 }
@@ -1228,6 +1238,24 @@ async function saveEquip(){
   await loadEquipment(); closeEquipModal(); showToast(id?'Equipment updated ✓':'Equipment added ✓');
 }
 
+async function deleteMatrix(id){
+  const m=_matrices.find(x=>x.id===id);
+  if(!confirm('Delete matrix "'+(m?m.title:id)+'" and all its isolation points? This cannot be undone.')) return;
+  // Delete points first (cascade should handle it but be explicit)
+  await sb.from('pw_isolation_points').delete().eq('matrix_id',id).catch(()=>{});
+  const {error}=await sb.from('pw_isolation_matrices').delete().eq('id',id);
+  if(error){ showToast('Delete failed: '+error.message); return; }
+  document.getElementById('matrixDetail').style.display='none';
+  await loadMatrices(); showToast('Matrix deleted ✓');
+}
+
+async function deleteEquip(id, name){
+  if(!confirm('Delete equipment "'+name+'"? This cannot be undone.')) return;
+  const {error}=await sb.from('pw_equipment').delete().eq('id',id);
+  if(error){ showToast('Delete failed: '+error.message); return; }
+  await loadEquipment(); showToast('Equipment deleted ✓');
+}
+
 /* ── AREA MODAL ──────────────────────────────────────────────────── */
 
 
@@ -1309,7 +1337,7 @@ function clearAiHistory(){ _aiHistory=[]; renderAiHistory(); }
 function renderAiHistory(){
   const hist=document.getElementById('aiHistory'); const clr=document.getElementById('aiClearBtn');
   if(!_aiHistory.length){
-    hist.innerHTML='<div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);text-align:center;padding:40px 0">Ask anything about isolation matrices or equipment</div>';
+    hist.innerHTML='<div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);text-align:center;padding:40px 0">Ask anything about isolation matrix or equipment</div>';
     if(clr) clr.style.display='none'; return;
   }
   hist.innerHTML=_aiHistory.map(m=>{
@@ -1321,11 +1349,11 @@ function renderAiHistory(){
 }
 async function buildAiContext(){
   try{
-    const lines=['PADESWOOD WORKS — ISOLATION MATRICES DATA','='.repeat(50)];
+    const lines=['PADESWOOD WORKS — ISOLATION MATRIX DATA','='.repeat(50)];
     lines.push(`\nWORK AREAS (${_areas.length}): ${_areas.join(', ')}`);
     lines.push(`\nEQUIPMENT (${_equipment.length}):`);
     _equipment.forEach(e=>lines.push(`  [${e.asset_tag||'—'}] ${e.name} | Cat: ${e.category||'—'} | Area: ${e.location||'—'} | Status: ${e.status||'active'}`));
-    lines.push(`\nISOLATION MATRICES (${_matrices.length}):`);
+    lines.push(`\nISOLATION MATRIX (${_matrices.length}):`);
     for(const m of _matrices){
       const equip=_equipment.find(e=>e.id===m.equipment_id);
       const area=m.area||null;
@@ -1348,9 +1376,9 @@ async function sendAiMessage(){
   hist.scrollTop=hist.scrollHeight;
   try{
     const context=await buildAiContext();
-    const systemPrompt='You are an expert AI assistant for Padeswood Works (HeidelbergMaterials cement plant, Wales). You help with isolation matrices, equipment isolation procedures, and work area information. Answer concisely based only on the provided data.';
-    const dataMsg={role:'user',content:'Here is the isolation matrices data:\n\n'+context+'\n\nOnly answer from this data.'};
-    const dataAck={role:'assistant',content:'Understood. I will only answer from the isolation matrices data provided.'};
+    const systemPrompt='You are an expert AI assistant for Padeswood Works (HeidelbergMaterials cement plant, Wales). You help with isolation matrix, equipment isolation procedures, and work area information. Answer concisely based only on the provided data.';
+    const dataMsg={role:'user',content:'Here is the isolation matrix data:\n\n'+context+'\n\nOnly answer from this data.'};
+    const dataAck={role:'assistant',content:'Understood. I will only answer from the isolation matrix data provided.'};
     const messages=[{role:'system',content:systemPrompt},dataMsg,dataAck,..._aiHistory];
     const res=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+_groqKey},body:JSON.stringify({model:'llama-3.3-70b-versatile',max_tokens:1500,messages})});
     const data=await res.json();
