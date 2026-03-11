@@ -692,13 +692,27 @@ async function doLogin() {
 }
 
 /* ── STEP 3: APP SELECTOR ────────────────────────────────────────── */
-function showAppSelector(user) {
+async function showAppSelector(user) {
   const name = user.email ? user.email.split('@')[0] : '—';
   document.getElementById('headerEmail').textContent = name;
   document.getElementById('headerUser').style.display = 'flex';
   document.getElementById('logoutBtn').style.display = 'flex';
   document.getElementById('changePwBtn').style.display = 'flex';
   document.getElementById('mainWrapper').style.display = 'block';
+  loadUserTheme();
+  loadPlatformGroqKey();
+  try {
+    const {data} = await sb.from('pw_profiles').select('*').eq('id', user.id).single();
+    _platformProfile = data;
+    if (data && data.role === 'admin') {
+      document.getElementById('adminPanelBtn').style.display = 'flex';
+      document.getElementById('resetReqBtn').style.display = 'flex';
+      loadResetReqBadge();
+    }
+    document.getElementById('aiReportBtn').style.display = 'flex';
+  } catch(e) {
+    document.getElementById('aiReportBtn').style.display = 'flex';
+  }
 }
 
 async function doLogout() {
@@ -721,11 +735,40 @@ function applyTheme(light) {
   if (icon) icon.innerHTML = light
     ? '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>'
     : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
-  localStorage.setItem('pw_platform_theme', light ? 'light' : 'dark');
+  localStorage.setItem('pw_theme', light ? 'light' : 'dark');
 }
-function toggleTheme() { applyTheme(!document.body.classList.contains('light-mode')); }
+function toggleTheme() {
+  const light = !document.body.classList.contains('light-mode');
+  applyTheme(light);
+  // Persist to kiln_config so all apps share it
+  sb && sb.auth.getSession().then(function(r) {
+    const uid = r.data && r.data.session && r.data.session.user && r.data.session.user.id;
+    if (!uid) return;
+    fetch(SUPABASE_URL + '/rest/v1/kiln_config', {
+      method: 'POST',
+      headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + r.data.session.access_token,
+        'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+      body: JSON.stringify({ key: 'theme_uid_' + uid, value: light ? 'light' : 'dark' })
+    }).catch(function(){});
+  });
+}
+async function loadUserTheme() {
+  try {
+    const r = await sb.auth.getSession();
+    const uid = r.data && r.data.session && r.data.session.user && r.data.session.user.id;
+    if (!uid) return;
+    const token = r.data.session.access_token;
+    const res = await fetch(SUPABASE_URL + '/rest/v1/kiln_config?key=eq.theme_uid_' + uid + '&select=value', {
+      headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + token }
+    });
+    const rows = await res.json();
+    if (rows && rows.length) {
+      applyTheme(rows[0].value === 'light');
+    }
+  } catch(e) {}
+}
 (function() {
-  const s = localStorage.getItem('pw_platform_theme');
+  const s = localStorage.getItem('pw_theme') || localStorage.getItem('pw_platform_theme');
   if (s) { applyTheme(s === 'light'); return; }
   applyTheme(new Date().getHours() >= 7 && new Date().getHours() < 18);
 })();
@@ -1174,25 +1217,6 @@ function showPlatformToast(msg) {
   t.textContent = msg; t.style.opacity = '1';
   clearTimeout(t._timer); t._timer = setTimeout(function(){t.style.opacity='0';}, 2800);
 }
-
-/* ── PATCH showAppSelector to load profile & show admin/AI buttons ── */
-const _origShowAppSelector = showAppSelector;
-showAppSelector = async function(user) {
-  _origShowAppSelector(user);
-  loadPlatformGroqKey();
-  try {
-    const {data} = await sb.from('pw_profiles').select('*').eq('id',user.id).single();
-    _platformProfile = data;
-    if (data && data.role === 'admin') {
-      document.getElementById('adminPanelBtn').style.display = 'flex';
-      document.getElementById('resetReqBtn').style.display = 'flex';
-      loadResetReqBadge();
-    }
-    document.getElementById('aiReportBtn').style.display = 'flex';
-  } catch(e) {
-    document.getElementById('aiReportBtn').style.display = 'flex';
-  }
-};
 
 /* ── PASSWORD RESET REQUESTS (admin) ─────────────────────────────── */
 async function loadResetReqBadge() {
