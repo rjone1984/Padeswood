@@ -74,10 +74,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 
 /* ── LOGIN SCREEN ───────────────────────────────────────────────── */
 #loginScreen{position:fixed;inset:0;background:var(--bg);z-index:9999;
-  display:none;align-items:center;justify-content:center;}
-#loginScreen::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
+  display:none;align-items:flex-start;justify-content:center;overflow-y:auto;padding:24px 0;}
+#loginScreen::after{content:'';position:fixed;bottom:0;left:0;right:0;height:3px;
   background:linear-gradient(90deg,transparent 0%,var(--ac) 50%,transparent 100%);opacity:.5;}
-.login-inner{width:380px;max-width:94vw;position:relative;z-index:1;}
+.login-inner{width:380px;max-width:94vw;position:relative;z-index:1;margin:auto;padding:8px 0;}
 .login-logo{width:52px;height:52px;background:linear-gradient(135deg,var(--ac),var(--ac3));
   border-radius:12px;display:flex;align-items:center;justify-content:center;
   margin:0 auto 18px;box-shadow:var(--eac);
@@ -1161,16 +1161,6 @@ async function loadAllUsers() {
   renderAllUsers();
 }
 
-const KILN_FLAGS = [
-  {key:'is_admin',         label:'Admin'},
-  {key:'is_burner',        label:'Burner'},
-  {key:'is_shift_manager', label:'Shift Mgr'},
-  {key:'is_cement_analyst',label:'CA'},
-  {key:'is_day_staff',     label:'Day Staff'},
-  {key:'is_readonly',      label:'Read Only'},
-  {key:'is_locked',        label:'Locked'},
-];
-
 function renderAllUsers() {
   const list = document.getElementById('userList');
   const merged = _usersCache.map(function(p) {
@@ -1301,13 +1291,6 @@ async function removeUser(userId, email) {
   if (error) { showPlatformToast('Failed: '+error.message); return; }
   try { await sb.functions.invoke('pw-admin-user',{body:{action:'delete',userId}}); } catch(e) { console.warn('Edge fn:',e.message); }
   _usersCache = _usersCache.filter(x=>x.id!==userId); renderAllUsers(); showPlatformToast('User removed \u2713');
-}
-async function updateKilnFlag(username, flag, value) {
-  const payload = {}; payload[flag] = value;
-  const {error} = await sb.from('kiln_users').update(payload).eq('username', username);
-  if (error) { showPlatformToast('Failed: '+error.message); return; }
-  const u = _kilnUsersCache.find(x=>x.username===username); if (u) u[flag] = value;
-  renderAllUsers(); showPlatformToast('Shift log role updated \u2713');
 }
 async function forceKilnPwReset(username) {
   const {error} = await sb.from('kiln_users').update({must_reset_password:true}).eq('username', username);
