@@ -324,7 +324,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
           <div class="card-icon" style="background:rgba(232,134,26,.12);border:1px solid rgba(232,134,26,.28)">🔌</div>
           <span class="card-badge badge-new">New</span>
         </div>
-        <div class="card-title">Isolation Matrices</div>
+        <div class="card-title">Isolation Matrix</div>
         <div class="card-desc">Equipment isolation procedures for safe maintenance. Manage isolation points, work areas, and equipment lockout/tagout requirements.</div>
         <div class="card-arrow">→</div>
       </a>
@@ -434,11 +434,11 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     </div>
   </div>
   <div id="aiSuggestions" style="padding:12px 22px;border-bottom:1px solid var(--bd);display:flex;flex-wrap:wrap;gap:6px;flex-shrink:0">
-    <button class="ai-suggestion" onclick="useAiSuggestion('Summarise this week\'s shifts')">Summarise this week's shifts</button>
-    <button class="ai-suggestion" onclick="useAiSuggestion('Which equipment had the most issues?')">Which equipment had the most issues?</button>
-    <button class="ai-suggestion" onclick="useAiSuggestion('Write a handover report for management')">Handover report for management</button>
-    <button class="ai-suggestion" onclick="useAiSuggestion('Any recurring problems this month?')">Recurring problems</button>
-    <button class="ai-suggestion" onclick="useAiSuggestion('Give me a night shift summary')">Night shift summary</button>
+    <button class="ai-suggestion" onclick="useAiSuggestion('Give me an overview of all current isolation matrices and their status')">Isolation matrix overview</button>
+    <button class="ai-suggestion" onclick="useAiSuggestion('Summarise this week\'s shift log entries and any ongoing issues')">Shift log summary</button>
+    <button class="ai-suggestion" onclick="useAiSuggestion('List all equipment with outstanding or overdue documents')">Equipment document status</button>
+    <button class="ai-suggestion" onclick="useAiSuggestion('Are there any recurring issues across shifts this month?')">Recurring shift issues</button>
+    <button class="ai-suggestion" onclick="useAiSuggestion('Show me all COSHH sheets and risk assessments due for review')">Documents due for review</button>
   </div>
   <div id="aiHistory" style="flex:1;overflow-y:auto;padding:16px 22px;display:flex;flex-direction:column;gap:10px"></div>
   <div style="padding:12px 22px;border-top:1px solid var(--bd);flex-shrink:0">
@@ -452,6 +452,35 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 </div>
 
 <!-- ── CHANGE PASSWORD MODAL ─────────────────────────────────────── -->
+<div id="forcePwOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:2000;align-items:center;justify-content:center">
+  <div style="width:380px;max-width:94vw;background:var(--sf);border:1px solid var(--ambb);border-radius:14px;padding:28px;box-shadow:var(--e3);position:relative;overflow:hidden">
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--amb),transparent)"></div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+      <div style="width:32px;height:32px;border-radius:8px;background:var(--ambd);border:1px solid var(--ambb);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--amb)" stroke-width="2" width="15" height="15"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      <div>
+        <div style="font-family:var(--ff-head);font-weight:700;font-size:16px;color:var(--tx)">Password Reset Required</div>
+        <div style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">Your administrator has requested a password change</div>
+      </div>
+    </div>
+    <div style="margin:14px 0;padding:10px 14px;background:var(--ambd);border:1px solid var(--ambb);border-radius:var(--rsm);font-size:12px;color:var(--amb)">
+      You must set a new password before continuing.
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div>
+        <label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">New Password</label>
+        <input type="password" id="forcePwNew" class="login-input" placeholder="Min 8 characters" autocomplete="new-password" onkeydown="if(event.key==='Enter')document.getElementById('forcePwConfirm').focus()">
+      </div>
+      <div>
+        <label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Confirm New Password</label>
+        <input type="password" id="forcePwConfirm" class="login-input" placeholder="Repeat new password" autocomplete="new-password" onkeydown="if(event.key==='Enter')submitPlatformForceReset()">
+      </div>
+      <div id="forcePwMsg" style="display:none;font-size:12px;padding:8px 12px;border-radius:var(--rsm)"></div>
+      <button id="forcePwBtn" onclick="submitPlatformForceReset()" style="width:100%;height:40px;background:linear-gradient(135deg,var(--amb),#e8861a);color:#fff;border:none;border-radius:var(--rsm);font-family:var(--ff-head);font-weight:600;font-size:13px;cursor:pointer;margin-top:4px">Set New Password &amp; Continue</button>
+    </div>
+  </div>
+</div>
 <div id="changePwOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;align-items:center;justify-content:center">
   <div id="changePwModal" style="width:380px;max-width:94vw;background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:28px;box-shadow:var(--e3);position:relative;overflow:hidden">
     <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--ac3),transparent)"></div>
@@ -702,8 +731,6 @@ async function doLogin() {
 
 /* ── STEP 3: APP SELECTOR ────────────────────────────────────────── */
 async function showAppSelector(user) {
-  const name = user.email ? user.email.split('@')[0] : '—';
-  document.getElementById('headerEmail').textContent = name;
   document.getElementById('headerUser').style.display = 'flex';
   document.getElementById('logoutBtn').style.display = 'flex';
   document.getElementById('changePwBtn').style.display = 'flex';
@@ -713,13 +740,25 @@ async function showAppSelector(user) {
   try {
     const {data} = await sb.from('pw_profiles').select('*').eq('id', user.id).single();
     _platformProfile = data;
+    // Show full name, fall back to email prefix
+    const displayName = (data && data.full_name) ? data.full_name : (user.email ? user.email.split('@')[0] : '—');
+    document.getElementById('headerEmail').textContent = displayName;
     if (data && data.role === 'admin') {
       document.getElementById('adminPanelBtn').style.display = 'flex';
       document.getElementById('resetReqBtn').style.display = 'flex';
       loadResetReqBadge();
     }
     document.getElementById('aiReportBtn').style.display = 'flex';
+    // Check if linked kiln user has must_reset_password
+    try {
+      const {data: ku} = await sb.from('kiln_users').select('must_reset_password,username').eq('auth_user_id', user.id).maybeSingle();
+      if (ku && ku.must_reset_password) {
+        setTimeout(function() { openForcePwResetModal(ku.username); }, 600);
+      }
+    } catch(e2) {}
   } catch(e) {
+    const fallback = user.email ? user.email.split('@')[0] : '—';
+    document.getElementById('headerEmail').textContent = fallback;
     document.getElementById('aiReportBtn').style.display = 'flex';
   }
 }
@@ -799,6 +838,44 @@ let _platformGroqKey = null;
 let _platformProfile = null;
 const SB_URL_PLATFORM = 'https://xnkwrkoxvgptobnmekgv.supabase.co';
 const SB_KEY_PLATFORM = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhua3dya294dmdwdG9ibm1la2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NjAxNTQsImV4cCI6MjA4ODIzNjE1NH0.PrmnJ4eGepac41bQuNPG7TcBaunrfTWdjLtkGLr_2LY';
+
+let _forcePwUsername = null;
+function openForcePwResetModal(username) {
+  _forcePwUsername = username || null;
+  document.getElementById('forcePwNew').value = '';
+  document.getElementById('forcePwConfirm').value = '';
+  document.getElementById('forcePwMsg').style.display = 'none';
+  document.getElementById('forcePwOverlay').style.display = 'flex';
+  setTimeout(function() { document.getElementById('forcePwNew').focus(); }, 80);
+}
+async function submitPlatformForceReset() {
+  const newPw = document.getElementById('forcePwNew').value;
+  const conf  = document.getElementById('forcePwConfirm').value;
+  const btn   = document.getElementById('forcePwBtn');
+  const msg   = document.getElementById('forcePwMsg');
+  msg.style.display = 'none';
+  if (!newPw || !conf) { showForcePwMsg('err','Please fill in both fields.'); return; }
+  if (newPw.length < 8) { showForcePwMsg('err','Password must be at least 8 characters.'); return; }
+  if (newPw !== conf)   { showForcePwMsg('err','Passwords do not match.'); return; }
+  btn.disabled = true; btn.textContent = 'Saving…';
+  const { error } = await sb.auth.updateUser({ password: newPw });
+  if (error) { btn.disabled = false; btn.textContent = 'Set New Password & Continue'; showForcePwMsg('err', error.message); return; }
+  // Clear the must_reset_password flag in kiln_users
+  if (_forcePwUsername) {
+    await sb.from('kiln_users').update({ must_reset_password: false }).eq('username', _forcePwUsername).catch(function(){});
+  }
+  btn.disabled = false; btn.textContent = 'Set New Password & Continue';
+  showForcePwMsg('ok','Password updated successfully ✓');
+  setTimeout(function() { document.getElementById('forcePwOverlay').style.display = 'none'; }, 2000);
+}
+function showForcePwMsg(type, text) {
+  const msg = document.getElementById('forcePwMsg');
+  msg.textContent = text;
+  msg.style.display = 'block';
+  msg.style.background = type === 'ok' ? 'var(--grnd)' : 'var(--redd)';
+  msg.style.color      = type === 'ok' ? 'var(--grn)'  : 'var(--red)';
+  msg.style.border     = '1px solid ' + (type === 'ok' ? 'var(--grnb)' : 'var(--redb)');
+}
 
 /* ── CHANGE PASSWORD ─────────────────────────────────────────────── */
 function openChangePwModal() {
@@ -978,6 +1055,28 @@ async function updateUserRole(userId, newRole) {
   const u = _usersCache.find(x=>x.id===userId); if (u) u.role = newRole;
   renderAllUsers(); showPlatformToast('Docs role updated \u2713');
 }
+async function updateUserIsoRole(userId, newRole) {
+  const {error} = await sb.from('pw_profiles').update({isolation_role:newRole}).eq('id',userId);
+  if (error) { showPlatformToast('Failed: '+error.message); return; }
+  const u = _usersCache.find(x=>x.id===userId); if (u) u.isolation_role = newRole;
+  renderAllUsers(); showPlatformToast('Isolation Matrix role updated ✓');
+}
+async function updateKilnRole(username, role) {
+  const flags = {
+    is_admin:         role === 'admin',
+    is_shift_manager: role === 'shift_manager',
+    is_cement_analyst:role === 'cement_analyst',
+    is_day_staff:     role === 'day_staff',
+    is_burner:        role === 'burner',
+    is_readonly:      role === 'read_only',
+  };
+  const {error} = await sb.from('kiln_users').update(flags).eq('username', username);
+  if (error) { showPlatformToast('Failed: '+error.message); return; }
+  const u = _kilnUsersCache.find(x=>x.username===username);
+  if (u) Object.assign(u, flags);
+  renderAllUsers(); showPlatformToast('Shift Log role updated ✓');
+}
+
 async function removeUser(userId, email) {
   if (!confirm('Remove '+email+'? This will revoke their platform access immediately.')) return;
   const {error} = await sb.from('pw_profiles').delete().eq('id',userId);
