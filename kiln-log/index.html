@@ -987,8 +987,17 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
       <div class="splash-field">
         <label>Email</label>
         <div style="display:flex;align-items:center;gap:0">
-          <input type="text" id="splashUser" placeholder="username" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('splashPass').focus()" style="border-radius:var(--r) 0 0 var(--r);flex:1;min-width:0">
-          <span style="padding:0 10px;background:var(--bg2);border:1.5px solid var(--bd);border-left:none;border-radius:0 var(--r) var(--r) 0;font-size:13px;color:var(--tx3);white-space:nowrap;height:100%;display:flex;align-items:center;line-height:1;font-family:var(--ff-mono)">@heidelbergmaterials.com</span>
+          <input type="text" id="splashUser" placeholder="username" autocomplete="username"
+            oninput="syncKilnEmail()"
+            onkeydown="if(event.key==='Enter')document.getElementById('splashPass').focus()"
+            style="border-radius:var(--r) 0 0 var(--r);flex:1;min-width:0">
+          <select id="splashDomain"
+            onchange="syncKilnEmail();if(this.value==='other'){document.getElementById('splashUser').placeholder='full@address.com';document.getElementById('splashUser').type='email';}else{document.getElementById('splashUser').placeholder='username';document.getElementById('splashUser').type='text';}"
+            style="height:100%;padding:0 8px 0 4px;background:var(--bg2);border:1.5px solid var(--bd);border-left:none;border-radius:0 var(--r) var(--r) 0;color:var(--tx3);font-family:var(--ff-mono);font-size:11px;cursor:pointer;outline:none;flex-shrink:0;max-width:190px">
+            <option value="@heidelbergmaterials.com">@heidelbergmaterials.com</option>
+            <option value="other">other address…</option>
+          </select>
+          <input type="hidden" id="splashEmail">
         </div>
       </div>
       <div class="splash-field">
@@ -1621,19 +1630,30 @@ function handleSearchClick(el){
   if(weekKey && day) navigateToResult(weekKey, day);
 }
 
+function syncKilnEmail(){
+  const u = document.getElementById('splashUser').value.trim();
+  const d = document.getElementById('splashDomain') ? document.getElementById('splashDomain').value : '@heidelbergmaterials.com';
+  document.getElementById('splashEmail').value = (d === 'other') ? u : u + d;
+}
+
 async function doLogin(){
   if(Date.now() < _loginLockUntil){
     const secs = Math.ceil((_loginLockUntil - Date.now()) / 1000);
     document.getElementById('splashErr').textContent = `Too many attempts. Try again in ${secs}s.`;
     return;
   }
-  const u = document.getElementById('splashUser').value.trim().toLowerCase();
+  syncKilnEmail();
+  const u = document.getElementById('splashUser').value.trim();
   const p = document.getElementById('splashPass').value.trim();
   if(!u || !p){
-    document.getElementById('splashErr').textContent = 'Please enter your username and password.';
+    document.getElementById('splashErr').textContent = 'Please enter your email and password.';
     return;
   }
-  const email = u + '@heidelbergmaterials.com';
+  const email = document.getElementById('splashEmail').value.trim().toLowerCase();
+  if(!email || !email.includes('@')){
+    document.getElementById('splashErr').textContent = 'Please enter a valid email address.';
+    return;
+  }
   document.getElementById('splashErr').textContent = '';
 
   // Sign in via Supabase Auth
@@ -3058,33 +3078,7 @@ function renderRows(sk,entries){
         var tsDiv=tdStatus.querySelector('.status-ts');
         if(tsDiv){ tsDiv.textContent=entry.statusAt?((entry.statusBy||'')+' · '+entry.statusAt):''; }
 
-        // Sync with feedback log
-        var wk = weekStart ? toISO(weekStart) : null;
-        if(wk && entry.equipment){
-          if(v === 'Resolved' && prevStatus !== 'Resolved'){
-            // Log to feedback resolved tab
-            sbFetch('/rest/v1/kiln_feedback_log', {
-              method: 'POST',
-              body: JSON.stringify({
-                week_key:    wk,
-                day:         currentDay,
-                shift:       sk==='shift1'?'Day':'Night',
-                equipment:   entry.equipment,
-                issue:       entry.issue||'',
-                resolved_by: entry.statusBy,
-                resolved_at: new Date().toISOString()
-              })
-            }).catch(function(e){ console.warn('feedback log write failed:', e); });
-          } else if(v !== 'Resolved' && prevStatus === 'Resolved'){
-            // Remove from feedback resolved tab
-            sbFetch('/rest/v1/kiln_feedback_log?week_key=eq.'+encodeURIComponent(wk)
-              +'&day=eq.'+encodeURIComponent(currentDay)
-              +'&equipment=eq.'+encodeURIComponent(entry.equipment)
-              +'&issue=eq.'+encodeURIComponent(entry.issue||''), {
-              method: 'DELETE'
-            }).catch(function(e){ console.warn('feedback log delete failed:', e); });
-          }
-        }
+        // Status saved to kiln_log — feedback tabs read directly from kiln_log
       });
     }
     tdStatus.appendChild(stSel);
@@ -3889,186 +3883,235 @@ async function loadResolvedIssues(){
   if(!list) return;
   const canReopen = isAdmin || isDayStaff;
 
+  // Build week keys from localStorage + Supabase (same approach as loadFeedbackIssues)
+  const cutoff = resolvedRangeCutoff();
+  let weekKeys = [];
+
+  const allKeys = Object.keys(localStorage).filter(k=>k.startsWith('kbl_week_'));
+  allKeys.forEach(function(k){
+    const iso = k.replace('kbl_week_','');
+    const d = parseLocalDate(iso);
+    if(!cutoff || d >= cutoff) weekKeys.push(iso);
+  });
+
   try {
-    const cutoff = resolvedRangeCutoff();
-    let url = '/rest/v1/kiln_feedback_log?select=*&order=resolved_at.desc';
-    if(cutoff) url += '&resolved_at=gte.'+cutoff.toISOString();
-
+    let url = '/rest/v1/kiln_log?select=week_key,data';
+    if(cutoff) url += '&week_key=gte.'+toISO(cutoff);
+    url += '&order=week_key.desc';
     const rows = await sbFetch(url);
-    const countEl = document.getElementById('fbResolvedCount');
-
-    if(!rows || !rows.length){
-      if(countEl) countEl.textContent = '0 resolved';
-      list.innerHTML = '<div style="text-align:center;padding:60px 20px;color:var(--tx3);font-family:var(--ff-mono);font-size:12px;border:1px dashed var(--bd);border-radius:var(--r)">No resolved issues for this period</div>';
-      return;
+    if(rows && rows.length){
+      rows.forEach(function(r){
+        if(!weekKeys.includes(r.week_key)) weekKeys.push(r.week_key);
+      });
     }
+  } catch(e){ console.warn('Resolved load error:', e); }
 
-    // Filter by search
-    const q = _resolvedSearch.toLowerCase().trim();
-    const filtered = q ? rows.filter(function(r){
-      return (r.equipment||'').toLowerCase().includes(q)
-          || (r.issue||'').toLowerCase().includes(q)
-          || (r.resolved_by||'').toLowerCase().includes(q)
-          || (r.day||'').toLowerCase().includes(q);
-    }) : rows;
+  // Fetch week data (prefer fresh from Supabase over stale localStorage for resolved)
+  const weekDataMap = {};
+  await Promise.all(weekKeys.map(async function(iso){
+    try {
+      // Always fetch fresh from Supabase so resolved status is current
+      const rows = await sbFetch('/rest/v1/kiln_log?week_key=eq.'+iso+'&select=data&limit=1');
+      if(rows && rows.length){
+        const d = rows[0].data;
+        weekDataMap[iso] = (d && d.state) ? d.state : d;
+        return;
+      }
+      // Fall back to localStorage
+      const cached = localStorage.getItem('kbl_week_'+iso);
+      if(cached){
+        const parsed = JSON.parse(cached);
+        weekDataMap[iso] = (parsed && parsed.state) ? parsed.state : parsed;
+      }
+    } catch(e){}
+  }));
 
-    if(countEl) countEl.textContent = filtered.length + ' resolved';
+  // Extract resolved issues
+  const issues = [];
+  const cutoffTime = cutoff ? cutoff.getTime() : 0;
 
-    if(!filtered.length){
-      list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--tx3);font-family:var(--ff-mono);font-size:12px;border:1px dashed var(--bd);border-radius:var(--r)">No results match your search</div>';
-      return;
-    }
+  Object.entries(weekDataMap).forEach(function(entry){
+    const iso = entry[0], wData = entry[1];
+    if(!wData) return;
+    const weekDate = parseLocalDate(iso);
+    DAYS.forEach(function(day){
+      if(!wData[day]) return;
+      ['shift1','shift2'].forEach(function(sk, si){
+        const sd = wData[day][sk];
+        if(!sd || !sd.entries) return;
+        sd.entries.forEach(function(e, ei){
+          if(!e.equipment && !e.issue) return;
+          if(e.status !== 'Resolved') return; // only resolved
+          const shiftDate = new Date(weekDate);
+          shiftDate.setDate(shiftDate.getDate() + DAYS.indexOf(day));
+          if(cutoffTime && shiftDate.getTime() < cutoffTime) return;
+          // Use statusAt as a Date for sorting (parse "12 Mar · 14:30" or ISO)
+          let resolvedDate = shiftDate;
+          if(e.statusAt){
+            const parsed = new Date(e.statusAt);
+            if(!isNaN(parsed)) resolvedDate = parsed;
+          }
+          issues.push({
+            iso, day, sk, si, ei,
+            equipment: e.equipment||'',
+            issue: e.issue||'',
+            resolvedBy: e.statusBy||'',
+            resolvedAt: e.statusAt||'',
+            resolvedDate,
+            burner: sd.burner||'',
+            shiftDate
+          });
+        });
+      });
+    });
+  });
 
-    // Store for reopen
-    window._fbResolved = filtered;
+  // Sort newest first
+  issues.sort(function(a,b){ return b.resolvedDate - a.resolvedDate; });
 
-    list.innerHTML = filtered.map(function(r, idx){
-      const resolvedAt = r.resolved_at ? new Date(r.resolved_at) : null;
-      const resolvedDateStr = resolvedAt ? resolvedAt.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+' · '+resolvedAt.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) : '—';
-      const equipHtml = esc(r.equipment||'') || '<span style="color:var(--tx3)">No equipment</span>';
-      const issueHtml = esc(r.issue||'') || '<span style="color:var(--tx3)">No description</span>';
+  const countEl = document.getElementById('fbResolvedCount');
 
-      const reopenBtn = canReopen
-        ? '<button onclick="reopenFeedbackIssue('+idx+')"'
-          +' style="padding:5px 12px;font-size:11px;font-family:var(--ff-mono);border-radius:var(--rxs);'
-          +'border:1px solid var(--redb);background:var(--redd);color:var(--red);'
-          +'cursor:pointer;white-space:nowrap;transition:all .14s"'
-          +' onmouseover="this.style.background=\'var(--redb)\'"'
-          +' onmouseout="this.style.background=\'var(--redd)\'">↩ Reopen</button>'
-        : '';
+  // Filter by search
+  const q = _resolvedSearch.toLowerCase().trim();
+  const filtered = q ? issues.filter(function(iss){
+    return iss.equipment.toLowerCase().includes(q)
+        || iss.issue.toLowerCase().includes(q)
+        || iss.resolvedBy.toLowerCase().includes(q)
+        || iss.day.toLowerCase().includes(q);
+  }) : issues;
 
-      // Audit trail
-      const auditHtml = ''
-        +'<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--bd)">'
-        +'<div style="font-size:10px;font-family:var(--ff-mono);color:var(--grn)">✓ Resolved by <strong>'+esc(r.resolved_by||'Unknown')+'</strong> · '+resolvedDateStr+'</div>'
-        +'</div>';
+  if(countEl) countEl.textContent = filtered.length + ' resolved';
 
-      return '<div id="res-item-'+idx+'" style="background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:14px 18px;box-shadow:var(--e1)">'
-        +'<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">'
-        +'<div style="flex:1;min-width:0">'
-        +'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px">'
-        +'<span style="font-family:var(--ff-head);font-weight:700;font-size:14px;color:var(--tx)">'+equipHtml+'</span>'
-        +'<span style="display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;font-family:var(--ff-mono);background:var(--grnd);color:var(--grn);border:1px solid var(--grnb)">Resolved</span>'
-        +'</div>'
-        +'<div style="font-size:13px;color:var(--tx2);margin-bottom:6px;line-height:1.5">'+issueHtml+'</div>'
-        +'<div style="display:flex;gap:14px;flex-wrap:wrap;font-size:10px;font-family:var(--ff-mono);color:var(--tx3)">'
-        +(r.day ? '<span>📆 '+esc(r.day)+'</span>' : '')
-        +(r.shift ? '<span>🔄 '+esc(r.shift)+' Shift</span>' : '')
-        +'</div>'
-        +auditHtml
-        +'</div>'
-        +'<div style="flex-shrink:0;margin-top:2px">'+reopenBtn+'</div>'
-        +'</div>'
-        +'</div>';
-    }).join('');
-
-  } catch(e){
-    console.warn('Failed to load resolved issues:', e);
-    const list2 = document.getElementById('fbResolvedList');
-    if(list2) list2.innerHTML = '<div style="text-align:center;padding:40px;color:var(--red);font-family:var(--ff-mono);font-size:12px">Failed to load resolved issues</div>';
+  if(!filtered.length){
+    list.innerHTML = q
+      ? '<div style="text-align:center;padding:40px;color:var(--tx3);font-family:var(--ff-mono);font-size:12px;border:1px dashed var(--bd);border-radius:var(--r)">No results match your search</div>'
+      : '<div style="text-align:center;padding:60px 20px;color:var(--tx3);font-family:var(--ff-mono);font-size:12px;border:1px dashed var(--bd);border-radius:var(--r)">No resolved issues for this period</div>';
+    return;
   }
+
+  window._fbResolved = filtered;
+
+  list.innerHTML = filtered.map(function(iss, idx){
+    const equipHtml = esc(iss.equipment) || '<span style="color:var(--tx3)">No equipment</span>';
+    const issueHtml = esc(iss.issue)     || '<span style="color:var(--tx3)">No description</span>';
+    const dateStr   = iss.shiftDate.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+
+    const reopenBtn = canReopen
+      ? '<button onclick="reopenFeedbackIssue('+idx+')"'
+        +' style="padding:5px 12px;font-size:11px;font-family:var(--ff-mono);border-radius:var(--rxs);'
+        +'border:1px solid var(--redb);background:var(--redd);color:var(--red);'
+        +'cursor:pointer;white-space:nowrap;transition:all .14s"'
+        +' onmouseover="this.style.background=\'var(--redb)\'"'
+        +' onmouseout="this.style.background=\'var(--redd)\'">↩ Reopen</button>'
+      : '';
+
+    const auditHtml = iss.resolvedBy
+      ? '<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--bd)">'
+        +'<div style="font-size:10px;font-family:var(--ff-mono);color:var(--grn)">✓ Resolved by <strong>'+esc(iss.resolvedBy)+'</strong>'+(iss.resolvedAt?' · '+esc(iss.resolvedAt):'')+'</div>'
+        +'</div>'
+      : '';
+
+    return '<div id="res-item-'+idx+'" style="background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:14px 18px;box-shadow:var(--e1)">'
+      +'<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">'
+      +'<div style="flex:1;min-width:0">'
+      +'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px">'
+      +'<span style="font-family:var(--ff-head);font-weight:700;font-size:14px;color:var(--tx)">'+equipHtml+'</span>'
+      +'<span style="display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;font-family:var(--ff-mono);background:var(--grnd);color:var(--grn);border:1px solid var(--grnb)">Resolved</span>'
+      +'</div>'
+      +'<div style="font-size:13px;color:var(--tx2);margin-bottom:6px;line-height:1.5">'+issueHtml+'</div>'
+      +'<div style="display:flex;gap:14px;flex-wrap:wrap;font-size:10px;font-family:var(--ff-mono);color:var(--tx3)">'
+      +'<span>📅 '+dateStr+'</span>'
+      +(iss.day ? '<span>📆 '+esc(iss.day)+'</span>' : '')
+      +'<span>🔄 '+(iss.si===0?'Day':'Night')+' Shift</span>'
+      +(iss.burner ? '<span>👷 '+esc(iss.burner)+'</span>' : '')
+      +'</div>'
+      +auditHtml
+      +'</div>'
+      +'<div style="flex-shrink:0;margin-top:2px">'+reopenBtn+'</div>'
+      +'</div>'
+      +'</div>';
+  }).join('');
 }
 
+
 async function reopenFeedbackIssue(idx){
-  const r = window._fbResolved && window._fbResolved[idx];
-  if(!r){ console.error('reopenFeedbackIssue: no record at idx', idx, window._fbResolved); return; }
+  const iss = window._fbResolved && window._fbResolved[idx];
+  if(!iss){ console.error('reopenFeedbackIssue: no record at idx', idx); return; }
   const reopenerName = lockedName || currentUser || '';
   const now = new Date();
   const ts = now.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})+' '+now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
 
-  // Step 1: try to flip the kiln_log entry back to Ongoing (best-effort, don't abort if missing)
   try {
-    if(r.week_key){
-      const rows = await sbFetch('/rest/v1/kiln_log?week_key=eq.'+encodeURIComponent(r.week_key)+'&select=data&limit=1');
-      if(rows && rows.length){
-        const payload = rows[0].data;
-        const wState = (payload && payload.state) ? payload.state : payload;
-        const sk = r.shift === 'Day' ? 'shift1' : 'shift2';
-        const shiftData = wState[r.day] && wState[r.day][sk];
-        if(shiftData && shiftData.entries){
-          const entry = shiftData.entries.find(function(e){
-            return e.equipment === r.equipment && e.issue === r.issue;
-          });
-          if(entry){
-            entry.status   = 'Ongoing';
-            entry.statusBy = reopenerName;
-            entry.statusAt = ts;
-            await sbFetch('/rest/v1/kiln_log?week_key=eq.'+encodeURIComponent(r.week_key), {
-              method: 'PATCH',
-              headers: { 'Prefer': 'return=minimal' },
-              body: JSON.stringify({ data: payload, updated_at: now.toISOString() })
-            });
-            localStorage.setItem('kbl_week_'+r.week_key, JSON.stringify(payload));
+    // Load fresh data
+    const rows = await sbFetch('/rest/v1/kiln_log?week_key=eq.'+encodeURIComponent(iss.iso)+'&select=data&limit=1');
+    if(!rows || !rows.length){ showToast('Could not load week data'); return; }
+    const payload = rows[0].data;
+    const wState = (payload && payload.state) ? payload.state : payload;
+    const shiftData = wState[iss.day] && wState[iss.day][iss.sk];
+    if(!shiftData || !shiftData.entries){ showToast('Shift data not found'); return; }
 
-            // Sync live in-memory state if same week is loaded
-            if(weekStart && toISO(weekStart) === r.week_key){
-              const sk = r.shift === 'Day' ? 'shift1' : 'shift2';
-              if(state[r.day] && state[r.day][sk] && state[r.day][sk].entries){
-                const liveEntry = state[r.day][sk].entries.find(function(e){
-                  return e.equipment === r.equipment && e.issue === r.issue;
-                });
-                if(liveEntry){
-                  liveEntry.status   = 'Ongoing';
-                  liveEntry.statusBy = reopenerName;
-                  liveEntry.statusAt = ts;
-                  if(currentDay === r.day){
-                    const tbody = document.getElementById('tbody-'+sk);
-                    if(tbody){
-                      const entryIdx = state[r.day][sk].entries.indexOf(liveEntry);
-                      const rows = tbody.querySelectorAll('tr');
-                      if(rows[entryIdx]){
-                        const stSel = rows[entryIdx].querySelector('select');
-                        const tsDiv = rows[entryIdx].querySelector('.status-ts');
-                        if(stSel){ stSel.value = 'Ongoing'; stSel.style.cssText='width:100%;padding:4px 6px;border-radius:6px;font-size:12px;font-weight:600;border:1.5px solid #dc2626;background:#dc262618;color:#dc2626;cursor:default;'; }
-                        if(tsDiv){ tsDiv.textContent = reopenerName + ' · ' + ts; }
-                      }
-                    }
-                  }
-                }
+    // Find the entry
+    let entry = shiftData.entries[iss.ei];
+    if(!entry || entry.equipment !== iss.equipment){
+      entry = shiftData.entries.find(function(e){
+        return e.equipment === iss.equipment && e.issue === iss.issue;
+      });
+    }
+    if(!entry){ showToast('Entry not found — it may have changed'); return; }
+
+    entry.status   = 'Ongoing';
+    entry.statusBy = reopenerName;
+    entry.statusAt = ts;
+
+    await sbFetch('/rest/v1/kiln_log?week_key=eq.'+encodeURIComponent(iss.iso), {
+      method: 'PATCH',
+      body: JSON.stringify({ data: payload, updated_at: now.toISOString() })
+    });
+    localStorage.setItem('kbl_week_'+iss.iso, JSON.stringify(payload));
+
+    // Sync live in-memory state if same week
+    if(weekStart && toISO(weekStart) === iss.iso){
+      if(state[iss.day] && state[iss.day][iss.sk] && state[iss.day][iss.sk].entries){
+        const liveEntry = state[iss.day][iss.sk].entries.find(function(e){
+          return e.equipment === iss.equipment && e.issue === iss.issue;
+        });
+        if(liveEntry){
+          liveEntry.status   = 'Ongoing';
+          liveEntry.statusBy = reopenerName;
+          liveEntry.statusAt = ts;
+          if(currentDay === iss.day){
+            const tbody = document.getElementById('tbody-'+iss.sk);
+            if(tbody){
+              const entryIdx = state[iss.day][iss.sk].entries.indexOf(liveEntry);
+              const trows = tbody.querySelectorAll('tr');
+              if(trows[entryIdx]){
+                const stSel = trows[entryIdx].querySelector('select');
+                const tsDiv = trows[entryIdx].querySelector('.status-ts');
+                if(stSel){ stSel.value = 'Ongoing'; stSel.style.cssText='width:100%;padding:4px 6px;border-radius:6px;font-size:12px;font-weight:600;border:1.5px solid #dc2626;background:#dc262618;color:#dc2626;cursor:default;'; }
+                if(tsDiv){ tsDiv.textContent = reopenerName + ' · ' + ts; }
               }
             }
           }
         }
       }
     }
-  } catch(e){
-    console.warn('reopenFeedbackIssue: kiln_log update failed (non-fatal):', e);
-  }
 
-  // Step 2: delete the feedback_log row so it disappears from resolved list
-  try {
-    const res = await fetch(SB_URL + '/rest/v1/kiln_feedback_log?id=eq.'+encodeURIComponent(r.id), {
-      method: 'DELETE',
-      headers: {
-        'apikey': SB_KEY,
-        'Authorization': 'Bearer ' + SB_KEY,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=minimal'
-      }
-    });
-    if(!res.ok){
-      const txt = await res.text();
-      console.error('reopenFeedbackIssue: feedback_log DELETE failed', res.status);
-      showToast('Reopen failed: ' + res.status + ' — ' + txt.slice(0,80));
-      return;
+    showToast('Issue reopened ✓');
+    const card = document.getElementById('res-item-'+idx);
+    if(card){
+      card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+      card.style.opacity = '0';
+      card.style.transform = 'translateX(-20px)';
+      setTimeout(function(){ loadFeedbackIssues(); loadResolvedIssues(); }, 320);
+    } else {
+      loadFeedbackIssues(); loadResolvedIssues();
     }
   } catch(e){
-    console.error('reopenFeedbackIssue: fetch error:', e);
+    console.error('Reopen failed:', e);
     showToast('Failed to reopen — check connection');
-    return;
-  }
-
-  showToast('Issue reopened ✓');
-  const card = document.getElementById('res-item-'+idx);
-  if(card){
-    card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-    card.style.opacity = '0';
-    card.style.transform = 'translateX(-20px)';
-    setTimeout(function(){ loadFeedbackIssues(); loadResolvedIssues(); }, 320);
-  } else {
-    loadFeedbackIssues(); loadResolvedIssues();
   }
 }
+
 
 function resolvedRangeCutoff(){
   const now = new Date();
