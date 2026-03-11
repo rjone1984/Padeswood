@@ -930,8 +930,19 @@ async function doLogout(){
 async function launchApp(){
   document.getElementById('splash').style.display='none';
   const app=document.getElementById('appWrapper'); app.style.display='flex';
-  const name=currentProfile.full_name||currentProfile.email||'—';
-  document.getElementById('headerEmail').textContent=name.includes('@')?name.split('@')[0]:name;
+  const rawName=currentProfile.full_name||'';
+  const emailPrefix=(currentProfile.email||'').split('@')[0]||'—';
+  document.getElementById('headerEmail').textContent=rawName||emailPrefix;
+  // Try kiln_users.locked_name as fallback if full_name missing
+  if(!rawName){
+    sb.auth.getSession().then(function(r){
+      const uid=r.data&&r.data.session&&r.data.session.user&&r.data.session.user.id;
+      if(!uid) return;
+      sb.from('kiln_users').select('locked_name').eq('auth_user_id',uid).maybeSingle().then(function(res){
+        if(res.data&&res.data.locked_name) document.getElementById('headerEmail').textContent=res.data.locked_name;
+      });
+    });
+  }
   const role=isoRole();
   if(role==='none'){
     document.getElementById('splash').style.display='flex';

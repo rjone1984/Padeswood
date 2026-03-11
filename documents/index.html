@@ -840,8 +840,20 @@ function launchApp(){
   document.getElementById('splash').style.display='none';
   const app = document.getElementById('appWrapper');
   app.style.display='flex';
-  const name = currentProfile.full_name||currentProfile.email||'—';
-  document.getElementById('headerEmail').textContent = name.includes('@') ? name.split('@')[0] : name;
+  // Use full_name, fall back to email prefix; kiln locked_name loaded below
+  const rawName = currentProfile.full_name || '';
+  const emailPrefix = (currentProfile.email||'').split('@')[0] || '—';
+  document.getElementById('headerEmail').textContent = rawName || emailPrefix;
+  // Also try kiln_users.locked_name if full_name is missing
+  if (!rawName) {
+    sb.auth.getSession().then(function(r){
+      const uid = r.data&&r.data.session&&r.data.session.user&&r.data.session.user.id;
+      if(!uid) return;
+      sb.from('kiln_users').select('locked_name').eq('auth_user_id',uid).maybeSingle().then(function(res){
+        if(res.data&&res.data.locked_name) document.getElementById('headerEmail').textContent = res.data.locked_name;
+      });
+    });
+  }
   const role = currentProfile.role||'viewer';
   const rb = document.getElementById('headerRole');
   rb.textContent = role.charAt(0).toUpperCase()+role.slice(1);

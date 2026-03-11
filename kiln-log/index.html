@@ -1725,7 +1725,7 @@ async function _applyUserSession(match){
 
   document.getElementById('splash').style.display='none';
   document.getElementById('app').style.display='block';
-  document.getElementById('userLabel').textContent = lockedName || currentUser;
+  document.getElementById('userLabel').textContent = currentUser;
   document.getElementById('manageListsBtn').style.display = isAdmin ? '' : 'none';
   const _cdBtn = document.getElementById('clearDayBtn'); if(_cdBtn) _cdBtn.style.display = isAdmin ? '' : 'none';
   const _canPrint = isAdmin || isShiftManager;
@@ -1799,11 +1799,8 @@ function doLogout(){
   ['kbl_pw5','kbl_users'].forEach(k => { try{ localStorage.removeItem(k); }catch(e){} });
   document.body.classList.remove('read-only-mode');
   const _wdLogout=document.getElementById('weekDate'); if(_wdLogout)_wdLogout.disabled=false;
-  document.getElementById('splash').style.display='flex';
-  document.getElementById('app').style.display='none';
-  document.getElementById('splashUser').value='';
-  document.getElementById('splashPass').value='';
-  document.getElementById('splashErr').textContent='';
+  // Redirect to platform login instead of showing kiln splash
+  window.location.href = '../index.html';
   document.getElementById('manageUsersBtn').style.display='none';
   const _rrBtn = document.getElementById('resetRequestsBtn');
   if(_rrBtn) _rrBtn.style.display='none';

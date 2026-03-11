@@ -749,11 +749,17 @@ async function showAppSelector(user) {
       loadResetReqBadge();
     }
     document.getElementById('aiReportBtn').style.display = 'flex';
-    // Check if linked kiln user has must_reset_password
+    // Check kiln_users for must_reset + locked_name fallback
     try {
-      const {data: ku} = await sb.from('kiln_users').select('must_reset_password,username').eq('auth_user_id', user.id).maybeSingle();
-      if (ku && ku.must_reset_password) {
-        setTimeout(function() { openForcePwResetModal(ku.username); }, 600);
+      const {data: ku} = await sb.from('kiln_users').select('must_reset_password,username,locked_name').eq('auth_user_id', user.id).maybeSingle();
+      if (ku) {
+        // If pw_profiles has no full_name, use locked_name from kiln_users
+        if ((!data || !data.full_name) && ku.locked_name) {
+          document.getElementById('headerEmail').textContent = ku.locked_name;
+        }
+        if (ku.must_reset_password) {
+          setTimeout(function() { openForcePwResetModal(ku.username); }, 600);
+        }
       }
     } catch(e2) {}
   } catch(e) {
