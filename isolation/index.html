@@ -1,1 +1,1388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PW Isolation">
+<meta name="theme-color" content="#111418">
+<title>Padeswood Works — Isolation Matrices</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Figtree:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+/* =====================================================================
+   PADESWOOD WORKS — ISOLATION MATRICES — Design System v4
+   Tables: pw_profiles, pw_equipment (shared with docs),
+           pw_isolation_matrices, pw_isolation_points
+   Supabase project: xnkwrkoxvgptobnmekgv
+===================================================================== */
+:root {
+  --ff-head:'Outfit',sans-serif; --ff-body:'Figtree',sans-serif; --ff-mono:'Fira Code',monospace;
+  --bg:#111418; --sf:#16191f; --sf2:#1c2028; --sf3:#222830; --sf4:#282f3a;
+  --bd:#252c38; --bd2:#2f3a4a; --bd3:#3d4e62;
+  --ac:#1a7a35; --ac2:#22a847; --ac3:#2ecc5c;
+  --acd1:rgba(26,122,53,.10); --acd2:rgba(26,122,53,.18); --acd3:rgba(26,122,53,.28);
+  --tx:#dde4ee; --tx2:#6b7a96; --tx3:#323d50;
+  --red:#f0524f; --redd:rgba(240,82,79,.10); --redb:rgba(240,82,79,.28);
+  --grn:#21c27a; --grnd:rgba(33,194,122,.10); --grnb:rgba(33,194,122,.28);
+  --amb:#f5a623; --ambd:rgba(245,166,35,.10); --ambb:rgba(245,166,35,.28);
+  --pur:#9b74e8; --purd:rgba(155,116,232,.10); --purb:rgba(155,116,232,.28);
+  --r:10px; --rsm:7px; --rxs:5px;
+  --e1:0 1px 3px rgba(0,0,0,.55),0 1px 2px rgba(0,0,0,.4);
+  --e2:0 4px 18px rgba(0,0,0,.6); --e3:0 20px 56px rgba(0,0,0,.72);
+  --eac:0 4px 22px rgba(26,122,53,.35);
+  --inp:var(--sf3);
+}
+.light-mode {
+  --bg:#f0f3f8; --sf:#ffffff; --sf2:#f5f7fc; --sf3:#eaeef6; --sf4:#e0e6f2;
+  --bd:#d0d8ea; --bd2:#b8c4db; --bd3:#98a8c4;
+  --ac:#155c28; --ac2:#1a7a35; --ac3:#22a847;
+  --acd1:rgba(21,92,40,.07); --acd2:rgba(21,92,40,.14); --acd3:rgba(21,92,40,.24);
+  --tx:#0d1526; --tx2:#4a5870; --tx3:#9aaabf;
+  --red:#d93f3c; --redd:rgba(217,63,60,.07); --redb:rgba(217,63,60,.22);
+  --grn:#15924f; --grnd:rgba(21,146,79,.07); --grnb:rgba(21,146,79,.22);
+  --amb:#c97d10; --ambd:rgba(201,125,16,.07); --ambb:rgba(201,125,16,.22);
+  --pur:#7a50c8; --purd:rgba(122,80,200,.07); --purb:rgba(122,80,200,.22);
+  --e1:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --e2:0 4px 18px rgba(0,0,0,.08); --e3:0 20px 56px rgba(0,0,0,.12);
+  --eac:0 4px 22px rgba(10,138,134,.20);
+  --inp:#edf0f8;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--ff-body);background:var(--bg);color:var(--tx);min-height:100vh;
+  font-size:13.5px;line-height:1.55;-webkit-font-smoothing:antialiased;
+  transition:background .28s,color .28s;display:flex;flex-direction:column;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:radial-gradient(circle,rgba(232,134,26,.05) 1px,transparent 1px);
+  background-size:28px 28px;}
+.light-mode::before{background-image:radial-gradient(circle,rgba(196,106,8,.04) 1px,transparent 1px);}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--sf)}
+::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--bd3)}
 
+/* ── LICENCE OVERLAY ─────────────────────────────────────────────── */
+#licenceOverlay{position:fixed;inset:0;background:var(--bg);z-index:10000;
+  display:flex;align-items:center;justify-content:center;}
+.lic-inner{width:360px;max-width:92vw;text-align:center;background:var(--sf);
+  border:1px solid var(--bd);border-radius:14px;padding:36px 32px 32px;
+  box-shadow:var(--e3);position:relative;overflow:hidden;}
+.lic-inner::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--ac2),transparent);}
+.lic-logo{width:48px;height:48px;background:linear-gradient(135deg,var(--ac),var(--ac3));
+  border-radius:11px;display:flex;align-items:center;justify-content:center;
+  margin:0 auto 16px;box-shadow:var(--eac);font-size:22px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── SPLASH / AUTH ───────────────────────────────────────────────── */
+#splash{position:fixed;inset:0;background:var(--bg);z-index:9999;
+  display:none;align-items:center;justify-content:center;}
+#splash::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,transparent 0%,var(--ac3) 50%,transparent 100%);opacity:.5;}
+.splash-inner{width:380px;max-width:94vw;position:relative;z-index:1}
+.splash-logo{width:52px;height:52px;background:linear-gradient(135deg,var(--ac),var(--ac3));
+  border-radius:12px;display:flex;align-items:center;justify-content:center;
+  margin:0 auto 18px;box-shadow:var(--eac);font-size:24px;}
+.splash-title{font-family:var(--ff-head);font-weight:700;font-size:24px;
+  text-align:center;letter-spacing:-.5px;margin-bottom:4px;color:var(--tx);}
+.splash-sub{font-family:var(--ff-mono);font-size:9px;letter-spacing:2.5px;
+  text-transform:uppercase;color:var(--tx3);text-align:center;margin-bottom:28px;}
+.splash-loader{height:3px;background:var(--bd);border-radius:2px;margin-bottom:20px;overflow:hidden;}
+.splash-loader-bar{height:100%;width:0;background:linear-gradient(90deg,var(--ac),var(--ac3));border-radius:2px;}
+.splash-card{background:var(--sf);border:1px solid var(--bd);border-radius:14px;
+  padding:28px 28px 24px;box-shadow:var(--e3);position:relative;overflow:hidden;}
+.splash-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--ac2),transparent);}
+.splash-field{margin-bottom:16px}
+.splash-field label{display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--tx3);margin-bottom:7px;}
+.splash-input{width:100%;height:40px;padding:0 12px;background:var(--inp);
+  border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);
+  font-family:var(--ff-body);font-size:13.5px;transition:border-color .18s,box-shadow .18s;outline:none;}
+.splash-input:focus{border-color:var(--ac3);box-shadow:0 0 0 3px var(--acd1);}
+.splash-btn{width:100%;height:42px;margin-top:8px;
+  background:linear-gradient(135deg,var(--ac),var(--ac3));color:#fff;border:none;
+  border-radius:var(--rsm);font-family:var(--ff-head);font-weight:600;font-size:14px;
+  cursor:pointer;box-shadow:var(--eac);transition:opacity .18s;}
+.splash-btn:hover{opacity:.9;}
+.splash-btn:disabled{opacity:.5;cursor:not-allowed;}
+.splash-err{font-size:12px;color:var(--red);background:var(--redd);border:1px solid var(--redb);
+  border-radius:var(--rsm);padding:8px 12px;margin-top:12px;display:none;}
+
+/* ── HEADER ──────────────────────────────────────────────────────── */
+#mainHeader{position:sticky;top:0;z-index:100;border-bottom:1px solid var(--bd);
+  background:var(--sf);padding:0 20px;display:flex;align-items:center;gap:12px;
+  height:56px;flex-shrink:0;}
+.header-back{width:32px;height:32px;border-radius:var(--rsm);border:1px solid var(--bd);
+  background:transparent;color:var(--tx2);cursor:pointer;display:flex;align-items:center;
+  justify-content:center;font-size:14px;transition:border-color .18s,color .18s;text-decoration:none;}
+.header-back:hover{border-color:var(--ac3);color:var(--ac3);}
+.header-logo{width:32px;height:32px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--ac),var(--ac3));
+  border-radius:7px;display:flex;align-items:center;justify-content:center;
+  font-size:16px;box-shadow:var(--eac);}
+.header-titles{flex:1}
+.header-name{font-family:var(--ff-head);font-weight:700;font-size:14px;color:var(--tx);letter-spacing:-.2px;}
+.header-sub{font-family:var(--ff-mono);font-size:9px;letter-spacing:1.8px;text-transform:uppercase;color:var(--tx3);}
+.header-right{display:flex;align-items:center;gap:8px}
+.header-user{font-family:var(--ff-mono);font-size:10px;color:var(--tx3);
+  padding:4px 10px;border:1px solid var(--bd);border-radius:var(--rxs);
+  display:flex;align-items:center;gap:6px;}
+.role-badge{font-size:8px;letter-spacing:1px;text-transform:uppercase;
+  padding:2px 6px;border-radius:3px;font-weight:600;}
+.role-admin{background:var(--acd2);color:var(--ac3);}
+.role-reviewer{background:var(--purd);color:var(--pur);}
+.role-editor{background:var(--ambd);color:var(--amb);}
+.role-viewer{background:var(--sf3);color:var(--tx3);border:1px solid var(--bd);}
+.icon-btn{width:32px;height:32px;border-radius:var(--rsm);border:1px solid var(--bd);
+  background:transparent;color:var(--tx2);cursor:pointer;display:flex;align-items:center;
+  justify-content:center;font-size:13px;transition:border-color .18s,color .18s,background .18s;}
+.icon-btn:hover{border-color:var(--ac3);color:var(--ac3);background:var(--acd1);}
+
+/* ── TABS ────────────────────────────────────────────────────────── */
+#tabBar{position:sticky;top:56px;z-index:90;background:var(--sf2);
+  border-bottom:1px solid var(--bd);display:flex;align-items:center;
+  padding:0 20px;gap:2px;overflow-x:auto;flex-shrink:0;}
+#tabBar::-webkit-scrollbar{height:0}
+.tab-btn{height:46px;padding:0 16px;border:none;background:transparent;
+  color:var(--tx2);font-family:var(--ff-body);font-size:13px;font-weight:500;
+  cursor:pointer;border-bottom:2px solid transparent;transition:color .18s,border-color .18s;
+  white-space:nowrap;display:flex;align-items:center;gap:7px;}
+.tab-btn:hover{color:var(--tx);}
+.tab-btn.active{color:var(--ac3);border-bottom-color:var(--ac3);font-weight:600;}
+.tab-count{font-family:var(--ff-mono);font-size:9px;color:var(--tx3);
+  background:var(--sf3);border:1px solid var(--bd);padding:1px 5px;border-radius:3px;}
+
+/* ── MAIN ────────────────────────────────────────────────────────── */
+#mainContent{flex:1;position:relative;z-index:1;padding:24px 20px 48px;
+  max-width:1200px;margin:0 auto;width:100%;}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* ── TOOLBAR / BUTTONS ───────────────────────────────────────────── */
+.list-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.search-wrap{flex:1;min-width:200px;position:relative;}
+.search-wrap svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);
+  color:var(--tx3);pointer-events:none;}
+.search-input{width:100%;height:36px;padding:0 12px 0 34px;background:var(--inp);
+  border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);
+  font-family:var(--ff-body);font-size:13px;transition:border-color .18s,box-shadow .18s;outline:none;}
+.search-input:focus{border-color:var(--ac3);box-shadow:0 0 0 3px var(--acd1);}
+.filter-select{height:36px;padding:0 10px;background:var(--inp);border:1px solid var(--bd2);
+  border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-mono);font-size:11px;outline:none;cursor:pointer;}
+.btn{height:36px;padding:0 16px;border-radius:var(--rsm);font-family:var(--ff-head);
+  font-weight:600;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px;
+  transition:opacity .18s,box-shadow .18s;border:none;white-space:nowrap;}
+.btn-primary{background:linear-gradient(135deg,var(--ac),var(--ac3));color:#fff;box-shadow:var(--eac);}
+.btn-primary:hover{opacity:.9;}
+.btn-iso{background:linear-gradient(135deg,var(--ac),var(--ac3));color:#fff;box-shadow:var(--eac);}
+.btn-iso:hover{opacity:.9;}
+.btn-ghost{background:transparent;border:1px solid var(--bd);color:var(--tx2);}
+.btn-ghost:hover{border-color:var(--ac3);color:var(--ac3);background:var(--acd1);}
+.btn-danger{background:transparent;border:1px solid var(--redb);color:var(--red);height:28px;padding:0 10px;font-size:11px;font-family:var(--ff-mono);cursor:pointer;border-radius:var(--rxs);}
+.btn-danger:hover{background:var(--redd);}
+
+/* ── STATS GRID ──────────────────────────────────────────────────── */
+.dash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:28px;}
+.stat-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);
+  padding:16px 18px;position:relative;overflow:hidden;}
+.stat-card::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px;}
+.stat-card.s-total::before{background:var(--ac3);}
+.stat-card.s-active::before{background:var(--grn);}
+.stat-card.s-draft::before{background:var(--amb);}
+.stat-card.s-review::before{background:var(--pur);}
+.stat-label{font-family:var(--ff-mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:8px;}
+.stat-num{font-family:var(--ff-head);font-weight:800;font-size:28px;line-height:1;letter-spacing:-1px;}
+.stat-card.s-total .stat-num{color:var(--ac3);}
+.stat-card.s-active .stat-num{color:var(--grn);}
+.stat-card.s-draft .stat-num{color:var(--amb);}
+.stat-card.s-review .stat-num{color:var(--pur);}
+.stat-sub{font-size:11px;color:var(--tx3);margin-top:4px;}
+
+/* ── MATRIX CARDS ────────────────────────────────────────────────── */
+.matrix-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;}
+.matrix-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);
+  padding:18px;cursor:pointer;transition:border-color .22s,box-shadow .22s,transform .14s;
+  position:relative;overflow:hidden;}
+.matrix-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--ac),var(--ac3));opacity:0;transition:opacity .22s;}
+.matrix-card:hover{border-color:var(--acd3);box-shadow:0 4px 22px rgba(26,122,53,.18);transform:translateY(-2px);}
+.matrix-card:hover::before{opacity:1;}
+.mc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;gap:8px;}
+.mc-icon{width:38px;height:38px;border-radius:8px;background:var(--acd1);border:1px solid var(--acd3);
+  display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.mc-status-pill{font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;
+  padding:3px 8px;border-radius:3px;font-weight:600;}
+.s-draft-pill{background:var(--sf3);color:var(--tx3);border:1px solid var(--bd);}
+.s-active-pill{background:var(--grnd);color:var(--grn);border:1px solid var(--grnb);}
+.s-review-pill{background:var(--purd);color:var(--pur);border:1px solid var(--purb);}
+.s-archived-pill{background:var(--redd);color:var(--red);border:1px solid var(--redb);}
+.mc-title{font-family:var(--ff-head);font-weight:700;font-size:14px;color:var(--tx);
+  letter-spacing:-.2px;margin-bottom:4px;line-height:1.35;}
+.mc-equip{font-size:12px;color:var(--tx2);}
+.mc-meta{display:flex;align-items:center;gap:10px;margin-top:12px;padding-top:12px;
+  border-top:1px solid var(--bd);flex-wrap:wrap;}
+.mc-meta-item{font-family:var(--ff-mono);font-size:10px;color:var(--tx3);
+  display:flex;align-items:center;gap:4px;}
+.mc-pts-badge{background:var(--acd1);border:1px solid var(--acd3);color:var(--ac3);
+  font-family:var(--ff-mono);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;}
+.empty-state{text-align:center;padding:60px 20px;color:var(--tx3);font-size:13px;}
+.empty-state svg{opacity:.25;margin-bottom:14px;display:block;margin-left:auto;margin-right:auto;}
+.empty-state p{color:var(--tx2);margin-bottom:16px;}
+
+/* ── MATRIX DETAIL PANEL ─────────────────────────────────────────── */
+#detailOverlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:300;
+  display:none;align-items:flex-start;justify-content:center;padding:20px;
+  overflow-y:auto;backdrop-filter:blur(3px);}
+#detailOverlay.open{display:flex;}
+#detailBox{background:var(--sf);border:1px solid var(--bd2);border-radius:14px;
+  width:100%;max-width:720px;box-shadow:var(--e3);margin:auto;overflow:hidden;}
+.detail-head{padding:20px 24px 16px;border-bottom:1px solid var(--bd);
+  display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+.detail-title-area{flex:1;min-width:0;}
+.detail-title{font-family:var(--ff-head);font-weight:700;font-size:18px;color:var(--tx);letter-spacing:-.3px;}
+.detail-equip{font-size:12.5px;color:var(--tx2);margin-top:3px;}
+.detail-actions{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap;}
+.detail-meta-bar{padding:12px 24px;background:var(--sf2);border-bottom:1px solid var(--bd);
+  display:flex;gap:14px;flex-wrap:wrap;}
+.detail-meta-item{font-family:var(--ff-mono);font-size:10px;color:var(--tx3);
+  display:flex;align-items:center;gap:5px;}
+.detail-notes{margin:16px 24px;background:var(--ambd);border:1px solid var(--ambb);
+  border-radius:var(--rsm);padding:10px 14px;font-size:12.5px;color:var(--amb);}
+.detail-desc{margin:16px 24px 0;font-size:13px;color:var(--tx2);line-height:1.65;}
+
+/* ── ISOLATION POINTS TABLE ──────────────────────────────────────── */
+.points-header{padding:16px 24px 10px;display:flex;align-items:center;justify-content:space-between;}
+.points-header h3{font-family:var(--ff-head);font-weight:700;font-size:13px;color:var(--tx);
+  text-transform:uppercase;letter-spacing:.8px;}
+.points-list{border-top:1px solid var(--bd);}
+.point-row{display:grid;grid-template-columns:40px 1fr auto;align-items:stretch;
+  border-bottom:1px solid var(--bd);}
+.point-row:last-child{border-bottom:none;}
+.pt-num{display:flex;align-items:center;justify-content:center;
+  background:var(--acd1);border-right:1px solid var(--bd);
+  font-family:var(--ff-mono);font-size:12px;font-weight:700;color:var(--ac3);
+  min-height:52px;}
+.pt-body{padding:12px 16px;}
+.pt-desc{font-weight:600;font-size:13px;color:var(--tx);margin-bottom:3px;}
+.pt-detail{font-size:12px;color:var(--tx2);}
+.pt-notes{font-size:11.5px;color:var(--tx3);margin-top:3px;font-style:italic;}
+.pt-type{display:flex;align-items:center;justify-content:flex-end;padding:12px 14px 12px 8px;
+  border-left:1px solid var(--bd);}
+.type-badge{font-family:var(--ff-mono);font-size:9px;letter-spacing:.8px;text-transform:uppercase;
+  padding:3px 8px;border-radius:3px;font-weight:600;white-space:nowrap;}
+.t-electrical{background:rgba(96,165,250,.12);color:#60a5fa;}
+.t-mechanical{background:var(--ambd);color:var(--amb);}
+.t-pneumatic{background:rgba(52,211,153,.10);color:#34d399;}
+.t-hydraulic{background:rgba(251,113,133,.10);color:#fb7185;}
+.t-process{background:var(--purd);color:var(--pur);}
+.t-other{background:var(--sf3);color:var(--tx3);}
+.no-points{padding:32px 24px;text-align:center;color:var(--tx3);font-size:12.5px;}
+.detail-close-bar{padding:14px 24px;border-top:1px solid var(--bd);
+  display:flex;justify-content:flex-end;gap:8px;background:var(--sf);}
+
+/* ── EQUIPMENT TABLE ─────────────────────────────────────────────── */
+.table-wrap{overflow-x:auto;border-radius:var(--r);border:1px solid var(--bd);}
+table{width:100%;border-collapse:collapse;}
+thead{background:var(--sf2);}
+th{padding:10px 14px;text-align:left;font-family:var(--ff-mono);font-size:9px;
+  letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);
+  border-bottom:1px solid var(--bd);white-space:nowrap;font-weight:500;}
+td{padding:11px 14px;border-bottom:1px solid var(--bd);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tbody tr{background:var(--sf);transition:background .14s;}
+tbody tr:hover{background:var(--sf2);}
+.td-tag{font-family:var(--ff-mono);font-size:9px;letter-spacing:.8px;text-transform:uppercase;
+  padding:2px 6px;border-radius:3px;background:var(--sf3);border:1px solid var(--bd);
+  color:var(--tx3);display:inline-block;}
+.td-name{font-size:13px;font-weight:500;color:var(--tx);}
+.td-cat{font-family:var(--ff-mono);font-size:9px;letter-spacing:.8px;text-transform:uppercase;
+  padding:2px 6px;border-radius:3px;background:var(--acd1);border:1px solid var(--acd3);
+  color:var(--ac3);display:inline-block;}
+.s-active-row{background:var(--grnd);color:var(--grn);border:1px solid var(--grnb);}
+.s-maintenance-row{background:var(--ambd);color:var(--amb);border:1px solid var(--ambb);}
+.s-decommissioned-row{background:var(--redd);color:var(--red);border:1px solid var(--redb);}
+.pill-status{font-family:var(--ff-mono);font-size:9px;letter-spacing:.8px;text-transform:uppercase;
+  padding:2px 7px;border-radius:3px;font-weight:600;}
+
+/* ── WORK AREAS ──────────────────────────────────────────────────── */
+.areas-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;}
+.area-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);
+  padding:16px 18px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+.area-card-left{}
+.area-name{font-family:var(--ff-head);font-weight:700;font-size:14px;color:var(--tx);margin-bottom:3px;}
+.area-desc{font-size:12px;color:var(--tx2);margin-bottom:6px;}
+.area-counts{display:flex;gap:8px;}
+.area-count-badge{font-family:var(--ff-mono);font-size:9px;padding:2px 7px;border-radius:3px;
+  border:1px solid var(--bd);color:var(--tx3);}
+
+/* ── MODAL ───────────────────────────────────────────────────────── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;
+  display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px);}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--sf);border:1px solid var(--bd2);border-radius:14px;
+  width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:var(--e3);}
+.modal-header{padding:20px 24px 16px;border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;background:var(--sf);z-index:1;}
+.modal-title{font-family:var(--ff-head);font-weight:700;font-size:16px;color:var(--tx);}
+.modal-body{padding:20px 24px 24px;display:flex;flex-direction:column;gap:14px;}
+.modal-close{width:28px;height:28px;border-radius:6px;border:1px solid var(--bd);
+  background:transparent;color:var(--tx2);cursor:pointer;font-size:16px;
+  display:flex;align-items:center;justify-content:center;transition:border-color .18s,color .18s;}
+.modal-close:hover{border-color:var(--red);color:var(--red);}
+.field-group{display:flex;flex-direction:column;gap:6px;}
+.field-label{font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);}
+.field-input,.field-select,.field-textarea{padding:9px 12px;background:var(--inp);
+  border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);
+  font-family:var(--ff-body);font-size:13.5px;transition:border-color .18s,box-shadow .18s;
+  outline:none;width:100%;}
+.field-input:focus,.field-select:focus,.field-textarea:focus{border-color:var(--ac3);box-shadow:0 0 0 3px var(--acd1);}
+.field-textarea{resize:vertical;min-height:80px;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.modal-footer{padding:14px 24px;border-top:1px solid var(--bd);
+  display:flex;justify-content:flex-end;gap:10px;position:sticky;bottom:0;background:var(--sf);}
+.form-err{font-size:12px;color:var(--red);background:var(--redd);border:1px solid var(--redb);
+  border-radius:var(--rsm);padding:8px 12px;display:none;}
+
+/* ── AI PANEL ────────────────────────────────────────────────────── */
+#isoAiOverlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:800;display:none;}
+#isoAiPanel{position:fixed;top:0;right:0;bottom:0;width:540px;max-width:96vw;
+  background:var(--sf);border-left:1px solid var(--bd);z-index:801;
+  transform:translateX(100%);transition:transform .28s ease;display:flex;flex-direction:column;overflow:hidden;}
+.ai-bubble-user{background:var(--acd1);border:1px solid var(--acd3);border-radius:10px 10px 2px 10px;
+  padding:10px 14px;font-size:13px;color:var(--tx);align-self:flex-end;max-width:85%}
+.ai-bubble-ai{background:var(--sf3);border:1px solid var(--bd);border-radius:2px 10px 10px 10px;
+  padding:10px 14px;font-size:13px;color:var(--tx);align-self:flex-start;max-width:85%;white-space:pre-wrap}
+.ai-thinking{display:flex;align-items:center;gap:4px;padding:10px 14px;
+  background:var(--sf3);border:1px solid var(--bd);border-radius:2px 10px 10px 10px}
+.ai-dot{width:6px;height:6px;border-radius:50%;background:var(--ac3);animation:aiDot 1.2s ease-in-out infinite}
+.ai-dot:nth-child(2){animation-delay:.2s}.ai-dot:nth-child(3){animation-delay:.4s}
+@keyframes aiDot{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+.ai-suggestion{padding:5px 11px;font-size:11px;font-family:var(--ff-body);
+  background:var(--sf3);border:1px solid var(--bd);border-radius:20px;
+  color:var(--tx2);cursor:pointer;white-space:nowrap}
+.ai-suggestion:hover{border-color:var(--ac3);color:var(--ac3)}
+
+/* ── TOAST ───────────────────────────────────────────────────────── */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(12px);
+  background:var(--sf3);color:var(--tx);border:1px solid var(--bd3);
+  border-radius:var(--rsm);padding:9px 18px;font-size:12.5px;box-shadow:var(--e2);
+  opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:9000;
+  font-family:var(--ff-mono);letter-spacing:.3px;white-space:nowrap;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── MOBILE ──────────────────────────────────────────────────────── */
+@media(max-width:640px){
+  #mainHeader{padding:0 12px;height:auto;min-height:52px;}
+  .header-sub{display:none;}
+  .header-right{gap:5px;flex-wrap:nowrap;overflow-x:auto;flex-shrink:0;scrollbar-width:none;}
+  .header-right::-webkit-scrollbar{display:none;}
+  .header-user{display:none;}
+  .icon-btn{width:30px;height:30px;}
+  #mainContent{padding-left:12px;padding-right:12px;}
+  .matrix-grid{grid-template-columns:1fr;}
+  .field-row{grid-template-columns:1fr;}
+  .areas-grid{grid-template-columns:1fr;}
+}
+
+/* Logo img containers */
+.splash-logo img, .lic-logo img, .login-logo img, .header-logo img { display:block; }
+.splash-logo { background:none !important; box-shadow:none !important; }
+.lic-logo { background:none !important; box-shadow:none !important; }
+.login-logo { background:none !important; box-shadow:none !important; }
+.header-logo { background:none !important; box-shadow:none !important; }
+</style>
+</head>
+<body>
+
+<!-- ── LICENCE OVERLAY ─────────────────────────────────────────── -->
+<div id="licenceOverlay">
+  <div class="lic-inner">
+    <div class="lic-logo"><img src="data:image/png;base64,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" style="width:40px;height:40px;object-fit:contain;display:block"></div>
+    <div style="font-family:var(--ff-head);font-weight:700;font-size:18px;color:var(--tx);margin-bottom:4px">Padeswood Works</div>
+    <div style="font-family:var(--ff-mono);font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:24px">HeidelbergMaterials</div>
+    <div id="licSpinner" style="display:flex;align-items:center;justify-content:center;gap:8px;color:var(--tx3);font-size:12px;font-family:var(--ff-mono)">
+      <svg style="animation:spin 1s linear infinite;width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+      Verifying licence...
+    </div>
+    <div id="licMsg" style="display:none;font-size:13px;color:var(--red);line-height:1.6;margin-bottom:16px"></div>
+    <div id="licRetryBtn" style="display:none;margin-top:12px">
+      <button onclick="checkLicence()" style="background:var(--ac);color:#fff;border:none;padding:10px 24px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer">↺ Retry</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── AUTH SPLASH ─────────────────────────────────────────────── -->
+<div id="splash">
+  <div class="splash-inner">
+    <div class="splash-logo"><img src="data:image/png;base64,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" style="width:44px;height:44px;object-fit:contain;display:block"></div>
+    <div class="splash-title">Isolation Matrices</div>
+    <div class="splash-sub">Padeswood Works · HeidelbergMaterials</div>
+    <div class="splash-loader"><div class="splash-loader-bar" id="splashBar"></div></div>
+    <div class="splash-card" id="splashCard" style="opacity:0;transition:opacity .5s ease">
+      <div class="splash-field">
+        <label>Email Address</label>
+        <div style="display:flex;align-items:stretch;gap:0;border:1px solid var(--bd);border-radius:var(--rsm);overflow:hidden;background:var(--inp)">
+          <input type="text" id="authEmailUser" class="splash-input" placeholder="username" autocomplete="username"
+            style="border:none;border-radius:0;flex:1;min-width:0;background:transparent"
+            oninput="syncEmail()"
+            onkeydown="if(event.key==='Enter')document.getElementById('authPass').focus()">
+          <select id="authDomain" onchange="syncEmail();if(this.value==='other'){document.getElementById('authEmailUser').placeholder='full@address.com';document.getElementById('authEmailUser').type='email';}else{document.getElementById('authEmailUser').placeholder='username';document.getElementById('authEmailUser').type='text';}"
+            style="flex-shrink:0;max-width:190px;padding:0 8px 0 4px;background:var(--sf2);border:none;border-left:1px solid var(--bd);color:var(--tx2);font-family:var(--ff-mono);font-size:10px;cursor:pointer;outline:none">
+            <option value="@heidelbergmaterials.com">@heidelbergmaterials.com</option>
+            <option value="other">other address…</option>
+          </select>
+        </div>
+        <input type="hidden" id="authEmail">
+      </div>
+      <div class="splash-field">
+        <label>Password</label>
+        <input type="password" id="authPass" class="splash-input" placeholder="••••••••" autocomplete="current-password"
+          onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <button class="splash-btn" id="authBtn" onclick="doLogin()">Sign In</button>
+      <div class="splash-err" id="authErr"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MAIN APP ─────────────────────────────────────────────────── -->
+<div id="appWrapper" style="display:none;flex-direction:column;min-height:100vh">
+
+  <header id="mainHeader">
+    <a href="../index.html" class="header-back" title="Back to platform">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="15 18 9 12 15 6"/></svg>
+    </a>
+    <div class="header-logo"><img src="data:image/png;base64,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" style="width:26px;height:26px;object-fit:contain;display:block"></div>
+    <div class="header-titles">
+      <div class="header-name">Isolation Matrices</div>
+      <div class="header-sub">Equipment Isolation Procedures</div>
+    </div>
+    <div class="header-right">
+      <div class="header-user">
+        <span id="headerEmail">—</span>
+        <span class="role-badge role-viewer" id="headerRole">Viewer</span>
+      </div>
+      <button class="icon-btn" id="isoAiBtn" onclick="openAiPanel()" title="AI Assistant" style="display:none">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="9" y1="14" x2="13" y2="14"/></svg>
+      </button>
+      <button class="icon-btn" id="isoChangePwBtn" onclick="openChangePwModal()" title="Change Password" style="display:none">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </button>
+      <button class="icon-btn" onclick="toggleTheme()" title="Toggle theme">
+        <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <button class="icon-btn" onclick="doLogout()" title="Sign out" style="color:var(--red)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <nav id="tabBar">
+    <button class="tab-btn active" data-tab="matrices" onclick="switchTab('matrices')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+      Matrices <span class="tab-count" id="matrixCount">0</span>
+    </button>
+    <button class="tab-btn" data-tab="equipment" onclick="switchTab('equipment')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 0-14.14 0"/><path d="M4.93 19.07a10 10 0 0 0 14.14 0"/></svg>
+      Equipment <span class="tab-count" id="equipCount">0</span>
+    </button>
+
+  </nav>
+
+  <main id="mainContent">
+
+    <!-- ── MATRICES TAB ─────────────────────────────────────────── -->
+    <div id="panel-matrices" class="tab-panel active">
+      <div class="list-toolbar">
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="search" class="search-input" id="matrixSearch" placeholder="Search matrices…" oninput="renderMatrices()">
+        </div>
+        <select class="filter-select" id="matrixStatusFilter" onchange="renderMatrices()">
+          <option value="">All statuses</option>
+          <option value="draft">Draft</option>
+          <option value="active">Active</option>
+          <option value="review">Under Review</option>
+          <option value="archived">Archived</option>
+        </select>
+        <select class="filter-select" id="matrixAreaFilter" onchange="renderMatrices()">
+          <option value="">All areas</option>
+        </select>
+        <button class="btn btn-iso" id="btnAddMatrix" onclick="openMatrixModal()" style="display:none">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New Matrix
+        </button>
+      </div>
+      <div class="dash-grid" id="matrixStats"></div>
+      <div class="matrix-grid" id="matrixGrid"></div>
+    </div>
+
+    <!-- ── EQUIPMENT TAB ────────────────────────────────────────── -->
+    <div id="panel-equipment" class="tab-panel">
+      <div class="list-toolbar">
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="search" class="search-input" id="equipSearch" placeholder="Search equipment…" oninput="renderEquipment()">
+        </div>
+        <select class="filter-select" id="equipCatFilter" onchange="renderEquipment()">
+          <option value="">All categories</option>
+        </select>
+        <select class="filter-select" id="equipAreaFilter" onchange="renderEquipment()">
+          <option value="">All areas</option>
+        </select>
+        <button class="btn btn-primary" id="btnAddEquip" onclick="openEquipModal()" style="display:none">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Equipment
+        </button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Asset Tag</th>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Area / Location</th>
+              <th>Status</th>
+              <th>Last Inspection</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="equipBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+
+
+  </main>
+</div>
+
+<!-- ── MATRIX DETAIL OVERLAY ──────────────────────────────────────── -->
+<div id="detailOverlay" onclick="if(event.target===this)closeDetail()">
+  <div id="detailBox">
+    <div class="detail-head">
+      <div class="detail-title-area">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px" id="detailStatusRow"></div>
+        <div class="detail-title" id="detailTitle"></div>
+        <div class="detail-equip" id="detailEquip"></div>
+      </div>
+      <div class="detail-actions" id="detailActions"></div>
+    </div>
+    <div class="detail-meta-bar" id="detailMeta"></div>
+    <div id="detailDesc"></div>
+    <div id="detailNotesEl"></div>
+    <div class="points-header">
+      <h3>Isolation Points</h3>
+      <div id="detailAddPoint"></div>
+    </div>
+    <div class="points-list" id="pointsList"></div>
+    <div class="detail-close-bar">
+      <button class="btn btn-ghost" onclick="closeDetail()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MATRIX MODAL ───────────────────────────────────────────────── -->
+<div class="modal-overlay" id="matrixModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="matrixModalTitle">New Isolation Matrix</div>
+      <button class="modal-close" onclick="closeMatrixModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="mxId">
+      <div class="field-group">
+        <div class="field-label">Equipment *</div>
+        <select class="field-select" id="mxEquip"><option value="">— Select equipment —</option></select>
+      </div>
+      <div class="field-group">
+        <div class="field-label">Matrix Title *</div>
+        <input type="text" class="field-input" id="mxTitle" placeholder="e.g. Kiln Drive Motor Isolation Procedure">
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <div class="field-label">Work Area / Location</div>
+          <input type="text" class="field-input" id="mxArea" placeholder="e.g. Kiln Drive, Raw Mill…" list="areaList"><datalist id="areaList"></datalist>
+        </div>
+        <div class="field-group">
+          <div class="field-label">Status</div>
+          <select class="field-select" id="mxStatus">
+            <option value="draft">Draft</option>
+            <option value="active">Active</option>
+            <option value="review">Under Review</option>
+            <option value="archived">Archived</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-group">
+        <div class="field-label">Scope of Work / Description</div>
+        <textarea class="field-textarea" id="mxDesc" placeholder="Describe what work this isolation procedure covers…"></textarea>
+      </div>
+      <div class="field-group">
+        <div class="field-label">Safety Notes / Special Precautions</div>
+        <textarea class="field-textarea" id="mxNotes" placeholder="Any special safety precautions or warnings…" style="min-height:60px"></textarea>
+      </div>
+      <div class="form-err" id="mxErr"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeMatrixModal()">Cancel</button>
+      <button class="btn btn-iso" onclick="saveMatrix()">Save Matrix</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── ISOLATION POINT MODAL ──────────────────────────────────────── -->
+<div class="modal-overlay" id="pointModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="pointModalTitle">Add Isolation Point</div>
+      <button class="modal-close" onclick="closePointModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="ptId">
+      <input type="hidden" id="ptMatrixId">
+      <div class="field-row">
+        <div class="field-group">
+          <div class="field-label">Isolation Type *</div>
+          <select class="field-select" id="ptType">
+            <option value="electrical">Electrical</option>
+            <option value="mechanical">Mechanical</option>
+            <option value="pneumatic">Pneumatic</option>
+            <option value="hydraulic">Hydraulic</option>
+            <option value="process">Process</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <div class="field-label">Reference / Tag</div>
+          <input type="text" class="field-input" id="ptRef" placeholder="e.g. CB-101, V-23">
+        </div>
+      </div>
+      <div class="field-group">
+        <div class="field-label">Description *</div>
+        <input type="text" class="field-input" id="ptDesc" placeholder="e.g. Isolate main incomer at panel MCC-A">
+      </div>
+      <div class="field-group">
+        <div class="field-label">Location</div>
+        <input type="text" class="field-input" id="ptLocation" placeholder="e.g. Motor Control Centre Room, Panel A">
+      </div>
+      <div class="field-group">
+        <div class="field-label">Isolation Method</div>
+        <input type="text" class="field-input" id="ptMethod" placeholder="e.g. Lock off + danger tag + test dead">
+      </div>
+      <div class="field-group">
+        <div class="field-label">Notes</div>
+        <textarea class="field-textarea" id="ptNotes" placeholder="Any additional notes…" style="min-height:60px"></textarea>
+      </div>
+      <div class="form-err" id="ptErr"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closePointModal()">Cancel</button>
+      <button class="btn btn-iso" onclick="savePoint()">Save Point</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── EQUIPMENT MODAL ────────────────────────────────────────────── -->
+<div class="modal-overlay" id="equipModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="equipModalTitle">Add Equipment</div>
+      <button class="modal-close" onclick="closeEquipModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="eqId">
+      <div class="field-row">
+        <div class="field-group">
+          <div class="field-label">Asset Tag *</div>
+          <input type="text" class="field-input" id="eqTag" placeholder="e.g. KLN-001">
+        </div>
+        <div class="field-group">
+          <div class="field-label">Name *</div>
+          <input type="text" class="field-input" id="eqName" placeholder="e.g. Kiln Drive Motor">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <div class="field-label">Category</div>
+          <input type="text" class="field-input" id="eqCat" placeholder="e.g. Drive, Fan, Conveyor…" list="catList">
+          <datalist id="catList"></datalist>
+        </div>
+        <div class="field-group">
+          <div class="field-label">Work Area / Location</div>
+          <input type="text" class="field-input" id="eqArea" placeholder="e.g. Kiln Drive, Raw Mill…" list="areaList2"><datalist id="areaList2"></datalist>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <div class="field-label">Manufacturer</div>
+          <input type="text" class="field-input" id="eqMfr" placeholder="Manufacturer">
+        </div>
+        <div class="field-group">
+          <div class="field-label">Model</div>
+          <input type="text" class="field-input" id="eqModel" placeholder="Model">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field-group">
+          <div class="field-label">Serial Number</div>
+          <input type="text" class="field-input" id="eqSerial" placeholder="Serial No.">
+        </div>
+        <div class="field-group">
+          <div class="field-label">Status</div>
+          <select class="field-select" id="eqStatus">
+            <option value="active">Active</option>
+            <option value="maintenance">Under Maintenance</option>
+            <option value="decommissioned">Decommissioned</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-group">
+        <div class="field-label">Physical Location / Notes</div>
+        <input type="text" class="field-input" id="eqLocation" placeholder="Where on site">
+      </div>
+      <div class="form-err" id="eqErr"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeEquipModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEquip()">Save Equipment</button>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- ── CHANGE PASSWORD MODAL ──────────────────────────────────────── -->
+<div id="changePwOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;align-items:center;justify-content:center">
+  <div style="width:380px;max-width:94vw;background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:28px;position:relative;overflow:hidden">
+    <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--ac3),transparent)"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <div style="font-family:var(--ff-head);font-weight:700;font-size:16px;color:var(--tx);display:flex;align-items:center;gap:8px">
+        <div style="width:28px;height:28px;border-radius:6px;background:var(--acd1);display:flex;align-items:center;justify-content:center">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--ac3)" stroke-width="2" width="13" height="13"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        Change Password
+      </div>
+      <button onclick="closeChangePwModal()" style="width:26px;height:26px;border-radius:5px;border:1px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center">×</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div><label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Current Password</label>
+        <input type="password" id="cpwCurrent" class="splash-input" placeholder="Your current password" autocomplete="current-password"></div>
+      <div><label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">New Password</label>
+        <input type="password" id="cpwNew" class="splash-input" placeholder="Min 8 characters" autocomplete="new-password"></div>
+      <div><label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Confirm New Password</label>
+        <input type="password" id="cpwConfirm" class="splash-input" placeholder="Repeat new password" autocomplete="new-password"></div>
+      <div id="cpwMsg" style="display:none;font-size:12px;padding:8px 12px;border-radius:var(--rsm)"></div>
+      <button id="cpwBtn" onclick="doChangePw()" style="width:100%;height:40px;background:linear-gradient(135deg,var(--ac),var(--ac3));color:#fff;border:none;border-radius:var(--rsm);font-family:var(--ff-head);font-weight:600;font-size:13px;cursor:pointer;margin-top:4px">Update Password</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── AI PANEL ───────────────────────────────────────────────────── -->
+<div id="isoAiOverlay"></div>
+<div id="isoAiPanel">
+  <div style="padding:18px 22px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+    <div style="display:flex;align-items:center;gap:10px;font-family:var(--ff-head);font-weight:700;font-size:16px;color:var(--tx)">
+      <div style="width:30px;height:30px;border-radius:7px;background:var(--acd1);border:1px solid var(--acd3);display:flex;align-items:center;justify-content:center">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--ac3)" stroke-width="2" width="14" height="14"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </div>
+      AI Assistant — Isolation
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <button id="aiClearBtn" onclick="clearAiHistory()" title="Clear conversation" style="display:none;width:28px;height:28px;border-radius:6px;border:1px solid var(--bd);background:transparent;color:var(--tx3);cursor:pointer;align-items:center;justify-content:center">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+      </button>
+      <button onclick="closeAiPanel()" style="width:28px;height:28px;border-radius:6px;border:1px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center">×</button>
+    </div>
+  </div>
+  <div id="aiSuggestions" style="padding:12px 22px;border-bottom:1px solid var(--bd);display:flex;flex-wrap:wrap;gap:6px;flex-shrink:0">
+    <button class="ai-suggestion" onclick="useAiSuggestion('Summarise all active isolation matrices')">Active matrices</button>
+    <button class="ai-suggestion" onclick="useAiSuggestion('Which equipment has the most isolation points?')">Most complex</button>
+    <button class="ai-suggestion" onclick="useAiSuggestion('List all electrical isolation points across all matrices')">All electrical</button>
+    <button class="ai-suggestion" onclick="useAiSuggestion('Which matrices are in draft or under review and need attention?')">Needs attention</button>
+  </div>
+  <div id="aiHistory" style="flex:1;overflow-y:auto;padding:16px 22px;display:flex;flex-direction:column;gap:10px"></div>
+  <div style="padding:12px 22px;border-top:1px solid var(--bd);flex-shrink:0">
+    <div style="display:flex;gap:8px;align-items:flex-end">
+      <textarea id="aiPrompt" rows="2" placeholder="Ask about isolation matrices or equipment… (⌘↵ to send)"
+        onkeydown="if((event.ctrlKey||event.metaKey)&&event.key==='Enter'){event.preventDefault();sendAiMessage();}"
+        style="flex:1;padding:10px 12px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;resize:none;outline:none;line-height:1.5"></textarea>
+      <button id="aiSendBtn" onclick="sendAiMessage()" style="width:38px;height:38px;background:linear-gradient(135deg,var(--ac),var(--ac3));border:none;border-radius:var(--rsm);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" width="14" height="14"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ================================================================
+   PADESWOOD WORKS — ISOLATION MATRICES
+   Supabase: xnkwrkoxvgptobnmekgv
+   Tables: pw_profiles, pw_equipment (shared),
+           pw_isolation_matrices, pw_isolation_points
+================================================================ */
+const SUPABASE_URL      = 'https://xnkwrkoxvgptobnmekgv.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhua3dya294dmdwdG9ibm1la2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NjAxNTQsImV4cCI6MjA4ODIzNjE1NH0.PrmnJ4eGepac41bQuNPG7TcBaunrfTWdjLtkGLr_2LY';
+const LICENCE_KEY       = 'KBL-HEIDELBERG-PADESWOOD-2026';
+const SB_LIC_URL        = 'https://dviicnomxeibbuafbozp.supabase.co';
+const SB_LIC_KEY        = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2aWljbm9teGVpYmJ1YWZib3pwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4ODM0MzcsImV4cCI6MjA4ODQ1OTQzN30.c1T3WXC225tdBbq_1R__9bhGFIZdSxim9dgxfvmkRjU';
+
+let sb, currentUser = null, currentProfile = null;
+let _matrices = [], _points = {}, _equipment = [], _areas = [];
+let _groqKey = null, _aiHistory = [];
+let _openMatrixId = null;
+
+/* ── HELPERS ─────────────────────────────────────────────────────── */
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function fmtDate(d){ if(!d) return '—'; try{ return new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); }catch(e){ return '—'; } }
+function showToast(msg,dur=2800){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),dur); }
+function hasRole(...roles){ if(!currentProfile) return false; if(currentProfile.role==='admin') return true; return roles.includes(currentProfile.role); }
+function canEdit(){ return hasRole('editor','admin'); }
+
+const STATUS_LABELS = {draft:'Draft',active:'Active',review:'Under Review',archived:'Archived'};
+const ISO_TYPES = {electrical:'Electrical',mechanical:'Mechanical',pneumatic:'Pneumatic',hydraulic:'Hydraulic',process:'Process',other:'Other'};
+
+/* ── LICENCE ─────────────────────────────────────────────────────── */
+async function checkLicence(){
+  try {
+    const res = await fetch(SB_LIC_URL+'/rest/v1/kiln_licences?licence_key=eq.'+encodeURIComponent(LICENCE_KEY)+'&select=paid,expires_at',
+      {method:'GET',mode:'cors',headers:{'apikey':SB_LIC_KEY,'Authorization':'Bearer '+SB_LIC_KEY,'Content-Type':'application/json'}});
+    if(res.ok){
+      const rows = await res.json();
+      if(rows&&rows.length&&rows[0].paid&&new Date(rows[0].expires_at)>=new Date()){ hideLicenceOverlay(); return; }
+      if(rows&&rows[0]&&new Date(rows[0].expires_at)<new Date()){
+        showLicErr('Licence expired on '+new Date(rows[0].expires_at).toLocaleDateString('en-GB')+'. Please contact your administrator.'); return;
+      }
+      showLicErr('Licence not active. Please contact your administrator.');
+    } else { hideLicenceOverlay(); }
+  } catch(e){ console.warn('Licence check failed — failing open:', e.message); hideLicenceOverlay(); }
+}
+function hideLicenceOverlay(){
+  const o=document.getElementById('licenceOverlay');
+  o.style.transition='opacity .3s ease'; o.style.opacity='0';
+  setTimeout(()=>{ o.style.display='none'; showAuthScreen(); },320);
+}
+function showLicErr(text){
+  document.getElementById('licSpinner').style.display='none';
+  const m=document.getElementById('licMsg'); m.textContent=text; m.style.display='block';
+  document.getElementById('licRetryBtn').style.display='block';
+}
+
+/* ── AUTH ────────────────────────────────────────────────────────── */
+function showAuthScreen(){
+  if(sb){
+    sb.auth.getSession().then(r=>{
+      const sess=r.data&&r.data.session;
+      if(sess&&sess.user){ currentUser=sess.user; loadProfileAndLaunch(); }
+      else showSplash();
+    });
+  } else showSplash();
+}
+function showSplash(){
+  const splash=document.getElementById('splash'); splash.style.display='flex';
+  const bar=document.getElementById('splashBar'); const card=document.getElementById('splashCard');
+  card.style.opacity='0'; bar.style.transition='none'; bar.style.width='0%'; bar.style.opacity='1';
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    bar.style.transition='width 2.4s cubic-bezier(0.4,0,0.2,1)'; bar.style.width='100%';
+    setTimeout(()=>{ card.style.opacity='1'; },1200);
+    setTimeout(()=>{ bar.style.transition='opacity .5s'; bar.style.opacity='0'; },2500);
+  }));
+  setTimeout(()=>document.getElementById('authEmailUser').focus(),1300);
+}
+function syncEmail(){
+  const u=document.getElementById('authEmailUser').value.trim();
+  const d=document.getElementById('authDomain').value;
+  document.getElementById('authEmail').value=(d==='other')?u:u+d;
+}
+async function doLogin(){
+  syncEmail();
+  const email=document.getElementById('authEmail').value.trim();
+  const pass=document.getElementById('authPass').value;
+  const btn=document.getElementById('authBtn'); const err=document.getElementById('authErr');
+  err.style.display='none';
+  if(!email||!pass){ err.textContent='Please enter your email and password.'; err.style.display='block'; return; }
+  btn.disabled=true; btn.textContent='Signing in…';
+  const {data,error}=await sb.auth.signInWithPassword({email,password:pass});
+  btn.disabled=false; btn.textContent='Sign In';
+  if(error){ err.textContent=error.message; err.style.display='block'; return; }
+  currentUser=data.user; await loadProfileAndLaunch();
+}
+async function loadProfileAndLaunch(){
+  const {data}=await sb.from('pw_profiles').select('*').eq('id',currentUser.id).single();
+  currentProfile=data||{email:currentUser.email,full_name:currentUser.email,role:'viewer'};
+  launchApp();
+}
+async function doLogout(){
+  await sb.auth.signOut(); currentUser=null; currentProfile=null;
+  window.location.href='../index.html';
+}
+
+/* ── LAUNCH ──────────────────────────────────────────────────────── */
+function launchApp(){
+  document.getElementById('splash').style.display='none';
+  const app=document.getElementById('appWrapper'); app.style.display='flex';
+  const name=currentProfile.full_name||currentProfile.email||'—';
+  document.getElementById('headerEmail').textContent=name.includes('@')?name.split('@')[0]:name;
+  const role=currentProfile.role||'viewer';
+  const rb=document.getElementById('headerRole');
+  rb.textContent=role.charAt(0).toUpperCase()+role.slice(1);
+  rb.className='role-badge role-'+role;
+  if(canEdit()){
+    document.getElementById('btnAddMatrix').style.display='flex';
+    document.getElementById('btnAddEquip').style.display='flex';
+  }
+  document.getElementById('isoAiBtn').style.display='flex';
+  document.getElementById('isoChangePwBtn').style.display='flex';
+  loadUserTheme(); loadGroqKey(); loadAllData();
+}
+
+/* ── TABS ────────────────────────────────────────────────────────── */
+function switchTab(tab){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+tab));
+}
+
+/* ── DATA ────────────────────────────────────────────────────────── */
+async function loadAllData(){
+  await Promise.all([loadMatrices(),loadEquipment()]);
+}
+async function loadMatrices(){
+  const {data}=await sb.from('pw_isolation_matrices').select('*').order('title');
+  _matrices=data||[];
+  document.getElementById('matrixCount').textContent=_matrices.length;
+  renderMatrices(); renderMatrixStats(); buildAreasFromData();
+}
+async function loadEquipment(){
+  const {data}=await sb.from('pw_equipment').select('*').order('name');
+  _equipment=data||[];
+  document.getElementById('equipCount').textContent=_equipment.length;
+  renderEquipment(); populateEquipDropdown(); populateCatFilter(); buildAreasFromData();
+}
+function buildAreasFromData(){
+  // Derive unique area names from equipment location and matrix area fields
+  const fromEquip=(_equipment||[]).map(e=>e.location).filter(Boolean);
+  const fromMatrix=(_matrices||[]).map(m=>m.area).filter(Boolean);
+  _areas=[...new Set([...fromEquip,...fromMatrix])].sort();
+  populateAreaDatalist();
+}
+function populateAreaDatalist(){
+  const opts=_areas.map(a=>`<option value="${esc(a)}">`).join('');
+  ['areaList','areaList2'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=opts;});
+}
+async function loadPointsForMatrix(id){
+  if(_points[id]) return _points[id];
+  const {data}=await sb.from('pw_isolation_points').select('*').eq('matrix_id',id).order('sort_order');
+  _points[id]=data||[]; return _points[id];
+}
+
+/* ── RENDER MATRICES ─────────────────────────────────────────────── */
+function renderMatrixStats(){
+  const total=_matrices.length;
+  const active=_matrices.filter(m=>m.status==='active').length;
+  const draft=_matrices.filter(m=>m.status==='draft'||!m.status).length;
+  const review=_matrices.filter(m=>m.status==='review').length;
+  document.getElementById('matrixStats').innerHTML=`
+    <div class="stat-card s-total"><div class="stat-label">Total Matrices</div><div class="stat-num">${total}</div><div class="stat-sub">All procedures</div></div>
+    <div class="stat-card s-active"><div class="stat-label">Active</div><div class="stat-num">${active}</div><div class="stat-sub">Approved & in use</div></div>
+    <div class="stat-card s-draft"><div class="stat-label">Draft</div><div class="stat-num">${draft}</div><div class="stat-sub">Awaiting approval</div></div>
+    <div class="stat-card s-review"><div class="stat-label">Under Review</div><div class="stat-num">${review}</div><div class="stat-sub">Being checked</div></div>
+  `;
+}
+function renderMatrices(){
+  const q=(document.getElementById('matrixSearch').value||'').toLowerCase();
+  const sf=document.getElementById('matrixStatusFilter').value;
+  const af=document.getElementById('matrixAreaFilter').value;
+  let list=_matrices.filter(m=>{
+    if(sf&&(m.status||'draft')!==sf) return false;
+    if(af&&(m.area||'')!==af) return false;
+    if(q&&![m.title,m.description,m.notes].some(f=>(f||'').toLowerCase().includes(q))) return false;
+    return true;
+  });
+  const grid=document.getElementById('matrixGrid');
+  if(!list.length){
+    grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="42" height="42"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+      <p>${_matrices.length?'No matrices match your filters':'No isolation matrices yet'}</p>
+      ${canEdit()?'<button class="btn btn-iso" onclick="openMatrixModal()">Create First Matrix</button>':''}
+    </div>`;
+    return;
+  }
+  grid.innerHTML=list.map(m=>{
+    const equip=_equipment.find(e=>e.id===m.equipment_id);
+    const area=m.area||null;
+    const pts=_points[m.id]||[];
+    const st=m.status||'draft';
+    return `<div class="matrix-card" onclick="openDetail('${m.id}')">
+      <div class="mc-top">
+        <div class="mc-icon">🔌</div>
+        <span class="mc-status-pill s-${st}-pill">${STATUS_LABELS[st]||st}</span>
+      </div>
+      <div class="mc-title">${esc(m.title)}</div>
+      <div class="mc-equip">${equip?esc(equip.name):''}</div>
+      <div class="mc-meta">
+        ${area?`<span class="mc-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/></svg>${esc(area)}</span>`:''}
+        ${pts.length?`<span class="mc-pts-badge">${pts.length} point${pts.length!==1?'s':''}</span>`:'<span class="mc-meta-item" style="color:var(--tx3)">No points yet</span>'}
+        <span class="mc-meta-item" style="margin-left:auto">${fmtDate(m.updated_at)}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ── MATRIX DETAIL ───────────────────────────────────────────────── */
+async function openDetail(id){
+  _openMatrixId=id;
+  const m=_matrices.find(x=>x.id===id); if(!m) return;
+  const equip=_equipment.find(e=>e.id===m.equipment_id);
+  const area=m.area||null;
+  const points=await loadPointsForMatrix(id);
+  const st=m.status||'draft';
+  document.getElementById('detailStatusRow').innerHTML=`<span class="mc-status-pill s-${st}-pill">${STATUS_LABELS[st]||st}</span>${area?`<span style="font-family:var(--ff-mono);font-size:10px;color:var(--tx3)">${esc(area)}</span>`:''}`;
+  document.getElementById('detailTitle').textContent=m.title;
+  document.getElementById('detailEquip').textContent=equip?`Equipment: ${equip.name}${equip.asset_tag?' ('+equip.asset_tag+')':''}` : '';
+  document.getElementById('detailActions').innerHTML=canEdit()?`
+    <button class="btn btn-ghost" style="font-size:12px" onclick="openMatrixModal('${id}')">Edit Matrix</button>
+    <button class="btn btn-iso" style="font-size:12px" onclick="openPointModal('${id}')">+ Add Point</button>`:'';
+  const metaItems=[];
+  if(equip&&equip.asset_tag) metaItems.push(`<span class="detail-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 0-14.14 0"/><path d="M4.93 19.07a10 10 0 0 0 14.14 0"/></svg>Asset: ${esc(equip.asset_tag)}</span>`);
+  metaItems.push(`<span class="detail-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>${points.length} isolation point${points.length!==1?'s':''}</span>`);
+  if(m.updated_at) metaItems.push(`<span class="detail-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Updated ${fmtDate(m.updated_at)}</span>`);
+  document.getElementById('detailMeta').innerHTML=metaItems.join('');
+  document.getElementById('detailDesc').innerHTML=m.description?`<div class="detail-desc">${esc(m.description)}</div>`:'';
+  document.getElementById('detailNotesEl').innerHTML=m.notes?`<div class="detail-notes">⚠ ${esc(m.notes)}</div>`:'';
+  document.getElementById('detailAddPoint').innerHTML=canEdit()?`<button class="btn btn-iso" style="height:28px;font-size:11px;padding:0 12px" onclick="openPointModal('${id}')">+ Add Point</button>`:'';
+  if(!points.length){
+    document.getElementById('pointsList').innerHTML=`<div class="no-points">No isolation points added yet.${canEdit()?' Use "Add Point" to build the isolation procedure.':''}</div>`;
+  } else {
+    document.getElementById('pointsList').innerHTML=points.map((pt,i)=>`
+      <div class="point-row">
+        <div class="pt-num">${i+1}</div>
+        <div class="pt-body">
+          <div class="pt-desc">${esc(pt.description)}</div>
+          <div class="pt-detail">${[pt.reference?`Ref: ${esc(pt.reference)}`:'',pt.location?esc(pt.location):'',pt.method?`Method: ${esc(pt.method)}`:''].filter(Boolean).join(' · ')}</div>
+          ${pt.notes?`<div class="pt-notes">${esc(pt.notes)}</div>`:''}
+        </div>
+        <div class="pt-type">
+          <span class="type-badge t-${pt.isolation_type||'other'}">${ISO_TYPES[pt.isolation_type]||'Other'}</span>
+        </div>
+      </div>`).join('');
+  }
+  document.getElementById('detailOverlay').classList.add('open');
+}
+function closeDetail(){ document.getElementById('detailOverlay').classList.remove('open'); _openMatrixId=null; }
+
+/* ── RENDER EQUIPMENT ────────────────────────────────────────────── */
+function renderEquipment(){
+  const q=(document.getElementById('equipSearch').value||'').toLowerCase();
+  const cf=document.getElementById('equipCatFilter').value;
+  const af=document.getElementById('equipAreaFilter').value;
+  let list=_equipment.filter(r=>{
+    if(cf&&r.category!==cf) return false;
+    if(af&&(r.location||'')!==af) return false;
+    if(q&&![r.asset_tag,r.name,r.manufacturer,r.model,r.serial,r.location,r.category].some(f=>(f||'').toLowerCase().includes(q))) return false;
+    return true;
+  });
+  const tbody=document.getElementById('equipBody');
+  if(!list.length){
+    tbody.innerHTML=`<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--tx3)">${_equipment.length?'No equipment matches your filters':'No equipment added yet'}</td></tr>`;
+    return;
+  }
+  const statusClass={active:'s-active-row',maintenance:'s-maintenance-row',decommissioned:'s-decommissioned-row'};
+  tbody.innerHTML=list.map(r=>`<tr>
+    <td><span class="td-tag">${esc(r.asset_tag||'—')}</span></td>
+    <td class="td-name">${esc(r.name)}</td>
+    <td>${r.category?`<span class="td-cat">${esc(r.category)}</span>`:'—'}</td>
+    <td style="font-size:12.5px;color:var(--tx2)">${esc(r.location||'—')}</td>
+    <td><span class="pill-status ${statusClass[r.status]||statusClass.active}">${r.status||'active'}</span></td>
+    <td style="font-family:var(--ff-mono);font-size:11px;color:var(--tx3)">${fmtDate(r.last_inspection)}</td>
+    <td>${canEdit()?`<button onclick="event.stopPropagation();openEquipModal('${r.id}')" style="padding:3px 9px;font-size:10px;border-radius:var(--rxs);border:1px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;font-family:var(--ff-mono)">Edit</button>`:''}
+    </td>
+  </tr>`).join('');
+}
+
+/* ── RENDER AREAS ────────────────────────────────────────────────── */
+
+
+/* ── POPULATE DROPDOWNS ──────────────────────────────────────────── */
+function populateEquipDropdown(){
+  const opts='<option value="">— Select equipment —</option>'+_equipment.map(e=>`<option value="${e.id}">${esc(e.name)}${e.asset_tag?' ('+esc(e.asset_tag)+')':''}</option>`).join('');
+  document.getElementById('mxEquip').innerHTML=opts;
+}
+function populateCatFilter(){
+  const cats=[...new Set(_equipment.map(r=>r.category).filter(Boolean))].sort();
+  const cur=document.getElementById('equipCatFilter').value;
+  document.getElementById('equipCatFilter').innerHTML='<option value="">All categories</option>'+cats.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
+  document.getElementById('equipCatFilter').value=cur;
+  document.getElementById('catList').innerHTML=cats.map(c=>`<option value="${esc(c)}">`).join('');
+}
+
+
+/* ── MATRIX MODAL ────────────────────────────────────────────────── */
+function openMatrixModal(id){
+  document.getElementById('matrixModalTitle').textContent=id?'Edit Matrix':'New Isolation Matrix';
+  document.getElementById('mxId').value=id||'';
+  document.getElementById('mxErr').style.display='none';
+  if(id){
+    const m=_matrices.find(x=>x.id===id);
+    if(m){ document.getElementById('mxEquip').value=m.equipment_id||''; document.getElementById('mxTitle').value=m.title||''; document.getElementById('mxArea').value=m.area||''; document.getElementById('mxStatus').value=m.status||'draft'; document.getElementById('mxDesc').value=m.description||''; document.getElementById('mxNotes').value=m.notes||''; }
+  } else {
+    ['mxTitle','mxDesc','mxNotes'].forEach(i=>document.getElementById(i).value='');
+    document.getElementById('mxEquip').value=''; document.getElementById('mxArea').value=''; document.getElementById('mxStatus').value='draft';
+  }
+  document.getElementById('matrixModal').classList.add('open');
+  setTimeout(()=>document.getElementById('mxTitle').focus(),80);
+}
+function closeMatrixModal(){ document.getElementById('matrixModal').classList.remove('open'); }
+async function saveMatrix(){
+  const id=document.getElementById('mxId').value;
+  const title=document.getElementById('mxTitle').value.trim();
+  const err=document.getElementById('mxErr');
+  if(!title){ err.textContent='Title is required.'; err.style.display='block'; return; }
+  const payload={title,equipment_id:document.getElementById('mxEquip').value||null,area:document.getElementById('mxArea').value.trim()||null,status:document.getElementById('mxStatus').value||'draft',description:document.getElementById('mxDesc').value.trim()||null,notes:document.getElementById('mxNotes').value.trim()||null,updated_at:new Date().toISOString()};
+  let error;
+  if(id){ ({error}=await sb.from('pw_isolation_matrices').update(payload).eq('id',id)); }
+  else   { ({error}=await sb.from('pw_isolation_matrices').insert({...payload,created_at:new Date().toISOString()})); }
+  if(error){ err.textContent=error.message; err.style.display='block'; return; }
+  await loadMatrices(); closeMatrixModal(); showToast(id?'Matrix updated ✓':'Matrix created ✓');
+}
+
+/* ── POINT MODAL ─────────────────────────────────────────────────── */
+function openPointModal(matrixId,pointId){
+  document.getElementById('pointModalTitle').textContent=pointId?'Edit Isolation Point':'Add Isolation Point';
+  document.getElementById('ptMatrixId').value=matrixId;
+  document.getElementById('ptId').value=pointId||'';
+  document.getElementById('ptErr').style.display='none';
+  if(pointId){
+    const pts=_points[matrixId]||[]; const pt=pts.find(p=>p.id===pointId);
+    if(pt){ document.getElementById('ptType').value=pt.isolation_type||'electrical'; document.getElementById('ptRef').value=pt.reference||''; document.getElementById('ptDesc').value=pt.description||''; document.getElementById('ptLocation').value=pt.location||''; document.getElementById('ptMethod').value=pt.method||''; document.getElementById('ptNotes').value=pt.notes||''; }
+  } else {
+    ['ptRef','ptDesc','ptLocation','ptMethod','ptNotes'].forEach(i=>document.getElementById(i).value='');
+    document.getElementById('ptType').value='electrical';
+  }
+  document.getElementById('pointModal').classList.add('open');
+  setTimeout(()=>document.getElementById('ptDesc').focus(),80);
+}
+function closePointModal(){ document.getElementById('pointModal').classList.remove('open'); }
+async function savePoint(){
+  const matrixId=document.getElementById('ptMatrixId').value;
+  const id=document.getElementById('ptId').value;
+  const desc=document.getElementById('ptDesc').value.trim();
+  const err=document.getElementById('ptErr');
+  if(!desc){ err.textContent='Description is required.'; err.style.display='block'; return; }
+  const pts=_points[matrixId]||[];
+  const payload={matrix_id:matrixId,isolation_type:document.getElementById('ptType').value,reference:document.getElementById('ptRef').value.trim()||null,description:desc,location:document.getElementById('ptLocation').value.trim()||null,method:document.getElementById('ptMethod').value.trim()||null,notes:document.getElementById('ptNotes').value.trim()||null,sort_order:id?pts.find(p=>p.id===id)?.sort_order:(pts.length+1)};
+  let error;
+  if(id){ ({error}=await sb.from('pw_isolation_points').update(payload).eq('id',id)); }
+  else   { ({error}=await sb.from('pw_isolation_points').insert(payload)); }
+  if(error){ err.textContent=error.message; err.style.display='block'; return; }
+  delete _points[matrixId]; // invalidate cache
+  closePointModal(); showToast(id?'Point updated ✓':'Point added ✓');
+  if(_openMatrixId===matrixId) await openDetail(matrixId); // refresh detail
+}
+
+/* ── EQUIPMENT MODAL ─────────────────────────────────────────────── */
+function openEquipModal(id){
+  document.getElementById('equipModalTitle').textContent=id?'Edit Equipment':'Add Equipment';
+  document.getElementById('eqId').value=id||'';
+  document.getElementById('eqErr').style.display='none';
+  if(id){
+    const r=_equipment.find(e=>e.id===id);
+    if(r){
+      document.getElementById('eqTag').value=r.asset_tag||'';
+      document.getElementById('eqName').value=r.name||'';
+      document.getElementById('eqCat').value=r.category||'';
+      document.getElementById('eqArea').value=r.location||'';
+      document.getElementById('eqMfr').value=r.manufacturer||'';
+      document.getElementById('eqModel').value=r.model||'';
+      document.getElementById('eqSerial').value=r.serial||'';
+      document.getElementById('eqStatus').value=r.status||'active';
+      document.getElementById('eqLocation').value=r.location||'';
+    }
+  } else {
+    ['eqTag','eqName','eqCat','eqMfr','eqModel','eqSerial','eqLocation'].forEach(i=>document.getElementById(i).value='');
+    document.getElementById('eqArea').value=''; document.getElementById('eqStatus').value='active';
+  }
+  document.getElementById('equipModal').classList.add('open');
+  setTimeout(()=>document.getElementById('eqTag').focus(),80);
+}
+function closeEquipModal(){ document.getElementById('equipModal').classList.remove('open'); }
+async function saveEquip(){
+  const id=document.getElementById('eqId').value;
+  const tag=document.getElementById('eqTag').value.trim();
+  const name=document.getElementById('eqName').value.trim();
+  const err=document.getElementById('eqErr');
+  if(!tag||!name){ err.textContent='Asset tag and name are required.'; err.style.display='block'; return; }
+  // Use selected area name as location — keeps compatible with docs app which also uses pw_equipment
+  const locationVal=document.getElementById('eqArea').value.trim()||document.getElementById('eqLocation').value.trim()||null;
+  const payload={asset_tag:tag,name,manufacturer:document.getElementById('eqMfr').value.trim()||null,model:document.getElementById('eqModel').value.trim()||null,serial:document.getElementById('eqSerial').value.trim()||null,location:locationVal,category:document.getElementById('eqCat').value.trim()||null,status:document.getElementById('eqStatus').value||'active',updated_at:new Date().toISOString()};
+  let error;
+  if(id){ ({error}=await sb.from('pw_equipment').update(payload).eq('id',id)); }
+  else   { ({error}=await sb.from('pw_equipment').insert({...payload,created_at:new Date().toISOString()})); }
+  if(error){ err.textContent=error.message; err.style.display='block'; return; }
+  await loadEquipment(); closeEquipModal(); showToast(id?'Equipment updated ✓':'Equipment added ✓');
+}
+
+/* ── AREA MODAL ──────────────────────────────────────────────────── */
+
+
+/* ── THEME ───────────────────────────────────────────────────────── */
+function applyTheme(light){
+  document.body.classList.toggle('light-mode',light);
+  const icon=document.getElementById('themeIcon');
+  if(icon) icon.innerHTML=light
+    ?'<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>'
+    :'<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+  localStorage.setItem('pw_theme',light?'light':'dark');
+}
+function toggleTheme(){
+  const light=!document.body.classList.contains('light-mode'); applyTheme(light);
+  sb&&sb.auth.getSession().then(r=>{
+    const uid=r.data&&r.data.session&&r.data.session.user&&r.data.session.user.id; if(!uid) return;
+    fetch(SUPABASE_URL+'/rest/v1/kiln_config',{method:'POST',headers:{'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+r.data.session.access_token,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({key:'theme_uid_'+uid,value:light?'light':'dark'})}).catch(()=>{});
+  });
+}
+async function loadUserTheme(){
+  try{
+    const r=await sb.auth.getSession(); const uid=r.data&&r.data.session&&r.data.session.user&&r.data.session.user.id; if(!uid) return;
+    const res=await fetch(SUPABASE_URL+'/rest/v1/kiln_config?key=eq.theme_uid_'+uid+'&select=value',{headers:{'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+r.data.session.access_token}});
+    const rows=await res.json(); if(rows&&rows.length) applyTheme(rows[0].value==='light');
+  }catch(e){}
+}
+(function(){ const s=localStorage.getItem('pw_theme'); if(s){applyTheme(s==='light');return;} applyTheme(new Date().getHours()>=7&&new Date().getHours()<18); })();
+
+/* ── CHANGE PASSWORD ─────────────────────────────────────────────── */
+function openChangePwModal(){ document.getElementById('changePwOverlay').style.display='flex'; setTimeout(()=>document.getElementById('cpwCurrent').focus(),80); }
+function closeChangePwModal(){
+  document.getElementById('changePwOverlay').style.display='none';
+  ['cpwCurrent','cpwNew','cpwConfirm'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('cpwMsg').style.display='none';
+}
+async function doChangePw(){
+  const current=document.getElementById('cpwCurrent').value; const newPw=document.getElementById('cpwNew').value; const confirm2=document.getElementById('cpwConfirm').value;
+  const btn=document.getElementById('cpwBtn'); document.getElementById('cpwMsg').style.display='none';
+  if(!current||!newPw||!confirm2){ showCpwMsg('err','Please fill in all fields.'); return; }
+  if(newPw.length<8){ showCpwMsg('err','New password must be at least 8 characters.'); return; }
+  if(newPw!==confirm2){ showCpwMsg('err','New passwords do not match.'); return; }
+  const {data:sess}=await sb.auth.getSession(); const email=sess?.session?.user?.email;
+  if(!email){ showCpwMsg('err','Could not determine current user.'); return; }
+  btn.disabled=true; btn.textContent='Updating…';
+  const {error:signInErr}=await sb.auth.signInWithPassword({email,password:current});
+  if(signInErr){ btn.disabled=false; btn.textContent='Update Password'; showCpwMsg('err','Current password is incorrect.'); return; }
+  const {error:updateErr}=await sb.auth.updateUser({password:newPw});
+  btn.disabled=false; btn.textContent='Update Password';
+  if(updateErr){ showCpwMsg('err',updateErr.message); return; }
+  showCpwMsg('ok','Password updated successfully ✓'); setTimeout(closeChangePwModal,2000);
+}
+function showCpwMsg(type,text){
+  const msg=document.getElementById('cpwMsg'); msg.textContent=text; msg.style.display='block';
+  msg.style.background=type==='ok'?'var(--grnd)':'var(--redd)';
+  msg.style.color=type==='ok'?'var(--grn)':'var(--red)';
+  msg.style.border='1px solid '+(type==='ok'?'var(--grnb)':'var(--redb)');
+}
+
+/* ── GROQ / AI ───────────────────────────────────────────────────── */
+async function loadGroqKey(){
+  try{
+    const {data:sess}=await sb.auth.getSession();
+    const token=(sess&&sess.session&&sess.session.access_token)||SUPABASE_ANON_KEY;
+    const res=await fetch(SUPABASE_URL+'/rest/v1/kiln_config?key=eq.groq_api_key&select=value',{headers:{'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+token}});
+    const rows=await res.json(); if(rows&&rows.length&&rows[0].value) _groqKey=rows[0].value;
+  }catch(e){ console.warn('Could not load Groq key:',e); }
+}
+function openAiPanel(){
+  document.getElementById('isoAiOverlay').style.display='block';
+  document.getElementById('isoAiPanel').style.transform='translateX(0)';
+  renderAiHistory(); document.getElementById('aiPrompt').focus();
+}
+function closeAiPanel(){
+  document.getElementById('isoAiOverlay').style.display='none';
+  document.getElementById('isoAiPanel').style.transform='translateX(100%)';
+}
+function useAiSuggestion(text){ document.getElementById('aiPrompt').value=text; sendAiMessage(); }
+function clearAiHistory(){ _aiHistory=[]; renderAiHistory(); }
+function renderAiHistory(){
+  const hist=document.getElementById('aiHistory'); const clr=document.getElementById('aiClearBtn');
+  if(!_aiHistory.length){
+    hist.innerHTML='<div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);text-align:center;padding:40px 0">Ask anything about isolation matrices or equipment</div>';
+    if(clr) clr.style.display='none'; return;
+  }
+  hist.innerHTML=_aiHistory.map(m=>{
+    if(m.role==='user') return `<div style="display:flex;justify-content:flex-end"><div class="ai-bubble-user">${m.content.replace(/</g,'&lt;')}</div></div>`;
+    if(m.role==='assistant') return `<div style="display:flex"><div class="ai-bubble-ai">${m.content.replace(/</g,'&lt;').replace(/\n/g,'<br>')}</div></div>`;
+    return '';
+  }).join('');
+  hist.scrollTop=hist.scrollHeight; if(clr) clr.style.display='flex';
+}
+async function buildAiContext(){
+  try{
+    const lines=['PADESWOOD WORKS — ISOLATION MATRICES DATA','='.repeat(50)];
+    lines.push(`\nWORK AREAS (${_areas.length}): ${_areas.join(', ')}`);
+    lines.push(`\nEQUIPMENT (${_equipment.length}):`);
+    _equipment.forEach(e=>lines.push(`  [${e.asset_tag||'—'}] ${e.name} | Cat: ${e.category||'—'} | Area: ${e.location||'—'} | Status: ${e.status||'active'}`));
+    lines.push(`\nISOLATION MATRICES (${_matrices.length}):`);
+    for(const m of _matrices){
+      const equip=_equipment.find(e=>e.id===m.equipment_id);
+      const area=m.area||null;
+      const pts=await loadPointsForMatrix(m.id);
+      lines.push(`  Matrix: ${m.title} | Status: ${m.status||'draft'} | Equipment: ${equip?equip.name:'—'} | Area: ${m.area||'—'}`);
+      pts.forEach((pt,i)=>lines.push(`    Point ${i+1}: [${pt.isolation_type||'other'}] ${pt.description}${pt.reference?' Ref:'+pt.reference:''}${pt.method?' Method:'+pt.method:''}`));
+    }
+    return lines.join('\n');
+  }catch(e){ return 'Error loading data: '+e.message; }
+}
+async function sendAiMessage(){
+  const promptEl=document.getElementById('aiPrompt'); const sendBtn=document.getElementById('aiSendBtn');
+  const q=promptEl.value.trim(); if(!q) return;
+  if(!_groqKey){ await loadGroqKey(); if(!_groqKey){ alert('AI unavailable — Groq key not configured.'); return; } }
+  document.getElementById('aiSuggestions').style.display='none';
+  promptEl.value=''; sendBtn.disabled=true;
+  _aiHistory.push({role:'user',content:q}); renderAiHistory();
+  const hist=document.getElementById('aiHistory');
+  hist.innerHTML+=`<div style="display:flex" id="aiThinking"><div class="ai-thinking"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div><span style="margin-left:6px;font-size:12px;color:var(--tx3);font-family:var(--ff-mono)">Analysing…</span></div></div>`;
+  hist.scrollTop=hist.scrollHeight;
+  try{
+    const context=await buildAiContext();
+    const systemPrompt='You are an expert AI assistant for Padeswood Works (HeidelbergMaterials cement plant, Wales). You help with isolation matrices, equipment isolation procedures, and work area information. Answer concisely based only on the provided data.';
+    const dataMsg={role:'user',content:'Here is the isolation matrices data:\n\n'+context+'\n\nOnly answer from this data.'};
+    const dataAck={role:'assistant',content:'Understood. I will only answer from the isolation matrices data provided.'};
+    const messages=[{role:'system',content:systemPrompt},dataMsg,dataAck,..._aiHistory];
+    const res=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+_groqKey},body:JSON.stringify({model:'llama-3.3-70b-versatile',max_tokens:1500,messages})});
+    const data=await res.json();
+    const reply=data.choices?.[0]?.message?.content||'No response received.';
+    document.getElementById('aiThinking')?.remove();
+    _aiHistory.push({role:'assistant',content:reply}); renderAiHistory();
+  }catch(e){
+    document.getElementById('aiThinking')?.remove();
+    _aiHistory.push({role:'assistant',content:'Error: '+e.message}); renderAiHistory();
+  }
+  sendBtn.disabled=false;
+}
+
+/* ── KEYBOARD / EVENTS ───────────────────────────────────────────── */
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){
+    ['matrixModal','pointModal','equipModal'].forEach(id=>document.getElementById(id).classList.remove('open'));
+    closeDetail(); closeAiPanel(); closeChangePwModal();
+  }
+  if(e.key==='Enter'&&document.getElementById('splash').style.display==='flex') doLogin();
+});
+document.addEventListener('DOMContentLoaded',function(){
+  const cpwOverlay=document.getElementById('changePwOverlay');
+  if(cpwOverlay) cpwOverlay.addEventListener('click',e=>{if(e.target===cpwOverlay)closeChangePwModal();});
+  document.getElementById('isoAiOverlay').addEventListener('click',closeAiPanel);
+});
+
+/* ── INIT ────────────────────────────────────────────────────────── */
+window.addEventListener('load',function(){
+  sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+  checkLicence();
+});
+</script>
+</body>
+</html>
