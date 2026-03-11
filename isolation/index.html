@@ -475,6 +475,10 @@ tbody tr:hover{background:var(--sf2);}
       <button class="icon-btn" onclick="toggleTheme()" title="Toggle theme">
         <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       </button>
+      <button class="icon-btn" id="isoAdminBtn" onclick="openUMPanel()" title="User Management" style="display:none;position:relative">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span id="isoUMBadge" style="display:none;position:absolute;top:2px;right:2px;background:var(--amb);color:#000;font-size:9px;font-weight:700;border-radius:10px;padding:1px 5px;min-width:16px;text-align:center;line-height:16px"></span>
+      </button>
       <button class="icon-btn" onclick="doLogout()" title="Sign out" style="color:var(--red)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
       </button>
@@ -919,6 +923,8 @@ async function doLogin(){
 async function loadProfileAndLaunch(){
   const {data}=await sb.from('pw_profiles').select('*').eq('id',currentUser.id).single();
   currentProfile=data||{email:currentUser.email,full_name:currentUser.email,role:'viewer'};
+  UM_SELF_ID = currentUser ? currentUser.id : null;
+  if(!UM_SB) UM_SB = sb;
   launchApp();
 }
 async function doLogout(){
@@ -932,6 +938,10 @@ async function launchApp(){
   const app=document.getElementById('appWrapper'); app.style.display='flex';
   const rawName=currentProfile.full_name||'';
   const emailPrefix=(currentProfile.email||'').split('@')[0]||'—';
+  if(isoRole()==='admin'){
+    const abtn=document.getElementById('isoAdminBtn'); if(abtn) abtn.style.display='flex';
+    loadISOUMBadge();
+  }
   document.getElementById('headerEmail').textContent=rawName||emailPrefix;
   // Try kiln_users.locked_name as fallback if full_name missing
   if(!rawName){
@@ -1428,6 +1438,126 @@ window.addEventListener('load',function(){
   sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
   checkLicence();
 });
+
+
+/* ── UNIFIED USER MANAGEMENT ─────────────────────────────────────── */
+let _umProfiles = [], _umKilnUsers = [];
+let UM_SB = null; // set after sb is created
+let UM_SELF_ID = null;
+
+function openUMPanel() {
+  document.getElementById('umOverlay').style.display = 'block';
+  document.getElementById('umPanel').style.transform = 'translateX(0)';
+  loadUMUsers();
+}
+function closeUMPanel() {
+  document.getElementById('umOverlay').style.display = 'none';
+  document.getElementById('umPanel').style.transform = 'translateX(100%)';
+}
+
+async function loadISOUMBadge() {
+  try {
+    const { count } = await sb.from('pw_profiles').select('id', { count: 'exact', head: true }).eq('approved', false);
+    const badge = document.getElementById('isoUMBadge');
+    if (badge) { badge.textContent = count||''; badge.style.display = count > 0 ? 'block' : 'none'; }
+  } catch(e) {}
+}
+
+async function loadUMUsers() {
+  if (!UM_SB) UM_SB = sb;
+  const list = document.getElementById('umUserList');
+  list.innerHTML = '<div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);padding:12px 0">Loading users\u2026</div>';
+  try {
+    const [profRes, kilnRes] = await Promise.all([
+      UM_SB.from('pw_profiles').select('*').order('email'),
+      UM_SB.from('kiln_users').select('username,locked_name,email,is_admin,is_burner,is_shift_manager,is_cement_analyst,is_day_staff,is_readonly,is_locked,must_reset_password,auth_user_id').order('username')
+    ]);
+    _umProfiles  = profRes.data || [];
+    _umKilnUsers = kilnRes.data || [];
+    renderUMUsers();
+  } catch(e) {
+    list.innerHTML = '<div style="color:var(--red);font-size:12px;font-family:var(--ff-mono)">Failed to load: ' + (e.message||'error') + '</div>';
+  }
+}
+
+function umEsc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+function renderUMUsers() {
+  const list = document.getElementById('umUserList');
+  const merged = _umProfiles.map(function(p) {
+    return { prof: p, kiln: _umKilnUsers.find(function(k){ return k.auth_user_id === p.id; }) || null };
+  });
+  _umKilnUsers.forEach(function(ku) {
+    if (!ku.auth_user_id || !_umProfiles.find(function(p){ return p.id === ku.auth_user_id; }))
+      merged.push({ prof: null, kiln: ku });
+  });
+  if (!merged.length) { list.innerHTML = '<div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);padding:12px 0">No users found.</div>'; return; }
+  const DS = 'height:30px;padding:0 8px;font-size:11px;font-family:var(--ff-mono);background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--tx);outline:none;cursor:pointer;flex:1;min-width:0';
+  const LS = 'font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);flex-shrink:0;width:72px';
+  const RS = 'display:flex;align-items:center;gap:8px;margin-bottom:7px';
+  const rc = {admin:'var(--ac3)',reviewer:'var(--pur)',editor:'var(--amb)',viewer:'var(--tx3)',none:'var(--tx3)'};
+  list.innerHTML = merged.map(function(m) {
+    const p = m.prof, ku = m.kiln;
+    const isSelf = UM_SELF_ID && p && p.id === UM_SELF_ID;
+    const displayName = (p&&(p.full_name||p.email))||(ku&&(ku.locked_name||ku.username))||'?';
+    const email = (p&&p.email)||(ku&&ku.email)||'\u2014';
+    const initials = displayName.split(' ').map(function(w){return w[0]||'';}).join('').slice(0,2).toUpperCase()||'?';
+    const docsRole = p?(p.role||'viewer'):null;
+    const isoRole  = p?(p.isolation_role||'none'):null;
+    const kilnRole = !ku?null:ku.is_admin?'admin':ku.is_shift_manager?'shift_manager':ku.is_cement_analyst?'cement_analyst':ku.is_day_staff?'day_staff':ku.is_burner?'burner':'read_only';
+    const col = docsRole?(rc[docsRole]||'var(--tx3)'):'var(--tx3)';
+    let h = '<div style="background:var(--sf2);border:1px solid var(--bd);border-radius:var(--r);padding:14px 16px">';
+    h += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:13px">'
+      +'<div style="width:36px;height:36px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--ff-head);font-weight:700;font-size:13px;color:'+col+';border:1px solid '+col+'33;background:'+col+'18">'+umEsc(initials)+'</div>'
+      +'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:var(--tx);font-family:var(--ff-head);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+umEsc(displayName)+'</div>'
+      +'<div style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+umEsc(email)+'</div></div>'
+      +(p&&p.approved===false?'<span style="font-size:9px;font-family:var(--ff-mono);color:var(--amb);border:1px solid var(--ambb);background:var(--ambd);padding:2px 6px;border-radius:4px;flex-shrink:0;white-space:nowrap">PENDING</span>':'')
+      +(ku&&ku.must_reset_password?'<span style="font-size:9px;font-family:var(--ff-mono);color:var(--amb);border:1px solid var(--ambb);background:var(--ambd);padding:2px 6px;border-radius:4px;flex-shrink:0;white-space:nowrap">PW RESET</span>':'')
+      +(ku&&ku.is_locked?'<span style="font-size:9px;font-family:var(--ff-mono);color:var(--red);border:1px solid var(--redb);background:var(--redd);padding:2px 6px;border-radius:4px;flex-shrink:0">LOCKED</span>':'')
+      +'</div>';
+    h += '<div style="'+RS+'"><span style="'+LS+'">Docs</span>';
+    if(p){h+='<select onchange="umUpdateDocsRole(\''+umEsc(p.id)+'\',this.value)"'+(isSelf?' disabled':'')+' style="'+DS+'"><option value="viewer"'+(docsRole==='viewer'?' selected':'')+'>Viewer</option><option value="editor"'+(docsRole==='editor'?' selected':'')+'>Editor</option><option value="reviewer"'+(docsRole==='reviewer'?' selected':'')+'>Reviewer</option><option value="admin"'+(docsRole==='admin'?' selected':'')+'>Admin</option></select>';}
+    else{h+='<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">No platform account</span>';}
+    h+='</div><div style="'+RS+'"><span style="'+LS+'">Isolation</span>';
+    if(p){h+='<select onchange="umUpdateIsoRole(\''+umEsc(p.id)+'\',this.value)"'+(isSelf?' disabled':'')+' style="'+DS+'"><option value="none"'+(isoRole==='none'?' selected':'')+'>No Access</option><option value="viewer"'+(isoRole==='viewer'?' selected':'')+'>Viewer</option><option value="editor"'+(isoRole==='editor'?' selected':'')+'>Editor</option><option value="reviewer"'+(isoRole==='reviewer'?' selected':'')+'>Reviewer</option><option value="admin"'+(isoRole==='admin'?' selected':'')+'>Admin</option></select>';}
+    else{h+='<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">No platform account</span>';}
+    h+='</div><div style="'+RS+'"><span style="'+LS+'">Shift Log</span>';
+    if(ku){h+='<select onchange="umUpdateKilnRole(\''+umEsc(ku.username)+'\',this.value)" style="'+DS+'"><option value="burner"'+(kilnRole==='burner'?' selected':'')+'>Burner</option><option value="shift_manager"'+(kilnRole==='shift_manager'?' selected':'')+'>Shift Manager</option><option value="cement_analyst"'+(kilnRole==='cement_analyst'?' selected':'')+'>Cement Analyst</option><option value="day_staff"'+(kilnRole==='day_staff'?' selected':'')+'>Day Staff</option><option value="read_only"'+(kilnRole==='read_only'?' selected':'')+'>Read Only</option><option value="admin"'+(kilnRole==='admin'?' selected':'')+'>Admin</option></select>';}
+    else{h+='<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">No shift log account</span>';}
+    h+='</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid var(--bd)">';
+    if(p&&p.approved===false){h+='<button onclick="umApproveUser(\''+umEsc(p.id)+'\')" style="height:26px;padding:0 12px;font-size:11px;font-family:var(--ff-head);font-weight:600;background:var(--grnd);border:1px solid var(--grnb);border-radius:var(--rsm);color:var(--grn);cursor:pointer">\u2713 Approve</button>';}
+    if(ku){h+='<button onclick="umForceReset(\''+umEsc(ku.username)+'\')" style="height:26px;padding:0 10px;font-size:11px;font-family:var(--ff-body);background:var(--sf3);border:1px solid var(--bd);border-radius:var(--rsm);color:var(--tx2);cursor:pointer">Force PW Reset</button>';}
+    if(p&&!isSelf){h+='<button onclick="umRemoveUser(\''+umEsc(p.id)+'\',\''+umEsc(email)+'\')" style="height:26px;padding:0 10px;font-size:11px;font-family:var(--ff-mono);background:transparent;border:1px solid var(--redb);border-radius:var(--rsm);color:var(--red);cursor:pointer;margin-left:auto">Remove</button>';}
+    h+='</div></div>';
+    return h;
+  }).join('');
+}
+
+async function umUpdateDocsRole(id,role){const{error}=await UM_SB.from('pw_profiles').update({role}).eq('id',id);if(error){umToast('Failed: '+error.message);return;}const u=_umProfiles.find(x=>x.id===id);if(u)u.role=role;renderUMUsers();umToast('Docs role updated \u2713');}
+async function umUpdateIsoRole(id,role){const{error}=await UM_SB.from('pw_profiles').update({isolation_role:role}).eq('id',id);if(error){umToast('Failed: '+error.message);return;}const u=_umProfiles.find(x=>x.id===id);if(u)u.isolation_role=role;renderUMUsers();umToast('Isolation role updated \u2713');}
+async function umUpdateKilnRole(username,role){const flags={is_admin:role==='admin',is_shift_manager:role==='shift_manager',is_cement_analyst:role==='cement_analyst',is_day_staff:role==='day_staff',is_burner:role==='burner',is_readonly:role==='read_only'};const{error}=await UM_SB.from('kiln_users').update(flags).eq('username',username);if(error){umToast('Failed: '+error.message);return;}const u=_umKilnUsers.find(x=>x.username===username);if(u)Object.assign(u,flags);renderUMUsers();umToast('Shift Log role updated \u2713');}
+async function umApproveUser(id){const{error}=await UM_SB.from('pw_profiles').update({approved:true}).eq('id',id);if(error){umToast('Failed: '+error.message);return;}const u=_umProfiles.find(x=>x.id===id);if(u)u.approved=true;renderUMUsers();loadISOUMBadge();umToast('User approved \u2713');}
+async function umForceReset(username){const{error}=await UM_SB.from('kiln_users').update({must_reset_password:true}).eq('username',username);if(error){umToast('Failed: '+error.message);return;}const u=_umKilnUsers.find(x=>x.username===username);if(u)u.must_reset_password=true;renderUMUsers();umToast(username+' will be prompted to reset password \u2713');}
+async function umRemoveUser(id,email){if(!confirm('Remove '+email+'? This will revoke their platform access immediately.'))return;const{error}=await UM_SB.from('pw_profiles').delete().eq('id',id);if(error){umToast('Failed: '+error.message);return;}_umProfiles=_umProfiles.filter(x=>x.id!==id);renderUMUsers();umToast('User removed \u2713');}
+function umToast(msg){showToast(msg);}
+
 </script>
+
+<!-- ── UNIFIED USER MANAGEMENT PANEL ─────────────────────────────── -->
+<div id="umOverlay" onclick="closeUMPanel()" style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:800;display:none"></div>
+<div id="umPanel" style="position:fixed;top:0;right:0;bottom:0;width:560px;max-width:96vw;background:var(--sf);border-left:1px solid var(--bd);z-index:801;transform:translateX(100%);transition:transform .28s ease;display:flex;flex-direction:column;overflow:hidden">
+  <div style="padding:18px 22px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+    <div style="display:flex;align-items:center;gap:10px;font-family:var(--ff-head);font-weight:700;font-size:16px;color:var(--tx)">
+      <div style="width:30px;height:30px;border-radius:7px;background:var(--acd2);display:flex;align-items:center;justify-content:center">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--ac3)" stroke-width="2" width="14" height="14"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      User Management
+    </div>
+    <button onclick="closeUMPanel()" style="width:28px;height:28px;border-radius:6px;border:1px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center">&times;</button>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:20px 22px;display:flex;flex-direction:column;gap:16px">
+    <div id="umUserList"><div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);padding:12px 0">Loading users&hellip;</div></div>
+  </div>
+</div>
 </body>
 </html>
