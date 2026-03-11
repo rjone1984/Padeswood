@@ -1720,19 +1720,8 @@ function doLogout(){
   GROQ_KEY = null;
   _reportHistory = [];
   _loginAttempts = 0;
-  const h = new Date().getHours();
-  lightMode = h >= 7 && h < 18;
-  document.body.classList.toggle('light-mode', lightMode);
-  localStorage.removeItem('kbl_theme');
   ['kbl_pw5','kbl_users'].forEach(k => { try{ localStorage.removeItem(k); }catch(e){} });
-  document.body.classList.remove('read-only-mode');
-  const _wdLogout=document.getElementById('weekDate'); if(_wdLogout)_wdLogout.disabled=false;
-  document.getElementById('splash').style.display='flex';
-  document.getElementById('app').style.display='none';
-  document.getElementById('splashUser').value='';
-  document.getElementById('splashPass').value='';
-  document.getElementById('splashErr').textContent='';
-  document.getElementById('manageUsersBtn').style.display='none';
+  window.location.href = '../index.html';
   const _mwo2 = document.getElementById('mobileWeeklyOverview'); if(_mwo2) _mwo2.style.display='none';
   const _mar2 = document.getElementById('mobileAiReporting'); if(_mar2) _mar2.style.display='none';
 }
@@ -5494,7 +5483,10 @@ function renderUsersList(){
       if(u.readOnly) allRoles.push('Read-only');
       const roleLabel = allRoles.join(' + ') || 'Burner';
 
-      row.innerHTML = '<span style="min-width:90px;font-family:var(--ff-mono);font-size:12px;font-weight:600;color:var(--tx)">'+esc(u.user)+'</span>'
+      row.innerHTML = '<div style="display:flex;flex-direction:column;min-width:120px;gap:1px">'
+        +'<span style="font-family:var(--ff-mono);font-size:12px;font-weight:600;color:var(--tx)">'+esc(u.user)+'</span>'
+        +(u.email ? '<span style="font-family:var(--ff-mono);font-size:10px;color:var(--tx3)">'+esc(u.email)+'</span>' : '')
+        +'</div>'
         +'<span style="flex:1;font-size:12px;color:var(--tx2)">'+(esc(u.lockedName)||'—')+'</span>'
         +(u.locked ? '<span style="font-size:10px;font-family:var(--ff-mono);color:#d97706">🔒</span>' : '')
         +'<button onclick="openEditUser(\''+esc(u.user)+'\')" style="padding:3px 8px;font-size:10px;border-radius:var(--rxs);border:1px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;font-family:var(--ff-mono)">'+(u.user===currentUser?'Edit (you)':'Edit')+'</button>'
