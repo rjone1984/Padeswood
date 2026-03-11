@@ -238,8 +238,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       <button class="login-btn" id="loginBtn" onclick="doLogin()">Sign In</button>
       <div class="login-err" id="loginErr"></div>
       <div id="forgotWrap" style="margin-top:12px">
-        <div style="text-align:center">
+        <div style="text-align:center;display:flex;justify-content:center;gap:16px">
           <button onclick="toggleForgot()" style="background:none;border:none;color:var(--tx3);font-size:11px;font-family:var(--ff-mono);cursor:pointer;text-decoration:underline;padding:0">Forgot password?</button>
+          <button onclick="showRegister()" style="background:none;border:none;color:var(--ac3);font-size:11px;font-family:var(--ff-mono);cursor:pointer;text-decoration:underline;padding:0">Request Access</button>
         </div>
         <div id="forgotPanel" style="display:none;margin-top:12px;padding:12px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm)">
           <p style="font-size:12px;color:var(--tx2);margin:0 0 10px;line-height:1.5">Enter your email address and an admin will reset your password.</p>
@@ -248,6 +249,36 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
             <button onclick="submitResetRequest()" class="login-btn" style="width:auto;padding:0 14px;margin:0;white-space:nowrap;flex-shrink:0">Send</button>
           </div>
           <div id="forgotMsg" style="margin-top:8px;font-size:11px;font-family:var(--ff-mono);min-height:16px"></div>
+        </div>
+      </div>
+      <!-- Registration panel -->
+      <div id="registerPanel" style="display:none;margin-top:16px;padding:16px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm)">
+        <div style="font-size:13px;font-weight:600;font-family:var(--ff-head);color:var(--tx);margin-bottom:4px">Request Access</div>
+        <p style="font-size:11px;color:var(--tx3);margin:0 0 14px;line-height:1.6;font-family:var(--ff-mono)">Your account will be reviewed by an admin before you can log in.</p>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div>
+            <label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:5px">Full Name</label>
+            <input type="text" id="regName" placeholder="e.g. John Smith" style="width:100%;height:36px;padding:0 10px;background:var(--sf2);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--tx);font-family:var(--ff-body);font-size:12px;outline:none;box-sizing:border-box">
+          </div>
+          <div>
+            <label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:5px">Email Address</label>
+            <div style="display:flex;gap:0;border:1px solid var(--bd2);border-radius:var(--rxs);overflow:hidden;background:var(--sf2)" id="regEmailWrap">
+              <input type="text" id="regEmailUser" placeholder="username" style="border:none;border-radius:0;flex:1;min-width:0;background:transparent;height:36px;padding:0 10px;color:var(--tx);font-family:var(--ff-body);font-size:12px;outline:none" oninput="syncRegEmail()">
+              <select id="regDomain" onchange="syncRegEmail();if(this.value==='other'){document.getElementById('regEmailUser').placeholder='full@address.com';document.getElementById('regEmailUser').type='email';}else{document.getElementById('regEmailUser').placeholder='username';document.getElementById('regEmailUser').type='text';}" style="height:36px;padding:0 8px 0 4px;background:var(--sf3);border:none;border-left:1px solid var(--bd2);color:var(--tx2);font-family:var(--ff-mono);font-size:10px;cursor:pointer;outline:none;flex-shrink:0;max-width:190px">
+                <option value="@heidelbergmaterials.com">@heidelbergmaterials.com</option>
+              </select>
+            </div>
+            <input type="hidden" id="regEmail">
+          </div>
+          <div>
+            <label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:5px">Password</label>
+            <input type="password" id="regPass" placeholder="Min. 8 characters" style="width:100%;height:36px;padding:0 10px;background:var(--sf2);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--tx);font-family:var(--ff-body);font-size:12px;outline:none;box-sizing:border-box">
+          </div>
+          <button id="regBtn" onclick="doRegister()" style="height:36px;background:linear-gradient(135deg,var(--ac),var(--ac3));color:#fff;border:none;border-radius:var(--rsm);font-family:var(--ff-head);font-weight:600;font-size:13px;cursor:pointer">Request Access</button>
+          <div id="regMsg" style="display:none;font-size:11px;font-family:var(--ff-mono);padding:8px 10px;border-radius:var(--rxs)"></div>
+        </div>
+        <div style="text-align:center;margin-top:12px">
+          <button onclick="hideRegister()" style="background:none;border:none;color:var(--tx3);font-size:11px;font-family:var(--ff-mono);cursor:pointer;text-decoration:underline;padding:0">Back to Sign In</button>
         </div>
       </div>
     </div>
@@ -270,8 +301,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       <button class="icon-btn" id="aiReportBtn" onclick="openAiPanel()" title="AI Reporting" style="display:none">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="9" y1="14" x2="13" y2="14"/></svg>
       </button>
-      <button class="icon-btn" id="adminPanelBtn" onclick="openAdminPanel()" title="User Management" style="display:none">
+      <button class="icon-btn" id="adminPanelBtn" onclick="openAdminPanel()" title="User Management" style="display:none;position:relative">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span id="pendingBadge" style="display:none;position:absolute;top:2px;right:2px;background:var(--amb);color:#000;font-size:9px;font-weight:700;border-radius:10px;padding:1px 5px;min-width:16px;text-align:center;line-height:16px"></span>
       </button>
       <button class="icon-btn" id="resetReqBtn" onclick="openResetReqModal()" title="Password Reset Requests" style="display:none;position:relative">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
@@ -375,15 +407,26 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
             </select>
           </div>
         </div>
-        <div>
-          <label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:8px">Shift Log Access</label>
-          <div style="display:flex;flex-wrap:wrap;gap:8px">
-            <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--tx);cursor:pointer"><input type="checkbox" id="inv_burner"> Kiln Burner</label>
-            <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--tx);cursor:pointer"><input type="checkbox" id="inv_sm"> Shift Manager</label>
-            <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--tx);cursor:pointer"><input type="checkbox" id="inv_ca"> Cement Analyst</label>
-            <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--tx);cursor:pointer"><input type="checkbox" id="inv_day"> Day Staff</label>
-            <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--tx);cursor:pointer"><input type="checkbox" id="inv_readonly"> Read-only</label>
-            <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--tx);cursor:pointer"><input type="checkbox" id="inv_admin_kiln"> Admin</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div><label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Isolation Matrix Role</label>
+            <select id="inviteIsoRole" style="width:100%;height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
+              <option value="none">No Access</option>
+              <option value="viewer">Viewer — read only</option>
+              <option value="editor">Editor — add &amp; edit</option>
+              <option value="reviewer">Reviewer — mark reviewed</option>
+              <option value="admin">Admin — full access</option>
+            </select>
+          </div>
+          <div><label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Shift Log Role</label>
+            <select id="inviteKilnRole" style="width:100%;height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
+              <option value="none">No Access</option>
+              <option value="burner">Kiln Burner</option>
+              <option value="shift_manager">Shift Manager</option>
+              <option value="cement_analyst">Cement Analyst</option>
+              <option value="day_staff">Day Staff</option>
+              <option value="read_only">Read Only</option>
+              <option value="admin">Admin</option>
+            </select>
           </div>
         </div>
         <div id="inviteMsg" style="display:none;font-size:12px;padding:8px 12px;border-radius:var(--rsm)"></div>
@@ -740,6 +783,25 @@ async function showAppSelector(user) {
   try {
     const {data} = await sb.from('pw_profiles').select('*').eq('id', user.id).single();
     _platformProfile = data;
+    // Block unapproved users
+    if (data && data.approved === false) {
+      await sb.auth.signOut();
+      Object.keys(localStorage).forEach(function(k) {
+        if (k.startsWith('sb-') || k.startsWith('supabase') || k === 'kbl_session' || k === 'kbl_refresh') localStorage.removeItem(k);
+      });
+      document.getElementById('mainWrapper').style.display = 'none';
+      document.getElementById('headerUser').style.display = 'none';
+      document.getElementById('logoutBtn').style.display = 'none';
+      document.getElementById('changePwBtn').style.display = 'none';
+      document.getElementById('loginScreen').style.display = 'flex';
+      const err = document.getElementById('loginErr');
+      err.textContent = 'Your account is pending admin approval. You\'ll receive access once an admin reviews your request.';
+      err.style.display = 'block';
+      err.style.background = 'var(--ambd)';
+      err.style.color = 'var(--amb)';
+      err.style.borderColor = 'var(--ambb)';
+      return;
+    }
     // Show full name, fall back to email prefix
     const displayName = (data && data.full_name) ? data.full_name : (user.email ? user.email.split('@')[0] : '—');
     document.getElementById('headerEmail').textContent = displayName;
@@ -747,6 +809,7 @@ async function showAppSelector(user) {
       document.getElementById('adminPanelBtn').style.display = 'flex';
       document.getElementById('resetReqBtn').style.display = 'flex';
       loadResetReqBadge();
+      loadPendingBadge();
     }
     document.getElementById('aiReportBtn').style.display = 'flex';
     // Check kiln_users for must_reset + locked_name fallback
@@ -775,6 +838,94 @@ async function doLogout() {
     if (k.startsWith('sb-') || k.startsWith('supabase') || k === 'kbl_session' || k === 'kbl_refresh') localStorage.removeItem(k);
   });
   window.location.reload();
+}
+
+/* ── SELF-REGISTRATION ───────────────────────────────────────────── */
+function showRegister() {
+  document.getElementById('registerPanel').style.display = 'block';
+  document.getElementById('forgotPanel').style.display = 'none';
+  document.getElementById('regMsg').style.display = 'none';
+  document.getElementById('regName').value = '';
+  document.getElementById('regEmailUser').value = '';
+  document.getElementById('regPass').value = '';
+  document.getElementById('regEmail').value = '';
+  document.getElementById('regDomain').value = '@heidelbergmaterials.com';
+  document.getElementById('regEmailUser').type = 'text';
+  document.getElementById('regEmailUser').placeholder = 'username';
+}
+function hideRegister() {
+  document.getElementById('registerPanel').style.display = 'none';
+}
+function syncRegEmail() {
+  const user = document.getElementById('regEmailUser').value.trim();
+  const dom  = document.getElementById('regDomain').value;
+  document.getElementById('regEmail').value = dom === 'other' ? user : user + dom;
+}
+async function doRegister() {
+  syncRegEmail();
+  const name  = document.getElementById('regName').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const pass  = document.getElementById('regPass').value;
+  const btn   = document.getElementById('regBtn');
+  const msg   = document.getElementById('regMsg');
+  msg.style.display = 'none';
+  if (!name)  { showRegMsg('err', 'Please enter your full name.'); return; }
+  if (!email) { showRegMsg('err', 'Please enter your email address.'); return; }
+  if (!email.toLowerCase().endsWith('@heidelbergmaterials.com')) { showRegMsg('err', 'Only @heidelbergmaterials.com email addresses are permitted to request access.'); return; }
+  if (!pass || pass.length < 8) { showRegMsg('err', 'Password must be at least 8 characters.'); return; }
+  btn.disabled = true; btn.textContent = 'Sending…';
+  try {
+    const { data, error } = await sb.auth.signUp({
+      email,
+      password: pass,
+      options: {
+        data: { full_name: name },
+        emailRedirectTo: 'https://rjone1984.github.io/Padeswood/index.html'
+      }
+    });
+    if (error) throw error;
+    // Store name so we can create the profile once they confirm
+    localStorage.setItem('pw_pending_name', name);
+    localStorage.setItem('pw_pending_email', email);
+    showRegMsg('ok', 'Confirmation email sent to ' + email + '. Please click the link in the email — your account will then be queued for admin approval.');
+    btn.disabled = false; btn.textContent = 'Request Access';
+  } catch(e) {
+    showRegMsg('err', e.message || 'Registration failed.');
+    btn.disabled = false; btn.textContent = 'Request Access';
+  }
+}
+function showRegMsg(type, text) {
+  const msg = document.getElementById('regMsg');
+  msg.textContent = text;
+  msg.style.display = 'block';
+  msg.style.background = type === 'ok' ? 'var(--grnd)' : 'var(--redd)';
+  msg.style.color      = type === 'ok' ? 'var(--grn)'  : 'var(--red)';
+  msg.style.border     = '1px solid ' + (type === 'ok' ? 'var(--grnb)' : 'var(--redb)');
+}
+
+/* ── PENDING BADGE ───────────────────────────────────────────────── */
+async function loadPendingBadge() {
+  try {
+    const { count } = await sb.from('pw_profiles').select('id', { count: 'exact', head: true }).eq('approved', false);
+    const badge = document.getElementById('pendingBadge');
+    if (count && count > 0) {
+      badge.textContent = count;
+      badge.style.display = 'block';
+    } else {
+      badge.style.display = 'none';
+    }
+  } catch(e) { console.warn('pendingBadge:', e); }
+}
+
+/* ── APPROVE USER ────────────────────────────────────────────────── */
+async function approveUser(userId) {
+  const { error } = await sb.from('pw_profiles').update({ approved: true }).eq('id', userId);
+  if (error) { showPlatformToast('Failed: ' + error.message); return; }
+  const u = _usersCache.find(x => x.id === userId);
+  if (u) u.approved = true;
+  renderAllUsers();
+  loadPendingBadge();
+  showPlatformToast('User approved ✓');
 }
 
 /* ── KEYBOARD ────────────────────────────────────────────────────── */
@@ -827,11 +978,54 @@ async function loadUserTheme() {
   applyTheme(new Date().getHours() >= 7 && new Date().getHours() < 18);
 })();
 
-/* ── INIT ────────────────────────────────────────────────────────── */
+/* /* ── INIT ──────────────────────────────────────────────── */
 window.addEventListener('load', function() {
   sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  checkLicence();
+  if (window.location.hash && window.location.hash.includes('access_token')) {
+    handleEmailConfirmation();
+  } else {
+    checkLicence();
+  }
 });
+
+async function handleEmailConfirmation() {
+  document.getElementById('licenceScreen').style.display = 'flex';
+  document.getElementById('licSpinner').style.display = 'flex';
+  document.getElementById('licMsg').style.display = 'none';
+  try {
+    const { data, error } = await sb.auth.getSession();
+    if (error || !data.session) throw new Error('Could not verify your confirmation link. Please try registering again.');
+    const user  = data.session.user;
+    const name  = localStorage.getItem('pw_pending_name')  || (user.user_metadata && user.user_metadata.full_name) || '';
+    const email = localStorage.getItem('pw_pending_email') || user.email || '';
+    const { error: profErr } = await sb.from('pw_profiles').upsert({
+      id: user.id,
+      email: email,
+      full_name: name,
+      role: 'viewer',
+      isolation_role: 'none',
+      approved: false
+    }, { onConflict: 'id' });
+    if (profErr) throw profErr;
+    localStorage.removeItem('pw_pending_name');
+    localStorage.removeItem('pw_pending_email');
+    await sb.auth.signOut();
+    history.replaceState(null, '', window.location.pathname);
+    document.getElementById('licenceScreen').style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'flex';
+    const errEl = document.getElementById('loginErr');
+    errEl.textContent = 'Email confirmed ✓  Your account is now pending admin approval — you will be able to sign in once reviewed.';
+    errEl.style.cssText = 'display:block;background:var(--grnd);color:var(--grn);border:1px solid var(--grnb);padding:10px 12px;border-radius:var(--rsm);font-size:12px;line-height:1.5;margin-top:8px';
+  } catch(e) {
+    history.replaceState(null, '', window.location.pathname);
+    checkLicence();
+    setTimeout(function() {
+      const errEl = document.getElementById('loginErr');
+      errEl.textContent = 'Confirmation error: ' + (e.message || 'Unknown error');
+      errEl.style.cssText = 'display:block;background:var(--redd);color:var(--red);border:1px solid var(--redb);padding:10px 12px;border-radius:var(--rsm);font-size:12px;margin-top:8px';
+    }, 900);
+  }
+}
 
 /* ================================================================
    PLATFORM ADDITIONS — User Mgmt + AI Reporting
@@ -945,6 +1139,7 @@ function closeAdminPanel() {
 async function loadAllUsers() {
   const list = document.getElementById('userList');
   list.innerHTML = '<div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);padding:12px 0">Loading users…</div>';
+  loadPendingBadge();
   const [profRes, kilnRes] = await Promise.all([
     sb.from('pw_profiles').select('*').order('email'),
     sb.from('kiln_users').select('username,locked_name,email,is_admin,is_burner,is_shift_manager,is_cement_analyst,is_day_staff,is_readonly,is_locked,must_reset_password,auth_user_id').order('username')
@@ -978,12 +1173,10 @@ const KILN_FLAGS = [
 
 function renderAllUsers() {
   const list = document.getElementById('userList');
-  // Build merged list: pw_profiles as primary, attach kiln_users by auth_user_id
   const merged = _usersCache.map(function(p) {
     const ku = _kilnUsersCache.find(function(k){ return k.auth_user_id === p.id; }) || null;
     return { prof: p, kiln: ku };
   });
-  // Orphaned kiln users (no auth link or no matching profile)
   _kilnUsersCache.forEach(function(ku) {
     if (!ku.auth_user_id || !_usersCache.find(function(p){ return p.id === ku.auth_user_id; })) {
       merged.push({ prof: null, kiln: ku });
@@ -991,67 +1184,86 @@ function renderAllUsers() {
   });
   document.getElementById('userCount').textContent = '(' + merged.length + ')';
   if (!merged.length) { list.innerHTML = '<div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);padding:12px 0">No users found.</div>'; return; }
-  const rc = {admin:'var(--ac3)',reviewer:'var(--pur)',editor:'var(--amb)',viewer:'var(--tx3)'};
+
+  const DS = 'height:30px;padding:0 8px;font-size:11px;font-family:var(--ff-mono);background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--tx);outline:none;cursor:pointer;flex:1;min-width:0';
+  const LS = 'font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);flex-shrink:0;width:72px';
+  const RS = 'display:flex;align-items:center;gap:8px;margin-bottom:7px';
+
   list.innerHTML = merged.map(function(m) {
-    const p = m.prof;
-    const ku = m.kiln;
+    const p = m.prof, ku = m.kiln;
     const isSelf = _platformProfile && p && p.id === _platformProfile.id;
     const displayName = (p && (p.full_name || p.email)) || (ku && (ku.locked_name || ku.username)) || '?';
     const email = (p && p.email) || (ku && ku.email) || '\u2014';
     const initials = displayName.split(' ').map(function(w){return w[0]||'';}).join('').slice(0,2).toUpperCase() || '?';
     const docsRole = p ? (p.role || 'viewer') : null;
+    const isoRole  = p ? (p.isolation_role || 'none') : null;
+    const kilnRole = !ku ? null : ku.is_admin ? 'admin' : ku.is_shift_manager ? 'shift_manager' : ku.is_cement_analyst ? 'cement_analyst' : ku.is_day_staff ? 'day_staff' : ku.is_burner ? 'burner' : 'read_only';
+    const rc = {admin:'var(--ac3)',reviewer:'var(--pur)',editor:'var(--amb)',viewer:'var(--tx3)',none:'var(--tx3)'};
     const col = docsRole ? (rc[docsRole] || 'var(--tx3)') : 'var(--tx3)';
-    let html = '<div style="background:var(--sf2);border:1px solid var(--bd);border-radius:var(--r);padding:14px 16px">';
-    // Avatar + name
-    html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">'
-      +'<div style="width:34px;height:34px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--ff-head);font-weight:700;font-size:13px;color:'+col+';border:1px solid '+col+'33;background:'+col+'18">'+esc(initials)+'</div>'
+
+    let h = '<div style="background:var(--sf2);border:1px solid var(--bd);border-radius:var(--r);padding:14px 16px">';
+
+    h += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:13px">'
+      +'<div style="width:36px;height:36px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--ff-head);font-weight:700;font-size:13px;color:'+col+';border:1px solid '+col+'33;background:'+col+'18">'+esc(initials)+'</div>'
       +'<div style="flex:1;min-width:0">'
-        +'<div style="font-size:13px;font-weight:600;color:var(--tx);font-family:var(--ff-head)">'+esc(displayName)+'</div>'
-        +'<div style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono);margin-top:1px">'+esc(email)+'</div>'
+        +'<div style="font-size:13px;font-weight:600;color:var(--tx);font-family:var(--ff-head);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(displayName)+'</div>'
+        +'<div style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(email)+'</div>'
       +'</div>'
-      +(ku && ku.must_reset_password ? '<span style="font-size:9px;font-family:var(--ff-mono);color:var(--amb);border:1px solid var(--ambb);background:var(--ambd);padding:2px 7px;border-radius:4px;flex-shrink:0">PW RESET</span>' : '')
+      +(p && p.approved === false ? '<span style="font-size:9px;font-family:var(--ff-mono);color:var(--amb);border:1px solid var(--ambb);background:var(--ambd);padding:2px 6px;border-radius:4px;flex-shrink:0;white-space:nowrap">PENDING</span>' : '')
+      +(ku && ku.must_reset_password ? '<span style="font-size:9px;font-family:var(--ff-mono);color:var(--amb);border:1px solid var(--ambb);background:var(--ambd);padding:2px 6px;border-radius:4px;flex-shrink:0;white-space:nowrap">PW RESET</span>' : '')
+      +(ku && ku.is_locked ? '<span style="font-size:9px;font-family:var(--ff-mono);color:var(--red);border:1px solid var(--redb);background:var(--redd);padding:2px 6px;border-radius:4px;flex-shrink:0">LOCKED</span>' : '')
       +'</div>';
-    // Docs role
-    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">'
-      +'<span style="font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);flex-shrink:0;width:68px">Docs Role</span>';
+
+    h += '<div style="'+RS+'"><span style="'+LS+'">Docs</span>';
     if (p) {
-      html += '<select onchange="updateUserRole(\''+esc(p.id)+'\',this.value)"'+(isSelf?' disabled title="Cannot change your own role"':'')+' style="height:28px;padding:0 8px;font-size:11px;font-family:var(--ff-mono);background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--tx);outline:none;cursor:pointer">'
-        +'<option value="viewer"'+(docsRole==="viewer"?" selected":"")+'>Viewer</option>'
-        +'<option value="editor"'+(docsRole==="editor"?" selected":"")+'>Editor</option>'
-        +'<option value="reviewer"'+(docsRole==="reviewer"?" selected":"")+'>Reviewer</option>'
-        +'<option value="admin"'+(docsRole==="admin"?" selected":"")+'>Admin</option>'
+      h += '<select onchange="updateUserRole(\''+esc(p.id)+'\',this.value)"'+(isSelf?' disabled title="Cannot change your own role"':'')+' style="'+DS+'">'
+        +'<option value="viewer"'+(docsRole==='viewer'?' selected':'')+'>Viewer</option>'
+        +'<option value="editor"'+(docsRole==='editor'?' selected':'')+'>Editor</option>'
+        +'<option value="reviewer"'+(docsRole==='reviewer'?' selected':'')+'>Reviewer</option>'
+        +'<option value="admin"'+(docsRole==='admin'?' selected':'')+'>Admin</option>'
         +'</select>';
-    } else {
-      html += '<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">No platform account</span>';
-    }
-    html += '</div>';
-    // Shift log flags
-    html += '<div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:10px">'
-      +'<span style="font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);flex-shrink:0;width:68px;padding-top:4px">Shift Log</span>';
+    } else { h += '<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">No platform account</span>'; }
+    h += '</div>';
+
+    h += '<div style="'+RS+'"><span style="'+LS+'">Isolation</span>';
+    if (p) {
+      h += '<select onchange="updateUserIsoRole(\''+esc(p.id)+'\',this.value)"'+(isSelf?' disabled':'')+' style="'+DS+'">'
+        +'<option value="none"'+(isoRole==='none'?' selected':'')+'>No Access</option>'
+        +'<option value="viewer"'+(isoRole==='viewer'?' selected':'')+'>Viewer</option>'
+        +'<option value="editor"'+(isoRole==='editor'?' selected':'')+'>Editor</option>'
+        +'<option value="reviewer"'+(isoRole==='reviewer'?' selected':'')+'>Reviewer</option>'
+        +'<option value="admin"'+(isoRole==='admin'?' selected':'')+'>Admin</option>'
+        +'</select>';
+    } else { h += '<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">No platform account</span>'; }
+    h += '</div>';
+
+    h += '<div style="'+RS+'"><span style="'+LS+'">Shift Log</span>';
     if (ku) {
-      html += '<div style="display:flex;flex-wrap:wrap;gap:4px">'
-        +KILN_FLAGS.map(function(f) {
-          const on = !!ku[f.key];
-          return '<label style="display:flex;align-items:center;gap:3px;padding:2px 7px;border-radius:4px;border:1px solid '+(on?'var(--ac)':'var(--bd)')+';background:'+(on?'var(--acd1)':'var(--sf3)')+';cursor:pointer;font-size:10px;color:'+(on?'var(--ac3)':'var(--tx2)')+';font-family:var(--ff-body)">'
-            +'<input type="checkbox" '+(on?'checked':'')+' onchange="updateKilnFlag(\''+esc(ku.username)+'\',\''+f.key+'\',this.checked)" style="accent-color:var(--ac);width:10px;height:10px;cursor:pointer">'
-            +f.label+'</label>';
-        }).join('')+'</div>';
-    } else {
-      html += '<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono);padding-top:4px">No shift log account</span>';
-    }
-    html += '</div>';
-    // Action buttons
-    html += '<div style="display:flex;gap:6px;flex-wrap:wrap">';
+      h += '<select onchange="updateKilnRole(\''+esc(ku.username)+'\',this.value)" style="'+DS+'">'
+        +'<option value="burner"'+(kilnRole==='burner'?' selected':'')+'>Burner</option>'
+        +'<option value="shift_manager"'+(kilnRole==='shift_manager'?' selected':'')+'>Shift Manager</option>'
+        +'<option value="cement_analyst"'+(kilnRole==='cement_analyst'?' selected':'')+'>Cement Analyst</option>'
+        +'<option value="day_staff"'+(kilnRole==='day_staff'?' selected':'')+'>Day Staff</option>'
+        +'<option value="read_only"'+(kilnRole==='read_only'?' selected':'')+'>Read Only</option>'
+        +'<option value="admin"'+(kilnRole==='admin'?' selected':'')+'>Admin</option>'
+        +'</select>';
+    } else { h += '<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">No shift log account</span>'; }
+    h += '</div>';
+
+    h += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid var(--bd)">';
     if (ku) {
       const authId = ku.auth_user_id || '';
-      html += '<button onclick="forceKilnPwReset(\''+esc(ku.username)+'\')" style="height:26px;padding:0 10px;font-size:11px;font-family:var(--ff-body);background:var(--sf3);border:1px solid var(--bd);border-radius:var(--rsm);color:var(--tx2);cursor:pointer">Force PW Reset</button>'
+      h += '<button onclick="forceKilnPwReset(\''+esc(ku.username)+'\')" style="height:26px;padding:0 10px;font-size:11px;font-family:var(--ff-body);background:var(--sf3);border:1px solid var(--bd);border-radius:var(--rsm);color:var(--tx2);cursor:pointer">Force PW Reset</button>'
         +'<button onclick="resetKilnPassword(\''+esc(ku.username)+'\',\''+esc(authId)+'\',\''+esc(email)+'\')" style="height:26px;padding:0 10px;font-size:11px;font-family:var(--ff-body);background:var(--sf3);border:1px solid var(--bd);border-radius:var(--rsm);color:var(--tx2);cursor:pointer">Set Password</button>';
     }
-    if (p && !isSelf) {
-      html += '<button onclick="removeUser(\''+esc(p.id)+'\',\''+esc(email)+'\')" style="height:26px;padding:0 10px;font-size:11px;font-family:var(--ff-mono);background:transparent;border:1px solid var(--redb);border-radius:var(--rsm);color:var(--red);cursor:pointer;margin-left:auto">Remove</button>';
+    if (p && p.approved === false) {
+      h += '<button onclick="approveUser(\''+esc(p.id)+'\')" style="height:26px;padding:0 12px;font-size:11px;font-family:var(--ff-head);font-weight:600;background:var(--grnd);border:1px solid var(--grnb);border-radius:var(--rsm);color:var(--grn);cursor:pointer">✓ Approve</button>';
     }
-    html += '</div></div>';
-    return html;
+    if (p && !isSelf) {
+      h += '<button onclick="removeUser(\''+esc(p.id)+'\',\''+esc(email)+'\')" style="height:26px;padding:0 10px;font-size:11px;font-family:var(--ff-mono);background:transparent;border:1px solid var(--redb);border-radius:var(--rsm);color:var(--red);cursor:pointer;margin-left:auto">Remove</button>';
+    }
+    h += '</div></div>';
+    return h;
   }).join('');
 }
 
@@ -1119,24 +1331,26 @@ async function inviteUser() {
   const email = document.getElementById('inviteEmail').value.trim();
   const name  = document.getElementById('inviteName').value.trim();
   const role  = document.getElementById('inviteRole').value;
+  const kilnRoleVal = document.getElementById('inviteKilnRole').value;
   const kilnRoles = {
-    is_burner:        document.getElementById('inv_burner').checked,
-    is_shift_manager: document.getElementById('inv_sm').checked,
-    is_cement_analyst:document.getElementById('inv_ca').checked,
-    is_day_staff:     document.getElementById('inv_day').checked,
-    is_readonly:      document.getElementById('inv_readonly').checked,
-    is_admin:         document.getElementById('inv_admin_kiln').checked,
+    is_burner:        kilnRoleVal === 'burner',
+    is_shift_manager: kilnRoleVal === 'shift_manager',
+    is_cement_analyst:kilnRoleVal === 'cement_analyst',
+    is_day_staff:     kilnRoleVal === 'day_staff',
+    is_readonly:      kilnRoleVal === 'read_only',
+    is_admin:         kilnRoleVal === 'admin',
   };
+  const isoRoleVal = document.getElementById('inviteIsoRole').value;
   const btn = document.getElementById('inviteBtn');
   showInviteMsg('','');
   if (!email) { showInviteMsg('err','Please enter an email address.'); return; }
   btn.disabled = true; btn.textContent = 'Sending…';
   try {
-    const {error} = await sb.functions.invoke('pw-admin-user',{body:{action:'invite',email,full_name:name,role,kiln_roles:kilnRoles}});
+    const {error} = await sb.functions.invoke('pw-admin-user',{body:{action:'invite',email,full_name:name,role,isolation_role:isoRoleVal,kiln_roles:kilnRoles}});
     if (error) throw new Error(error.message);
     document.getElementById('inviteEmail').value = '';
     document.getElementById('inviteName').value = '';
-    ['inv_burner','inv_sm','inv_ca','inv_day','inv_readonly','inv_admin_kiln'].forEach(id => { document.getElementById(id).checked = false; });
+    document.getElementById('inviteKilnRole').value='none'; document.getElementById('inviteIsoRole').value='none'; document.getElementById('inviteRole').value='viewer';
     showInviteMsg('ok','Invite sent to '+email); await loadAllUsers();
   } catch(e) { showInviteMsg('err',e.message||'Failed to send invite.'); }
   btn.disabled = false; btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Send Invite';
