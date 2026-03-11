@@ -862,35 +862,28 @@ function syncRegEmail() {
   document.getElementById('regEmail').value = dom === 'other' ? user : user + dom;
 }
 async function doRegister() {
-  syncRegEmail();
   const name  = document.getElementById('regName').value.trim();
-  const email = document.getElementById('regEmail').value.trim();
-  const pass  = document.getElementById('regPass').value;
+  const email = document.getElementById('regEmail').value.trim().toLowerCase();
   const btn   = document.getElementById('regBtn');
-  const msg   = document.getElementById('regMsg');
-  msg.style.display = 'none';
   if (!name)  { showRegMsg('err', 'Please enter your full name.'); return; }
   if (!email) { showRegMsg('err', 'Please enter your email address.'); return; }
-  if (!email.toLowerCase().endsWith('@heidelbergmaterials.com')) { showRegMsg('err', 'Only @heidelbergmaterials.com email addresses are permitted to request access.'); return; }
-  if (!pass || pass.length < 8) { showRegMsg('err', 'Password must be at least 8 characters.'); return; }
+  if (!email.endsWith('@heidelbergmaterials.com')) { showRegMsg('err', 'Only @heidelbergmaterials.com addresses are permitted.'); return; }
   btn.disabled = true; btn.textContent = 'Sending…';
   try {
-    const { data, error } = await sb.auth.signUp({
-      email,
-      password: pass,
-      options: {
-        data: { full_name: name },
-        emailRedirectTo: 'https://rjone1984.github.io/Padeswood/index.html'
-      }
+    // Check not already requested
+    const {data:existing} = await sb.from('pw_access_requests').select('id').eq('email',email).eq('status','pending');
+    if (existing && existing.length) { showRegMsg('err', 'A request for this email is already pending approval.'); btn.disabled=false; btn.textContent='Request Access'; return; }
+    const {error} = await sb.from('pw_access_requests').insert({
+      email, full_name: name, role: 'viewer', isolation_role: 'none',
+      kiln_role: 'read_only', status: 'pending', requested_at: new Date().toISOString()
     });
     if (error) throw error;
-    // Store name so we can create the profile once they confirm
-    localStorage.setItem('pw_pending_name', name);
-    localStorage.setItem('pw_pending_email', email);
-    showRegMsg('ok', 'Confirmation email sent to ' + email + '. Please click the link in the email — your account will then be queued for admin approval.');
+    showRegMsg('ok', 'Request submitted! An administrator will review your request and set up your account.');
+    document.getElementById('regName').value = '';
+    document.getElementById('regEmail').value = '';
     btn.disabled = false; btn.textContent = 'Request Access';
   } catch(e) {
-    showRegMsg('err', e.message || 'Registration failed.');
+    showRegMsg('err', e.message || 'Request failed — please try again.');
     btn.disabled = false; btn.textContent = 'Request Access';
   }
 }
@@ -906,18 +899,72 @@ function showRegMsg(type, text) {
 /* ── PENDING BADGE ───────────────────────────────────────────────── */
 async function loadPendingBadge() {
   try {
-    const { count } = await sb.from('pw_profiles').select('id', { count: 'exact', head: true }).eq('approved', false);
+    const [profRes, reqRes] = await Promise.all([
+      sb.from('pw_profiles').select('id', { count: 'exact', head: true }).eq('approved', false),
+      sb.from('pw_access_requests').select('id', { count: 'exact', head: true }).eq('status', 'pending')
+    ]);
+    const total = (profRes.count || 0) + (reqRes.count || 0);
     const badge = document.getElementById('pendingBadge');
-    if (count && count > 0) {
-      badge.textContent = count;
-      badge.style.display = 'block';
-    } else {
-      badge.style.display = 'none';
-    }
+    if (badge) { badge.textContent = total; badge.style.display = total > 0 ? 'block' : 'none'; }
   } catch(e) { console.warn('pendingBadge:', e); }
 }
 
 /* ── APPROVE USER ────────────────────────────────────────────────── */
+
+function activateRequestFromBtn(btn) {
+  activateAccessRequest(
+    btn.dataset.reqId, btn.dataset.reqEmail, btn.dataset.reqName,
+    btn.dataset.reqRole, btn.dataset.reqIso, btn.dataset.reqKiln
+  );
+}
+async function activateAccessRequest(reqId, email, fullName, role, isoRole, kilnRole) {
+  const pw = prompt('Set a password for ' + fullName + ' (' + email + '):\n\nThis will create their account immediately.');
+  if (!pw) return;
+  if (pw.length < 6) { showPlatformToast('Password must be at least 6 characters'); return; }
+  try {
+    // Create auth user via Supabase Auth Admin API is not available client-side
+    // Instead create pw_profiles entry (approved=true) and kiln_users entry - user logs in via email+password
+    // Must use signUp to create the auth.users entry
+    const {data: authData, error: authErr} = await sb.auth.signUp({
+      email, password: pw,
+      options: { data: { full_name: fullName }, emailRedirectTo: null }
+    });
+    if (authErr) throw new Error(authErr.message);
+    const userId = authData.user ? authData.user.id : null;
+    if (!userId) throw new Error('Failed to create auth user');
+    // Create pw_profiles
+    await sb.from('pw_profiles').upsert({
+      id: userId, email, full_name: fullName,
+      role: role || 'viewer', isolation_role: isoRole || 'none', approved: true
+    });
+    // Create kiln_users if kiln role set
+    if (kilnRole && kilnRole !== 'none') {
+      const flags = {
+        is_admin: kilnRole==='admin', is_shift_manager: kilnRole==='shift_manager',
+        is_cement_analyst: kilnRole==='cement_analyst', is_day_staff: kilnRole==='day_staff',
+        is_burner: kilnRole==='burner', is_readonly: kilnRole==='read_only'
+      };
+      const username = email.split('@')[0].replace(/[^a-z0-9_]/gi,'').toLowerCase();
+      await sb.from('kiln_users').upsert({
+        ...flags, auth_user_id: userId, username, locked_name: fullName, email,
+        must_reset_password: true
+      });
+    }
+    // Mark request done
+    await sb.from('pw_access_requests').update({status:'approved'}).eq('id',reqId);
+    showPlatformToast(fullName + ' activated ✓ — they can now log in');
+    await loadAllUsers();
+  } catch(e) { showPlatformToast('Failed: ' + e.message); }
+}
+
+function denyRequestFromBtn(btn){ denyAccessRequest(btn.dataset.reqId); }
+async function denyAccessRequest(reqId) {
+  if (!confirm('Deny and remove this access request?')) return;
+  await sb.from('pw_access_requests').update({status:'denied'}).eq('id',reqId);
+  _accessRequestsCache = _accessRequestsCache.filter(x=>x.id!==reqId);
+  renderAllUsers(); loadPendingBadge(); showPlatformToast('Request denied');
+}
+
 async function approveUser(userId) {
   const { error } = await sb.from('pw_profiles').update({ approved: true }).eq('id', userId);
   if (error) { showPlatformToast('Failed: ' + error.message); return; }
@@ -1136,17 +1183,20 @@ function closeAdminPanel() {
 }
 
 // Loads both pw_profiles and kiln_users, joins on auth_user_id, auto-syncs stale emails
+let _accessRequestsCache = [];
 async function loadAllUsers() {
   const list = document.getElementById('userList');
   list.innerHTML = '<div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);padding:12px 0">Loading users…</div>';
   loadPendingBadge();
-  const [profRes, kilnRes] = await Promise.all([
+  const [profRes, kilnRes, reqRes] = await Promise.all([
     sb.from('pw_profiles').select('*').order('email'),
-    sb.from('kiln_users').select('username,locked_name,email,is_admin,is_burner,is_shift_manager,is_cement_analyst,is_day_staff,is_readonly,is_locked,must_reset_password,auth_user_id').order('username')
+    sb.from('kiln_users').select('username,locked_name,email,is_admin,is_burner,is_shift_manager,is_cement_analyst,is_day_staff,is_readonly,is_locked,must_reset_password,auth_user_id').order('username'),
+    sb.from('pw_access_requests').select('*').eq('status','pending').order('requested_at')
   ]);
   if (profRes.error) { list.innerHTML = '<div style="color:var(--red);font-size:12px;padding:12px 0">Error: '+profRes.error.message+'</div>'; return; }
   _usersCache = profRes.data || [];
   _kilnUsersCache = kilnRes.data || [];
+  _accessRequestsCache = reqRes.data || [];
   // Auto-sync stale emails in kiln_users where auth_user_id matches a pw_profiles row
   const emailFixes = [];
   _kilnUsersCache.forEach(function(ku) {
@@ -1162,113 +1212,119 @@ async function loadAllUsers() {
 }
 
 function renderAllUsers() {
-  const list = document.getElementById('userList');
+  const list = document.getElementById('usersList');
+  if (!list) return;
   const merged = _usersCache.map(function(p) {
-    const ku = _kilnUsersCache.find(function(k){ return k.auth_user_id === p.id; }) || null;
-    return { prof: p, kiln: ku };
+    return { prof: p, kiln: _kilnUsersCache.find(function(k){ return k.auth_user_id === p.id; }) || null };
   });
   _kilnUsersCache.forEach(function(ku) {
-    if (!ku.auth_user_id || !_usersCache.find(function(p){ return p.id === ku.auth_user_id; })) {
+    if (!ku.auth_user_id || !_usersCache.find(function(p){ return p.id === ku.auth_user_id; }))
       merged.push({ prof: null, kiln: ku });
-    }
   });
-  document.getElementById('userCount').textContent = '(' + merged.length + ')';
   if (!merged.length) { list.innerHTML = '<div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);padding:12px 0">No users found.</div>'; return; }
 
   const DS = 'height:30px;padding:0 8px;font-size:11px;font-family:var(--ff-mono);background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--tx);outline:none;cursor:pointer;flex:1;min-width:0';
   const LS = 'font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);flex-shrink:0;width:72px';
   const RS = 'display:flex;align-items:center;gap:8px;margin-bottom:7px';
+  const rc = {admin:'var(--ac3)',reviewer:'var(--pur)',editor:'var(--amb)',viewer:'var(--tx3)',none:'var(--tx3)'};
 
-  list.innerHTML = merged.map(function(m) {
-    const p = m.prof, ku = m.kiln;
-    const isSelf = _platformProfile && p && p.id === _platformProfile.id;
-    const displayName = (p && (p.full_name || p.email)) || (ku && (ku.locked_name || ku.username)) || '?';
-    const email = (p && p.email) || (ku && ku.email) || '\u2014';
-    const initials = displayName.split(' ').map(function(w){return w[0]||'';}).join('').slice(0,2).toUpperCase() || '?';
-    const docsRole = p ? (p.role || 'viewer') : null;
-    const isoRole  = p ? (p.isolation_role || 'none') : null;
-    const kilnRole = !ku ? null : ku.is_admin ? 'admin' : ku.is_shift_manager ? 'shift_manager' : ku.is_cement_analyst ? 'cement_analyst' : ku.is_day_staff ? 'day_staff' : ku.is_burner ? 'burner' : 'read_only';
-    const rc = {admin:'var(--ac3)',reviewer:'var(--pur)',editor:'var(--amb)',viewer:'var(--tx3)',none:'var(--tx3)'};
-    const col = docsRole ? (rc[docsRole] || 'var(--tx3)') : 'var(--tx3)';
+  const ROLE_GROUPS = [
+    { label:'Admins',           key:'admin',          color:'var(--ac3)', test: function(m){ const ku=m.kiln; const p=m.prof; return (ku&&ku.is_admin)||(p&&p.role==='admin'); } },
+    { label:'Shift Managers',   key:'shift_manager',  color:'#7c3aed',    test: function(m){ const ku=m.kiln; return ku&&ku.is_shift_manager&&!ku.is_admin; } },
+    { label:'Cement Analysts',  key:'cement_analyst', color:'#b45309',    test: function(m){ const ku=m.kiln; return ku&&ku.is_cement_analyst&&!ku.is_admin; } },
+    { label:'Day Staff',        key:'day_staff',      color:'#0891b2',    test: function(m){ const ku=m.kiln; return ku&&ku.is_day_staff&&!ku.is_admin; } },
+    { label:'Burners',          key:'burner',         color:'var(--amb)', test: function(m){ const ku=m.kiln; return ku&&ku.is_burner&&!ku.is_admin&&!ku.is_shift_manager&&!ku.is_cement_analyst&&!ku.is_day_staff; } },
+    { label:'Read Only',        key:'readonly',       color:'var(--tx2)', test: function(m){ const ku=m.kiln; return ku&&ku.is_readonly&&!ku.is_admin; } },
+    { label:'Platform Only',    key:'platform',       color:'var(--tx3)', test: function(m){ return m.prof && !m.kiln; } },
+  ];
 
-    let h = '<div style="background:var(--sf2);border:1px solid var(--bd);border-radius:var(--r);padding:14px 16px">';
+  const _platCollapsed = window._platCollapsed = window._platCollapsed || {};
+  let html = '';
 
-    h += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:13px">'
-      +'<div style="width:36px;height:36px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--ff-head);font-weight:700;font-size:13px;color:'+col+';border:1px solid '+col+'33;background:'+col+'18">'+esc(initials)+'</div>'
-      +'<div style="flex:1;min-width:0">'
-        +'<div style="font-size:13px;font-weight:600;color:var(--tx);font-family:var(--ff-head);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(displayName)+'</div>'
-        +'<div style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(email)+'</div>'
-      +'</div>'
-      +(p && p.approved === false ? '<span style="font-size:9px;font-family:var(--ff-mono);color:var(--amb);border:1px solid var(--ambb);background:var(--ambd);padding:2px 6px;border-radius:4px;flex-shrink:0;white-space:nowrap">PENDING</span>' : '')
-      +(ku && ku.must_reset_password ? '<span style="font-size:9px;font-family:var(--ff-mono);color:var(--amb);border:1px solid var(--ambb);background:var(--ambd);padding:2px 6px;border-radius:4px;flex-shrink:0;white-space:nowrap">PW RESET</span>' : '')
-      +(ku && ku.is_locked ? '<span style="font-size:9px;font-family:var(--ff-mono);color:var(--red);border:1px solid var(--redb);background:var(--redd);padding:2px 6px;border-radius:4px;flex-shrink:0">LOCKED</span>' : '')
+  // ── Pending access requests section ──
+  if (_accessRequestsCache && _accessRequestsCache.length) {
+    html += '<div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--bd)">';
+    html += '<div style="font-family:var(--ff-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--amb);margin-bottom:8px;display:flex;align-items:center;gap:8px">Access Requests <span style="background:var(--ambd);border:1px solid var(--ambb);color:var(--amb);border-radius:10px;padding:1px 7px;font-size:10px">'+_accessRequestsCache.length+'</span></div>';
+    _accessRequestsCache.forEach(function(req) {
+      html += '<div style="background:var(--ambd);border:1px solid var(--ambb);border-radius:var(--r);padding:12px 14px;margin-bottom:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">'
+        +'<div style="flex:1;min-width:0">'
+        +'<div style="font-size:12px;font-weight:600;color:var(--tx);font-family:var(--ff-head)">'+esc(req.full_name||'—')+'</div>'
+        +'<div style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">'+esc(req.email)+'</div>'
+        +'<div style="font-size:10px;color:var(--amb);font-family:var(--ff-mono);margin-top:2px">Requested '+new Date(req.requested_at).toLocaleDateString('en-GB')+'</div>'
+        +'</div>'
+        +'<button data-req-id="'+esc(req.id)+'" data-req-email="'+esc(req.email)+'" data-req-name="'+esc(req.full_name||'')+'" data-req-role="'+esc(req.role||'viewer')+'" data-req-iso="'+esc(req.isolation_role||'none')+'" data-req-kiln="'+esc(req.kiln_role||'read_only')+'" onclick="activateRequestFromBtn(this)" style="height:28px;padding:0 12px;font-size:11px;font-family:var(--ff-head);font-weight:600;background:var(--grnd);border:1px solid var(--grnb);border-radius:var(--rsm);color:var(--grn);cursor:pointer;white-space:nowrap">\u2713 Activate</button>'
+        +'<button data-req-id="'+esc(req.id)+'" onclick="denyRequestFromBtn(this)" style="height:28px;padding:0 10px;font-size:11px;font-family:var(--ff-mono);background:transparent;border:1px solid var(--redb);border-radius:var(--rsm);color:var(--red);cursor:pointer">Deny</button>'
+        +'</div>';
+    });
+    html += '</div>';
+  }
+
+  ROLE_GROUPS.forEach(function(grp) {
+    const members = merged.filter(grp.test);
+    if (!members.length) return;
+    const collapsed = !!_platCollapsed[grp.key];
+    html += '<div style="margin-bottom:4px">';
+    html += '<div onclick="window._platCollapsed[\''+grp.key+'\']=!window._platCollapsed[\''+grp.key+'\'];renderAllUsers()" style="display:flex;align-items:center;gap:8px;padding:7px 12px;background:'+grp.color+'18;border:1px solid '+grp.color+'44;border-radius:var(--rsm);cursor:pointer;user-select:none;margin-bottom:4px">'
+      +'<span style="flex:1;font-size:11px;font-weight:700;font-family:var(--ff-mono);color:'+grp.color+'">'+grp.label+'</span>'
+      +'<span style="font-size:10px;font-family:var(--ff-mono);color:'+grp.color+';opacity:.7">'+members.length+' user'+(members.length!==1?'s':'')+'</span>'
+      +'<svg viewBox="0 0 24 24" fill="none" stroke="'+grp.color+'" stroke-width="2.5" style="width:12px;height:12px;transition:transform .15s;transform:rotate('+(collapsed?'-90deg':'0deg')+')"><polyline points="6 9 12 15 18 9"/></svg>'
       +'</div>';
-
-    h += '<div style="'+RS+'"><span style="'+LS+'">Docs</span>';
-    if (p) {
-      h += '<select onchange="updateUserRole(\''+esc(p.id)+'\',this.value)"'+(isSelf?' disabled title="Cannot change your own role"':'')+' style="'+DS+'">'
-        +'<option value="viewer"'+(docsRole==='viewer'?' selected':'')+'>Viewer</option>'
-        +'<option value="editor"'+(docsRole==='editor'?' selected':'')+'>Editor</option>'
-        +'<option value="reviewer"'+(docsRole==='reviewer'?' selected':'')+'>Reviewer</option>'
-        +'<option value="admin"'+(docsRole==='admin'?' selected':'')+'>Admin</option>'
-        +'</select>';
-    } else { h += '<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">No platform account</span>'; }
-    h += '</div>';
-
-    h += '<div style="'+RS+'"><span style="'+LS+'">Isolation</span>';
-    if (p) {
-      h += '<select onchange="updateUserIsoRole(\''+esc(p.id)+'\',this.value)"'+(isSelf?' disabled':'')+' style="'+DS+'">'
-        +'<option value="none"'+(isoRole==='none'?' selected':'')+'>No Access</option>'
-        +'<option value="viewer"'+(isoRole==='viewer'?' selected':'')+'>Viewer</option>'
-        +'<option value="editor"'+(isoRole==='editor'?' selected':'')+'>Editor</option>'
-        +'<option value="reviewer"'+(isoRole==='reviewer'?' selected':'')+'>Reviewer</option>'
-        +'<option value="admin"'+(isoRole==='admin'?' selected':'')+'>Admin</option>'
-        +'</select>';
-    } else { h += '<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">No platform account</span>'; }
-    h += '</div>';
-
-    h += '<div style="'+RS+'"><span style="'+LS+'">Shift Log</span>';
-    if (ku) {
-      h += '<select onchange="updateKilnRole(\''+esc(ku.username)+'\',this.value)" style="'+DS+'">'
-        +'<option value="burner"'+(kilnRole==='burner'?' selected':'')+'>Burner</option>'
-        +'<option value="shift_manager"'+(kilnRole==='shift_manager'?' selected':'')+'>Shift Manager</option>'
-        +'<option value="cement_analyst"'+(kilnRole==='cement_analyst'?' selected':'')+'>Cement Analyst</option>'
-        +'<option value="day_staff"'+(kilnRole==='day_staff'?' selected':'')+'>Day Staff</option>'
-        +'<option value="read_only"'+(kilnRole==='read_only'?' selected':'')+'>Read Only</option>'
-        +'<option value="admin"'+(kilnRole==='admin'?' selected':'')+'>Admin</option>'
-        +'</select>';
-    } else { h += '<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">No shift log account</span>'; }
-    h += '</div>';
-
-    h += '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid var(--bd)">';
-    if (ku) {
-      const authId = ku.auth_user_id || '';
-      h += '<button onclick="forceKilnPwReset(\''+esc(ku.username)+'\')" style="height:26px;padding:0 10px;font-size:11px;font-family:var(--ff-body);background:var(--sf3);border:1px solid var(--bd);border-radius:var(--rsm);color:var(--tx2);cursor:pointer">Force PW Reset</button>'
-        +'<button onclick="resetKilnPassword(\''+esc(ku.username)+'\',\''+esc(authId)+'\',\''+esc(email)+'\')" style="height:26px;padding:0 10px;font-size:11px;font-family:var(--ff-body);background:var(--sf3);border:1px solid var(--bd);border-radius:var(--rsm);color:var(--tx2);cursor:pointer">Set Password</button>';
+    if (!collapsed) {
+      members.forEach(function(m) {
+        html += renderUserCard(m, DS, LS, RS, rc);
+      });
     }
-    if (p && p.approved === false) {
-      h += '<button onclick="approveUser(\''+esc(p.id)+'\')" style="height:26px;padding:0 12px;font-size:11px;font-family:var(--ff-head);font-weight:600;background:var(--grnd);border:1px solid var(--grnb);border-radius:var(--rsm);color:var(--grn);cursor:pointer">✓ Approve</button>';
-    }
-    if (p && !isSelf) {
-      h += '<button onclick="removeUser(\''+esc(p.id)+'\',\''+esc(email)+'\')" style="height:26px;padding:0 10px;font-size:11px;font-family:var(--ff-mono);background:transparent;border:1px solid var(--redb);border-radius:var(--rsm);color:var(--red);cursor:pointer;margin-left:auto">Remove</button>';
-    }
-    h += '</div></div>';
-    return h;
-  }).join('');
+    html += '</div>';
+  });
+
+  const ungrouped = merged.filter(function(m){ return !ROLE_GROUPS.some(function(g){ return g.test(m); }); });
+  ungrouped.forEach(function(m){ html += renderUserCard(m, DS, LS, RS, rc); });
+  list.innerHTML = html;
 }
 
-async function updateUserRole(userId, newRole) {
-  const {error} = await sb.from('pw_profiles').update({role:newRole}).eq('id',userId);
-  if (error) { showPlatformToast('Failed: '+error.message); return; }
-  const u = _usersCache.find(x=>x.id===userId); if (u) u.role = newRole;
-  renderAllUsers(); showPlatformToast('Docs role updated \u2713');
+function renderUserCard(m, DS, LS, RS, rc) {
+  const p = m.prof, ku = m.kiln;
+  const PROTECTED_USERNAME = 'rjone';
+  const isSelf = currentUser && p && p.id === currentUser.id;
+  const isProtectedKiln = ku && ku.username === PROTECTED_USERNAME;
+  const displayName = (p&&(p.full_name||p.email))||(ku&&(ku.locked_name||ku.username))||'?';
+  const email = (p&&p.email)||(ku&&ku.email)||'\u2014';
+  const initials = displayName.split(' ').map(function(w){return w[0]||'';}).join('').slice(0,2).toUpperCase()||'?';
+  const docsRole = p?(p.role||'viewer'):null;
+  const isoRole  = p?(p.isolation_role||'none'):null;
+  const kilnRole = !ku?null:ku.is_admin?'admin':ku.is_shift_manager?'shift_manager':ku.is_cement_analyst?'cement_analyst':ku.is_day_staff?'day_staff':ku.is_burner?'burner':'read_only';
+  const col = docsRole?(rc[docsRole]||'var(--tx3)'):'var(--tx3)';
+  let h = '<div style="background:var(--sf2);border:1px solid var(--bd);border-radius:var(--r);padding:14px 16px;margin-bottom:6px">';
+  h += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:13px">'
+    +'<div style="width:36px;height:36px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--ff-head);font-weight:700;font-size:13px;color:'+col+';border:1px solid '+col+'33;background:'+col+'18">'+esc(initials)+'</div>'
+    +'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:var(--tx);font-family:var(--ff-head);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(displayName)+'</div>'
+    +'<div style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(email)+'</div></div>'
+    +(p&&p.approved===false?'<span style="font-size:9px;font-family:var(--ff-mono);color:var(--amb);border:1px solid var(--ambb);background:var(--ambd);padding:2px 6px;border-radius:4px;flex-shrink:0;white-space:nowrap">PENDING</span>':'')
+    +(ku&&ku.must_reset_password?'<span style="font-size:9px;font-family:var(--ff-mono);color:var(--amb);border:1px solid var(--ambb);background:var(--ambd);padding:2px 6px;border-radius:4px;flex-shrink:0;white-space:nowrap">PW RESET</span>':'')
+    +(ku&&ku.is_locked?'<span style="font-size:9px;font-family:var(--ff-mono);color:var(--red);border:1px solid var(--redb);background:var(--redd);padding:2px 6px;border-radius:4px;flex-shrink:0">LOCKED</span>':'')
+    +'</div>';
+  h += '<div style="'+RS+'"><span style="'+LS+'">Docs</span>';
+  if(p){h+='<select onchange="updateDocsRole(\''+esc(p.id)+'\',this.value)"'+(isSelf?' disabled':'')+' style="'+DS+'"><option value="viewer"'+(docsRole==='viewer'?' selected':'')+'>Viewer</option><option value="editor"'+(docsRole==='editor'?' selected':'')+'>Editor</option><option value="reviewer"'+(docsRole==='reviewer'?' selected':'')+'>Reviewer</option><option value="admin"'+(docsRole==='admin'?' selected':'')+'>Admin</option></select>';}
+  else{h+='<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">No platform account</span>';}
+  h+='</div><div style="'+RS+'"><span style="'+LS+'">Isolation</span>';
+  if(p){h+='<select onchange="updateIsoRole(\''+esc(p.id)+'\',this.value)"'+(isSelf?' disabled':'')+' style="'+DS+'"><option value="none"'+(isoRole==='none'?' selected':'')+'>No Access</option><option value="viewer"'+(isoRole==='viewer'?' selected':'')+'>Viewer</option><option value="editor"'+(isoRole==='editor'?' selected':'')+'>Editor</option><option value="reviewer"'+(isoRole==='reviewer'?' selected':'')+'>Reviewer</option><option value="admin"'+(isoRole==='admin'?' selected':'')+'>Admin</option></select>';}
+  else{h+='<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">No platform account</span>';}
+  h+='</div><div style="'+RS+'"><span style="'+LS+'">Shift Log</span>';
+  if(ku){
+    if(isProtectedKiln){
+      h+='<div style="height:30px;padding:0 8px;font-size:11px;font-family:var(--ff-mono);background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--ac3);display:flex;align-items:center;flex:1">Admin (protected)</div>';
+    } else {
+      h+='<select onchange="updateKilnRole(\''+esc(ku.username)+'\',this.value)" style="'+DS+'"><option value="burner"'+(kilnRole==='burner'?' selected':'')+'>Burner</option><option value="shift_manager"'+(kilnRole==='shift_manager'?' selected':'')+'>Shift Manager</option><option value="cement_analyst"'+(kilnRole==='cement_analyst'?' selected':'')+'>Cement Analyst</option><option value="day_staff"'+(kilnRole==='day_staff'?' selected':'')+'>Day Staff</option><option value="read_only"'+(kilnRole==='read_only'?' selected':'')+'>Read Only</option><option value="admin"'+(kilnRole==='admin'?' selected':'')+'>Admin</option></select>';
+    }
+  } else{h+='<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">No shift log account</span>';}
+  h+='</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid var(--bd)">';
+  if(p&&p.approved===false){h+='<button onclick="approveUser(\''+esc(p.id)+'\')" style="height:26px;padding:0 12px;font-size:11px;font-family:var(--ff-head);font-weight:600;background:var(--grnd);border:1px solid var(--grnb);border-radius:var(--rsm);color:var(--grn);cursor:pointer">\u2713 Approve</button>';}
+  if(ku&&!isProtectedKiln){h+='<button onclick="setKilnPassword(\''+esc(ku.username)+'\')" style="height:26px;padding:0 10px;font-size:11px;font-family:var(--ff-body);background:var(--sf3);border:1px solid var(--bd);border-radius:var(--rsm);color:var(--tx2);cursor:pointer">Set PW</button>';}
+  if(p&&!isSelf&&!isProtectedKiln){h+='<button onclick="deleteUser(\''+esc(p.id)+'\',\''+esc(email)+'\')" style="height:26px;padding:0 10px;font-size:11px;font-family:var(--ff-mono);background:transparent;border:1px solid var(--redb);border-radius:var(--rsm);color:var(--red);cursor:pointer;margin-left:auto">Remove</button>';}
+  h+='</div></div>';
+  return h;
 }
-async function updateUserIsoRole(userId, newRole) {
-  const {error} = await sb.from('pw_profiles').update({isolation_role:newRole}).eq('id',userId);
-  if (error) { showPlatformToast('Failed: '+error.message); return; }
-  const u = _usersCache.find(x=>x.id===userId); if (u) u.isolation_role = newRole;
-  renderAllUsers(); showPlatformToast('Isolation Matrix role updated ✓');
-}
+
 async function updateKilnRole(username, role) {
   const flags = {
     is_admin:         role === 'admin',
@@ -1311,32 +1367,35 @@ async function resetKilnPassword(username, authUserId, email) {
   } catch(e) { showPlatformToast('Failed: '+e.message); }
 }
 async function inviteUser() {
-  const email = document.getElementById('inviteEmail').value.trim();
+  const email = document.getElementById('inviteEmail').value.trim().toLowerCase();
   const name  = document.getElementById('inviteName').value.trim();
   const role  = document.getElementById('inviteRole').value;
-  const kilnRoleVal = document.getElementById('inviteKilnRole').value;
-  const kilnRoles = {
-    is_burner:        kilnRoleVal === 'burner',
-    is_shift_manager: kilnRoleVal === 'shift_manager',
-    is_cement_analyst:kilnRoleVal === 'cement_analyst',
-    is_day_staff:     kilnRoleVal === 'day_staff',
-    is_readonly:      kilnRoleVal === 'read_only',
-    is_admin:         kilnRoleVal === 'admin',
-  };
   const isoRoleVal = document.getElementById('inviteIsoRole').value;
+  const kilnRoleVal = document.getElementById('inviteKilnRole').value;
   const btn = document.getElementById('inviteBtn');
   showInviteMsg('','');
   if (!email) { showInviteMsg('err','Please enter an email address.'); return; }
-  btn.disabled = true; btn.textContent = 'Sending…';
+  if (!name)  { showInviteMsg('err','Please enter the user\'s full name.'); return; }
+  btn.disabled = true; btn.textContent = 'Adding…';
   try {
-    const {error} = await sb.functions.invoke('pw-admin-user',{body:{action:'invite',email,full_name:name,role,isolation_role:isoRoleVal,kiln_roles:kilnRoles}});
+    // Check not already in pw_profiles
+    const {data:existing} = await sb.from('pw_profiles').select('id').eq('email',email);
+    if (existing && existing.length) { showInviteMsg('err','A user with this email already exists.'); btn.disabled=false; btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add User'; return; }
+    // Insert into pw_access_requests — admin will set password and activate
+    const {error} = await sb.from('pw_access_requests').insert({
+      email, full_name: name, role, isolation_role: isoRoleVal,
+      kiln_role: kilnRoleVal, status: 'pending', requested_at: new Date().toISOString()
+    });
     if (error) throw new Error(error.message);
     document.getElementById('inviteEmail').value = '';
     document.getElementById('inviteName').value = '';
-    document.getElementById('inviteKilnRole').value='none'; document.getElementById('inviteIsoRole').value='none'; document.getElementById('inviteRole').value='viewer';
-    showInviteMsg('ok','Invite sent to '+email); await loadAllUsers();
-  } catch(e) { showInviteMsg('err',e.message||'Failed to send invite.'); }
-  btn.disabled = false; btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Send Invite';
+    document.getElementById('inviteKilnRole').value='none';
+    document.getElementById('inviteIsoRole').value='none';
+    document.getElementById('inviteRole').value='viewer';
+    showInviteMsg('ok', name + ' added to pending queue — set their password in the Users list below.');
+    await loadAllUsers(); loadPendingBadge();
+  } catch(e) { showInviteMsg('err', e.message || 'Failed to add user.'); }
+  btn.disabled = false; btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add User';
 }
 function showInviteMsg(type, text) {
   const msg = document.getElementById('inviteMsg');

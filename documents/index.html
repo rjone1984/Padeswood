@@ -642,20 +642,37 @@ tbody tr:hover{background:var(--sf2);}
       <input type="hidden" id="equipId">
       <div class="field-row">
         <div class="field-group"><label class="field-label">Asset Tag *</label><input type="text" class="field-input" id="equipTag" placeholder="e.g. KLN-001"></div>
-        <div class="field-group"><label class="field-label">Category</label><input type="text" class="field-input" id="equipCat" placeholder="e.g. Kiln, Conveyor, Fan"></div>
+        <div class="field-group"><label class="field-label">Category</label>
+          <div style="display:flex;gap:6px">
+            <select class="field-input" id="equipCat" style="flex:1"></select>
+            <button type="button" id="manageCatBtn" onclick="openCatManager()" title="Manage categories" style="height:36px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd);border-radius:var(--r);color:var(--tx2);cursor:pointer;font-size:11px;white-space:nowrap">Manage</button>
+          </div>
+        </div>
       </div>
       <div class="field-group"><label class="field-label">Name *</label><input type="text" class="field-input" id="equipName" placeholder="e.g. Kiln 1 Main Drive Motor"></div>
       <div class="field-row">
         <div class="field-group"><label class="field-label">Manufacturer</label><input type="text" class="field-input" id="equipMfr" placeholder="e.g. ABB"></div>
-        <div class="field-group"><label class="field-label">Model</label><input type="text" class="field-input" id="equipModel" placeholder="e.g. M3BP 450SMB"></div>
-      </div>
-      <div class="field-row">
         <div class="field-group"><label class="field-label">Serial Number</label><input type="text" class="field-input" id="equipSerial"></div>
-        <div class="field-group"><label class="field-label">Location</label><input type="text" class="field-input" id="equipLocation" placeholder="e.g. Kiln Bay 1"></div>
       </div>
+      <div class="field-group"><label class="field-label">Department</label><input type="text" class="field-input" id="equipLocation" placeholder="e.g. Kiln Bay, Raw Mill, Packing"></div>
       <div class="form-err" id="equipErr"></div>
     </div>
-    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeEquipModal()">Cancel</button><button class="btn btn-primary" onclick="saveEquip()">Save</button></div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeEquipModal()">Cancel</button><button class="btn btn-danger" id="equipDeleteBtn" onclick="deleteEquip()" style="display:none">Delete</button><button class="btn btn-primary" onclick="saveEquip()">Save</button></div>
+  </div>
+</div>
+
+
+<!-- ── CATEGORY MANAGER ──────────────────────────────────────────── -->
+<div class="modal-overlay" id="catManagerModal" onclick="if(event.target===this)closeCatManager()">
+  <div class="modal" style="max-width:380px">
+    <div class="modal-header"><span class="modal-title">Manage Categories</span><button class="modal-close" onclick="closeCatManager()">×</button></div>
+    <div class="modal-body">
+      <div id="catList" style="display:flex;flex-direction:column;gap:4px;margin-bottom:12px;max-height:240px;overflow-y:auto"></div>
+      <div style="display:flex;gap:6px">
+        <input type="text" id="newCatInput" class="field-input" placeholder="New category name" style="flex:1" onkeydown="if(event.key==='Enter')addCategory()">
+        <button class="btn btn-primary" onclick="addCategory()">Add</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -889,6 +906,7 @@ async function loadCOSHH(){
   renderCOSHH();
 }
 async function loadEquipment(){
+  await loadCategories();
   const {data,error} = await sb.from('pw_equipment').select('*').order('asset_tag');
   if(error){ console.error(error); return; }
   _equipment = data||[];
@@ -1078,19 +1096,23 @@ async function saveCOSHH(){
 function openEquipModal(id){
   document.getElementById('equipId').value=id||'';
   document.getElementById('equipErr').style.display='none';
+  populateCatDropdown(id ? (_equipment.find(x=>x.id===id)||{}).category||'' : '');
+  const delBtn=document.getElementById('equipDeleteBtn');
+  const catBtn=document.getElementById('manageCatBtn');
+  if(catBtn) catBtn.style.display=hasRole('admin')?'':'none';
   if(id){
     const r=_equipment.find(x=>x.id===id); if(!r) return;
     document.getElementById('equipModalTitle').textContent='Edit Equipment';
     document.getElementById('equipTag').value=r.asset_tag||'';
     document.getElementById('equipName').value=r.name||'';
     document.getElementById('equipMfr').value=r.manufacturer||'';
-    document.getElementById('equipModel').value=r.model||'';
     document.getElementById('equipSerial').value=r.serial||'';
     document.getElementById('equipLocation').value=r.location||'';
-    document.getElementById('equipCat').value=r.category||'';
+    if(delBtn) delBtn.style.display=hasRole('admin')?'':'none';
   } else {
     document.getElementById('equipModalTitle').textContent='Add Equipment';
-    ['equipTag','equipName','equipMfr','equipModel','equipSerial','equipLocation','equipCat'].forEach(i=>document.getElementById(i).value='');
+    ['equipTag','equipName','equipMfr','equipSerial','equipLocation'].forEach(i=>document.getElementById(i).value='');
+    if(delBtn) delBtn.style.display='none';
   }
   document.getElementById('equipModal').classList.add('open');
 }
@@ -1101,9 +1123,10 @@ async function saveEquip(){
   const name=document.getElementById('equipName').value.trim();
   const err=document.getElementById('equipErr');
   if(!tag||!name){ err.textContent='Asset tag and name are required.'; err.style.display='block'; return; }
+  const catEl=document.getElementById('equipCat'); const catVal=catEl?catEl.value:'';
   const payload={asset_tag:tag,name,manufacturer:document.getElementById('equipMfr').value.trim()||null,
-    model:document.getElementById('equipModel').value.trim()||null,serial:document.getElementById('equipSerial').value.trim()||null,
-    location:document.getElementById('equipLocation').value.trim()||null,category:document.getElementById('equipCat').value.trim()||null,
+    serial:document.getElementById('equipSerial').value.trim()||null,
+    location:document.getElementById('equipLocation').value.trim()||null,category:catVal||null,
     updated_at:new Date().toISOString()};
   let error;
   if(id){ ({error}=await sb.from('pw_equipment').update(payload).eq('id',id)); }
@@ -1391,6 +1414,78 @@ document.addEventListener('DOMContentLoaded', function() {
   const aiOverlay = document.getElementById('docAiOverlay');
   if (aiOverlay) aiOverlay.addEventListener('click', closeDocAiPanel);
 });
+
+
+/* ── EQUIPMENT DELETE ────────────────────────────────────────────── */
+async function deleteEquip(){
+  const id=document.getElementById('equipId').value;
+  if(!id) return;
+  const r=_equipment.find(x=>x.id===id);
+  if(!confirm('Delete '+((r&&r.name)||'this equipment')+'? This cannot be undone.')) return;
+  const{error}=await sb.from('pw_equipment').delete().eq('id',id);
+  if(error){showToast('Delete failed: '+error.message);return;}
+  await loadEquipment(); closeEquipModal(); showToast('Equipment deleted');
+}
+
+/* ── CATEGORY MANAGEMENT ─────────────────────────────────────────── */
+let _equipCats = [];
+
+async function loadCategories(){
+  try{
+    const{data}=await sb.from('pw_equipment_categories').select('name').order('name');
+    _equipCats=(data||[]).map(r=>r.name);
+  }catch(e){
+    // Fallback: derive from existing equipment
+    _equipCats=[...new Set(_equipment.map(r=>r.category).filter(Boolean))].sort();
+  }
+}
+
+function populateCatDropdown(selected){
+  const sel=document.getElementById('equipCat'); if(!sel) return;
+  const cats=[..._equipCats];
+  if(selected&&!cats.includes(selected)) cats.push(selected);
+  cats.sort();
+  sel.innerHTML='<option value="">— select —</option>'+cats.map(c=>'<option value="'+esc(c)+'"'+(c===selected?' selected':'')+'>'+esc(c)+'</option>').join('');
+}
+
+function openCatManager(){
+  renderCatList();
+  document.getElementById('catManagerModal').classList.add('open');
+}
+function closeCatManager(){
+  document.getElementById('catManagerModal').classList.remove('open');
+  populateCatDropdown(document.getElementById('equipCat').value);
+}
+
+function renderCatList(){
+  const list=document.getElementById('catList');
+  if(!_equipCats.length){list.innerHTML='<div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono)">No categories yet</div>';return;}
+  list.innerHTML=_equipCats.map(c=>'<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--sf2);border:1px solid var(--bd);border-radius:var(--rsm)">'
+    +'<span style="flex:1;font-size:13px;color:var(--tx)">'+esc(c)+'</span>'
+    +'<button onclick="deleteCategory(\''+esc(c)+'\')" style="height:24px;padding:0 8px;font-size:10px;font-family:var(--ff-mono);background:transparent;border:1px solid var(--redb);border-radius:4px;color:var(--red);cursor:pointer">Remove</button>'
+    +'</div>').join('');
+}
+
+async function addCategory(){
+  const input=document.getElementById('newCatInput');
+  const name=input.value.trim();
+  if(!name) return;
+  if(_equipCats.includes(name)){showToast('Category already exists');return;}
+  try{
+    await sb.from('pw_equipment_categories').insert({name});
+  }catch(e){/* table may not exist yet, just add to local */}
+  _equipCats.push(name); _equipCats.sort();
+  input.value='';
+  renderCatList();
+}
+
+async function deleteCategory(name){
+  if(!confirm('Remove category "'+name+'"? Existing equipment using this category will not be affected.')) return;
+  try{ await sb.from('pw_equipment_categories').delete().eq('name',name); }catch(e){}
+  _equipCats=_equipCats.filter(c=>c!==name);
+  renderCatList();
+}
+
 </script>
 
 <!-- Documents AI Panel -->

@@ -490,10 +490,7 @@ tbody tr:hover{background:var(--sf2);}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
       Matrices <span class="tab-count" id="matrixCount">0</span>
     </button>
-    <button class="tab-btn" data-tab="equipment" onclick="switchTab('equipment')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 0-14.14 0"/><path d="M4.93 19.07a10 10 0 0 0 14.14 0"/></svg>
-      Equipment <span class="tab-count" id="equipCount">0</span>
-    </button>
+
 
   </nav>
 
@@ -1492,45 +1489,89 @@ function renderUMUsers() {
       merged.push({ prof: null, kiln: ku });
   });
   if (!merged.length) { list.innerHTML = '<div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);padding:12px 0">No users found.</div>'; return; }
+
   const DS = 'height:30px;padding:0 8px;font-size:11px;font-family:var(--ff-mono);background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--tx);outline:none;cursor:pointer;flex:1;min-width:0';
   const LS = 'font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);flex-shrink:0;width:72px';
   const RS = 'display:flex;align-items:center;gap:8px;margin-bottom:7px';
   const rc = {admin:'var(--ac3)',reviewer:'var(--pur)',editor:'var(--amb)',viewer:'var(--tx3)',none:'var(--tx3)'};
-  list.innerHTML = merged.map(function(m) {
-    const p = m.prof, ku = m.kiln;
-    const isSelf = UM_SELF_ID && p && p.id === UM_SELF_ID;
-    const displayName = (p&&(p.full_name||p.email))||(ku&&(ku.locked_name||ku.username))||'?';
-    const email = (p&&p.email)||(ku&&ku.email)||'\u2014';
-    const initials = displayName.split(' ').map(function(w){return w[0]||'';}).join('').slice(0,2).toUpperCase()||'?';
-    const docsRole = p?(p.role||'viewer'):null;
-    const isoRole  = p?(p.isolation_role||'none'):null;
-    const kilnRole = !ku?null:ku.is_admin?'admin':ku.is_shift_manager?'shift_manager':ku.is_cement_analyst?'cement_analyst':ku.is_day_staff?'day_staff':ku.is_burner?'burner':'read_only';
-    const col = docsRole?(rc[docsRole]||'var(--tx3)'):'var(--tx3)';
-    let h = '<div style="background:var(--sf2);border:1px solid var(--bd);border-radius:var(--r);padding:14px 16px">';
-    h += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:13px">'
-      +'<div style="width:36px;height:36px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--ff-head);font-weight:700;font-size:13px;color:'+col+';border:1px solid '+col+'33;background:'+col+'18">'+umEsc(initials)+'</div>'
-      +'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:var(--tx);font-family:var(--ff-head);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+umEsc(displayName)+'</div>'
-      +'<div style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+umEsc(email)+'</div></div>'
-      +(p&&p.approved===false?'<span style="font-size:9px;font-family:var(--ff-mono);color:var(--amb);border:1px solid var(--ambb);background:var(--ambd);padding:2px 6px;border-radius:4px;flex-shrink:0;white-space:nowrap">PENDING</span>':'')
-      +(ku&&ku.must_reset_password?'<span style="font-size:9px;font-family:var(--ff-mono);color:var(--amb);border:1px solid var(--ambb);background:var(--ambd);padding:2px 6px;border-radius:4px;flex-shrink:0;white-space:nowrap">PW RESET</span>':'')
-      +(ku&&ku.is_locked?'<span style="font-size:9px;font-family:var(--ff-mono);color:var(--red);border:1px solid var(--redb);background:var(--redd);padding:2px 6px;border-radius:4px;flex-shrink:0">LOCKED</span>':'')
+
+  const ROLE_GROUPS = [
+    { label:'Admins',           key:'admin',          color:'var(--ac3)', test: function(m){ const ku=m.kiln; const p=m.prof; return (ku&&ku.is_admin)||(p&&p.role==='admin'); } },
+    { label:'Shift Managers',   key:'shift_manager',  color:'#7c3aed',    test: function(m){ const ku=m.kiln; return ku&&ku.is_shift_manager&&!ku.is_admin; } },
+    { label:'Cement Analysts',  key:'cement_analyst', color:'#b45309',    test: function(m){ const ku=m.kiln; return ku&&ku.is_cement_analyst&&!ku.is_admin; } },
+    { label:'Day Staff',        key:'day_staff',      color:'#0891b2',    test: function(m){ const ku=m.kiln; return ku&&ku.is_day_staff&&!ku.is_admin; } },
+    { label:'Burners',          key:'burner',         color:'var(--amb)', test: function(m){ const ku=m.kiln; return ku&&ku.is_burner&&!ku.is_admin&&!ku.is_shift_manager&&!ku.is_cement_analyst&&!ku.is_day_staff; } },
+    { label:'Read Only',        key:'readonly',       color:'var(--tx2)', test: function(m){ const ku=m.kiln; return ku&&ku.is_readonly&&!ku.is_admin; } },
+    { label:'Platform Only',    key:'platform',       color:'var(--tx3)', test: function(m){ return m.prof && !m.kiln; } },
+  ];
+
+  const _umCollapsed = window._umCollapsed = window._umCollapsed || {};
+  let html = '';
+
+  ROLE_GROUPS.forEach(function(grp) {
+    const members = merged.filter(grp.test);
+    if (!members.length) return;
+    const collapsed = !!_umCollapsed[grp.key];
+    html += '<div style="margin-bottom:4px">';
+    html += '<div onclick="window._umCollapsed[\''+grp.key+'\']=!window._umCollapsed[\''+grp.key+'\'];renderUMUsers()" style="display:flex;align-items:center;gap:8px;padding:7px 12px;background:'+grp.color+'18;border:1px solid '+grp.color+'44;border-radius:var(--rsm);cursor:pointer;user-select:none;margin-bottom:4px">'
+      +'<span style="flex:1;font-size:11px;font-weight:700;font-family:var(--ff-mono);color:'+grp.color+'">'+grp.label+'</span>'
+      +'<span style="font-size:10px;font-family:var(--ff-mono);color:'+grp.color+';opacity:.7">'+members.length+' user'+(members.length!==1?'s':'')+'</span>'
+      +'<svg viewBox="0 0 24 24" fill="none" stroke="'+grp.color+'" stroke-width="2.5" style="width:12px;height:12px;transition:transform .15s;transform:rotate('+(collapsed?'-90deg':'0deg')+')"><polyline points="6 9 12 15 18 9"/></svg>'
       +'</div>';
-    h += '<div style="'+RS+'"><span style="'+LS+'">Docs</span>';
-    if(p){h+='<select onchange="umUpdateDocsRole(\''+umEsc(p.id)+'\',this.value)"'+(isSelf?' disabled':'')+' style="'+DS+'"><option value="viewer"'+(docsRole==='viewer'?' selected':'')+'>Viewer</option><option value="editor"'+(docsRole==='editor'?' selected':'')+'>Editor</option><option value="reviewer"'+(docsRole==='reviewer'?' selected':'')+'>Reviewer</option><option value="admin"'+(docsRole==='admin'?' selected':'')+'>Admin</option></select>';}
-    else{h+='<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">No platform account</span>';}
-    h+='</div><div style="'+RS+'"><span style="'+LS+'">Isolation</span>';
-    if(p){h+='<select onchange="umUpdateIsoRole(\''+umEsc(p.id)+'\',this.value)"'+(isSelf?' disabled':'')+' style="'+DS+'"><option value="none"'+(isoRole==='none'?' selected':'')+'>No Access</option><option value="viewer"'+(isoRole==='viewer'?' selected':'')+'>Viewer</option><option value="editor"'+(isoRole==='editor'?' selected':'')+'>Editor</option><option value="reviewer"'+(isoRole==='reviewer'?' selected':'')+'>Reviewer</option><option value="admin"'+(isoRole==='admin'?' selected':'')+'>Admin</option></select>';}
-    else{h+='<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">No platform account</span>';}
-    h+='</div><div style="'+RS+'"><span style="'+LS+'">Shift Log</span>';
-    if(ku){h+='<select onchange="umUpdateKilnRole(\''+umEsc(ku.username)+'\',this.value)" style="'+DS+'"><option value="burner"'+(kilnRole==='burner'?' selected':'')+'>Burner</option><option value="shift_manager"'+(kilnRole==='shift_manager'?' selected':'')+'>Shift Manager</option><option value="cement_analyst"'+(kilnRole==='cement_analyst'?' selected':'')+'>Cement Analyst</option><option value="day_staff"'+(kilnRole==='day_staff'?' selected':'')+'>Day Staff</option><option value="read_only"'+(kilnRole==='read_only'?' selected':'')+'>Read Only</option><option value="admin"'+(kilnRole==='admin'?' selected':'')+'>Admin</option></select>';}
-    else{h+='<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">No shift log account</span>';}
-    h+='</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid var(--bd)">';
-    if(p&&p.approved===false){h+='<button onclick="umApproveUser(\''+umEsc(p.id)+'\')" style="height:26px;padding:0 12px;font-size:11px;font-family:var(--ff-head);font-weight:600;background:var(--grnd);border:1px solid var(--grnb);border-radius:var(--rsm);color:var(--grn);cursor:pointer">\u2713 Approve</button>';}
-    if(ku){h+='<button onclick="umForceReset(\''+umEsc(ku.username)+'\')" style="height:26px;padding:0 10px;font-size:11px;font-family:var(--ff-body);background:var(--sf3);border:1px solid var(--bd);border-radius:var(--rsm);color:var(--tx2);cursor:pointer">Force PW Reset</button>';}
-    if(p&&!isSelf){h+='<button onclick="umRemoveUser(\''+umEsc(p.id)+'\',\''+umEsc(email)+'\')" style="height:26px;padding:0 10px;font-size:11px;font-family:var(--ff-mono);background:transparent;border:1px solid var(--redb);border-radius:var(--rsm);color:var(--red);cursor:pointer;margin-left:auto">Remove</button>';}
-    h+='</div></div>';
-    return h;
-  }).join('');
+    if (!collapsed) {
+      members.forEach(function(m) {
+        html += renderUMCard(m, DS, LS, RS, rc);
+      });
+    }
+    html += '</div>';
+  });
+
+  const ungrouped = merged.filter(function(m){ return !ROLE_GROUPS.some(function(g){ return g.test(m); }); });
+  ungrouped.forEach(function(m){ html += renderUMCard(m, DS, LS, RS, rc); });
+  list.innerHTML = html;
+}
+
+function renderUMCard(m, DS, LS, RS, rc) {
+  const p = m.prof, ku = m.kiln;
+  const PROTECTED_USERNAME = 'rjone';
+  const isSelf = UM_SELF_ID && p && p.id === UM_SELF_ID;
+  const isProtectedKiln = ku && ku.username === PROTECTED_USERNAME;
+  const displayName = (p&&(p.full_name||p.email))||(ku&&(ku.locked_name||ku.username))||'?';
+  const email = (p&&p.email)||(ku&&ku.email)||'\u2014';
+  const initials = displayName.split(' ').map(function(w){return w[0]||'';}).join('').slice(0,2).toUpperCase()||'?';
+  const docsRole = p?(p.role||'viewer'):null;
+  const isoRole  = p?(p.isolation_role||'none'):null;
+  const kilnRole = !ku?null:ku.is_admin?'admin':ku.is_shift_manager?'shift_manager':ku.is_cement_analyst?'cement_analyst':ku.is_day_staff?'day_staff':ku.is_burner?'burner':'read_only';
+  const col = docsRole?(rc[docsRole]||'var(--tx3)'):'var(--tx3)';
+  let h = '<div style="background:var(--sf2);border:1px solid var(--bd);border-radius:var(--r);padding:14px 16px;margin-bottom:6px">';
+  h += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:13px">'
+    +'<div style="width:36px;height:36px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--ff-head);font-weight:700;font-size:13px;color:'+col+';border:1px solid '+col+'33;background:'+col+'18">'+umEsc(initials)+'</div>'
+    +'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:var(--tx);font-family:var(--ff-head);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+umEsc(displayName)+'</div>'
+    +'<div style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+umEsc(email)+'</div></div>'
+    +(p&&p.approved===false?'<span style="font-size:9px;font-family:var(--ff-mono);color:var(--amb);border:1px solid var(--ambb);background:var(--ambd);padding:2px 6px;border-radius:4px;flex-shrink:0;white-space:nowrap">PENDING</span>':'')
+    +(ku&&ku.must_reset_password?'<span style="font-size:9px;font-family:var(--ff-mono);color:var(--amb);border:1px solid var(--ambb);background:var(--ambd);padding:2px 6px;border-radius:4px;flex-shrink:0;white-space:nowrap">PW RESET</span>':'')
+    +(ku&&ku.is_locked?'<span style="font-size:9px;font-family:var(--ff-mono);color:var(--red);border:1px solid var(--redb);background:var(--redd);padding:2px 6px;border-radius:4px;flex-shrink:0">LOCKED</span>':'')
+    +'</div>';
+  h += '<div style="'+RS+'"><span style="'+LS+'">Docs</span>';
+  if(p){h+='<select onchange="umUpdateDocsRole(\''+umEsc(p.id)+'\',this.value)"'+(isSelf?' disabled':'')+' style="'+DS+'"><option value="viewer"'+(docsRole==='viewer'?' selected':'')+'>Viewer</option><option value="editor"'+(docsRole==='editor'?' selected':'')+'>Editor</option><option value="reviewer"'+(docsRole==='reviewer'?' selected':'')+'>Reviewer</option><option value="admin"'+(docsRole==='admin'?' selected':'')+'>Admin</option></select>';}
+  else{h+='<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">No platform account</span>';}
+  h+='</div><div style="'+RS+'"><span style="'+LS+'">Isolation</span>';
+  if(p){h+='<select onchange="umUpdateIsoRole(\''+umEsc(p.id)+'\',this.value)"'+(isSelf?' disabled':'')+' style="'+DS+'"><option value="none"'+(isoRole==='none'?' selected':'')+'>No Access</option><option value="viewer"'+(isoRole==='viewer'?' selected':'')+'>Viewer</option><option value="editor"'+(isoRole==='editor'?' selected':'')+'>Editor</option><option value="reviewer"'+(isoRole==='reviewer'?' selected':'')+'>Reviewer</option><option value="admin"'+(isoRole==='admin'?' selected':'')+'>Admin</option></select>';}
+  else{h+='<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">No platform account</span>';}
+  h+='</div><div style="'+RS+'"><span style="'+LS+'">Shift Log</span>';
+  if(ku){
+    if(isProtectedKiln){
+      h+='<div style="height:30px;padding:0 8px;font-size:11px;font-family:var(--ff-mono);background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--ac3);display:flex;align-items:center;flex:1">Admin (protected)</div>';
+    } else {
+      h+='<select onchange="umUpdateKilnRole(\''+umEsc(ku.username)+'\',this.value)" style="'+DS+'"><option value="burner"'+(kilnRole==='burner'?' selected':'')+'>Burner</option><option value="shift_manager"'+(kilnRole==='shift_manager'?' selected':'')+'>Shift Manager</option><option value="cement_analyst"'+(kilnRole==='cement_analyst'?' selected':'')+'>Cement Analyst</option><option value="day_staff"'+(kilnRole==='day_staff'?' selected':'')+'>Day Staff</option><option value="read_only"'+(kilnRole==='read_only'?' selected':'')+'>Read Only</option><option value="admin"'+(kilnRole==='admin'?' selected':'')+'>Admin</option></select>';
+    }
+  } else{h+='<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">No shift log account</span>';}
+  h+='</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid var(--bd)">';
+  if(p&&p.approved===false){h+='<button onclick="umApproveUser(\''+umEsc(p.id)+'\')" style="height:26px;padding:0 12px;font-size:11px;font-family:var(--ff-head);font-weight:600;background:var(--grnd);border:1px solid var(--grnb);border-radius:var(--rsm);color:var(--grn);cursor:pointer">\u2713 Approve</button>';}
+  if(ku&&!isProtectedKiln){h+='<button onclick="umForceReset(\''+umEsc(ku.username)+'\')" style="height:26px;padding:0 10px;font-size:11px;font-family:var(--ff-body);background:var(--sf3);border:1px solid var(--bd);border-radius:var(--rsm);color:var(--tx2);cursor:pointer">Force PW Reset</button>';}
+  if(p&&!isSelf&&!isProtectedKiln){h+='<button onclick="umRemoveUser(\''+umEsc(p.id)+'\',\''+umEsc(email)+'\')" style="height:26px;padding:0 10px;font-size:11px;font-family:var(--ff-mono);background:transparent;border:1px solid var(--redb);border-radius:var(--rsm);color:var(--red);cursor:pointer;margin-left:auto">Remove</button>';}
+  h+='</div></div>';
+  return h;
 }
 
 async function umUpdateDocsRole(id,role){const{error}=await UM_SB.from('pw_profiles').update({role}).eq('id',id);if(error){umToast('Failed: '+error.message);return;}const u=_umProfiles.find(x=>x.id===id);if(u)u.role=role;renderUMUsers();umToast('Docs role updated \u2713');}
