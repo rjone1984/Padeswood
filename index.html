@@ -500,14 +500,18 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 
 /* ── MOBILE ──────────────────────────────────────────────────────── */
 @media(max-width:640px){
-  #mainHeader{padding:0 14px;height:auto;min-height:52px;flex-wrap:wrap;row-gap:0;}
+  #mainHeader{padding:0 10px;height:52px;flex-wrap:nowrap;overflow:hidden;}
   .header-titles{min-width:0;flex:1;}
-  .header-name{font-size:13px;}
+  .header-name{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .header-sub{display:none;}
-  .header-actions,.header-right{gap:6px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+  .header-actions,.header-right{
+    flex-wrap:nowrap;overflow-x:auto;flex-shrink:0;
+    scrollbar-width:none;-webkit-overflow-scrolling:touch;
+    gap:4px;
+  }
   .header-actions::-webkit-scrollbar,.header-right::-webkit-scrollbar{display:none;}
   .header-user{display:none;}
-  .icon-btn{width:30px;height:30px;}
+  .icon-btn{width:30px;height:30px;flex-shrink:0;}
   #mainContent{padding:28px 14px 48px;}
   .platform-hero h1{font-size:20px;}
   .apps-grid{grid-template-columns:1fr;gap:12px;}
