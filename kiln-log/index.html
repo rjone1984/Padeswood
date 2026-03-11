@@ -1451,16 +1451,12 @@ async function checkLicence(){
     }
     clearTimeout(showTimer);
     overlay.style.display = 'none';
-    document.getElementById('splash').style.display = 'flex';
-    animateSplashLoader();
     return true;
   } catch(e){
     console.warn('Licence check failed:', e.message);
     // Fail open on genuine network error so outages don't lock out users
     clearTimeout(showTimer);
     overlay.style.display = 'none';
-    document.getElementById('splash').style.display = 'flex';
-    animateSplashLoader();
     return true;
   }
 }
@@ -1502,7 +1498,7 @@ function showLicenceBlock(msg, text){
 
 // time-of-day theme — dark between 18:00 and 07:00, light otherwise
 (function(){
-  const saved = localStorage.getItem('kbl_theme');
+  const saved = localStorage.getItem('pw_theme') || localStorage.getItem('kbl_theme');
   const apply = () => {
     let usLight;
     if(saved) { usLight = saved === 'light'; }
@@ -1786,27 +1782,38 @@ document.addEventListener('click', e => {
 
 // theme
 async function sbSaveTheme(isDark){
-  if(!currentUser) return;
   try {
-    await sbFetch('/rest/v1/kiln_config', {
-      method: 'POST',
-      headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
-      body: JSON.stringify({ key: 'theme_' + currentUser, value: isDark ? 'dark' : 'light' })
+    // Get auth UID for cross-app theme sharing
+    const verifyRes = await fetch(SB_URL + '/auth/v1/user', {
+      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + _sbSession }
     });
+    if(verifyRes.ok){
+      const authUser = await verifyRes.json();
+      await sbFetch('/rest/v1/kiln_config', {
+        method: 'POST',
+        headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+        body: JSON.stringify({ key: 'theme_uid_' + authUser.id, value: isDark ? 'dark' : 'light' })
+      });
+    }
   } catch(e){}
 }
 
 async function sbLoadUserTheme(){
-  if(!currentUser) return;
   try {
-    const rows = await sbFetch('/rest/v1/kiln_config?key=eq.theme_' + encodeURIComponent(currentUser) + '&select=value');
-    if(rows && rows.length){
-      const theme = rows[0].value;
-      lightMode = theme === 'light';
-      document.body.classList.toggle('light-mode', lightMode);
-      localStorage.setItem('kbl_theme', theme);
-      updateThemeIcon();
-      return;
+    const verifyRes = await fetch(SB_URL + '/auth/v1/user', {
+      headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + _sbSession }
+    });
+    if(verifyRes.ok){
+      const authUser = await verifyRes.json();
+      const rows = await sbFetch('/rest/v1/kiln_config?key=eq.theme_uid_' + authUser.id + '&select=value');
+      if(rows && rows.length){
+        const theme = rows[0].value;
+        lightMode = theme === 'light';
+        document.body.classList.toggle('light-mode', lightMode);
+        localStorage.setItem('pw_theme', theme);
+        updateThemeIcon();
+        return;
+      }
     }
   } catch(e){}
   // No saved preference — keep current time-of-day theme
@@ -1825,7 +1832,7 @@ function updateThemeIcon(){
 function toggleTheme(){
   lightMode=!lightMode;
   document.body.classList.toggle('light-mode',lightMode);
-  localStorage.setItem('kbl_theme',lightMode?'light':'dark');
+  localStorage.setItem('pw_theme',lightMode?'light':'dark');
   sbSaveTheme(!lightMode);
   updateThemeIcon();
 }
@@ -5697,6 +5704,9 @@ window.addEventListener("load",()=>{
       localStorage.removeItem('kbl_session');
       localStorage.removeItem('kbl_refresh');
     }
+    // No valid session — show login
+    document.getElementById('splash').style.display = 'flex';
+    animateSplashLoader();
   });
 });
 </script>
