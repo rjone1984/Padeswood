@@ -387,40 +387,40 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   <!-- Single unified scrollable body -->
   <div style="flex:1;overflow-y:auto;padding:20px 22px;display:flex;flex-direction:column;gap:20px">
 
-    <!-- Invite section -->
+    <!-- Add New User section -->
     <div>
-      <div style="font-family:var(--ff-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--tx3);margin-bottom:12px;display:flex;align-items:center;gap:10px">Invite New User<span style="flex:1;height:1px;background:var(--bd)"></span></div>
+      <div style="font-family:var(--ff-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--tx3);margin-bottom:12px;display:flex;align-items:center;gap:10px">Add New User<span style="flex:1;height:1px;background:var(--bd)"></span></div>
       <div style="display:flex;flex-direction:column;gap:10px">
-        <div><label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Email Address</label>
-          <input type="email" id="inviteEmail" placeholder="name@heidelbergmaterials.com" style="width:100%;height:38px;padding:0 12px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none;box-sizing:border-box">
-        </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
           <div><label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Full Name</label>
             <input type="text" id="inviteName" placeholder="e.g. John Smith" style="width:100%;height:38px;padding:0 12px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none;box-sizing:border-box">
           </div>
-          <div><label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Docs Role</label>
-            <select id="inviteRole" style="width:100%;height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
-              <option value="viewer">Viewer — read only</option>
-              <option value="editor">Editor — add &amp; edit</option>
-              <option value="reviewer">Reviewer — mark reviewed</option>
-              <option value="admin">Admin — full access</option>
-            </select>
+          <div><label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Email Address</label>
+            <input type="email" id="inviteEmail" placeholder="name@heidelbergmaterials.com" style="width:100%;height:38px;padding:0 12px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none;box-sizing:border-box">
           </div>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-          <div><label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Isolation Matrix Role</label>
-            <select id="inviteIsoRole" style="width:100%;height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
-              <option value="none">No Access</option>
-              <option value="viewer">Viewer — read only</option>
-              <option value="editor">Editor — add &amp; edit</option>
-              <option value="reviewer">Reviewer — mark reviewed</option>
-              <option value="admin">Admin — full access</option>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+          <div><label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Docs / Platform</label>
+            <select id="inviteRole" style="width:100%;height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
+              <option value="viewer">Viewer</option>
+              <option value="editor">Editor</option>
+              <option value="reviewer">Reviewer</option>
+              <option value="admin">Admin</option>
             </select>
           </div>
-          <div><label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Shift Log Role</label>
+          <div><label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Isolation</label>
+            <select id="inviteIsoRole" style="width:100%;height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
+              <option value="none">No Access</option>
+              <option value="viewer">Viewer</option>
+              <option value="editor">Editor</option>
+              <option value="reviewer">Reviewer</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+          <div><label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Shift Log</label>
             <select id="inviteKilnRole" style="width:100%;height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
               <option value="none">No Access</option>
-              <option value="burner">Kiln Burner</option>
+              <option value="burner">Burner</option>
               <option value="shift_manager">Shift Manager</option>
               <option value="cement_analyst">Cement Analyst</option>
               <option value="day_staff">Day Staff</option>
@@ -429,9 +429,12 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
             </select>
           </div>
         </div>
+        <div style="background:var(--sf3);border:1px solid var(--bd);border-radius:var(--rsm);padding:10px 12px;font-size:11px;color:var(--tx3);line-height:1.6">
+          <strong style="color:var(--tx2)">How this works:</strong> Fill in the name, email and roles, then click <strong style="color:var(--ac3)">Add to Queue</strong>. The person appears in the <strong style="color:var(--amb)">Access Requests</strong> section below. Click <strong style="color:var(--grn)">✓ Activate</strong>, set their password, and they can log in immediately — no email required.
+        </div>
         <div id="inviteMsg" style="display:none;font-size:12px;padding:8px 12px;border-radius:var(--rsm)"></div>
         <button id="inviteBtn" onclick="inviteUser()" style="display:flex;align-items:center;gap:6px;padding:0 16px;height:36px;background:linear-gradient(135deg,var(--ac),var(--ac3));color:#fff;border:none;border-radius:var(--rsm);font-family:var(--ff-head);font-weight:600;font-size:13px;cursor:pointer">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Send Invite
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add to Queue
         </button>
       </div>
     </div>
@@ -503,12 +506,12 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         <svg viewBox="0 0 24 24" fill="none" stroke="var(--amb)" stroke-width="2" width="15" height="15"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
       </div>
       <div>
-        <div style="font-family:var(--ff-head);font-weight:700;font-size:16px;color:var(--tx)">Password Reset Required</div>
-        <div style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">Your administrator has requested a password change</div>
+        <div id="forcePwTitle" style="font-family:var(--ff-head);font-weight:700;font-size:16px;color:var(--tx)">Password Reset Required</div>
+        <div id="forcePwSub" style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">Your administrator has requested a password change</div>
       </div>
     </div>
     <div style="margin:14px 0;padding:10px 14px;background:var(--ambd);border:1px solid var(--ambb);border-radius:var(--rsm);font-size:12px;color:var(--amb)">
-      You must set a new password before continuing.
+      <span id="forcePwNotice">You must set a new password before continuing.</span>
     </div>
     <div style="display:flex;flex-direction:column;gap:12px">
       <div>
@@ -822,7 +825,12 @@ async function showAppSelector(user) {
         }
         if (ku.must_reset_password) {
           setTimeout(function() { openForcePwResetModal(ku.username); }, 600);
+          return; // handled
         }
+      }
+      // Also check pw_profiles must_reset_password column
+      if (data && data.must_reset_password) {
+        setTimeout(function() { openForcePwResetModal(null); }, 600);
       }
     } catch(e2) {}
   } catch(e) {
@@ -899,11 +907,13 @@ function showRegMsg(type, text) {
 /* ── PENDING BADGE ───────────────────────────────────────────────── */
 async function loadPendingBadge() {
   try {
-    const [profRes, reqRes] = await Promise.all([
-      sb.from('pw_profiles').select('id', { count: 'exact', head: true }).eq('approved', false),
-      sb.from('pw_access_requests').select('id', { count: 'exact', head: true }).eq('status', 'pending')
-    ]);
-    const total = (profRes.count || 0) + (reqRes.count || 0);
+    const profRes = await sb.from('pw_profiles').select('id', { count: 'exact', head: true }).eq('approved', false);
+    let reqCount = 0;
+    try {
+      const reqRes = await sb.from('pw_access_requests').select('id', { count: 'exact', head: true }).eq('status', 'pending');
+      reqCount = reqRes.count || 0;
+    } catch(e) {}
+    const total = (profRes.count || 0) + reqCount;
     const badge = document.getElementById('pendingBadge');
     if (badge) { badge.textContent = total; badge.style.display = total > 0 ? 'block' : 'none'; }
   } catch(e) { console.warn('pendingBadge:', e); }
@@ -1087,30 +1097,95 @@ const SB_URL_PLATFORM = 'https://xnkwrkoxvgptobnmekgv.supabase.co';
 const SB_KEY_PLATFORM = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhua3dya294dmdwdG9ibm1la2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NjAxNTQsImV4cCI6MjA4ODIzNjE1NH0.PrmnJ4eGepac41bQuNPG7TcBaunrfTWdjLtkGLr_2LY';
 
 let _forcePwUsername = null;
+let _adminSetPwTarget = null; // { authUserId, kilnUsername, displayName } when admin is setting
+let _pendingResetReqId = null;  // set when opened from reset request queue
+
 function openForcePwResetModal(username) {
+  // Self-reset mode (user must change their own password)
+  _adminSetPwTarget = null;
   _forcePwUsername = username || null;
+  document.getElementById('forcePwTitle').textContent = 'Password Reset Required';
+  document.getElementById('forcePwSub').textContent = 'Your administrator has requested a password change';
+  document.getElementById('forcePwNotice').textContent = 'You must set a new password before continuing.';
+  document.getElementById('forcePwBtn').textContent = 'Set New Password & Continue';
   document.getElementById('forcePwNew').value = '';
   document.getElementById('forcePwConfirm').value = '';
   document.getElementById('forcePwMsg').style.display = 'none';
   document.getElementById('forcePwOverlay').style.display = 'flex';
   setTimeout(function() { document.getElementById('forcePwNew').focus(); }, 80);
 }
+
+function openAdminSetPwModal(authUserId, kilnUsername, displayName, fromResetReqId) {
+  // Admin set-password mode
+  _adminSetPwTarget = { authUserId, kilnUsername, displayName };
+  _forcePwUsername = null;
+  if (!fromResetReqId) _pendingResetReqId = null; // clear unless explicitly set by handleResetReq
+  document.getElementById('forcePwTitle').textContent = 'Set Password';
+  document.getElementById('forcePwSub').textContent = 'Setting password for ' + displayName;
+  document.getElementById('forcePwNotice').textContent = 'Enter a new password for this user. They can change it themselves after logging in.';
+  document.getElementById('forcePwBtn').textContent = 'Set Password';
+  document.getElementById('forcePwNew').value = '';
+  document.getElementById('forcePwConfirm').value = '';
+  document.getElementById('forcePwMsg').style.display = 'none';
+  document.getElementById('forcePwOverlay').style.display = 'flex';
+  setTimeout(function() { document.getElementById('forcePwNew').focus(); }, 80);
+}
+
 async function submitPlatformForceReset() {
   const newPw = document.getElementById('forcePwNew').value;
   const conf  = document.getElementById('forcePwConfirm').value;
   const btn   = document.getElementById('forcePwBtn');
-  const msg   = document.getElementById('forcePwMsg');
+  msg = document.getElementById('forcePwMsg');
   msg.style.display = 'none';
   if (!newPw || !conf) { showForcePwMsg('err','Please fill in both fields.'); return; }
   if (newPw.length < 8) { showForcePwMsg('err','Password must be at least 8 characters.'); return; }
   if (newPw !== conf)   { showForcePwMsg('err','Passwords do not match.'); return; }
   btn.disabled = true; btn.textContent = 'Saving…';
+
+  if (_adminSetPwTarget) {
+    // Admin setting someone else's password via edge function
+    if (!_adminSetPwTarget.authUserId) {
+      showForcePwMsg('err', 'No linked auth account — activate this user first.');
+      btn.disabled = false; btn.textContent = 'Set Password'; return;
+    }
+    try {
+      const { error } = await sb.functions.invoke('pw-admin-user', {
+        body: { action: 'setPassword', userId: _adminSetPwTarget.authUserId, password: newPw }
+      });
+      if (error) throw new Error(error.message);
+      if (_adminSetPwTarget.kilnUsername) {
+        await sb.from('kiln_users').update({ must_reset_password: false }).eq('username', _adminSetPwTarget.kilnUsername).catch(function(){});
+      }
+      showForcePwMsg('ok', 'Password set for ' + _adminSetPwTarget.displayName + ' ✓');
+      btn.disabled = false; btn.textContent = 'Set Password';
+      // If opened from the reset request queue, mark the request as done
+      if (_pendingResetReqId) {
+        await sb.from('pw_reset_requests').update({status:'done'}).eq('id',_pendingResetReqId).catch(function(){});
+        _pendingResetReqId = null;
+        loadResetReqBadge();
+        if (document.getElementById('resetReqOverlay') && document.getElementById('resetReqOverlay').style.display !== 'none') renderResetRequests();
+      }
+      setTimeout(function() { document.getElementById('forcePwOverlay').style.display = 'none'; renderAllUsers(); }, 1800);
+    } catch(e) {
+      btn.disabled = false; btn.textContent = 'Set Password';
+      showForcePwMsg('err', e.message || 'Failed to set password.');
+    }
+    return;
+  }
+
+  // Self-reset mode
   const { error } = await sb.auth.updateUser({ password: newPw });
   if (error) { btn.disabled = false; btn.textContent = 'Set New Password & Continue'; showForcePwMsg('err', error.message); return; }
-  // Clear the must_reset_password flag in kiln_users
   if (_forcePwUsername) {
     await sb.from('kiln_users').update({ must_reset_password: false }).eq('username', _forcePwUsername).catch(function(){});
   }
+  // Also clear must_reset_password on pw_profiles if set
+  try {
+    const { data: sess } = await sb.auth.getSession();
+    if (sess && sess.session) {
+      await sb.from('pw_profiles').update({ must_reset_password: false }).eq('id', sess.session.user.id).catch(function(){});
+    }
+  } catch(e2) {}
   btn.disabled = false; btn.textContent = 'Set New Password & Continue';
   showForcePwMsg('ok','Password updated successfully ✓');
   setTimeout(function() { document.getElementById('forcePwOverlay').style.display = 'none'; }, 2000);
@@ -1184,36 +1259,71 @@ function closeAdminPanel() {
 
 // Loads both pw_profiles and kiln_users, joins on auth_user_id, auto-syncs stale emails
 let _accessRequestsCache = [];
+function _umShowErr(list, msg) {
+  list.innerHTML = '<div style="color:var(--red);font-size:12px;padding:12px 0;line-height:1.8">'
+    + msg + '<br><button onclick="loadAllUsers()" style="margin-top:8px;height:28px;padding:0 14px;'
+    + 'font-size:11px;font-family:var(--ff-mono);background:var(--sf3);border:1px solid var(--bd);'
+    + 'border-radius:var(--rsm);color:var(--tx2);cursor:pointer">↺ Retry</button></div>';
+}
+
 async function loadAllUsers() {
   const list = document.getElementById('userList');
+  if (!list) return;
   list.innerHTML = '<div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);padding:12px 0">Loading users…</div>';
   loadPendingBadge();
-  const [profRes, kilnRes, reqRes] = await Promise.all([
-    sb.from('pw_profiles').select('*').order('email'),
-    sb.from('kiln_users').select('username,locked_name,email,is_admin,is_burner,is_shift_manager,is_cement_analyst,is_day_staff,is_readonly,is_locked,must_reset_password,auth_user_id').order('username'),
-    sb.from('pw_access_requests').select('*').eq('status','pending').order('requested_at')
-  ]);
-  if (profRes.error) { list.innerHTML = '<div style="color:var(--red);font-size:12px;padding:12px 0">Error: '+profRes.error.message+'</div>'; return; }
-  _usersCache = profRes.data || [];
-  _kilnUsersCache = kilnRes.data || [];
-  _accessRequestsCache = reqRes.data || [];
-  // Auto-sync stale emails in kiln_users where auth_user_id matches a pw_profiles row
-  const emailFixes = [];
-  _kilnUsersCache.forEach(function(ku) {
-    if (!ku.auth_user_id) return;
-    const prof = _usersCache.find(function(p){ return p.id === ku.auth_user_id; });
-    if (prof && prof.email && prof.email !== ku.email) {
-      emailFixes.push(sb.from('kiln_users').update({email: prof.email}).eq('auth_user_id', ku.auth_user_id));
-      ku.email = prof.email;
+  try {
+    // Ensure supabase client is ready and session is valid
+    if (!sb) { _umShowErr(list, 'Not initialised — please refresh the page.'); return; }
+    const { data: sessData, error: sessErr } = await sb.auth.getSession();
+    if (sessErr || !sessData || !sessData.session) {
+      _umShowErr(list, 'Session expired — please log out and back in.'); return;
     }
-  });
-  if (emailFixes.length) await Promise.all(emailFixes);
-  renderAllUsers();
+
+    // Fetch with a 10-second timeout
+    function withTimeout(promise, ms) {
+      return Promise.race([promise, new Promise(function(_, rej) {
+        setTimeout(function() { rej(new Error('Request timed out after ' + ms/1000 + 's')); }, ms);
+      })]);
+    }
+
+    const [profRes, kilnRes] = await withTimeout(Promise.all([
+      sb.from('pw_profiles').select('*').order('email'),
+      sb.from('kiln_users').select('username,locked_name,email,is_admin,is_burner,is_shift_manager,is_cement_analyst,is_day_staff,is_readonly,is_locked,must_reset_password,auth_user_id').order('username')
+    ]), 10000);
+
+    if (profRes.error) {
+      _umShowErr(list, 'Error: ' + (profRes.error.message || JSON.stringify(profRes.error))); return;
+    }
+    _usersCache = profRes.data || [];
+    _kilnUsersCache = (kilnRes.error ? [] : kilnRes.data) || [];
+
+    // pw_access_requests may not exist yet — fail gracefully
+    try {
+      const reqRes = await sb.from('pw_access_requests').select('*').eq('status','pending').order('requested_at');
+      _accessRequestsCache = reqRes.data || [];
+    } catch(e) { _accessRequestsCache = []; }
+
+    // Auto-sync stale emails in kiln_users where auth_user_id matches a pw_profiles row
+    const emailFixes = [];
+    _kilnUsersCache.forEach(function(ku) {
+      if (!ku.auth_user_id) return;
+      const prof = _usersCache.find(function(p){ return p.id === ku.auth_user_id; });
+      if (prof && prof.email && prof.email !== ku.email) {
+        emailFixes.push(sb.from('kiln_users').update({email: prof.email}).eq('auth_user_id', ku.auth_user_id));
+        ku.email = prof.email;
+      }
+    });
+    if (emailFixes.length) await Promise.all(emailFixes).catch(function(){});
+    renderAllUsers();
+  } catch(e) {
+    _umShowErr(list, 'Failed to load users: ' + (e && e.message ? e.message : String(e)));
+  }
 }
 
 function renderAllUsers() {
-  const list = document.getElementById('usersList');
+  const list = document.getElementById('userList');
   if (!list) return;
+  try {
   const merged = _usersCache.map(function(p) {
     return { prof: p, kiln: _kilnUsersCache.find(function(k){ return k.auth_user_id === p.id; }) || null };
   });
@@ -1228,14 +1338,15 @@ function renderAllUsers() {
   const RS = 'display:flex;align-items:center;gap:8px;margin-bottom:7px';
   const rc = {admin:'var(--ac3)',reviewer:'var(--pur)',editor:'var(--amb)',viewer:'var(--tx3)',none:'var(--tx3)'};
 
+  // Users appear in EVERY group they qualify for (multi-group)
   const ROLE_GROUPS = [
     { label:'Admins',           key:'admin',          color:'var(--ac3)', test: function(m){ const ku=m.kiln; const p=m.prof; return (ku&&ku.is_admin)||(p&&p.role==='admin'); } },
-    { label:'Shift Managers',   key:'shift_manager',  color:'#7c3aed',    test: function(m){ const ku=m.kiln; return ku&&ku.is_shift_manager&&!ku.is_admin; } },
-    { label:'Cement Analysts',  key:'cement_analyst', color:'#b45309',    test: function(m){ const ku=m.kiln; return ku&&ku.is_cement_analyst&&!ku.is_admin; } },
-    { label:'Day Staff',        key:'day_staff',      color:'#0891b2',    test: function(m){ const ku=m.kiln; return ku&&ku.is_day_staff&&!ku.is_admin; } },
-    { label:'Burners',          key:'burner',         color:'var(--amb)', test: function(m){ const ku=m.kiln; return ku&&ku.is_burner&&!ku.is_admin&&!ku.is_shift_manager&&!ku.is_cement_analyst&&!ku.is_day_staff; } },
-    { label:'Read Only',        key:'readonly',       color:'var(--tx2)', test: function(m){ const ku=m.kiln; return ku&&ku.is_readonly&&!ku.is_admin; } },
-    { label:'Platform Only',    key:'platform',       color:'var(--tx3)', test: function(m){ return m.prof && !m.kiln; } },
+    { label:'Shift Managers',   key:'shift_manager',  color:'#7c3aed',    test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_shift_manager); } },
+    { label:'Cement Analysts',  key:'cement_analyst', color:'#b45309',    test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_cement_analyst); } },
+    { label:'Day Staff',        key:'day_staff',      color:'#0891b2',    test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_day_staff); } },
+    { label:'Burners',          key:'burner',         color:'var(--amb)', test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_burner); } },
+    { label:'Read Only',        key:'readonly',       color:'var(--tx2)', test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_readonly); } },
+    { label:'Platform Only',    key:'platform',       color:'var(--tx3)', test: function(m){ return !!(m.prof && !m.kiln); } },
   ];
 
   const _platCollapsed = window._platCollapsed = window._platCollapsed || {};
@@ -1280,12 +1391,13 @@ function renderAllUsers() {
   const ungrouped = merged.filter(function(m){ return !ROLE_GROUPS.some(function(g){ return g.test(m); }); });
   ungrouped.forEach(function(m){ html += renderUserCard(m, DS, LS, RS, rc); });
   list.innerHTML = html;
+  } catch(e) { _umShowErr(list, 'Render error: ' + (e && e.message ? e.message : String(e))); }
 }
 
 function renderUserCard(m, DS, LS, RS, rc) {
   const p = m.prof, ku = m.kiln;
   const PROTECTED_USERNAME = 'rjone';
-  const isSelf = currentUser && p && p.id === currentUser.id;
+  const isSelf = _platformProfile && p && p.id === _platformProfile.id;
   const isProtectedKiln = ku && ku.username === PROTECTED_USERNAME;
   const displayName = (p&&(p.full_name||p.email))||(ku&&(ku.locked_name||ku.username))||'?';
   const email = (p&&p.email)||(ku&&ku.email)||'\u2014';
@@ -1304,11 +1416,15 @@ function renderUserCard(m, DS, LS, RS, rc) {
     +(ku&&ku.is_locked?'<span style="font-size:9px;font-family:var(--ff-mono);color:var(--red);border:1px solid var(--redb);background:var(--redd);padding:2px 6px;border-radius:4px;flex-shrink:0">LOCKED</span>':'')
     +'</div>';
   h += '<div style="'+RS+'"><span style="'+LS+'">Docs</span>';
-  if(p){h+='<select onchange="updateDocsRole(\''+esc(p.id)+'\',this.value)"'+(isSelf?' disabled':'')+' style="'+DS+'"><option value="viewer"'+(docsRole==='viewer'?' selected':'')+'>Viewer</option><option value="editor"'+(docsRole==='editor'?' selected':'')+'>Editor</option><option value="reviewer"'+(docsRole==='reviewer'?' selected':'')+'>Reviewer</option><option value="admin"'+(docsRole==='admin'?' selected':'')+'>Admin</option></select>';}
-  else{h+='<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">No platform account</span>';}
+  if(p){
+    if(isProtectedKiln){h+='<div style="height:30px;padding:0 8px;font-size:11px;font-family:var(--ff-mono);background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--ac3);display:flex;align-items:center;flex:1">Admin (protected)</div>';}
+    else{h+='<select onchange="updateDocsRole(\''+esc(p.id)+'\',this.value)"'+(isSelf?' disabled':'')+' style="'+DS+'"><option value="viewer"'+(docsRole==='viewer'?' selected':'')+'>Viewer</option><option value="editor"'+(docsRole==='editor'?' selected':'')+'>Editor</option><option value="reviewer"'+(docsRole==='reviewer'?' selected':'')+'>Reviewer</option><option value="admin"'+(docsRole==='admin'?' selected':'')+'>Admin</option></select>';}
+  } else{h+='<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">No platform account</span>';}
   h+='</div><div style="'+RS+'"><span style="'+LS+'">Isolation</span>';
-  if(p){h+='<select onchange="updateIsoRole(\''+esc(p.id)+'\',this.value)"'+(isSelf?' disabled':'')+' style="'+DS+'"><option value="none"'+(isoRole==='none'?' selected':'')+'>No Access</option><option value="viewer"'+(isoRole==='viewer'?' selected':'')+'>Viewer</option><option value="editor"'+(isoRole==='editor'?' selected':'')+'>Editor</option><option value="reviewer"'+(isoRole==='reviewer'?' selected':'')+'>Reviewer</option><option value="admin"'+(isoRole==='admin'?' selected':'')+'>Admin</option></select>';}
-  else{h+='<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">No platform account</span>';}
+  if(p){
+    if(isProtectedKiln){h+='<div style="height:30px;padding:0 8px;font-size:11px;font-family:var(--ff-mono);background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--ac3);display:flex;align-items:center;flex:1">Admin (protected)</div>';}
+    else{h+='<select onchange="updateIsoRole(\''+esc(p.id)+'\',this.value)"'+(isSelf?' disabled':'')+' style="'+DS+'"><option value="none"'+(isoRole==='none'?' selected':'')+'>No Access</option><option value="viewer"'+(isoRole==='viewer'?' selected':'')+'>Viewer</option><option value="editor"'+(isoRole==='editor'?' selected':'')+'>Editor</option><option value="reviewer"'+(isoRole==='reviewer'?' selected':'')+'>Reviewer</option><option value="admin"'+(isoRole==='admin'?' selected':'')+'>Admin</option></select>';}
+  } else{h+='<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">No platform account</span>';}
   h+='</div><div style="'+RS+'"><span style="'+LS+'">Shift Log</span>';
   if(ku){
     if(isProtectedKiln){
@@ -1319,7 +1435,17 @@ function renderUserCard(m, DS, LS, RS, rc) {
   } else{h+='<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">No shift log account</span>';}
   h+='</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid var(--bd)">';
   if(p&&p.approved===false){h+='<button onclick="approveUser(\''+esc(p.id)+'\')" style="height:26px;padding:0 12px;font-size:11px;font-family:var(--ff-head);font-weight:600;background:var(--grnd);border:1px solid var(--grnb);border-radius:var(--rsm);color:var(--grn);cursor:pointer">\u2713 Approve</button>';}
-  if(ku&&!isProtectedKiln){h+='<button onclick="setKilnPassword(\''+esc(ku.username)+'\')" style="height:26px;padding:0 10px;font-size:11px;font-family:var(--ff-body);background:var(--sf3);border:1px solid var(--bd);border-radius:var(--rsm);color:var(--tx2);cursor:pointer">Set PW</button>';}
+  if(!isSelf&&!isProtectedKiln){
+    const authId = p ? p.id : null;
+    const dName  = (p&&p.full_name) || (ku&&ku.locked_name) || email;
+    const kilnUn = ku ? ku.username : null;
+    if(authId){
+      h+='<button onclick="openAdminSetPwModal(\''+esc(authId)+'\','+( kilnUn ? '\''+esc(kilnUn)+'\'' : 'null' )+',\''+esc(dName)+'\')" style="height:26px;padding:0 10px;font-size:11px;font-family:var(--ff-body);background:var(--sf3);border:1px solid var(--bd);border-radius:var(--rsm);color:var(--tx2);cursor:pointer">Set PW</button>';
+      h+='<button onclick="forcePlatformPwReset(\''+esc(authId)+'\',\''+esc(dName)+'\')" title="Force password reset on next login" style="height:26px;padding:0 10px;font-size:11px;font-family:var(--ff-body);background:var(--ambd);border:1px solid var(--ambb);border-radius:var(--rsm);color:var(--amb);cursor:pointer">Force Reset</button>';
+    } else if(kilnUn){
+      h+='<button onclick="setKilnPassword(\''+esc(kilnUn)+'\')" style="height:26px;padding:0 10px;font-size:11px;font-family:var(--ff-body);background:var(--sf3);border:1px solid var(--bd);border-radius:var(--rsm);color:var(--tx2);cursor:pointer">Set PW</button>';
+    }
+  }
   if(p&&!isSelf&&!isProtectedKiln){h+='<button onclick="deleteUser(\''+esc(p.id)+'\',\''+esc(email)+'\')" style="height:26px;padding:0 10px;font-size:11px;font-family:var(--ff-mono);background:transparent;border:1px solid var(--redb);border-radius:var(--rsm);color:var(--red);cursor:pointer;margin-left:auto">Remove</button>';}
   h+='</div></div>';
   return h;
@@ -1352,7 +1478,33 @@ async function forceKilnPwReset(username) {
   const {error} = await sb.from('kiln_users').update({must_reset_password:true}).eq('username', username);
   if (error) { showPlatformToast('Failed: '+error.message); return; }
   const u = _kilnUsersCache.find(x=>x.username===username); if (u) u.must_reset_password = true;
-  renderAllUsers(); showPlatformToast(username+' will be prompted to reset password \u2713');
+  renderAllUsers(); showPlatformToast(username+' will be prompted to reset password ✓');
+}
+
+// Called by "Set PW" button in user cards
+function setKilnPassword(username) {
+  const ku = _kilnUsersCache.find(x=>x.username===username);
+  const pu = ku && ku.auth_user_id ? _usersCache.find(x=>x.id===ku.auth_user_id) : null;
+  const displayName = (pu&&pu.full_name) || (ku&&ku.locked_name) || username;
+  const authId = ku && ku.auth_user_id;
+  openAdminSetPwModal(authId, username, displayName);
+}
+
+// Force a platform user to reset password on next login
+async function forcePlatformPwReset(profileId, displayName) {
+  // Set must_reset_password on pw_profiles (add column if needed) + kiln_users
+  const {error} = await sb.from('pw_profiles').update({must_reset_password:true}).eq('id',profileId);
+  if (error && error.message && error.message.includes('column')) {
+    // Column doesn't exist yet — just flag via kiln if possible
+    const ku = _kilnUsersCache.find(x=>x.auth_user_id===profileId);
+    if (ku) { await sb.from('kiln_users').update({must_reset_password:true}).eq('username',ku.username); }
+  } else if (error) { showPlatformToast('Failed: '+error.message); return; }
+  const pu = _usersCache.find(x=>x.id===profileId);
+  if (pu) pu.must_reset_password = true;
+  // Also set on kiln_users if linked
+  const ku = _kilnUsersCache.find(x=>x.auth_user_id===profileId);
+  if (ku) { await sb.from('kiln_users').update({must_reset_password:true}).eq('username',ku.username); ku.must_reset_password = true; }
+  renderAllUsers(); showPlatformToast((displayName||'User')+' must reset password on next login ✓');
 }
 async function resetKilnPassword(username, authUserId, email) {
   const newPw = prompt('Set new password for '+username+':\n(Min 8 characters)');
@@ -1635,20 +1787,13 @@ async function renderResetRequests() {
 }
 
 async function handleResetReq(id, email) {
-  const newPw = prompt(`Set a temporary password for:\n${email}\n\nThey will need to change it on next login.`);
-  if (newPw === null) return;
-  if (!newPw || newPw.length < 6) { alert('Password must be at least 6 characters.'); return; }
+  // Find the user's auth ID, then open the proper set-password modal
   try {
-    // Find the user's auth ID via pw_profiles
-    const {data:profile} = await sb.from('pw_profiles').select('id').eq('email', email).maybeSingle();
-    if (!profile) { alert('Could not find user account for ' + email); return; }
-    const {error} = await sb.functions.invoke('pw-admin-user',{body:{action:'setPassword',userId:profile.id,password:newPw}});
-    if (error) throw new Error(error.message);
-    await sb.from('pw_reset_requests').update({status:'done'}).eq('id',id);
-    alert(`✓ Password set for ${email}.\nTell them their temporary password: ${newPw}`);
-    renderResetRequests();
-    loadResetReqBadge();
-  } catch(e) { alert('Failed: ' + e.message); }
+    const {data:profile} = await sb.from('pw_profiles').select('id,full_name').eq('email', email).maybeSingle();
+    if (!profile) { showPlatformToast('No account found for ' + email); return; }
+    _pendingResetReqId = id; // store so we can mark done after password is set
+    openAdminSetPwModal(profile.id, null, profile.full_name || email, id);
+  } catch(e) { showPlatformToast('Failed: ' + e.message); }
 }
 
 async function deleteResetReq(id) {

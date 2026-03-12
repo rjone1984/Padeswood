@@ -1495,14 +1495,15 @@ function renderUMUsers() {
   const RS = 'display:flex;align-items:center;gap:8px;margin-bottom:7px';
   const rc = {admin:'var(--ac3)',reviewer:'var(--pur)',editor:'var(--amb)',viewer:'var(--tx3)',none:'var(--tx3)'};
 
+  // Users appear in EVERY group they qualify for (multi-group)
   const ROLE_GROUPS = [
-    { label:'Admins',           key:'admin',          color:'var(--ac3)', test: function(m){ const ku=m.kiln; const p=m.prof; return (ku&&ku.is_admin)||(p&&p.role==='admin'); } },
-    { label:'Shift Managers',   key:'shift_manager',  color:'#7c3aed',    test: function(m){ const ku=m.kiln; return ku&&ku.is_shift_manager&&!ku.is_admin; } },
-    { label:'Cement Analysts',  key:'cement_analyst', color:'#b45309',    test: function(m){ const ku=m.kiln; return ku&&ku.is_cement_analyst&&!ku.is_admin; } },
-    { label:'Day Staff',        key:'day_staff',      color:'#0891b2',    test: function(m){ const ku=m.kiln; return ku&&ku.is_day_staff&&!ku.is_admin; } },
-    { label:'Burners',          key:'burner',         color:'var(--amb)', test: function(m){ const ku=m.kiln; return ku&&ku.is_burner&&!ku.is_admin&&!ku.is_shift_manager&&!ku.is_cement_analyst&&!ku.is_day_staff; } },
-    { label:'Read Only',        key:'readonly',       color:'var(--tx2)', test: function(m){ const ku=m.kiln; return ku&&ku.is_readonly&&!ku.is_admin; } },
-    { label:'Platform Only',    key:'platform',       color:'var(--tx3)', test: function(m){ return m.prof && !m.kiln; } },
+    { label:'Admins',           key:'admin',          color:'var(--ac3)', test: function(m){ const ku=m.kiln; const p=m.prof; return !!(ku&&ku.is_admin)||(p&&p.role==='admin'); } },
+    { label:'Shift Managers',   key:'shift_manager',  color:'#7c3aed',    test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_shift_manager); } },
+    { label:'Cement Analysts',  key:'cement_analyst', color:'#b45309',    test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_cement_analyst); } },
+    { label:'Day Staff',        key:'day_staff',      color:'#0891b2',    test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_day_staff); } },
+    { label:'Burners',          key:'burner',         color:'var(--amb)', test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_burner); } },
+    { label:'Read Only',        key:'readonly',       color:'var(--tx2)', test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_readonly); } },
+    { label:'Platform Only',    key:'platform',       color:'var(--tx3)', test: function(m){ return !!(m.prof && !m.kiln); } },
   ];
 
   const _umCollapsed = window._umCollapsed = window._umCollapsed || {};

@@ -312,7 +312,7 @@ tbody tr:hover{background:var(--sf2);}
   background:var(--inp);border:1px solid var(--bd2);border-radius:var(--rxs);
   color:var(--tx);outline:none;cursor:pointer;transition:border-color .15s;}
 .role-select:focus{border-color:var(--ac2);}
-.btn-danger{height:28px;padding:0 10px;border-radius:var(--rxs);
+.btn-danger{height:36px;padding:0 16px;border-radius:var(--rsm);font-family:var(--ff-head);font-weight:600;font-size:13px;cursor:pointer;
   background:transparent;border:1px solid var(--redb);color:var(--red);
   font-size:11px;font-family:var(--ff-mono);cursor:pointer;transition:background .15s;}
 .btn-danger:hover{background:var(--redd);}
@@ -608,7 +608,7 @@ tbody tr:hover{background:var(--sf2);}
       </div>
       <div class="form-err" id="raErr"></div>
     </div>
-    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeRAModal()">Cancel</button><button class="btn btn-primary" onclick="saveRA()">Save</button></div>
+    <div class="modal-footer" style="justify-content:flex-start"><button class="btn btn-danger" id="raDeleteBtn" onclick="deleteRA()" style="display:none;margin-right:auto">Delete</button><button class="btn btn-ghost" onclick="closeRAModal()">Cancel</button><button class="btn btn-primary" onclick="saveRA()">Save</button></div>
   </div>
 </div>
 
@@ -630,7 +630,7 @@ tbody tr:hover{background:var(--sf2);}
       </div>
       <div class="form-err" id="coshhErr"></div>
     </div>
-    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeCOSHHModal()">Cancel</button><button class="btn btn-primary" onclick="saveCOSHH()">Save</button></div>
+    <div class="modal-footer" style="justify-content:flex-start"><button class="btn btn-danger" id="coshhDeleteBtn" onclick="deleteCOSHH()" style="display:none;margin-right:auto">Delete</button><button class="btn btn-ghost" onclick="closeCOSHHModal()">Cancel</button><button class="btn btn-primary" onclick="saveCOSHH()">Save</button></div>
   </div>
 </div>
 
@@ -657,7 +657,7 @@ tbody tr:hover{background:var(--sf2);}
       <div class="field-group"><label class="field-label">Department</label><input type="text" class="field-input" id="equipLocation" placeholder="e.g. Kiln Bay, Raw Mill, Packing"></div>
       <div class="form-err" id="equipErr"></div>
     </div>
-    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeEquipModal()">Cancel</button><button class="btn btn-danger" id="equipDeleteBtn" onclick="deleteEquip()" style="display:none">Delete</button><button class="btn btn-primary" onclick="saveEquip()">Save</button></div>
+    <div class="modal-footer" style="justify-content:flex-start"><button class="btn btn-danger" id="equipDeleteBtn" onclick="deleteEquip()" style="display:none;margin-right:auto">Delete</button><button class="btn btn-ghost" onclick="closeEquipModal()">Cancel</button><button class="btn btn-primary" onclick="saveEquip()">Save</button></div>
   </div>
 </div>
 
@@ -1032,6 +1032,8 @@ function openRAModal(id){
     ['raRef','raTitle','raArea','raOwner','raEquipTags','raReviewDate','raNextReview'].forEach(i=>document.getElementById(i).value='');
     document.getElementById('raStatus').value='draft';
   }
+  const raDelBtn = document.getElementById('raDeleteBtn');
+  if(raDelBtn) raDelBtn.style.display = (id && hasRole('admin')) ? 'block' : 'none';
   document.getElementById('raModal').classList.add('open');
 }
 function closeRAModal(){ document.getElementById('raModal').classList.remove('open'); }
@@ -1071,6 +1073,8 @@ function openCOSHHModal(id){
     document.getElementById('coshhModalTitle').textContent='Add COSHH Sheet';
     ['coshhProduct','coshhMfr','coshhLocation','coshhHazards','coshhReviewDate','coshhNextReview'].forEach(i=>document.getElementById(i).value='');
   }
+  const coshhDelBtn = document.getElementById('coshhDeleteBtn');
+  if(coshhDelBtn) coshhDelBtn.style.display = (id && hasRole('admin')) ? 'block' : 'none';
   document.getElementById('coshhModal').classList.add('open');
 }
 function closeCOSHHModal(){ document.getElementById('coshhModal').classList.remove('open'); }
@@ -1415,6 +1419,28 @@ document.addEventListener('DOMContentLoaded', function() {
   if (aiOverlay) aiOverlay.addEventListener('click', closeDocAiPanel);
 });
 
+
+/* ── RA DELETE ───────────────────────────────────────────────────── */
+async function deleteRA(){
+  const id=document.getElementById('raId').value;
+  if(!id) return;
+  const r=_ra.find(x=>x.id===id);
+  if(!confirm('Delete "'+((r&&r.title)||'this Risk Assessment')+'"?\n\nThis cannot be undone.')) return;
+  const{error}=await sb.from('pw_risk_assessments').delete().eq('id',id);
+  if(error){showToast('Delete failed: '+error.message);return;}
+  await loadRA(); refreshDashboard(); closeRAModal(); showToast('Risk Assessment deleted');
+}
+
+/* ── COSHH DELETE ────────────────────────────────────────────────── */
+async function deleteCOSHH(){
+  const id=document.getElementById('coshhId').value;
+  if(!id) return;
+  const r=_coshh.find(x=>x.id===id);
+  if(!confirm('Delete "'+((r&&r.product_name)||'this COSHH Sheet')+'"?\n\nThis cannot be undone.')) return;
+  const{error}=await sb.from('pw_coshh_sheets').delete().eq('id',id);
+  if(error){showToast('Delete failed: '+error.message);return;}
+  await loadCOSHH(); refreshDashboard(); closeCOSHHModal(); showToast('COSHH Sheet deleted');
+}
 
 /* ── EQUIPMENT DELETE ────────────────────────────────────────────── */
 async function deleteEquip(){
