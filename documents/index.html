@@ -954,8 +954,9 @@ async function loadAllData(){ await Promise.all([loadRA(),loadCOSHH(),loadEquipm
 
 async function loadRA(){
   const {data,error} = await sb.from('pw_risk_assessments').select('*').order('next_review_date');
-  if(error){ console.error(error); return; }
+  if(error){ console.error('loadRA error:', error); showToast('RA load error: '+error.message); return; }
   _ra = (data||[]).map(r=>({...r,_status:calcStatus(r.next_review_date)}));
+  console.log('loadRA: loaded', _ra.length, 'RAs');
   document.getElementById('raCount').textContent = _ra.length;
   renderRA();
 }
@@ -1013,7 +1014,7 @@ function renderRA(rows){
     body.innerHTML='<tr><td colspan="10"><div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="36" height="36"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><p>No risk assessments found.</p>'+(canEdit?'<button class="btn btn-primary" onclick="openRAModal()">Add first Risk Assessment</button>':'')+'</div></td></tr>';
     return;
   }
-  body.innerHTML=rows.map(function(r){
+  try { body.innerHTML=rows.map(function(r){
     const rid = esc(r.id);
     const editBtns = canEdit
       ? '<button class="btn-tbl-edit" onclick="event.stopPropagation();openRAModal(\'' + rid + '\')" title="Edit">'
@@ -1035,7 +1036,7 @@ function renderRA(rows){
       +'<td>'+statusPill(r._status)+'</td>'
       +'<td onclick="event.stopPropagation()" style="white-space:nowrap">'+editBtns+'</td>'
       +'</tr>';
-  }).join('');
+  }).join(''); } catch(renderErr){ console.error('renderRA crash:', renderErr); body.innerHTML='<tr><td colspan="10" style="color:red;padding:12px">Render error: '+renderErr.message+'</td></tr>'; }
 }
 
 function renderCOSHH(rows){
