@@ -1928,11 +1928,9 @@ async function buildDocContext() {
     const fmt = function(d){ return d ? new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}) : 'not set'; };
     const daysUntil = function(d){ if(!d) return null; return Math.round((new Date(d)-today)/86400000); };
 
-    // Use in-memory _ra/_coshh/_equipment if already loaded, else fetch
     let ras = _ra.length ? _ra : null;
     let coshh = _coshh.length ? _coshh : null;
     let equip = _equipment.length ? _equipment : null;
-
     if(!ras || !coshh || !equip){
       const [rRes,cRes,eRes] = await Promise.all([
         sb.from('pw_risk_assessments').select('*').order('next_review_date').limit(500),
@@ -1944,65 +1942,67 @@ async function buildDocContext() {
       if(!equip) equip = eRes.data||[];
     }
 
-    const lines = ['PADESWOOD WORKS — DOCUMENTS DATA','='.repeat(60),'Generated: '+new Date().toLocaleString('en-GB')];
-
-    // Risk Assessments — full detail
     const raOverdue  = ras.filter(r=>r._status==='overdue');
     const raDueSoon  = ras.filter(r=>r._status==='due-soon');
     const raCurrent  = ras.filter(r=>r._status==='current');
     const raDraft    = ras.filter(r=>r._status==='draft');
-    lines.push('\nRISK ASSESSMENTS — SUMMARY:');
-    lines.push('  Total: '+ras.length+' | Overdue: '+raOverdue.length+' | Due soon (≤30 days): '+raDueSoon.length+' | Current: '+raCurrent.length+' | Draft/no date: '+raDraft.length);
 
-    lines.push('\nRISK ASSESSMENTS — FULL LIST ('+ras.length+'):');
-    ras.forEach(function(r){
-      const du = daysUntil(r.next_review_date);
-      const duStr = du===null ? 'no expiry date' : du<0 ? Math.abs(du)+' days OVERDUE' : du===0 ? 'expires TODAY' : du+' days until expiry';
-      lines.push(
-        '  Ref: '+(r.ref||'—')+
-        ' | Title: '+(r.title||'—')+
-        ' | Dept: '+(r.department||'—')+
-        ' | Location: '+(r.location||r.area||'—')+
-        ' | Assessor: '+(r.owner||r.assessor||'—')+
-        ' | Hazards: '+(r.hazard_count||0)+
-        ' | Date assessed: '+fmt(r.review_date)+
-        ' | Expiry: '+fmt(r.next_review_date)+
-        ' | Status: '+(r._status||'draft')+
-        ' | '+duStr+
-        ' | Version: '+(r.version||'1')+
-        ' | Supervision: '+(r.supervision||'—')+
-        ' | Specialist equipment: '+(r.specialist_equipment||'—')
-      );
-    });
+    const lines = [
+      'PADESWOOD WORKS — DOCUMENTS SUMMARY',
+      '='.repeat(50),
+      'Today: '+today.toLocaleDateString('en-GB'),
+      '',
+      'RISK ASSESSMENTS: '+ras.length+' total',
+      '  Overdue: '+raOverdue.length+' | Due soon (≤30 days): '+raDueSoon.length+' | Current: '+raCurrent.length+' | Draft/no date: '+raDraft.length,
+    ];
 
-    lines.push('\nRAs REQUIRING RENEWAL (overdue or due within 30 days):');
-    const needsRenewal = [...raOverdue, ...raDueSoon].sort((a,b)=>(new Date(a.next_review_date||0))-(new Date(b.next_review_date||0)));
-    if(!needsRenewal.length){
-      lines.push('  None — all RAs are current or have no review date set.');
-    } else {
-      needsRenewal.forEach(function(r){
+    // Overdue — full list (most important)
+    if(raOverdue.length){
+      lines.push('');
+      lines.push('OVERDUE RAs ('+raOverdue.length+'):');
+      raOverdue.forEach(function(r){
         const du = daysUntil(r.next_review_date);
-        lines.push('  '+r.ref+' — '+r.title+' | Expiry: '+fmt(r.next_review_date)+' | '+(du<0?Math.abs(du)+' days overdue':du+' days remaining')+' | Assessor: '+(r.owner||r.assessor||'—'));
+        lines.push('  '+esc(r.ref||'—')+' | '+esc(r.title||'—')+' | Expired: '+fmt(r.next_review_date)+' ('+Math.abs(du)+' days ago) | Assessor: '+esc(r.owner||r.assessor||'—')+' | Dept: '+esc(r.department||'—'));
       });
     }
 
-    // COSHH
-    lines.push('\nCOSHH SHEETS — SUMMARY:');
-    lines.push('  Total: '+coshh.length+' | Overdue: '+coshh.filter(r=>r._status==='overdue').length+' | Due soon: '+coshh.filter(r=>r._status==='due-soon').length);
-    lines.push('\nCOSHH SHEETS — FULL LIST ('+coshh.length+'):');
+    // Due soon — full list
+    if(raDueSoon.length){
+      lines.push('');
+      lines.push('DUE SOON ('+raDueSoon.length+'):');
+      raDueSoon.forEach(function(r){
+        const du = daysUntil(r.next_review_date);
+        lines.push('  '+esc(r.ref||'—')+' | '+esc(r.title||'—')+' | Expires: '+fmt(r.next_review_date)+' (in '+du+' days) | Assessor: '+esc(r.owner||r.assessor||'—')+' | Dept: '+esc(r.department||'—'));
+      });
+    }
+
+    // All RAs — compact one-liner each
+    lines.push('');
+    lines.push('ALL RAs:');
+    ras.forEach(function(r){
+      lines.push('  '+esc(r.ref||'—')+' | '+esc(r.title||'—')+' | '+esc(r.department||'—')+' | Expiry: '+fmt(r.next_review_date)+' | Status: '+(r._status||'draft')+' | Assessor: '+esc(r.owner||r.assessor||'—'));
+    });
+
+    // COSHH — compact
+    lines.push('');
+    lines.push('COSHH SHEETS: '+coshh.length+' total | Overdue: '+coshh.filter(r=>r._status==='overdue').length+' | Due soon: '+coshh.filter(r=>r._status==='due-soon').length);
     coshh.forEach(function(c){
-      lines.push('  '+c.product_name+' | Supplier: '+(c.supplier||'—')+' | Location: '+(c.location||'—')+' | Expiry: '+fmt(c.next_review_date)+' | Status: '+(c._status||'—'));
+      lines.push('  '+esc(c.product_name||'—')+' | '+esc(c.supplier||'—')+' | Expiry: '+fmt(c.next_review_date)+' | Status: '+(c._status||'—'));
     });
 
-    // Equipment
-    lines.push('\nEQUIPMENT ('+equip.length+'):');
+    // Equipment — compact
+    lines.push('');
+    lines.push('EQUIPMENT: '+equip.length+' total');
     equip.forEach(function(e){
-      lines.push('  '+(e.asset_tag||'—')+' — '+e.name+' | Category: '+(e.category||'—')+' | Status: '+(e.status||'—')+' | Last inspection: '+fmt(e.last_inspection));
+      lines.push('  '+esc(e.asset_tag||'—')+' — '+esc(e.name||'—')+' | '+esc(e.category||'—')+' | Status: '+esc(e.status||'—'));
     });
 
-    return lines.join('\n');
-  } catch(e) { return 'Error loading documents data: '+e.message; }
+    const ctx = lines.join('\n');
+    // Hard cap: free Groq tier is 12k TPM, keep context under ~3500 tokens (~14k chars)
+    return ctx.length > 14000 ? ctx.substring(0,14000)+'\n[...truncated]' : ctx;
+  } catch(e) { return 'Error loading data: '+e.message; }
 }
+
 
 function renderDocAiHistory() {
   const hist = document.getElementById('docAiHistory');
@@ -2050,9 +2050,19 @@ async function sendDocAiReport() {
     const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+_docGroqKey},
-      body:JSON.stringify({model:'llama-3.3-70b-versatile',max_tokens:1500,messages})
+      body:JSON.stringify({model:'llama-3.3-70b-versatile',max_tokens:2000,messages})
     });
     const data = await res.json();
+    // Surface API-level errors (token limit, auth, etc.)
+    if(data.error){
+      document.getElementById('docAiThinking')?.remove();
+      const errMsg = data.error.message || JSON.stringify(data.error);
+      console.error('Groq API error:', data.error);
+      _docAiHistory.push({role:'assistant', content:'API error: '+errMsg});
+      renderDocAiHistory();
+      sendBtn.disabled = false;
+      return;
+    }
     const reply = data.choices?.[0]?.message?.content || 'No response received.';
     document.getElementById('docAiThinking')?.remove();
     _docAiHistory.push({role:'assistant', content:reply});
