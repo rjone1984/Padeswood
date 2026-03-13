@@ -252,6 +252,13 @@ tbody tr:hover{background:var(--sf2);}
 .modal-overlay.open{display:flex;}
 .modal{background:var(--sf);border:1px solid var(--bd2);border-radius:14px;
   width:100%;max-width:580px;max-height:90vh;overflow-y:auto;box-shadow:var(--e3);}
+.modal.modal-wide{max-width:860px;}
+.modal-section-label{font-size:10px;font-weight:700;font-family:var(--ff-mono);letter-spacing:1px;text-transform:uppercase;color:var(--tx3);padding-bottom:6px;border-bottom:1px solid var(--bd);margin-bottom:6px}
+.risk-group-key{display:inline-flex;align-items:center;gap:4px;margin-right:14px;font-size:11px}
+.risk-group-key b{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:3px;background:var(--bd2);color:var(--tx2);font-size:10px}
+.btn-tbl-edit,.btn-tbl-del{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:var(--rsm);cursor:pointer;border:1px solid var(--bd)}
+.btn-tbl-edit{background:transparent;color:var(--tx2)}.btn-tbl-edit:hover{border-color:var(--ac);color:var(--ac);background:color-mix(in srgb,var(--ac) 10%,transparent)}
+.btn-tbl-del{background:transparent;color:var(--tx3);margin-left:4px}.btn-tbl-del:hover{border-color:var(--red);color:var(--red);background:color-mix(in srgb,var(--red) 10%,transparent)}
 .modal-header{padding:20px 24px 16px;border-bottom:1px solid var(--bd);
   display:flex;align-items:center;justify-content:space-between;
   position:sticky;top:0;background:var(--sf);z-index:1;}
@@ -515,7 +522,7 @@ tbody tr:hover{background:var(--sf2);}
       <div class="list-toolbar">
         <div class="search-wrap">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="search" class="search-input" id="raSearch" placeholder="Search by title, reference, area, owner…" oninput="filterRA()">
+          <input type="search" class="search-input" id="raSearch" placeholder="Search by title, reference, location, assessor…" oninput="filterRA()">
         </div>
         <select class="filter-select" id="raStatusFilter" onchange="filterRA()">
           <option value="">All statuses</option>
@@ -524,14 +531,25 @@ tbody tr:hover{background:var(--sf2);}
           <option value="current">Current</option>
           <option value="draft">Draft</option>
         </select>
-        <select class="filter-select" id="raAreaFilter" onchange="filterRA()"><option value="">All areas</option></select>
+        <select class="filter-select" id="raDeptFilter" onchange="filterRA()"><option value="">All departments</option></select>
         <button class="btn btn-primary" id="btnAddRA" onclick="openRAModal()" style="display:none">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add RA
         </button>
       </div>
       <div class="table-wrap">
-        <table><thead><tr><th>Reference</th><th>Title / Area</th><th>Owner</th><th>Next Review</th><th>Status</th></tr></thead>
-        <tbody id="raBody"><tr><td colspan="5"><div class="empty-state"><p>Loading…</p></div></td></tr></tbody></table>
+        <table><thead><tr>
+          <th>Reference</th>
+          <th>Activity</th>
+          <th>Department</th>
+          <th>Location</th>
+          <th>Assessor</th>
+          <th>Hazards</th>
+          <th>Date Assessed</th>
+          <th>Expiry</th>
+          <th>Status</th>
+          <th></th>
+        </tr></thead>
+        <tbody id="raBody"><tr><td colspan="10"><div class="empty-state"><p>Loading…</p></div></td></tr></tbody></table>
       </div>
     </div>
 
@@ -588,27 +606,69 @@ tbody tr:hover{background:var(--sf2);}
 
 <!-- ── RA MODAL ─────────────────────────────────────────────────── -->
 <div class="modal-overlay" id="raModal" onclick="if(event.target===this)closeRAModal()">
-  <div class="modal">
+  <div class="modal modal-wide">
     <div class="modal-header"><span class="modal-title" id="raModalTitle">Add Risk Assessment</span><button class="modal-close" onclick="closeRAModal()">×</button></div>
     <div class="modal-body">
       <input type="hidden" id="raId">
+
+      <!-- ── Document ── -->
+      <div class="modal-section-label">Document</div>
       <div class="field-row">
-        <div class="field-group"><label class="field-label">Reference *</label><input type="text" class="field-input" id="raRef" placeholder="e.g. RA-2024-001"></div>
-        <div class="field-group"><label class="field-label">Status</label><select class="field-select" id="raStatus"><option value="draft">Draft</option><option value="current">Current</option></select></div>
+        <div class="field-group"><label class="field-label">Reference Number *</label><input type="text" class="field-input" id="raRef" placeholder="e.g. OP341-001"></div>
+        <div class="field-group"><label class="field-label">Status</label>
+          <select class="field-select" id="raStatus">
+            <option value="draft">Draft</option><option value="current">Current</option><option value="archived">Archived</option>
+          </select>
+        </div>
+        <div class="field-group" style="max-width:80px"><label class="field-label">Version</label><input type="text" class="field-input" id="raVersion" placeholder="1"></div>
       </div>
-      <div class="field-group"><label class="field-label">Title *</label><input type="text" class="field-input" id="raTitle" placeholder="e.g. Kiln 1 Burner Maintenance"></div>
+      <div class="field-group"><label class="field-label">Activity *</label><input type="text" class="field-input" id="raTitle" placeholder="e.g. Routine Cleaning Raw Mill Table"></div>
       <div class="field-row">
-        <div class="field-group"><label class="field-label">Area / Location</label><input type="text" class="field-input" id="raArea" placeholder="e.g. Kiln Bay 1"></div>
-        <div class="field-group"><label class="field-label">Owner</label><input type="text" class="field-input" id="raOwner" placeholder="e.g. J. Smith"></div>
+        <div class="field-group"><label class="field-label">Department</label>
+          <select class="field-select" id="raDept">
+            <option value="">— Select —</option><option>Kiln</option><option>Raw Mill</option><option>Finish Mill</option><option>Quarry</option><option>Packing</option><option>Utilities</option><option>Stores</option><option>Laboratory</option><option>General</option>
+          </select>
+        </div>
+        <div class="field-group"><label class="field-label">Location of Activity</label><input type="text" class="field-input" id="raLocation" placeholder="e.g. Raw Mill Internals"></div>
       </div>
-      <div class="field-group"><label class="field-label">Equipment Tags (comma-separated)</label><input type="text" class="field-input" id="raEquipTags" placeholder="e.g. KLN-001, KLN-002"></div>
       <div class="field-row">
-        <div class="field-group"><label class="field-label">Review Date</label><input type="date" class="field-input" id="raReviewDate"></div>
-        <div class="field-group"><label class="field-label">Next Review Date *</label><input type="date" class="field-input" id="raNextReview"></div>
+        <div class="field-group"><label class="field-label">Name(s) of Assessor(s)</label><input type="text" class="field-input" id="raOwner" placeholder="e.g. P. Durkin"></div>
+        <div class="field-group"><label class="field-label">Date Assessed</label><input type="date" class="field-input" id="raReviewDate"></div>
+        <div class="field-group"><label class="field-label">Expiry Date</label><input type="date" class="field-input" id="raNextReview"></div>
       </div>
+
+      <!-- ── Activity Details ── -->
+      <div class="modal-section-label" style="margin-top:10px">Activity Details</div>
+      <div class="field-row">
+        <div class="field-group" style="max-width:160px"><label class="field-label">Number of People Required</label><input type="number" class="field-input" id="raNumPeople" placeholder="e.g. 3" min="1"></div>
+        <div class="field-group"><label class="field-label">Level of Supervision Required</label><input type="text" class="field-input" id="raSupervision" placeholder="e.g. Twice unless specific additional hazard identified"></div>
+      </div>
+      <div class="field-group"><label class="field-label">Specialist Tools / Equipment / Documentation Required</label><input type="text" class="field-input" id="raSpecialist" placeholder="e.g. DISAB Vacuum Tanker"></div>
+
+      <!-- At Risk Groups key -->
+      <div style="margin-top:6px;font-size:11px;font-family:var(--ff-mono);color:var(--tx3);background:var(--sf3);border:1px solid var(--bd);border-radius:var(--rsm);padding:7px 12px;line-height:2">
+        <span style="font-weight:700;color:var(--tx2);letter-spacing:.5px;text-transform:uppercase;font-size:10px">At Risk Groups Reference</span><br>
+        <span class="risk-group-key"><b>1</b> Employees</span>
+        <span class="risk-group-key"><b>2</b> Contractors</span>
+        <span class="risk-group-key"><b>3</b> Visitors</span>
+        <span class="risk-group-key"><b>4</b> Public</span>
+        <span class="risk-group-key"><b>5</b> Apprentices / Trainees</span>
+      </div>
+
+      <!-- ── Hazard Rows ── -->
+      <div class="modal-section-label" style="margin-top:10px;display:flex;align-items:center;justify-content:space-between">
+        <span>Hazard Rows</span>
+        <button type="button" onclick="addRAHazardRow()" style="height:26px;padding:0 12px;font-size:11px;font-family:var(--ff-mono);background:transparent;border:1px dashed var(--bd2);border-radius:var(--rsm);color:var(--ac3);cursor:pointer">+ Add Row</button>
+      </div>
+      <div id="raHazardRows" style="display:flex;flex-direction:column;gap:8px;margin-top:6px"></div>
+
       <div class="form-err" id="raErr"></div>
     </div>
-    <div class="modal-footer" style="justify-content:flex-start"><button class="btn btn-danger" id="raDeleteBtn" onclick="deleteRA()" style="display:none;margin-right:auto">Delete</button><button class="btn btn-ghost" onclick="closeRAModal()">Cancel</button><button class="btn btn-primary" onclick="saveRA()">Save</button></div>
+    <div class="modal-footer" style="justify-content:flex-start">
+      <button class="btn btn-danger" id="raDeleteBtn" onclick="deleteRA()" style="display:none;margin-right:auto">Delete</button>
+      <button class="btn btn-ghost" onclick="closeRAModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveRA()">Save</button>
+    </div>
   </div>
 </div>
 
@@ -941,17 +1001,39 @@ function refreshDashboard(){
 /* ── RENDER ──────────────────────────────────────────────────────── */
 function renderRA(rows){
   rows=rows||_ra;
-  const areas=[...new Set(_ra.map(r=>r.area).filter(Boolean))].sort();
-  const af=document.getElementById('raAreaFilter'); const pv=af.value;
-  af.innerHTML='<option value="">All areas</option>'+areas.map(a=>'<option value="'+esc(a)+'"'+(a===pv?' selected':'')+'>'+esc(a)+'</option>').join('');
+  // Populate dept filter
+  const depts=[...new Set(_ra.map(r=>r.department).filter(Boolean))].sort();
+  const df=document.getElementById('raDeptFilter'); const dpv=df.value;
+  df.innerHTML='<option value="">All departments</option>'+depts.map(d=>'<option value="'+esc(d)+'"'+(d===dpv?' selected':'')+'>'+esc(d)+'</option>').join('');
   const body=document.getElementById('raBody');
-  if(!rows.length){ body.innerHTML='<tr><td colspan="5"><div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="36" height="36"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><p>No risk assessments found.</p>'+(hasRole('editor','reviewer','admin')?'<button class="btn btn-primary" onclick="openRAModal()">Add first Risk Assessment</button>':'')+'</div></td></tr>'; return; }
-  body.innerHTML=rows.map(r=>'<tr onclick="openRAModal(\''+esc(r.id)+'\')">'
-    +'<td class="td-ref">'+esc(r.ref||'—')+'</td>'
-    +'<td><div class="td-title">'+esc(r.title)+'</div><div class="td-sub">'+esc(r.area||'—')+'</div></td>'
-    +'<td style="color:var(--tx2);font-size:12.5px">'+esc(r.owner||'—')+'</td>'
-    +'<td class="td-date">'+fmtDate(r.next_review_date)+'</td>'
-    +'<td>'+statusPill(r._status)+'</td></tr>').join('');
+  const canEdit=hasRole('editor','reviewer','admin');
+  if(!rows.length){
+    body.innerHTML='<tr><td colspan="10"><div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="36" height="36"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><p>No risk assessments found.</p>'+(canEdit?'<button class="btn btn-primary" onclick="openRAModal()">Add first Risk Assessment</button>':'')+'</div></td></tr>';
+    return;
+  }
+  body.innerHTML=rows.map(function(r){
+    const editBtns = canEdit
+      ? '<button class="btn-tbl-edit" onclick="event.stopPropagation();openRAModal(\'' + rid + '\')" title="Edit">'
+          + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>'
+        + (hasRole('admin')
+          ? '<button class="btn-tbl-del" onclick="event.stopPropagation();deleteRAById(\'' + rid + '\')" title="Delete">'
+              + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg></button>'
+          : '')
+      : '';
+    const rid = esc(r.id);
+    return '<tr onclick="openRAModal(\'' + rid + '\')" style="cursor:pointer">'
+      +'<td class="td-ref">'+esc(r.ref||'—')+'</td>'
+      +'<td><div class="td-title">'+esc(r.title||'—')+'</div></td>'
+      +'<td style="font-size:12px"><span class="td-tag">'+esc(r.department||'—')+'</span></td>'
+      +'<td style="color:var(--tx2);font-size:12px">'+esc(r.location||r.area||'—')+'</td>'
+      +'<td style="color:var(--tx2);font-size:12px">'+esc(r.owner||r.assessor||'—')+'</td>'
+      +'<td style="font-family:var(--ff-mono);font-size:12px;text-align:center">'+(r.hazard_count||0)+'</td>'
+      +'<td class="td-date">'+fmtDate(r.review_date)+'</td>'
+      +'<td class="td-date">'+fmtDate(r.next_review_date)+'</td>'
+      +'<td>'+statusPill(r._status)+'</td>'
+      +'<td onclick="event.stopPropagation()" style="white-space:nowrap">'+editBtns+'</td>'
+      +'</tr>';
+  }).join('');
 }
 
 function renderCOSHH(rows){
@@ -992,8 +1074,13 @@ function renderEquipment(rows){
 function filterRA(){
   const q=document.getElementById('raSearch').value.toLowerCase();
   const st=document.getElementById('raStatusFilter').value;
-  const ar=document.getElementById('raAreaFilter').value;
-  renderRA(_ra.filter(r=>(!q||[r.ref,r.title,r.area,r.owner].some(f=>(f||'').toLowerCase().includes(q)))&&(!st||r._status===st)&&(!ar||r.area===ar)));
+  const dp=document.getElementById('raDeptFilter').value;
+  renderRA(_ra.filter(function(r){
+    const matchQ=!q||[r.ref,r.title,r.location,r.area,r.owner,r.assessor,r.department].some(function(f){return (f||'').toLowerCase().includes(q);});
+    const matchS=!st||r._status===st;
+    const matchD=!dp||r.department===dp;
+    return matchQ&&matchS&&matchD;
+  }));
 }
 function filterCOSHH(){
   const q=document.getElementById('coshhSearch').value.toLowerCase();
@@ -1013,46 +1100,179 @@ function switchTab(tab){
 }
 
 /* ── RA MODAL ────────────────────────────────────────────────────── */
+let _raHazards=[];
+
 function openRAModal(id){
   document.getElementById('raId').value=id||'';
   document.getElementById('raErr').style.display='none';
+  const fld = (i,v) => { const el=document.getElementById(i); if(el) el.value=v||''; };
   if(id){
     const r=_ra.find(x=>x.id===id); if(!r) return;
     document.getElementById('raModalTitle').textContent='Edit Risk Assessment';
-    document.getElementById('raRef').value=r.ref||'';
-    document.getElementById('raTitle').value=r.title||'';
-    document.getElementById('raArea').value=r.area||'';
-    document.getElementById('raOwner').value=r.owner||'';
-    document.getElementById('raStatus').value=r.status||'draft';
-    document.getElementById('raEquipTags').value=(r.equipment_tags||[]).join(', ');
-    document.getElementById('raReviewDate').value=r.review_date||'';
-    document.getElementById('raNextReview').value=r.next_review_date||'';
+    fld('raRef',       r.ref);
+    fld('raTitle',     r.title);
+    fld('raStatus',    r.status||'draft');
+    fld('raDept',      r.department);
+    fld('raLocation',  r.location||r.area);
+    fld('raOwner',     r.owner||r.assessor);
+    fld('raVersion',   r.version||'1');
+    fld('raReviewDate',r.review_date);
+    fld('raNextReview',r.next_review_date);
+    fld('raNumPeople', r.num_people||'');
+    fld('raSupervision',r.supervision||'');
+    fld('raSpecialist', r.specialist_equipment||'');
+    // Load hazard rows
+    _raHazards = [];
+    renderRAHazardRows();
+    if(r.id){
+      sb.from('pw_ra_hazards').select('*').eq('ra_id',r.id).order('sort_order').then(function(res){
+        _raHazards = res.data||[];
+        renderRAHazardRows();
+      });
+    }
   } else {
     document.getElementById('raModalTitle').textContent='Add Risk Assessment';
-    ['raRef','raTitle','raArea','raOwner','raEquipTags','raReviewDate','raNextReview'].forEach(i=>document.getElementById(i).value='');
-    document.getElementById('raStatus').value='draft';
+    ['raRef','raTitle','raLocation','raOwner','raVersion','raReviewDate','raNextReview','raNumPeople','raSupervision','raSpecialist'].forEach(i=>fld(i,''));
+    fld('raStatus','draft'); fld('raDept','');
+    _raHazards = [];
+    renderRAHazardRows();
   }
   const raDelBtn = document.getElementById('raDeleteBtn');
   if(raDelBtn) raDelBtn.style.display = (id && hasRole('admin')) ? 'block' : 'none';
   document.getElementById('raModal').classList.add('open');
 }
+
+/* ── RA HAZARD ROW HELPERS ───────────────────────────────────────── */
+function addRAHazardRow() {
+  _raHazards.push({task_sequence:'',persons_at_risk:'',hazard_description:'',
+    potential_effect:'',method_statement:'',severity:'',likelihood:'',risk_rating:''});
+  renderRAHazardRows();
+}
+
+function removeRAHazardRow(i) {
+  _raHazards.splice(i,1);
+  renderRAHazardRows();
+}
+
+function updateRAHazard(i, field, val) {
+  if(_raHazards[i]) _raHazards[i][field] = val;
+}
+
+function renderRAHazardRows() {
+  const container = document.getElementById('raHazardRows');
+  if(!container) return;
+  if(!_raHazards.length){
+    container.innerHTML = '<div style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono);padding:10px 0">No hazard rows yet — use the + Add Row button above.</div>';
+    return;
+  }
+  const ratingColor = {L:'var(--grn)',M:'var(--amb)',H:'var(--red)',U:'#9b59b6'};
+  const selOpts = function(vals, cur){ return vals.map(function(v){ return '<option value="'+v+'"'+(String(v)===String(cur)?' selected':'')+'>'+( v===''?'—':v)+'</option>'; }).join(''); };
+  container.innerHTML = _raHazards.map(function(h,i){
+    const ratingBg = ratingColor[h.risk_rating] || 'var(--bd2)';
+    return '<div style="background:var(--sf3);border:1px solid var(--bd);border-radius:var(--rsm);padding:10px 12px">'
+      +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">'
+        +'<span style="font-size:10px;font-weight:700;font-family:var(--ff-mono);color:var(--tx3);text-transform:uppercase;letter-spacing:.5px">Row '+(i+1)+'</span>'
+        +'<div style="display:flex;align-items:center;gap:8px">'
+          +(h.risk_rating ? '<span style="font-size:11px;font-weight:700;font-family:var(--ff-mono);color:'+ratingBg+';background:'+ratingBg+'22;border:1px solid '+ratingBg+'55;border-radius:4px;padding:1px 8px">'+h.risk_rating+'</span>' : '')
+          +'<button onclick="removeRAHazardRow('+i+')" style="width:22px;height:22px;border-radius:4px;border:1px solid var(--redb);background:transparent;color:var(--red);cursor:pointer;font-size:14px;line-height:1;flex-shrink:0">×</button>'
+        +'</div>'
+      +'</div>'
+      +'<div class="field-row" style="margin-bottom:6px">'
+        +'<div class="field-group"><label class="field-label">Task Sequence</label>'
+          +'<input type="text" class="field-input" value="'+esc(h.task_sequence||'')+'" oninput="updateRAHazard('+i+',\'task_sequence\',this.value)" placeholder="e.g. working inside mill"></div>'
+        +'<div class="field-group" style="max-width:120px"><label class="field-label">At Risk Groups</label>'
+          +'<input type="text" class="field-input" value="'+esc(h.persons_at_risk||'')+'" oninput="updateRAHazard('+i+',\'persons_at_risk\',this.value)" placeholder="e.g. 1/2"></div>'
+      +'</div>'
+      +'<div class="field-row" style="margin-bottom:6px">'
+        +'<div class="field-group"><label class="field-label">Hazards Identified *</label>'
+          +'<input type="text" class="field-input" value="'+esc(h.hazard_description||'')+'" oninput="updateRAHazard('+i+',\'hazard_description\',this.value)" placeholder="e.g. Confined space"></div>'
+        +'<div class="field-group"><label class="field-label">Potential Effect (from the hazard)</label>'
+          +'<input type="text" class="field-input" value="'+esc(h.potential_effect||'')+'" oninput="updateRAHazard('+i+',\'potential_effect\',this.value)" placeholder="e.g. Contact with hazardous gases"></div>'
+      +'</div>'
+      +'<div class="field-group" style="margin-bottom:6px"><label class="field-label">Method Statement — Controls, equipment, working methods (Eliminate / Reduce / Isolate / Control / PPE)</label>'
+        +'<textarea class="field-input" rows="2" oninput="updateRAHazard('+i+',\'method_statement\',this.value)" style="resize:vertical;min-height:52px" placeholder="e.g. Confined space entry by trained persons only…">'+esc(h.method_statement||'')+'</textarea></div>'
+      +'<div class="field-row">'
+        +'<div class="field-group" style="max-width:140px"><label class="field-label">Severity (1–5)</label>'
+          +'<select class="field-select" onchange="updateRAHazard('+i+',\'severity\',this.value)">'+selOpts(['','1','2','3','4','5'], h.severity)+'</select></div>'
+        +'<div class="field-group" style="max-width:140px"><label class="field-label">Likelihood (1–5)</label>'
+          +'<select class="field-select" onchange="updateRAHazard('+i+',\'likelihood\',this.value)">'+selOpts(['','1','2','3','4','5'], h.likelihood)+'</select></div>'
+        +'<div class="field-group" style="max-width:130px"><label class="field-label">Risk Rating</label>'
+          +'<select class="field-select" onchange="updateRAHazard('+i+',\'risk_rating\',this.value);renderRAHazardRows()">'+selOpts(['','L','M','H','U'], h.risk_rating)+'</select></div>'
+      +'</div>'
+    +'</div>';
+  }).join('');
+}
+
+async function deleteRAById(id){
+  if(!confirm('Delete this Risk Assessment and all its hazard rows? This cannot be undone.')) return;
+  await sb.from('pw_ra_hazards').delete().eq('ra_id', id);
+  const {error} = await sb.from('pw_risk_assessments').delete().eq('id', id);
+  if(error){ showToast('Delete failed: '+error.message); return; }
+  await loadRA(); refreshDashboard();
+  showToast('Risk Assessment deleted');
+}
+
 function closeRAModal(){ document.getElementById('raModal').classList.remove('open'); }
 async function saveRA(){
   const id=document.getElementById('raId').value;
   const ref=document.getElementById('raRef').value.trim();
   const title=document.getElementById('raTitle').value.trim();
-  const next=document.getElementById('raNextReview').value;
   const err=document.getElementById('raErr');
   if(!ref||!title){ err.textContent='Reference and title are required.'; err.style.display='block'; return; }
-  const payload={ref,title,area:document.getElementById('raArea').value.trim()||null,owner:document.getElementById('raOwner').value.trim()||null,
-    status:document.getElementById('raStatus').value,equipment_tags:document.getElementById('raEquipTags').value.split(',').map(t=>t.trim()).filter(Boolean),
-    review_date:document.getElementById('raReviewDate').value||null,next_review_date:next||null,
-    updated_at:new Date().toISOString(),updated_by:currentProfile?.email||null};
+
+  const payload={
+    ref, title,
+    department:   document.getElementById('raDept').value||null,
+    location:     document.getElementById('raLocation').value.trim()||null,
+    area:         'Padeswood',
+    owner:        document.getElementById('raOwner').value.trim()||null,
+    assessor:     document.getElementById('raOwner').value.trim()||null,
+    version:      document.getElementById('raVersion').value.trim()||'1',
+    status:       document.getElementById('raStatus').value,
+    review_date:  document.getElementById('raReviewDate').value||null,
+    next_review_date: document.getElementById('raNextReview').value||null,
+    num_people:   parseInt(document.getElementById('raNumPeople').value)||null,
+    supervision:  document.getElementById('raSupervision').value.trim()||null,
+    specialist_equipment: document.getElementById('raSpecialist').value.trim()||null,
+    hazard_count: _raHazards.length,
+    updated_at:   new Date().toISOString(),
+    updated_by:   currentProfile?.email||null,
+  };
+
+  let raId = id;
   let error;
-  if(id){ ({error}=await sb.from('pw_risk_assessments').update(payload).eq('id',id)); }
-  else   { ({error}=await sb.from('pw_risk_assessments').insert({...payload,created_at:new Date().toISOString(),created_by:currentProfile?.email||null})); }
+  if(id){
+    ({error}=await sb.from('pw_risk_assessments').update(payload).eq('id',id));
+  } else {
+    const res = await sb.from('pw_risk_assessments').insert({...payload,created_at:new Date().toISOString(),created_by:currentProfile?.email||null}).select().single();
+    error = res.error;
+    if(!error) raId = res.data.id;
+  }
   if(error){ err.textContent=error.message; err.style.display='block'; return; }
-  await loadRA(); refreshDashboard(); closeRAModal(); showToast(id?'Risk Assessment updated ✓':'Risk Assessment added ✓');
+
+  // Save hazard rows: delete existing then re-insert
+  if(raId && _raHazards.length){
+    await sb.from('pw_ra_hazards').delete().eq('ra_id', raId);
+    const hazPayload = _raHazards.map(function(h,i){return{
+      ra_id:              raId,
+      sort_order:         i+1,
+      task_sequence:      h.task_sequence||null,
+      persons_at_risk:    h.persons_at_risk||null,
+      hazard_description: h.hazard_description||'',
+      potential_effect:   h.potential_effect||null,
+      method_statement:   h.method_statement||null,
+      severity:           parseInt(h.severity)||null,
+      likelihood:         parseInt(h.likelihood)||null,
+      risk_rating:        h.risk_rating||null,
+    };});
+    const {error:hErr} = await sb.from('pw_ra_hazards').insert(hazPayload);
+    if(hErr) console.warn('Hazard save error:', hErr.message);
+  } else if(raId){
+    await sb.from('pw_ra_hazards').delete().eq('ra_id', raId);
+  }
+
+  await loadRA(); refreshDashboard(); closeRAModal();
+  showToast(id?'Risk Assessment updated ✓':'Risk Assessment added ✓');
 }
 
 /* ── COSHH MODAL ─────────────────────────────────────────────────── */
