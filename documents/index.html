@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="PW Documents">
@@ -499,6 +499,7 @@ tbody tr:hover{background:var(--sf2);}
         <div class="stat-card overdue"><div class="stat-label">Overdue</div><div class="stat-num" id="raOverdue">0</div><div class="stat-sub">Past review date</div></div>
         <div class="stat-card due-soon"><div class="stat-label">Due Soon</div><div class="stat-num" id="raDueSoon">0</div><div class="stat-sub">Within 30 days</div></div>
         <div class="stat-card current"><div class="stat-label">Current</div><div class="stat-num" id="raCurrent">0</div><div class="stat-sub">Up to date</div></div>
+        <div class="stat-card" style="border-color:var(--bd2)"><div class="stat-label">Draft</div><div class="stat-num" id="raDraft">0</div><div class="stat-sub">No review date set</div></div>
         <div class="stat-card total"><div class="stat-label">Total</div><div class="stat-num" id="raTotal">0</div><div class="stat-sub">All assessments</div></div>
       </div>
       <div style="margin-bottom:12px;font-family:var(--ff-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--tx3)">COSHH Sheets</div>
@@ -980,6 +981,7 @@ function refreshDashboard(){
   document.getElementById('raDueSoon').textContent  = _ra.filter(r=>r._status==='due-soon').length;
   document.getElementById('raCurrent').textContent  = _ra.filter(r=>r._status==='current').length;
   document.getElementById('raTotal').textContent    = _ra.length;
+  const _raDraftEl = document.getElementById('raDraft'); if(_raDraftEl) _raDraftEl.textContent = _ra.filter(r=>r._status==='draft').length;
   document.getElementById('coshhOverdue').textContent  = _coshh.filter(r=>r._status==='overdue').length;
   document.getElementById('coshhDueSoon').textContent  = _coshh.filter(r=>r._status==='due-soon').length;
   document.getElementById('coshhCurrent').textContent  = _coshh.filter(r=>r._status==='current').length;

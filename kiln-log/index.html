@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Padeswood Works">
@@ -2559,7 +2559,14 @@ function renderCaDay(day){
       refSel.appendChild(op);
     });
     refSel.value = sd.shiftRef || '';
-    refSel.onchange = function(){ sd.shiftRef = this.value; autoSave(); };
+    // Only CA or admin can change the shift ref — day staff are read-only here
+    if(!isCementAnalyst && !isAdmin){
+      refSel.disabled = true;
+      refSel.style.opacity = '0.6';
+      refSel.style.cursor = 'not-allowed';
+    } else {
+      refSel.onchange = function(){ sd.shiftRef = this.value; autoSave(); };
+    }
     refWrap.appendChild(refSel);
     persGrid.appendChild(refWrap);
 
@@ -3612,8 +3619,24 @@ async function loadFeedbackIssues(){
 
   // Fetch all week data
   const weekDataMap = {};
+
+  // Always seed with the live in-memory state for the current week —
+  // this ensures entries marked Ongoing THIS session show up immediately
+  // even before an autosave has written to localStorage or Supabase.
+  if(weekStart){
+    const currentIso = toISO(weekStart);
+    const currentCutoff = feedbackRangeCutoff();
+    const currentWeekDate = parseLocalDate(currentIso);
+    if(!currentCutoff || currentWeekDate >= currentCutoff){
+      if(!weekKeys.includes(currentIso)) weekKeys.push(currentIso);
+      weekDataMap[currentIso] = state; // live in-memory state
+    }
+  }
+
   await Promise.all(weekKeys.map(async function(iso){
     try {
+      // Skip if already seeded from live state
+      if(weekDataMap[iso]) return;
       const cached = localStorage.getItem('kbl_week_'+iso);
       if(cached){
         const parsed = JSON.parse(cached);
