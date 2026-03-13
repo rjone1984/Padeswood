@@ -392,6 +392,46 @@ th.sortable.sort-asc .sort-icon .arr-down,th.sortable.sort-desc .sort-icon .arr-
 .lic-logo { background:none !important; box-shadow:none !important; }
 .login-logo { background:none !important; box-shadow:none !important; }
 .header-logo { background:none !important; box-shadow:none !important; }
+
+/* ── COSHH VIEW MODAL ──────────────────────────────────────────── */
+.coshh-view-header{padding:20px 24px 16px;border-bottom:1px solid var(--bd);
+  display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap;}
+.coshh-view-name{font-family:var(--ff-head);font-weight:800;font-size:20px;flex:1;min-width:0;}
+.coshh-view-badges{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:4px;}
+.coshh-badge{padding:3px 9px;border-radius:5px;font-size:10px;font-weight:700;letter-spacing:.05em;}
+.coshh-badge-high{background:var(--redd);color:var(--red);border:1px solid var(--redb);}
+.coshh-badge-medium{background:var(--ambd);color:var(--amb);border:1px solid var(--ambb);}
+.coshh-badge-low{background:var(--grnd);color:var(--grn);border:1px solid var(--grnb);}
+.coshh-badge-neutral{background:var(--sf3);color:var(--tx2);border:1px solid var(--bd);}
+.coshh-badge-danger{background:var(--redd);color:var(--red);border:1px solid var(--redb);}
+.coshh-badge-warning{background:var(--ambd);color:var(--amb);border:1px solid var(--ambb);}
+.coshh-view-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid var(--bd);}
+.coshh-view-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border-bottom:1px solid var(--bd);}
+.coshh-meta-cell{padding:10px 24px;border-right:1px solid var(--bd);}
+.coshh-meta-cell:last-child{border-right:none;}
+.coshh-meta-lbl{font-size:10px;font-weight:700;font-family:var(--ff-mono);letter-spacing:.08em;
+  text-transform:uppercase;color:var(--tx3);margin-bottom:3px;}
+.coshh-meta-val{font-size:13px;color:var(--tx);}
+.coshh-section{padding:14px 24px;border-bottom:1px solid var(--bd);}
+.coshh-section:last-child{border-bottom:none;}
+.coshh-section-title{font-size:10px;font-weight:700;font-family:var(--ff-mono);letter-spacing:.08em;
+  text-transform:uppercase;color:var(--tx3);margin-bottom:10px;
+  display:flex;align-items:center;gap:8px;}
+.coshh-section-title::after{content:'';flex:1;height:1px;background:var(--bd);}
+.coshh-haz-list{display:flex;flex-wrap:wrap;gap:6px;}
+.coshh-haz-pill{padding:4px 10px;background:var(--redd);border:1px solid var(--redb);
+  border-radius:5px;font-size:11px;color:var(--red);}
+.coshh-act-table{width:100%;border-collapse:collapse;font-size:12px;}
+.coshh-act-table th{background:var(--sf3);padding:6px 10px;text-align:left;font-weight:600;
+  color:var(--tx2);border-bottom:1px solid var(--bd);font-size:10px;letter-spacing:.05em;text-transform:uppercase;}
+.coshh-act-table td{padding:7px 10px;border-bottom:1px solid var(--bd);color:var(--tx);}
+.coshh-act-table tr:last-child td{border-bottom:none;}
+.coshh-act-table td:first-child{color:var(--tx3);font-family:var(--ff-mono);font-size:11px;}
+.coshh-text-block{font-size:12.5px;color:var(--tx2);line-height:1.7;white-space:pre-wrap;}
+.coshh-text-block li,.coshh-text-block-item{padding:3px 0;border-bottom:1px solid var(--bd);
+  display:block;color:var(--tx2);font-size:12.5px;}
+.coshh-two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:600px){.coshh-view-grid,.coshh-view-grid-3,.coshh-two-col{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -627,7 +667,7 @@ th.sortable.sort-asc .sort-icon .arr-down,th.sortable.sort-desc .sort-icon .arr-
         </button>
       </div>
       <div class="table-wrap">
-        <table><thead><tr><th>Product</th><th>Manufacturer</th><th>Hazards</th><th>Location</th><th>Next Review</th><th>Status</th></tr></thead>
+        <table><thead><tr><th>Product</th><th>Supplier</th><th>Hazard Level</th><th>Work Area</th><th>Next Review</th><th>Status</th></tr></thead>
         <tbody id="coshhBody"><tr><td colspan="6"><div class="empty-state"><p>Loading…</p></div></td></tr></tbody></table>
       </div>
     </div>
@@ -733,23 +773,41 @@ th.sortable.sort-asc .sort-icon .arr-down,th.sortable.sort-desc .sort-icon .arr-
 
 <!-- ── COSHH MODAL ──────────────────────────────────────────────── -->
 <div class="modal-overlay" id="coshhModal" onclick="if(event.target===this)closeCOSHHModal()">
-  <div class="modal">
-    <div class="modal-header"><span class="modal-title" id="coshhModalTitle">Add COSHH Sheet</span><button class="modal-close" onclick="closeCOSHHModal()">×</button></div>
-    <div class="modal-body" id="coshhModalBody">
+  <div class="modal modal-wide" id="coshhModalInner">
+    <div class="modal-header">
+      <span class="modal-title" id="coshhModalTitle">COSHH Sheet</span>
+      <div style="display:flex;gap:8px;align-items:center;margin-left:auto">
+        <button class="btn btn-ghost btn-sm" id="coshhEditBtn" onclick="switchCOSHHToEdit()" style="display:none">Edit</button>
+        <button class="modal-close" onclick="closeCOSHHModal()">×</button>
+      </div>
+    </div>
+
+    <!-- VIEW MODE -->
+    <div id="coshhViewBody" class="modal-body" style="padding:0">
+      <div id="coshhViewContent"></div>
+    </div>
+
+    <!-- EDIT MODE -->
+    <div id="coshhEditBody" class="modal-body" style="display:none">
       <input type="hidden" id="coshhId">
       <div class="field-row">
         <div class="field-group"><label class="field-label">Product Name *</label><input type="text" class="field-input" id="coshhProduct" placeholder="e.g. HydroLube 220"></div>
-        <div class="field-group"><label class="field-label">Manufacturer</label><input type="text" class="field-input" id="coshhMfr" placeholder="e.g. Shell"></div>
+        <div class="field-group"><label class="field-label">Manufacturer / Supplier</label><input type="text" class="field-input" id="coshhMfr" placeholder="e.g. Shell"></div>
       </div>
       <div class="field-group"><label class="field-label">Hazard Categories (comma-separated)</label><input type="text" class="field-input" id="coshhHazards" placeholder="e.g. Flammable, Irritant"></div>
-      <div class="field-group"><label class="field-label">Storage Location</label><input type="text" class="field-input" id="coshhLocation" placeholder="e.g. Store Room B, Cabinet 3"></div>
+      <div class="field-group"><label class="field-label">Storage Location / Work Area</label><input type="text" class="field-input" id="coshhLocation" placeholder="e.g. Store Room B, Cabinet 3"></div>
       <div class="field-row">
         <div class="field-group"><label class="field-label">Review Date</label><input type="date" class="field-input" id="coshhReviewDate"></div>
         <div class="field-group"><label class="field-label">Next Review Date *</label><input type="date" class="field-input" id="coshhNextReview"></div>
       </div>
       <div class="form-err" id="coshhErr"></div>
     </div>
-    <div class="modal-footer" style="justify-content:flex-start"><button class="btn btn-danger" id="coshhDeleteBtn" onclick="deleteCOSHH()" style="display:none;margin-right:auto">Delete</button><button class="btn btn-ghost" onclick="closeCOSHHModal()">Cancel</button><button class="btn btn-primary" id="coshhSaveBtn" onclick="saveCOSHH()">Save</button></div>
+
+    <div class="modal-footer" style="justify-content:flex-start" id="coshhFooter">
+      <button class="btn btn-danger" id="coshhDeleteBtn" onclick="deleteCOSHH()" style="display:none;margin-right:auto">Delete</button>
+      <button class="btn btn-ghost" onclick="closeCOSHHModal()">Close</button>
+      <button class="btn btn-primary" id="coshhSaveBtn" onclick="saveCOSHH()" style="display:none">Save</button>
+    </div>
   </div>
 </div>
 
@@ -1117,15 +1175,18 @@ function renderCOSHH(rows){
   const body=document.getElementById('coshhBody');
   if(!rows.length){ body.innerHTML='<tr><td colspan="6"><div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="36" height="36"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><p>No COSHH sheets found.</p>'+(hasRole('editor','reviewer','admin')?'<button class="btn btn-primary" onclick="openCOSHHModal()">Add first COSHH Sheet</button>':'')+'</div></td></tr>'; return; }
   body.innerHTML=rows.map(r=>{
-    const haz=Array.isArray(r.hazard_categories)?r.hazard_categories:(r.hazard_categories||'').split(',').map(h=>h.trim()).filter(Boolean);
+    const lvl=(r.hazard_level||'').toUpperCase();
+    const lvlColor=lvl==='HIGH'?'var(--red)':lvl==='MEDIUM'?'var(--amb)':'var(--grn)';
+    const lvlBg=lvl==='HIGH'?'var(--redd)':lvl==='MEDIUM'?'var(--ambd)':'var(--grnd)';
+    const lvlPill=lvl?'<span style="padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.04em;background:'+lvlBg+';color:'+lvlColor+'">'+esc(lvl)+'</span>':'<span style="color:var(--tx3)">—</span>';
     return '<tr onclick="openCOSHHModal(\''+esc(r.id)+'\')">'
-      +'<td><div class="td-title">'+esc(r.product_name)+'</div></td>'
-      +'<td style="color:var(--tx2);font-size:12.5px">'+esc(r.manufacturer||'—')+'</td>'
-      +'<td>'+(haz.map(h=>'<span class="td-tag">'+esc(h)+'</span>').join('')||'—')+'</td>'
-      +'<td style="color:var(--tx2);font-size:12.5px">'+esc(r.location||'—')+'</td>'
+      +'<td><div class="td-title">'+esc(r.product_name)+'</div>'+(r.keyword?'<div class="td-sub">'+esc(r.keyword)+'</div>':'')+'</td>'
+      +'<td style="color:var(--tx2);font-size:12.5px">'+esc(r.supplier||r.manufacturer||'—')+'</td>'
+      +'<td>'+lvlPill+'</td>'
+      +'<td style="color:var(--tx2);font-size:12.5px">'+esc(r.work_area||r.location||'—')+'</td>'
       +'<td class="td-date">'+fmtDate(r.next_review_date)+'</td>'
       +'<td>'+statusPill(r._status)+'</td></tr>';
-  }).join('');
+    }).join('');
 }
 
 function renderEquipment(rows){
@@ -1290,7 +1351,7 @@ function sortRA(col){
 function filterCOSHH(){
   const q=document.getElementById('coshhSearch').value.toLowerCase();
   const st=document.getElementById('coshhStatusFilter').value;
-  renderCOSHH(_coshh.filter(r=>(!q||[r.product_name,r.manufacturer,r.location].some(f=>(f||'').toLowerCase().includes(q)))&&(!st||r._status===st)));
+  renderCOSHH(_coshh.filter(r=>(!q||[r.product_name,r.supplier,r.manufacturer,r.work_area,r.location,r.keyword,r.hazard_level].some(f=>(f||'').toLowerCase().includes(q)))&&(!st||r._status===st)));
 }
 function filterEquipment(){
   const q=document.getElementById('equipSearch').value.toLowerCase();
@@ -1740,29 +1801,192 @@ async function saveRA(){
 }
 
 /* ── COSHH MODAL ─────────────────────────────────────────────────── */
-function openCOSHHModal(id){
-  document.getElementById('coshhId').value=id||'';
-  document.getElementById('coshhErr').style.display='none';
-  if(id){
-    const r=_coshh.find(x=>x.id===id); if(!r) return;
-    document.getElementById('coshhModalTitle').textContent='Edit COSHH Sheet';
-    document.getElementById('coshhProduct').value=r.product_name||'';
-    document.getElementById('coshhMfr').value=r.manufacturer||'';
-    document.getElementById('coshhLocation').value=r.location||'';
-    document.getElementById('coshhReviewDate').value=r.review_date||'';
-    document.getElementById('coshhNextReview').value=r.next_review_date||'';
-    const haz=Array.isArray(r.hazard_categories)?r.hazard_categories:(r.hazard_categories||'').split(',').map(h=>h.trim()).filter(Boolean);
-    document.getElementById('coshhHazards').value=haz.join(', ');
-  } else {
+async function openCOSHHModal(id){
+  const overlay=document.getElementById('coshhModal');
+  const viewBody=document.getElementById('coshhViewBody');
+  const editBody=document.getElementById('coshhEditBody');
+  const editBtn=document.getElementById('coshhEditBtn');
+  const saveBtn=document.getElementById('coshhSaveBtn');
+  const delBtn=document.getElementById('coshhDeleteBtn');
+
+  if(!id){
+    // Add new — go straight to edit mode
     document.getElementById('coshhModalTitle').textContent='Add COSHH Sheet';
+    document.getElementById('coshhId').value='';
+    document.getElementById('coshhErr').style.display='none';
     ['coshhProduct','coshhMfr','coshhLocation','coshhHazards','coshhReviewDate','coshhNextReview'].forEach(i=>document.getElementById(i).value='');
+    viewBody.style.display='none';
+    editBody.style.display='block';
+    if(editBtn) editBtn.style.display='none';
+    if(saveBtn) saveBtn.style.display='';
+    if(delBtn)  delBtn.style.display='none';
+    overlay.classList.add('open');
+    return;
   }
-  const coshhDelBtn = document.getElementById('coshhDeleteBtn');
-  if(coshhDelBtn) coshhDelBtn.style.display = (id && hasRole('admin','reviewer')) ? 'block' : 'none';
-  setModalReadOnly('coshhModalBody', 'coshhSaveBtn', hasRole('editor','reviewer','admin'));
-  document.getElementById('coshhModal').classList.add('open');
+
+  const r=_coshh.find(x=>x.id===id); if(!r) return;
+
+  // Fetch activities
+  let acts=[];
+  try{
+    const {data}=await sb.from('pw_coshh_activities').select('*').eq('coshh_id',id).order('act_no');
+    acts=data||[];
+  }catch(e){}
+
+  // Render view
+  document.getElementById('coshhId').value=id;
+  document.getElementById('coshhModalTitle').textContent=r.product_name||'COSHH Sheet';
+  document.getElementById('coshhViewContent').innerHTML=buildCOSHHView(r, acts);
+  viewBody.style.display='block';
+  editBody.style.display='none';
+
+  const canEdit=hasRole('editor','reviewer','admin');
+  if(editBtn) editBtn.style.display=canEdit?'':'none';
+  if(saveBtn) saveBtn.style.display='none';
+  if(delBtn)  delBtn.style.display=(hasRole('admin','reviewer'))?'block':'none';
+
+  overlay.classList.add('open');
 }
+
+function buildCOSHHView(r, acts){
+  const lvl=(r.hazard_level||'').toUpperCase();
+  const lvlCls=lvl==='HIGH'?'coshh-badge-high':lvl==='MEDIUM'?'coshh-badge-medium':'coshh-badge-low';
+  const swCls=(r.signal_word||'').toLowerCase()==='danger'?'coshh-badge-danger':'coshh-badge-warning';
+  const haz=Array.isArray(r.health_hazards)?r.health_hazards:
+    (Array.isArray(r.hazard_categories)?r.hazard_categories:
+    (r.hazard_categories||'').split(',').map(h=>h.trim()).filter(Boolean));
+
+  let html='';
+
+  // ── Header strip
+  html+=`<div class="coshh-view-header">
+    <div style="flex:1;min-width:0">
+      <div class="coshh-view-name">${esc(r.product_name||'—')}</div>
+      <div class="coshh-view-badges" style="margin-top:8px">
+        ${lvl?`<span class="coshh-badge ${lvlCls}">${esc(lvl)} HAZARD</span>`:''}
+        ${r.physical_state?`<span class="coshh-badge coshh-badge-neutral">${esc(r.physical_state)}</span>`:''}
+        ${r.signal_word?`<span class="coshh-badge ${swCls}">${esc(r.signal_word)}</span>`:''}
+        ${r.keyword?`<span class="coshh-badge coshh-badge-neutral">${esc(r.keyword)}</span>`:''}
+      </div>
+    </div>
+    <div style="text-align:right;flex-shrink:0">
+      ${r.assessment_id?`<div style="font-family:var(--ff-mono);font-size:10px;color:var(--tx3)">ID# ${esc(r.assessment_id)}</div>`:''}
+      ${r.material_code?`<div style="font-family:var(--ff-mono);font-size:10px;color:var(--tx3)">IMC ${esc(r.material_code)}</div>`:''}
+    </div>
+  </div>`;
+
+  // ── Meta grid — row 1
+  html+=`<div class="coshh-view-grid-3">
+    <div class="coshh-meta-cell"><div class="coshh-meta-lbl">Supplier</div><div class="coshh-meta-val">${esc(r.supplier||r.manufacturer||'—')}</div></div>
+    <div class="coshh-meta-cell"><div class="coshh-meta-lbl">Supplier Phone</div><div class="coshh-meta-val">${esc(r.supplier_phone||'—')}</div></div>
+    <div class="coshh-meta-cell"><div class="coshh-meta-lbl">Assessment Owner</div><div class="coshh-meta-val">${esc(r.assessment_owner||'—')}</div></div>
+  </div>`;
+
+  // ── Meta grid — row 2
+  html+=`<div class="coshh-view-grid-3">
+    <div class="coshh-meta-cell"><div class="coshh-meta-lbl">Work Area</div><div class="coshh-meta-val">${esc(r.work_area||r.location||'—')}</div></div>
+    <div class="coshh-meta-cell"><div class="coshh-meta-lbl">Frequency of Use</div><div class="coshh-meta-val">${esc(r.frequency_of_use||'—')}</div></div>
+    <div class="coshh-meta-cell"><div class="coshh-meta-lbl">People Exposed</div><div class="coshh-meta-val">${esc(r.people_exposed||'—')}</div></div>
+  </div>`;
+
+  // ── Meta grid — row 3 dates
+  html+=`<div class="coshh-view-grid-3">
+    <div class="coshh-meta-cell"><div class="coshh-meta-lbl">Assessment Reviewed</div><div class="coshh-meta-val">${fmtDate(r.review_date)}</div></div>
+    <div class="coshh-meta-cell"><div class="coshh-meta-lbl">Next Review</div><div class="coshh-meta-val" style="color:${calcStatus(r.next_review_date)==='overdue'?'var(--red)':calcStatus(r.next_review_date)==='due-soon'?'var(--amb)':'var(--tx)'}">${fmtDate(r.next_review_date)}</div></div>
+    <div class="coshh-meta-cell"><div class="coshh-meta-lbl">Latest SDS Reference</div><div class="coshh-meta-val">${fmtDate(r.sds_reference_date)||'—'}</div></div>
+  </div>`;
+
+  // ── Activities
+  if(acts && acts.length){
+    html+=`<div class="coshh-section">
+      <div class="coshh-section-title">Activities</div>
+      <table class="coshh-act-table">
+        <thead><tr><th>#</th><th>Method</th><th>Area</th><th>Exposure</th></tr></thead>
+        <tbody>${acts.map(a=>`<tr>
+          <td>${a.act_no||'—'}</td>
+          <td>${esc(a.method||'—')}</td>
+          <td>${esc(a.area||'—')}</td>
+          <td>${esc(a.exposure||'—')}</td>
+        </tr>`).join('')}</tbody>
+      </table>
+    </div>`;
+  }
+
+  // ── Health hazards
+  if(haz && haz.length){
+    html+=`<div class="coshh-section">
+      <div class="coshh-section-title">Health Hazards</div>
+      <div class="coshh-haz-list">${haz.map(h=>`<span class="coshh-haz-pill">${esc(h)}</span>`).join('')}</div>
+    </div>`;
+  }
+
+  // ── Exposure limits
+  if(r.exposure_limits){
+    html+=`<div class="coshh-section">
+      <div class="coshh-section-title">Exposure Limits</div>
+      <div class="coshh-text-block">${esc(r.exposure_limits)}</div>
+    </div>`;
+  }
+
+  // ── Existing controls / work practices
+  if(r.existing_controls||r.work_practices){
+    html+=`<div class="coshh-section">
+      <div class="coshh-section-title">Controls &amp; Work Practices</div>
+      <div class="coshh-two-col">`;
+    if(r.existing_controls) html+=`<div><div style="font-size:10px;font-weight:700;font-family:var(--ff-mono);letter-spacing:.06em;color:var(--tx3);margin-bottom:6px">EXISTING CONTROLS</div><div class="coshh-text-block">${esc(r.existing_controls)}</div></div>`;
+    if(r.work_practices)    html+=`<div><div style="font-size:10px;font-weight:700;font-family:var(--ff-mono);letter-spacing:.06em;color:var(--tx3);margin-bottom:6px">ADDITIONAL WORK PRACTICES</div><div class="coshh-text-block">${esc(r.work_practices)}</div></div>`;
+    html+=`</div></div>`;
+  }
+
+  // ── First aid / Fire / Spillage
+  const sections=[['First Aid',r.first_aid],['Fire',r.fire],['Spillage',r.spillage]].filter(s=>s[1]);
+  if(sections.length){
+    html+=`<div class="coshh-section"><div class="coshh-section-title">Emergency Information</div><div class="coshh-two-col">`;
+    sections.forEach(([title,text])=>{
+      html+=`<div><div style="font-size:10px;font-weight:700;font-family:var(--ff-mono);letter-spacing:.06em;color:var(--tx3);margin-bottom:6px;text-transform:uppercase">${esc(title)}</div><div class="coshh-text-block">${esc(text)}</div></div>`;
+    });
+    html+=`</div></div>`;
+  }
+
+  // ── Contents / Notes
+  if(r.contents||r.notes){
+    html+=`<div class="coshh-section">`;
+    if(r.contents) html+=`<div style="margin-bottom:12px"><div class="coshh-section-title">Contents</div><div class="coshh-text-block">${esc(r.contents)}</div></div>`;
+    if(r.notes)    html+=`<div><div class="coshh-section-title">Notes / Considerations</div><div class="coshh-text-block">${esc(r.notes)}</div></div>`;
+    html+=`</div>`;
+  }
+
+  // ── Footer meta
+  html+=`<div style="padding:10px 24px;background:var(--sf2);border-top:1px solid var(--bd);display:flex;gap:20px;flex-wrap:wrap">
+    ${r.created_by?`<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">Created by ${esc(r.created_by)}</span>`:''}
+    ${r.updated_by?`<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">Updated by ${esc(r.updated_by)}</span>`:''}
+    ${r.quantity_per_day?`<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">Qty/day: ${esc(r.quantity_per_day)}</span>`:''}
+    ${r.susceptible_workers?`<span style="font-size:11px;color:var(--amb);font-family:var(--ff-mono)">⚠ Susceptible workers</span>`:''}
+  </div>`;
+
+  return html;
+}
+
+function switchCOSHHToEdit(){
+  const rid=document.getElementById('coshhId').value||'';
+  const r=_coshh.find(x=>x.id===rid)||{};
+  document.getElementById('coshhId').value=rid;
+  document.getElementById('coshhErr').style.display='none';
+  document.getElementById('coshhProduct').value=r.product_name||'';
+  document.getElementById('coshhMfr').value=r.manufacturer||r.supplier||'';
+  document.getElementById('coshhLocation').value=r.location||r.work_area||'';
+  document.getElementById('coshhReviewDate').value=r.review_date||'';
+  document.getElementById('coshhNextReview').value=r.next_review_date||'';
+  const haz=Array.isArray(r.hazard_categories)?r.hazard_categories:(r.hazard_categories||'').split(',').map(h=>h.trim()).filter(Boolean);
+  document.getElementById('coshhHazards').value=haz.join(', ');
+  document.getElementById('coshhViewBody').style.display='none';
+  document.getElementById('coshhEditBody').style.display='block';
+  document.getElementById('coshhEditBtn').style.display='none';
+  document.getElementById('coshhSaveBtn').style.display='';
+}
+
 function closeCOSHHModal(){ document.getElementById('coshhModal').classList.remove('open'); }
+
 async function saveCOSHH(){
   const id=document.getElementById('coshhId').value;
   const product=document.getElementById('coshhProduct').value.trim();
@@ -1770,7 +1994,9 @@ async function saveCOSHH(){
   const err=document.getElementById('coshhErr');
   if(!product){ err.textContent='Product name is required.'; err.style.display='block'; return; }
   const payload={product_name:product,manufacturer:document.getElementById('coshhMfr').value.trim()||null,
+    supplier:document.getElementById('coshhMfr').value.trim()||null,
     location:document.getElementById('coshhLocation').value.trim()||null,
+    work_area:document.getElementById('coshhLocation').value.trim()||null,
     hazard_categories:document.getElementById('coshhHazards').value.split(',').map(h=>h.trim()).filter(Boolean),
     review_date:document.getElementById('coshhReviewDate').value||null,next_review_date:next||null,
     updated_at:new Date().toISOString(),updated_by:currentProfile?.email||null};
