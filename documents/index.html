@@ -663,7 +663,7 @@ th.sortable.sort-asc .sort-icon .arr-down,th.sortable.sort-desc .sort-icon .arr-
 <div class="modal-overlay" id="raModal" onclick="if(event.target===this)closeRAModal()">
   <div class="modal modal-wide">
     <div class="modal-header"><span class="modal-title" id="raModalTitle">Add Risk Assessment</span><button class="modal-close" onclick="closeRAModal()">×</button></div>
-    <div class="modal-body">
+    <div class="modal-body" id="raModalBody">
       <input type="hidden" id="raId">
 
       <!-- ── Document ── -->
@@ -725,7 +725,7 @@ th.sortable.sort-asc .sort-icon .arr-down,th.sortable.sort-desc .sort-icon .arr-
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Print
       </button>
       <button class="btn btn-ghost" onclick="closeRAModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="saveRA()">Save</button>
+      <button class="btn btn-primary" id="raSaveBtn" onclick="saveRA()">Save</button>
     </div>
   </div>
 </div>
@@ -734,7 +734,7 @@ th.sortable.sort-asc .sort-icon .arr-down,th.sortable.sort-desc .sort-icon .arr-
 <div class="modal-overlay" id="coshhModal" onclick="if(event.target===this)closeCOSHHModal()">
   <div class="modal">
     <div class="modal-header"><span class="modal-title" id="coshhModalTitle">Add COSHH Sheet</span><button class="modal-close" onclick="closeCOSHHModal()">×</button></div>
-    <div class="modal-body">
+    <div class="modal-body" id="coshhModalBody">
       <input type="hidden" id="coshhId">
       <div class="field-row">
         <div class="field-group"><label class="field-label">Product Name *</label><input type="text" class="field-input" id="coshhProduct" placeholder="e.g. HydroLube 220"></div>
@@ -748,7 +748,7 @@ th.sortable.sort-asc .sort-icon .arr-down,th.sortable.sort-desc .sort-icon .arr-
       </div>
       <div class="form-err" id="coshhErr"></div>
     </div>
-    <div class="modal-footer" style="justify-content:flex-start"><button class="btn btn-danger" id="coshhDeleteBtn" onclick="deleteCOSHH()" style="display:none;margin-right:auto">Delete</button><button class="btn btn-ghost" onclick="closeCOSHHModal()">Cancel</button><button class="btn btn-primary" onclick="saveCOSHH()">Save</button></div>
+    <div class="modal-footer" style="justify-content:flex-start"><button class="btn btn-danger" id="coshhDeleteBtn" onclick="deleteCOSHH()" style="display:none;margin-right:auto">Delete</button><button class="btn btn-ghost" onclick="closeCOSHHModal()">Cancel</button><button class="btn btn-primary" id="coshhSaveBtn" onclick="saveCOSHH()">Save</button></div>
   </div>
 </div>
 
@@ -756,7 +756,7 @@ th.sortable.sort-asc .sort-icon .arr-down,th.sortable.sort-desc .sort-icon .arr-
 <div class="modal-overlay" id="equipModal" onclick="if(event.target===this)closeEquipModal()">
   <div class="modal">
     <div class="modal-header"><span class="modal-title" id="equipModalTitle">Add Equipment</span><button class="modal-close" onclick="closeEquipModal()">×</button></div>
-    <div class="modal-body">
+    <div class="modal-body" id="equipModalBody">
       <input type="hidden" id="equipId">
       <div class="field-row">
         <div class="field-group"><label class="field-label">Asset Tag *</label><input type="text" class="field-input" id="equipTag" placeholder="e.g. KLN-001"></div>
@@ -775,7 +775,7 @@ th.sortable.sort-asc .sort-icon .arr-down,th.sortable.sort-desc .sort-icon .arr-
       <div class="field-group"><label class="field-label">Department</label><input type="text" class="field-input" id="equipLocation" placeholder="e.g. Kiln Bay, Raw Mill, Packing"></div>
       <div class="form-err" id="equipErr"></div>
     </div>
-    <div class="modal-footer" style="justify-content:flex-start"><button class="btn btn-danger" id="equipDeleteBtn" onclick="deleteEquip()" style="display:none;margin-right:auto">Delete</button><button class="btn btn-ghost" onclick="closeEquipModal()">Cancel</button><button class="btn btn-primary" onclick="saveEquip()">Save</button></div>
+    <div class="modal-footer" style="justify-content:flex-start"><button class="btn btn-danger" id="equipDeleteBtn" onclick="deleteEquip()" style="display:none;margin-right:auto">Delete</button><button class="btn btn-ghost" onclick="closeEquipModal()">Cancel</button><button class="btn btn-primary" id="equipSaveBtn" onclick="saveEquip()">Save</button></div>
   </div>
 </div>
 
@@ -1078,7 +1078,7 @@ function renderRA(rows){
     const editBtns = canEdit
       ? '<button class="btn-tbl-edit" onclick="event.stopPropagation();openRAModal(\'' + rid + '\')" title="Edit">'
           + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>'
-        + (hasRole('admin')
+        + (hasRole('admin','reviewer')
           ? '<button class="btn-tbl-del" onclick="event.stopPropagation();deleteRAById(\'' + rid + '\')" title="Delete">'
               + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg></button>'
           : '')
@@ -1294,6 +1294,47 @@ function switchTab(tab){
 /* ── RA MODAL ────────────────────────────────────────────────────── */
 let _raHazards=[];
 
+/* ── MODAL READ-ONLY HELPER ──────────────────────────────────────── */
+function setModalReadOnly(bodyId, saveId, canEdit){
+  // Show/hide Save button
+  const saveBtn = document.getElementById(saveId);
+  if(saveBtn) saveBtn.style.display = canEdit ? '' : 'none';
+  // Disable all inputs, selects, textareas inside the modal body
+  const body = document.getElementById(bodyId);
+  if(!body) return;
+  body.querySelectorAll('input,select,textarea,button:not(.btn-tbl-edit):not(.btn-tbl-del)').forEach(function(el){
+    if(canEdit){
+      el.removeAttribute('disabled');
+      el.style.pointerEvents = '';
+      el.style.opacity = '';
+    } else {
+      el.setAttribute('disabled','disabled');
+      el.style.pointerEvents = 'none';
+      el.style.opacity = '1'; // keep readable, not greyed
+    }
+  });
+  // Also disable Add Row / edit/del buttons in hazard table for viewers
+  if(!canEdit && body.querySelector('#raHazardRows')){
+    body.querySelectorAll('.btn-tbl-edit,.btn-tbl-del,[onclick*="addRAHazardRow"]').forEach(function(el){
+      el.style.display = 'none';
+    });
+  }
+  // Show a "View only" notice in the footer when read-only
+  const footer = body.closest('.modal')?.querySelector('.modal-footer');
+  if(footer){
+    const existing = footer.querySelector('.view-only-badge');
+    if(!canEdit && !existing){
+      const badge = document.createElement('span');
+      badge.className = 'view-only-badge';
+      badge.style.cssText = 'font-size:11px;color:var(--tx3);font-family:var(--ff-mono);margin-right:auto;display:flex;align-items:center;gap:5px';
+      badge.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>View only';
+      footer.insertBefore(badge, footer.firstChild);
+    } else if(canEdit && existing){
+      existing.remove();
+    }
+  }
+}
+
 function openRAModal(id){
   document.getElementById('raId').value=id||'';
   document.getElementById('raErr').style.display='none';
@@ -1330,9 +1371,11 @@ function openRAModal(id){
     renderRAHazardRows();
   }
   const raDelBtn = document.getElementById('raDeleteBtn');
-  if(raDelBtn) raDelBtn.style.display = (id && hasRole('admin')) ? 'block' : 'none';
+  if(raDelBtn) raDelBtn.style.display = (id && hasRole('admin','reviewer')) ? 'block' : 'none';
   const raPrintBtn = document.getElementById('raPrintBtn');
   if(raPrintBtn) raPrintBtn.style.display = id ? 'flex' : 'none';
+  const canEdit = hasRole('editor','reviewer','admin');
+  setModalReadOnly('raModalBody', 'raSaveBtn', canEdit);
   document.getElementById('raModal').classList.add('open');
 }
 
@@ -1701,7 +1744,8 @@ function openCOSHHModal(id){
     ['coshhProduct','coshhMfr','coshhLocation','coshhHazards','coshhReviewDate','coshhNextReview'].forEach(i=>document.getElementById(i).value='');
   }
   const coshhDelBtn = document.getElementById('coshhDeleteBtn');
-  if(coshhDelBtn) coshhDelBtn.style.display = (id && hasRole('admin')) ? 'block' : 'none';
+  if(coshhDelBtn) coshhDelBtn.style.display = (id && hasRole('admin','reviewer')) ? 'block' : 'none';
+  setModalReadOnly('coshhModalBody', 'coshhSaveBtn', hasRole('editor','reviewer','admin'));
   document.getElementById('coshhModal').classList.add('open');
 }
 function closeCOSHHModal(){ document.getElementById('coshhModal').classList.remove('open'); }
@@ -1739,12 +1783,13 @@ function openEquipModal(id){
     document.getElementById('equipMfr').value=r.manufacturer||'';
     document.getElementById('equipSerial').value=r.serial||'';
     document.getElementById('equipLocation').value=r.location||'';
-    if(delBtn) delBtn.style.display=hasRole('admin')?'':'none';
+    if(delBtn) delBtn.style.display=hasRole('admin','reviewer')?'':'none';
   } else {
     document.getElementById('equipModalTitle').textContent='Add Equipment';
     ['equipTag','equipName','equipMfr','equipSerial','equipLocation'].forEach(i=>document.getElementById(i).value='');
     if(delBtn) delBtn.style.display='none';
   }
+  setModalReadOnly('equipModalBody', 'equipSaveBtn', hasRole('editor','reviewer','admin'));
   document.getElementById('equipModal').classList.add('open');
 }
 function closeEquipModal(){ document.getElementById('equipModal').classList.remove('open'); }
@@ -2127,9 +2172,10 @@ async function deleteRA(){
   if(!id) return;
   const r=_ra.find(x=>x.id===id);
   if(!confirm('Delete "'+((r&&r.title)||'this Risk Assessment')+'"?\n\nThis cannot be undone.')) return;
+  await logRAAction('delete', id, r?.ref||'—', r?.title||'—', 'Deleted by '+( currentProfile?.full_name||currentProfile?.email||'unknown'));
   const{error}=await sb.from('pw_risk_assessments').delete().eq('id',id);
   if(error){showToast('Delete failed: '+error.message);return;}
-  await loadRA(); refreshDashboard(); closeRAModal(); showToast('Risk Assessment deleted');
+  await loadRA(); await loadAudit(); refreshDashboard(); closeRAModal(); showToast('Risk Assessment deleted');
 }
 
 /* ── COSHH DELETE ────────────────────────────────────────────────── */
@@ -2138,6 +2184,13 @@ async function deleteCOSHH(){
   if(!id) return;
   const r=_coshh.find(x=>x.id===id);
   if(!confirm('Delete "'+((r&&r.product_name)||'this COSHH Sheet')+'"?\n\nThis cannot be undone.')) return;
+  const user=currentProfile?.full_name||currentProfile?.email||'unknown';
+  try {
+    await sb.from('pw_audit_trail').insert({
+      table_name:'pw_coshh_sheets', record_id:id, action:'delete', changed_by:user,
+      new_data:{product_name:r?.product_name||'—', detail:'Deleted by '+user}
+    });
+  } catch(e){ console.warn('COSHH audit log failed:', e.message); }
   const{error}=await sb.from('pw_coshh_sheets').delete().eq('id',id);
   if(error){showToast('Delete failed: '+error.message);return;}
   await loadCOSHH(); refreshDashboard(); closeCOSHHModal(); showToast('COSHH Sheet deleted');
@@ -2149,6 +2202,13 @@ async function deleteEquip(){
   if(!id) return;
   const r=_equipment.find(x=>x.id===id);
   if(!confirm('Delete '+((r&&r.name)||'this equipment')+'? This cannot be undone.')) return;
+  const user=currentProfile?.full_name||currentProfile?.email||'unknown';
+  try {
+    await sb.from('pw_audit_trail').insert({
+      table_name:'pw_equipment', record_id:id, action:'delete', changed_by:user,
+      new_data:{name:r?.name||'—', asset_tag:r?.asset_tag||'—', detail:'Deleted by '+user}
+    });
+  } catch(e){ console.warn('Equipment audit log failed:', e.message); }
   const{error}=await sb.from('pw_equipment').delete().eq('id',id);
   if(error){showToast('Delete failed: '+error.message);return;}
   await loadEquipment(); closeEquipModal(); showToast('Equipment deleted');
