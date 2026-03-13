@@ -918,8 +918,20 @@ async function doLogin(){
   currentUser=data.user; await loadProfileAndLaunch();
 }
 async function loadProfileAndLaunch(){
-  const {data}=await sb.from('pw_profiles').select('*').eq('id',currentUser.id).single();
-  currentProfile=data||{email:currentUser.email,full_name:currentUser.email,role:'viewer'};
+  const {data} = await sb.from('pw_profiles').select('*').eq('id',currentUser.id).single();
+  // Block disabled or unapproved accounts
+  if(data && (data.disabled === true || data.approved === false)){
+    await sb.auth.signOut();
+    ['kbl_session','kbl_refresh'].forEach(function(k){ localStorage.removeItem(k); });
+    document.getElementById('splash').style.display='flex';
+    const err = document.getElementById('splashErr') || document.createElement('div');
+    err.id='splashErr';
+    err.style.cssText='margin:16px auto;max-width:340px;padding:10px 14px;background:var(--redd,#3d1a1a);border:1px solid var(--redb,#5c1e1e);border-radius:6px;color:var(--red,#f0524f);font-size:12px;text-align:center';
+    err.textContent = data.disabled ? 'Your account has been disabled. Contact an administrator.' : 'Your account is pending approval.';
+    if(!document.getElementById('splashErr')) document.getElementById('splash').appendChild(err);
+    return;
+  }
+  currentProfile = data || {email:currentUser.email, full_name:currentUser.email, role:'viewer'};
   UM_SELF_ID = currentUser ? currentUser.id : null;
   if(!UM_SB) UM_SB = sb;
   launchApp();

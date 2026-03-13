@@ -787,7 +787,7 @@ async function showAppSelector(user) {
     const {data} = await sb.from('pw_profiles').select('*').eq('id', user.id).single();
     _platformProfile = data;
     // Block unapproved users
-    if (data && data.approved === false) {
+    if (data && (data.approved === false || data.disabled === true)) {
       await sb.auth.signOut();
       Object.keys(localStorage).forEach(function(k) {
         if (k.startsWith('sb-') || k.startsWith('supabase') || k === 'kbl_session' || k === 'kbl_refresh') localStorage.removeItem(k);
@@ -798,11 +798,18 @@ async function showAppSelector(user) {
       document.getElementById('changePwBtn').style.display = 'none';
       document.getElementById('loginScreen').style.display = 'flex';
       const err = document.getElementById('loginErr');
-      err.textContent = 'Your account is pending admin approval. You\'ll receive access once an admin reviews your request.';
+      if (data.disabled === true) {
+        err.textContent = 'Your account has been disabled. Please contact an administrator.';
+        err.style.background = 'var(--redd)';
+        err.style.color = 'var(--red)';
+        err.style.borderColor = 'var(--redb)';
+      } else {
+        err.textContent = 'Your account is pending admin approval. You\'ll receive access once an admin reviews your request.';
+        err.style.background = 'var(--ambd)';
+        err.style.color = 'var(--amb)';
+        err.style.borderColor = 'var(--ambb)';
+      }
       err.style.display = 'block';
-      err.style.background = 'var(--ambd)';
-      err.style.color = 'var(--amb)';
-      err.style.borderColor = 'var(--ambb)';
       return;
     }
     // Show full name, fall back to email prefix
@@ -983,6 +990,19 @@ async function approveUser(userId) {
   renderAllUsers();
   loadPendingBadge();
   showPlatformToast('User approved ✓');
+}
+
+
+async function toggleDisableUser(userId, currentlyDisabled) {
+  const u = _usersCache.find(x => x.id === userId);
+  const name = (u && (u.full_name || u.email)) || 'this user';
+  const action = currentlyDisabled ? 'enable' : 'disable';
+  if (!confirm((currentlyDisabled ? 'Re-enable ' : 'Disable ') + name + '?\n\n' + (currentlyDisabled ? 'They will be able to log in again.' : 'They will be immediately blocked from logging in.'))) return;
+  const { error } = await sb.from('pw_profiles').update({ disabled: !currentlyDisabled }).eq('id', userId);
+  if (error) { showPlatformToast('Failed: ' + error.message); return; }
+  if (u) u.disabled = !currentlyDisabled;
+  renderAllUsers();
+  showPlatformToast(currentlyDisabled ? 'User enabled ✓' : 'User disabled ✓');
 }
 
 /* ── KEYBOARD ────────────────────────────────────────────────────── */
@@ -1411,7 +1431,7 @@ function renderUserCard(m, DS, LS, RS, rc) {
     +'<div style="width:36px;height:36px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--ff-head);font-weight:700;font-size:13px;color:'+col+';border:1px solid '+col+'33;background:'+col+'18">'+esc(initials)+'</div>'
     +'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:var(--tx);font-family:var(--ff-head);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(displayName)+'</div>'
     +'<div style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(email)+'</div></div>'
-    +(p&&p.approved===false?'<span style="font-size:9px;font-family:var(--ff-mono);color:var(--amb);border:1px solid var(--ambb);background:var(--ambd);padding:2px 6px;border-radius:4px;flex-shrink:0;white-space:nowrap">PENDING</span>':'')
+    +(p&&p.disabled===true?'<span style="font-size:9px;font-family:var(--ff-mono);color:var(--red);border:1px solid var(--redb);background:var(--redd);padding:2px 6px;border-radius:4px;flex-shrink:0;white-space:nowrap">DISABLED</span>':p&&p.approved===false?'<span style="font-size:9px;font-family:var(--ff-mono);color:var(--amb);border:1px solid var(--ambb);background:var(--ambd);padding:2px 6px;border-radius:4px;flex-shrink:0;white-space:nowrap">PENDING</span>':'')
     +(ku&&ku.must_reset_password?'<span style="font-size:9px;font-family:var(--ff-mono);color:var(--amb);border:1px solid var(--ambb);background:var(--ambd);padding:2px 6px;border-radius:4px;flex-shrink:0;white-space:nowrap">PW RESET</span>':'')
     +(ku&&ku.is_locked?'<span style="font-size:9px;font-family:var(--ff-mono);color:var(--red);border:1px solid var(--redb);background:var(--redd);padding:2px 6px;border-radius:4px;flex-shrink:0">LOCKED</span>':'')
     +'</div>';
@@ -1446,7 +1466,11 @@ function renderUserCard(m, DS, LS, RS, rc) {
       h+='<button onclick="setKilnPassword(\''+esc(kilnUn)+'\')" style="height:26px;padding:0 10px;font-size:11px;font-family:var(--ff-body);background:var(--sf3);border:1px solid var(--bd);border-radius:var(--rsm);color:var(--tx2);cursor:pointer">Set PW</button>';
     }
   }
-  if(p&&!isSelf&&!isProtectedKiln){h+='<button onclick="deleteUser(\''+esc(p.id)+'\',\''+esc(email)+'\')" style="height:26px;padding:0 10px;font-size:11px;font-family:var(--ff-mono);background:transparent;border:1px solid var(--redb);border-radius:var(--rsm);color:var(--red);cursor:pointer;margin-left:auto">Remove</button>';}
+  if(p&&!isSelf&&!isProtectedKiln){
+    const isDisabled = p.disabled === true;
+    h+='<button onclick="toggleDisableUser(\''+esc(p.id)+'\','+(isDisabled?'true':'false')+')" style="height:26px;padding:0 10px;font-size:11px;font-family:var(--ff-body);background:'+(isDisabled?'var(--grnd)':'var(--redd)')+';border:1px solid '+(isDisabled?'var(--grnb)':'var(--redb)')+';border-radius:var(--rsm);color:'+(isDisabled?'var(--grn)':'var(--red)')+';cursor:pointer">'+(isDisabled?'&#10003; Enable':'&#9646; Disable')+'</button>';
+    h+='<button onclick="deleteUser(\''+esc(p.id)+'\',\''+esc(email)+'\')" style="height:26px;padding:0 10px;font-size:11px;font-family:var(--ff-mono);background:transparent;border:1px solid var(--redb);border-radius:var(--rsm);color:var(--red);cursor:pointer;margin-left:auto">Remove</button>';
+  }
   h+='</div></div>';
   return h;
 }
