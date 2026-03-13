@@ -152,6 +152,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   text-transform:uppercase;padding:3px 8px;border-radius:4px;border:1px solid;}
 .badge-live{color:var(--grn);border-color:var(--grnb);background:var(--grnd);}
 .badge-new{color:var(--ac3);border-color:var(--acd3);background:var(--acd1);}
+.badge-offline{color:var(--red);border-color:var(--redb);background:var(--redd);}
 .card-title{font-family:var(--ff-head);font-weight:700;font-size:16px;
   color:var(--tx);letter-spacing:-.3px;margin-bottom:5px;}
 .card-desc{font-size:12.5px;color:var(--tx2);line-height:1.55;margin-bottom:16px;}
@@ -331,30 +332,30 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     <div class="section-label">Live Applications</div>
     <div class="app-grid">
 
-      <a href="kiln-log/index.html" class="app-card">
+      <a href="kiln-log/index.html" class="app-card" data-check="kiln-log/index.html">
         <div class="card-top">
           <div class="card-icon" style="background:rgba(26,122,53,.15);border:1px solid rgba(46,204,92,.25)">🔥</div>
-          <span class="card-badge badge-live">Live</span>
+          <span class="card-badge badge-live" id="badge-kiln">Live</span>
         </div>
         <div class="card-title">Padeswood Shift Logs</div>
         <div class="card-desc">Plant shift logs for kiln burners, cement analysts and shift managers. Track process conditions, coal additions, and shift handover notes.</div>
         <div class="card-arrow">→</div>
       </a>
 
-      <a href="documents/index.html" class="app-card">
+      <a href="documents/index.html" class="app-card" data-check="documents/index.html">
         <div class="card-top">
           <div class="card-icon" style="background:rgba(155,116,232,.12);border:1px solid rgba(155,116,232,.28)">📋</div>
-          <span class="card-badge badge-new">New</span>
+          <span class="card-badge badge-live" id="badge-docs">Checking…</span>
         </div>
         <div class="card-title">Documents</div>
         <div class="card-desc">Risk assessments, COSHH data sheets, and equipment records. Status tracking, review dates, and audit trail for all compliance documents.</div>
         <div class="card-arrow">→</div>
       </a>
 
-      <a href="isolation/index.html" class="app-card">
+      <a href="isolation/index.html" class="app-card" data-check="isolation/index.html">
         <div class="card-top">
           <div class="card-icon" style="background:rgba(232,134,26,.12);border:1px solid rgba(232,134,26,.28)">🔌</div>
-          <span class="card-badge badge-new">New</span>
+          <span class="card-badge badge-live" id="badge-iso">Checking…</span>
         </div>
         <div class="card-title">Isolation Matrix</div>
         <div class="card-desc">Equipment isolation procedures for safe maintenance. Manage isolation points, work areas, and equipment lockout/tagout requirements.</div>
@@ -845,6 +846,8 @@ async function showAppSelector(user) {
     document.getElementById('headerEmail').textContent = fallback;
     document.getElementById('aiReportBtn').style.display = 'flex';
   }
+  // Check each app is reachable
+  checkAppStatus();
 }
 
 async function doLogout() {
@@ -1056,6 +1059,32 @@ async function loadUserTheme() {
 })();
 
 /* /* ── INIT ──────────────────────────────────────────────── */
+
+async function checkAppStatus() {
+  const apps = [
+    { id: 'badge-kiln', url: 'kiln-log/index.html' },
+    { id: 'badge-docs', url: 'documents/index.html' },
+    { id: 'badge-iso',  url: 'isolation/index.html' }
+  ];
+  for (const app of apps) {
+    const el = document.getElementById(app.id);
+    if (!el) continue;
+    try {
+      const res = await fetch(app.url, { method: 'HEAD', cache: 'no-cache' });
+      if (res.ok) {
+        el.textContent = 'Live';
+        el.className = 'card-badge badge-live';
+      } else {
+        el.textContent = 'Offline';
+        el.className = 'card-badge badge-offline';
+      }
+    } catch (e) {
+      el.textContent = 'Offline';
+      el.className = 'card-badge badge-offline';
+    }
+  }
+}
+
 window.addEventListener('load', function() {
   sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   if (window.location.hash && window.location.hash.includes('access_token')) {

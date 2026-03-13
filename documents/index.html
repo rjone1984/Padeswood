@@ -427,11 +427,37 @@ th.sortable.sort-asc .sort-icon .arr-down,th.sortable.sort-desc .sort-icon .arr-
 .coshh-act-table td{padding:7px 10px;border-bottom:1px solid var(--bd);color:var(--tx);}
 .coshh-act-table tr:last-child td{border-bottom:none;}
 .coshh-act-table td:first-child{color:var(--tx3);font-family:var(--ff-mono);font-size:11px;}
-.coshh-text-block{font-size:12.5px;color:var(--tx2);line-height:1.7;white-space:pre-wrap;}
+.coshh-text-block{font-size:12.5px;color:var(--tx2);line-height:1.7;white-space:pre-wrap;max-height:160px;overflow-y:auto;padding-right:4px;}
 .coshh-text-block li,.coshh-text-block-item{padding:3px 0;border-bottom:1px solid var(--bd);
   display:block;color:var(--tx2);font-size:12.5px;}
 .coshh-two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 @media(max-width:600px){.coshh-view-grid,.coshh-view-grid-3,.coshh-two-col{grid-template-columns:1fr;}}
+
+/* ── EMERGENCY INFO BLOCKS ──────────────────────────────────────── */
+.emerg-block{border-radius:8px;padding:14px 16px;margin-bottom:0;}
+.emerg-block .emerg-lbl{font-size:10px;font-weight:700;font-family:var(--ff-mono);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:7px;}
+.emerg-block .emerg-lbl svg{flex-shrink:0;}
+.emerg-block .emerg-text{font-size:12.5px;line-height:1.75;white-space:pre-wrap;max-height:180px;overflow-y:auto;}
+.emerg-first-aid{background:#0a1e2e;border:1px solid #1a4a70;}
+.emerg-first-aid .emerg-lbl{color:#4a9eff;}
+.emerg-first-aid .emerg-text{color:#a0c4e8;}
+.emerg-fire{background:#2a0a0a;border:1px solid #7a1a1a;}
+.emerg-fire .emerg-lbl{color:#f0524f;}
+.emerg-fire .emerg-text{color:#e8a0a0;}
+.emerg-spillage{background:#1e1a08;border:1px solid #6a4e10;}
+.emerg-spillage .emerg-lbl{color:#f5a623;}
+.emerg-spillage .emerg-text{color:#e8d0a0;}
+.emerg-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;}
+/* ── RA MODAL scrollable fields ──────────────────────────────────── */
+.field-textarea{width:100%;background:var(--inp);border:1px solid var(--bd2);border-radius:var(--rxs);padding:8px 10px;color:var(--tx);font-size:13px;font-family:var(--ff-body);resize:vertical;min-height:70px;max-height:200px;overflow-y:auto;line-height:1.5;}
+.field-textarea:focus{outline:none;border-color:var(--ac);}
+/* ── AUDIT DETAIL MODAL ──────────────────────────────────────────── */
+.audit-diff{font-family:var(--ff-mono);font-size:11px;display:flex;flex-direction:column;gap:6px;}
+.audit-diff-row{display:grid;grid-template-columns:120px 1fr 1fr;gap:8px;padding:6px 8px;border-radius:5px;background:var(--sf2);}
+.audit-diff-field{color:var(--tx2);font-weight:600;word-break:break-word;}
+.audit-diff-old{color:var(--red);word-break:break-word;text-decoration:line-through;opacity:.8;}
+.audit-diff-new{color:var(--grn);word-break:break-word;}
+.audit-diff-header{display:grid;grid-template-columns:120px 1fr 1fr;gap:8px;padding:4px 8px;font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--tx3);}
 </style>
 </head>
 <body>
@@ -531,10 +557,6 @@ th.sortable.sort-asc .sort-icon .arr-down,th.sortable.sort-desc .sort-icon .arr-
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
       Risk Assessments <span class="tab-count" id="raCount">0</span>
     </button>
-    <button class="tab-btn" data-tab="ra-audit" onclick="switchTab('ra-audit')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-      Audit Log <span class="tab-count" id="raAuditCount">0</span>
-    </button>
     <button class="tab-btn" data-tab="coshh" onclick="switchTab('coshh')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
       COSHH <span class="tab-count" id="coshhCount">0</span>
@@ -542,6 +564,10 @@ th.sortable.sort-asc .sort-icon .arr-down,th.sortable.sort-desc .sort-icon .arr-
     <button class="tab-btn" data-tab="equipment" onclick="switchTab('equipment')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 0-14.14 0"/><path d="M4.93 19.07a10 10 0 0 0 14.14 0"/></svg>
       Equipment <span class="tab-count" id="equipCount">0</span>
+    </button>
+    <button class="tab-btn" data-tab="ra-audit" onclick="switchTab('ra-audit')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      Audit Log <span class="tab-count" id="raAuditCount">0</span>
     </button>
   </nav>
 
@@ -640,12 +666,13 @@ th.sortable.sort-asc .sort-icon .arr-down,th.sortable.sort-desc .sort-icon .arr-
         <table><thead><tr>
           <th>Timestamp</th>
           <th>Action</th>
-          <th>Reference</th>
-          <th>Title</th>
+          <th>Type</th>
+          <th>Record</th>
           <th>User</th>
-          <th>Detail</th>
+          <th>Changes</th>
+          <th></th>
         </tr></thead>
-        <tbody id="auditBody"><tr><td colspan="6"><div class="empty-state"><p>Loading…</p></div></td></tr></tbody></table>
+        <tbody id="auditBody"><tr><td colspan="7"><div class="empty-state"><p>Loading…</p></div></td></tr></tbody></table>
       </div>
     </div>
 
@@ -665,6 +692,10 @@ th.sortable.sort-asc .sort-icon .arr-down,th.sortable.sort-desc .sort-icon .arr-
         <button class="btn btn-primary" id="btnAddCOSHH" onclick="openCOSHHModal()" style="display:none">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add COSHH
         </button>
+        <a href="https://cms.sypol.com/Login.aspx?ReturnUrl=/" target="_blank" rel="noopener" class="btn btn-ghost" style="text-decoration:none;font-size:12px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          Sypol
+        </a>
       </div>
       <div class="table-wrap">
         <table><thead><tr><th>Product</th><th>Supplier</th><th>Hazard Level</th><th>Work Area</th><th>Next Review</th><th>Status</th></tr></thead>
@@ -737,9 +768,9 @@ th.sortable.sort-asc .sort-icon .arr-down,th.sortable.sort-desc .sort-icon .arr-
       <div class="modal-section-label" style="margin-top:10px">Activity Details</div>
       <div class="field-row">
         <div class="field-group" style="max-width:160px"><label class="field-label">Number of People Required</label><input type="number" class="field-input" id="raNumPeople" placeholder="e.g. 3" min="1"></div>
-        <div class="field-group"><label class="field-label">Level of Supervision Required</label><input type="text" class="field-input" id="raSupervision" placeholder="e.g. Twice unless specific additional hazard identified"></div>
+        <div class="field-group"><label class="field-label">Level of Supervision Required</label><textarea class="field-input" id="raSupervision" rows="2" style="resize:vertical;min-height:52px;max-height:200px;overflow-y:auto" placeholder="e.g. Twice unless specific additional hazard identified"></textarea></div>
       </div>
-      <div class="field-group"><label class="field-label">Specialist Tools / Equipment / Documentation Required</label><input type="text" class="field-input" id="raSpecialist" placeholder="e.g. DISAB Vacuum Tanker"></div>
+      <div class="field-group"><label class="field-label">Specialist Tools / Equipment / Documentation Required</label><textarea class="field-input" id="raSpecialist" rows="2" style="resize:vertical;min-height:52px;max-height:200px;overflow-y:auto" placeholder="e.g. DISAB Vacuum Tanker"></textarea></div>
 
       <!-- At Risk Groups key -->
       <div style="margin-top:6px;font-size:11px;font-family:var(--ff-mono);color:var(--tx3);background:var(--sf3);border:1px solid var(--bd);border-radius:var(--rsm);padding:7px 12px;line-height:2">
@@ -767,6 +798,20 @@ th.sortable.sort-asc .sort-icon .arr-down,th.sortable.sort-desc .sort-icon .arr-
       </button>
       <button class="btn btn-ghost" onclick="closeRAModal()">Cancel</button>
       <button class="btn btn-primary" id="raSaveBtn" onclick="saveRA()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── AUDIT DETAIL MODAL ──────────────────────────────────────── -->
+<div class="modal-overlay" id="auditDetailModal" onclick="if(event.target===this)document.getElementById('auditDetailModal').classList.remove('open')">
+  <div class="modal modal-wide">
+    <div class="modal-header">
+      <span class="modal-title">Audit Entry Detail</span>
+      <button class="modal-close" onclick="document.getElementById('auditDetailModal').classList.remove('open')">×</button>
+    </div>
+    <div class="modal-body" id="auditDetailContent" style="padding:0"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="document.getElementById('auditDetailModal').classList.remove('open')">Close</button>
     </div>
   </div>
 </div>
@@ -805,6 +850,9 @@ th.sortable.sort-asc .sort-icon .arr-down,th.sortable.sort-desc .sort-icon .arr-
 
     <div class="modal-footer" style="justify-content:flex-start" id="coshhFooter">
       <button class="btn btn-danger" id="coshhDeleteBtn" onclick="deleteCOSHH()" style="display:none;margin-right:auto">Delete</button>
+      <button class="btn btn-ghost" id="coshhPrintBtn" onclick="printSingleCOSHH(document.getElementById('coshhId').value)" style="display:none;gap:5px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Print
+      </button>
       <button class="btn btn-ghost" onclick="closeCOSHHModal()">Close</button>
       <button class="btn btn-primary" id="coshhSaveBtn" onclick="saveCOSHH()" style="display:none">Save</button>
     </div>
@@ -925,10 +973,14 @@ function hasRole(...roles){ if(!currentProfile) return false; if(currentProfile.
 /* ── LICENCE ─────────────────────────────────────────────────────── */
 async function checkLicence(){
   try {
+    // 6-second timeout — fail open rather than hang forever
+    const controller = new AbortController();
+    const tid = setTimeout(() => controller.abort(), 6000);
     const res = await fetch(
       SB_LIC_URL+'/rest/v1/kiln_licences?licence_key=eq.'+encodeURIComponent(LICENCE_KEY)+'&select=paid,expires_at,customer,site',
-      {method:'GET',mode:'cors',headers:{'apikey':SB_LIC_KEY,'Authorization':'Bearer '+SB_LIC_KEY,'Content-Type':'application/json'}}
+      {method:'GET',mode:'cors',signal:controller.signal,headers:{'apikey':SB_LIC_KEY,'Authorization':'Bearer '+SB_LIC_KEY,'Content-Type':'application/json'}}
     );
+    clearTimeout(tid);
     if(res.ok){
       const rows = await res.json();
       if(rows&&rows.length&&rows[0].paid&&new Date(rows[0].expires_at)>=new Date()){
@@ -940,10 +992,12 @@ async function checkLicence(){
       }
       showLicenceError('Licence not active. Please contact your administrator.');
     } else {
+      // Non-200 from licence server — fail open
       hideLicenceOverlay();
     }
   } catch(e) {
-    console.warn('Licence check network error — failing open:', e.message);
+    // Network error or timeout — fail open so app isn't blocked
+    console.warn('Licence check failed, failing open:', e.message);
     hideLicenceOverlay();
   }
 }
@@ -1235,18 +1289,17 @@ async function loadAudit(){
   const { data, error } = await sb
     .from('pw_audit_trail')
     .select('*')
-    .eq('table_name','pw_risk_assessments')
     .order('changed_at', { ascending: false })
-    .limit(500);
+    .limit(1000);
   if(error){ console.error('loadAudit error:', error); return; }
   _raAudit = data || [];
+  indexAuditRows(_raAudit);
   document.getElementById('raAuditCount').textContent = _raAudit.length;
   renderAudit();
 }
 
 function renderAudit(rows){
   rows = rows || _raAudit;
-  // Populate user filter
   const users = [...new Set(_raAudit.map(r => r.changed_by).filter(Boolean))].sort();
   const uf = document.getElementById('auditUserFilter');
   const uv = uf.value;
@@ -1255,39 +1308,103 @@ function renderAudit(rows){
 
   const body = document.getElementById('auditBody');
   if(!rows.length){
-    body.innerHTML = '<tr><td colspan="6"><div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="36" height="36"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg><p>No audit entries found.</p></div></td></tr>';
+    body.innerHTML = '<tr><td colspan="7"><div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="36" height="36"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg><p>No audit entries found.</p></div></td></tr>';
     return;
   }
+  const tableLabel={'pw_risk_assessments':'Risk Assessment','pw_coshh_sheets':'COSHH','pw_equipment':'Equipment','pw_profiles':'User'};
   body.innerHTML = rows.map(function(r){
-    const nv = r.new_data || (r.new_values ? (function(){ try{ return JSON.parse(r.new_values); }catch(e){ return {}; } })() : {});
-    const ref   = nv.ref   || r.record_id || '—';
-    const title = nv.title || '—';
-    const detail= nv.detail|| '—';
-    const action = r.action || 'updated';
-    const ts = r.changed_at ? new Date(r.changed_at).toLocaleString('en-GB',{
-      day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'
-    }) : '—';
-    return '<tr>'
-      + '<td style="font-family:var(--ff-mono);font-size:11px;white-space:nowrap;color:var(--tx2)">'+ts+'</td>'
-      + '<td><span class="pill-action-'+action+'">'+action+'</span></td>'
-      + '<td class="td-ref">'+esc(ref)+'</td>'
-      + '<td><div class="td-title">'+esc(title)+'</div></td>'
-      + '<td style="font-size:12px;color:var(--tx2)">'+esc(r.changed_by||'—')+'</td>'
-      + '<td style="font-size:11px;color:var(--tx3)">'+esc(detail)+'</td>'
-      + '</tr>';
+    const nv = r.new_data||{};
+    const ov = r.old_data||{};
+    const action = r.action||'update';
+    const tbl = tableLabel[r.table_name]||r.table_name||'—';
+    const name = nv.product_name||nv.title||nv.name||nv.full_name||ov.product_name||ov.title||ov.name||r.record_id||'—';
+    const ref  = nv.ref||ov.ref||'';
+    const ts   = r.changed_at ? new Date(r.changed_at).toLocaleString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
+
+    // Build a quick summary of what changed
+    const changes = buildChangeSummary(ov, nv);
+
+    return '<tr class="audit-row" style="cursor:pointer" onclick="openAuditDetail(''+esc(r.id||'')+'')">'+
+      '<td style="font-family:var(--ff-mono);font-size:11px;white-space:nowrap;color:var(--tx2)">'+ts+'</td>'+
+      '<td><span class="pill-action-'+action+'">'+action+'</span></td>'+
+      '<td style="font-size:11px;color:var(--tx2)">'+esc(tbl)+'</td>'+
+      '<td><div class="td-title">'+(ref?'<span class="td-ref" style="margin-right:6px">'+esc(ref)+'</span>':'')+esc(name)+'</div></td>'+
+      '<td style="font-size:12px;color:var(--tx2)">'+esc(r.changed_by||'—')+'</td>'+
+      '<td style="font-size:11px;color:var(--tx3);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+esc(changes)+'">'+esc(changes||'—')+'</td>'+
+      '<td style="text-align:right"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12" style="color:var(--tx3)"><polyline points="9 18 15 12 9 6"/></svg></td>'+
+      '</tr>';
   }).join('');
 }
+
+function buildChangeSummary(old_data, new_data){
+  if(!old_data || Object.keys(old_data).length===0) return 'Record created';
+  const ignore = new Set(['updated_at','created_at','updated_by','created_by']);
+  const parts = [];
+  const allKeys = [...new Set([...Object.keys(old_data||{}), ...Object.keys(new_data||{})])].filter(k=>!ignore.has(k));
+  for(const k of allKeys){
+    const ov = String(old_data[k]??''); const nv2 = String(new_data[k]??'');
+    if(ov !== nv2 && (ov||nv2)) parts.push(k.replace(/_/g,' '));
+  }
+  return parts.length ? 'Changed: '+parts.slice(0,4).join(', ')+(parts.length>4?' +more':'') : 'No field changes';
+}
+
+// Store audit rows by id for detail lookup
+const _auditById = {};
+function indexAuditRows(rows){ rows.forEach(r=>{ if(r.id) _auditById[r.id]=r; }); }
+
+function openAuditDetail(id){
+  const r = _auditById[id] || _raAudit.find(x=>x.id===id);
+  if(!r) return;
+  const ov = r.old_data||{};
+  const nv = r.new_data||{};
+  const action = r.action||'update';
+  const ts = r.changed_at ? new Date(r.changed_at).toLocaleString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'}) : '—';
+  const ignore = new Set(['updated_at','created_at','updated_by','created_by']);
+
+  const allKeys = [...new Set([...Object.keys(ov), ...Object.keys(nv)])].filter(k=>!ignore.has(k));
+  const rows = allKeys.map(k=>{
+    const o=String(ov[k]??'—'); const n=String(nv[k]??'—');
+    const changed = o!==n;
+    return '<div class="audit-diff-row" style="'+(changed?'background:var(--sf3)':'')+'">'
+      +'<div class="audit-diff-field">'+esc(k.replace(/_/g,' '))+'</div>'
+      +'<div class="audit-diff-old">'+(action==='create'?'<span style="color:var(--tx3)">new record</span>':esc(o))+'</div>'
+      +'<div class="audit-diff-new">'+esc(n)+'</div>'
+      +'</div>';
+  }).join('');
+
+  const tableLabel={'pw_risk_assessments':'Risk Assessment','pw_coshh_sheets':'COSHH','pw_equipment':'Equipment','pw_profiles':'User'};
+  const tbl = tableLabel[r.table_name]||r.table_name||'—';
+
+  const html = '<div style="padding:0">'
+    +'<div style="padding:16px 20px;background:var(--sf2);border-bottom:1px solid var(--bd);display:flex;gap:16px;flex-wrap:wrap;align-items:center">'
+    +'<span class="pill-action-'+action+'">'+action+'</span>'
+    +'<span style="font-size:12px;color:var(--tx2)">'+esc(tbl)+'</span>'
+    +'<span style="font-family:var(--ff-mono);font-size:11px;color:var(--tx2)">'+esc(ts)+'</span>'
+    +'<span style="font-size:12px;color:var(--tx)">'+esc(r.changed_by||'—')+'</span>'
+    +'</div>'
+    +'<div style="padding:16px 20px">'
+    +'<div class="audit-diff-header"><div>Field</div><div>Before</div><div>After</div></div>'
+    +'<div class="audit-diff">'+rows+'</div>'
+    +'</div>'
+    +'</div>';
+
+  document.getElementById('auditDetailContent').innerHTML = html;
+  document.getElementById('auditDetailModal').classList.add('open');
+}
+
 
 function filterAudit(){
   const q  = document.getElementById('auditSearch').value.toLowerCase();
   const ac = document.getElementById('auditActionFilter').value;
   const uc = document.getElementById('auditUserFilter').value;
+  const tableLabel={'pw_risk_assessments':'risk assessment','pw_coshh_sheets':'coshh','pw_equipment':'equipment','pw_profiles':'user'};
   renderAudit(_raAudit.filter(function(r){
-    const nv = r.new_data || (r.new_values ? (function(){ try{ return JSON.parse(r.new_values); }catch(e){ return {}; } })() : {});
-    const matchQ = !q || [r.action, r.changed_by, nv.ref, nv.title, nv.detail, r.record_id]
-      .some(function(f){ return (f||'').toLowerCase().includes(q); });
-    const matchA = !ac || r.action === ac;
-    const matchU = !uc || r.changed_by === uc;
+    const nv = r.new_data||{};
+    const name = String(nv.product_name||nv.title||nv.name||r.record_id||'').toLowerCase();
+    const tblLabel = tableLabel[r.table_name]||r.table_name||'';
+    const matchQ = !q || name.includes(q) || (r.changed_by||'').toLowerCase().includes(q) || tblLabel.includes(q) || (r.action||'').includes(q);
+    const matchA = !ac || r.action===ac;
+    const matchU = !uc || r.changed_by===uc;
     return matchQ && matchA && matchU;
   }));
 }
@@ -1497,9 +1614,9 @@ function renderRAHazardRows() {
       +'</div>'
       +'<div class="field-row" style="margin-bottom:6px">'
         +'<div class="field-group"><label class="field-label">Hazards Identified *</label>'
-          +'<input type="text" class="field-input" value="'+esc(h.hazard_description||'')+'" oninput="updateRAHazard('+i+',\'hazard_description\',this.value)" placeholder="e.g. Confined space"></div>'
+          +'<textarea class="field-input" rows="2" oninput="updateRAHazard('+i+',\'hazard_description\',this.value)" style="resize:vertical;min-height:48px;max-height:180px;overflow-y:auto" placeholder="e.g. Confined space">'+esc(h.hazard_description||'')+'</textarea></div>'
         +'<div class="field-group"><label class="field-label">Potential Effect (from the hazard)</label>'
-          +'<input type="text" class="field-input" value="'+esc(h.potential_effect||'')+'" oninput="updateRAHazard('+i+',\'potential_effect\',this.value)" placeholder="e.g. Contact with hazardous gases"></div>'
+          +'<textarea class="field-input" rows="2" oninput="updateRAHazard('"+i+"',\'potential_effect\',this.value)" style="resize:vertical;min-height:48px;max-height:180px;overflow-y:auto" placeholder="e.g. Contact with hazardous gases">'+esc(h.potential_effect||'')+'</textarea></div>'
       +'</div>'
       +'<div class="field-group" style="margin-bottom:6px"><label class="field-label">Method Statement — Controls, equipment, working methods (Eliminate / Reduce / Isolate / Control / PPE)</label>'
         +'<textarea class="field-input" rows="2" oninput="updateRAHazard('+i+',\'method_statement\',this.value)" style="resize:vertical;min-height:52px" placeholder="e.g. Confined space entry by trained persons only…">'+esc(h.method_statement||'')+'</textarea></div>'
@@ -1579,7 +1696,7 @@ function buildPrintDoc(rows, title, subtitle){
   <tbody>${rows_html}</tbody>
 </table>
 <div class="footer"><span>Padeswood Works — Confidential</span><span>Printed ${now}</span></div>
-<script>window.onload=function(){window.print();}<\/script>
+<scr'+'ipt>window.onload=function(){window.print();}<\/script>
 </body></html>`;
 }
 
@@ -1709,11 +1826,152 @@ function printSingleRA(id){
         +'<div class="section-title">Hazard Rows ('+hazards.length+')</div>'
         +hazardSection
         +'<div class="footer"><span>Padeswood Works \u2014 Confidential \u2014 '+esc(r.ref||'')+' v'+esc(String(r.version||'1'))+'</span><span>Printed '+now+'</span></div>'
-        +'<script>window.onload=function(){window.print();}<\/script>'
+        +'<scr'+'ipt>window.onload=function(){window.print();}<\/script>'
         +'</body></html>';
 
       openPrintWindow(html);
     }catch(e){ console.error('printSingleRA error:',e); showToast('Print error: '+e.message); }
+  });
+}
+
+function printSingleCOSHH(id){
+  if(!id){ showToast('No COSHH sheet selected'); return; }
+  const r=_coshh.find(x=>x.id===id);
+  if(!r){ showToast('COSHH sheet not found'); return; }
+  sb.from('pw_coshh_activities').select('*').eq('coshh_id',id).order('act_no').then(function(res){
+    try{
+      const acts=res.data||[];
+      const now=new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});
+      const lvl=(r.hazard_level||'').toUpperCase();
+      const hazardStyle={
+        HIGH:'background:#f8d7da;color:#721c24;border:1px solid #f5c6cb',
+        MEDIUM:'background:#fff3cd;color:#856404;border:1px solid #ffeeba',
+        LOW:'background:#d4edda;color:#155724;border:1px solid #c3e6cb'
+      };
+      const hst=hazardStyle[lvl]||'background:#e9ecef;color:#495057;border:1px solid #dee2e6';
+      const st=r._status||'current';
+      const reviewStyle={'overdue':'background:#f8d7da;color:#721c24','due-soon':'background:#fff3cd;color:#856404','current':'background:#d4edda;color:#155724'};
+      const rst=reviewStyle[st]||reviewStyle['current'];
+
+      const haz=Array.isArray(r.health_hazards)&&r.health_hazards.length?r.health_hazards:
+        (Array.isArray(r.hazard_categories)?r.hazard_categories:[]);
+      const hazHtml=haz.length
+        ?haz.map(function(h){return '<span style="display:inline-block;margin:2px 3px;padding:2px 8px;border-radius:3px;font-size:9px;font-weight:600;background:#ffeeba;color:#856404;border:1px solid #ffc107">'+esc(h)+'</span>';}).join('')
+        :'<span style="color:#888;font-size:10px">None recorded</span>';
+
+      const actHtml=acts.length
+        ?('<table style="width:100%;border-collapse:collapse;font-size:10px;margin-top:4px">'
+          +'<thead><tr>'
+          +['#','Method','Area','Exposure','Acute','Chronic'].map(function(h){return '<th style="background:#1a7a35;color:#fff;padding:5px 7px;font-size:9px;font-weight:600;text-transform:uppercase;text-align:left">'+h+'</th>';}).join('')
+          +'</tr></thead><tbody>'
+          +acts.map(function(a,i){
+            var rsk=function(v){return v==='HIGH'?'color:#721c24;font-weight:700':v==='MEDIUM'?'color:#856404;font-weight:700':'color:#155724';};
+            return '<tr style="background:'+(i%2===0?'#f8faf8':'#fff')+'">'
+              +'<td style="padding:4px 7px;border-bottom:1px solid #e8e8e8;color:#888;font-size:9px">'+(a.act_no||i+1)+'</td>'
+              +'<td style="padding:4px 7px;border-bottom:1px solid #e8e8e8;font-weight:500">'+esc(a.method||'—')+'</td>'
+              +'<td style="padding:4px 7px;border-bottom:1px solid #e8e8e8">'+esc(a.area||'—')+'</td>'
+              +'<td style="padding:4px 7px;border-bottom:1px solid #e8e8e8">'+esc(a.exposure||'—')+'</td>'
+              +'<td style="padding:4px 7px;border-bottom:1px solid #e8e8e8;'+rsk(a.acute_risk)+'">'+esc(a.acute_risk||'—')+'</td>'
+              +'<td style="padding:4px 7px;border-bottom:1px solid #e8e8e8;'+rsk(a.chronic_risk)+'">'+esc(a.chronic_risk||'—')+'</td>'
+              +'</tr>';
+          }).join('')
+          +'</tbody></table>')
+        :'<p style="color:#888;font-size:10px;padding:8px 0">No activities recorded.</p>';
+
+      var emergBlock=function(title,text,col,bg,bdr){
+        if(!text) return '';
+        return '<div style="flex:1;min-width:200px;background:'+bg+';border:1px solid '+bdr+';border-radius:4px;padding:10px 12px;margin:4px 0">'
+          +'<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:'+col+';margin-bottom:6px">'+title+'</div>'
+          +'<div style="font-size:10px;line-height:1.65;color:'+col+';white-space:pre-wrap">'+esc(text)+'</div>'
+          +'</div>';
+      };
+      const emergHtml=emergBlock('First Aid',r.first_aid,'#1a4a8a','#e8f0fe','#b8d0f8')
+        +emergBlock('Fire',r.fire,'#721c24','#f8d7da','#f5c6cb')
+        +emergBlock('Spillage',r.spillage,'#856404','#fff3cd','#ffc107');
+
+      const logoSrc=(function(){
+        var imgs=document.querySelectorAll('img');
+        for(var i=0;i<imgs.length;i++){
+          if(imgs[i].src&&imgs[i].src.indexOf('data:image/png;base64,')===0) return imgs[i].src;
+        }
+        return '';
+      })();
+
+      var mi=function(label,val){
+        return val?'<div class="mi"><div class="ml">'+esc(label)+'</div><div class="mv">'+esc(String(val))+'</div></div>':'';
+      };
+
+      const css='*{box-sizing:border-box;margin:0;padding:0}'
+        +'body{font-family:Arial,sans-serif;font-size:11px;color:#111;padding:20px;background:#fff}'
+        +'.hdr{display:flex;align-items:center;gap:16px;padding-bottom:12px;border-bottom:3px solid #1a7a35;margin-bottom:16px}'
+        +'.hdr img{height:56px;width:auto}'
+        +'.hdr h1{font-size:19px;font-weight:700;color:#111;line-height:1.1}'
+        +'.hdr-sub{font-size:10px;color:#666;letter-spacing:.5px;text-transform:uppercase;margin-top:2px}'
+        +'.hdr-right{margin-left:auto;text-align:right}'
+        +'.hdr-right .ref{font-size:13px;font-weight:700;color:#1a7a35}'
+        +'.hdr-right .date{font-size:10px;color:#666;margin-top:3px}'
+        +'.ptitle{font-size:17px;font-weight:700;color:#111;margin-bottom:10px}'
+        +'.bdgs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}'
+        +'.bdg{display:inline-block;padding:3px 9px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:.05em}'
+        +'.mg{display:grid;grid-template-columns:repeat(3,1fr);gap:5px 16px;margin-bottom:10px;padding:10px 12px;background:#f5faf6;border:1px solid #c3e6cb;border-radius:4px}'
+        +'.mi .ml{font-size:9px;text-transform:uppercase;letter-spacing:.4px;color:#666;font-weight:600;margin-bottom:2px}'
+        +'.mi .mv{font-size:11px;font-weight:500;color:#111}'
+        +'.sec{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#1a7a35;border-bottom:2px solid #1a7a35;padding-bottom:4px;margin:14px 0 8px}'
+        +'table{width:100%;border-collapse:collapse}'
+        +'.tb{font-size:10px;line-height:1.65;color:#333;white-space:pre-wrap;padding:8px 10px;background:#f9f9f9;border:1px solid #eee;border-radius:3px}'
+        +'.er{display:flex;gap:8px;flex-wrap:wrap}'
+        +'.ftr{margin-top:16px;padding-top:8px;border-top:1px solid #ddd;display:flex;justify-content:space-between;font-size:9px;color:#999}'
+        +'@media print{@page{size:A4;margin:10mm}button{display:none!important}}';
+
+      const logoHtml=logoSrc
+        ?'<img src="'+logoSrc+'" alt="Logo">'
+        :'<div style="width:56px;height:56px;background:#1a7a35;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:20px">PW</div>';
+
+      const html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>COSHH \u2014 '+esc(r.product_name||' ')+'</title>'
+        +'<style>'+css+'</style></head><body>'
+        +'<div class="hdr">'+logoHtml
+        +'<div><h1>Padeswood Works</h1><div class="hdr-sub">HeidelbergMaterials &middot; Wales</div></div>'
+        +'<div class="hdr-right"><div class="ref">COSHH Assessment</div><div class="date">Printed: '+now+'</div></div>'
+        +'</div>'
+        +'<div class="ptitle">'+esc(r.product_name||'—')+'</div>'
+        +'<div class="bdgs">'
+        +(lvl?'<span class="bdg" style="'+hst+'">'+esc(lvl)+' HAZARD</span>':'')
+        +(r.physical_state?'<span class="bdg" style="background:#e9ecef;color:#495057;border:1px solid #ced4da">'+esc(r.physical_state)+'</span>':'')
+        +(r.signal_word?'<span class="bdg" style="background:#e9ecef;color:#495057;border:1px solid #ced4da">'+esc(r.signal_word)+'</span>':'')
+        +(r.keyword?'<span class="bdg" style="background:#e9ecef;color:#495057;border:1px solid #ced4da">'+esc(r.keyword)+'</span>':'')
+        +'</div>'
+        +'<div class="mg">'
+        +mi('Sypol ID',r.assessment_id)+mi('Material Code',r.material_code)+mi('Supplier',r.supplier||r.manufacturer)
+        +mi('Supplier Phone',r.supplier_phone)+mi('Assessment Owner',r.assessment_owner)+mi('Work Area',r.work_area||r.location)
+        +mi('Sub Area',r.sub_area)+mi('Frequency of Use',r.frequency_of_use)+mi('People Exposed',r.people_exposed)
+        +mi('Qty / Day',r.quantity_per_day)+mi('Susceptible Workers',r.susceptible_workers?'Yes':null)+mi('Signal Word',r.signal_word)
+        +'</div>'
+        +'<div class="mg" style="margin-top:0">'
+        +mi('Assessment Reviewed',r.review_date)+mi('Next Review',r.next_review_date)+mi('Latest SDS Reference',r.sds_reference_date)
+        +'</div>'
+        +(haz.length?'<div class="sec">Health Hazards</div><div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">'+hazHtml+'</div>':'')
+        +(acts.length?'<div class="sec">Activities</div>'+actHtml:'')
+        +((r.existing_controls||r.work_practices)?'<div class="sec">Controls &amp; Work Practices</div>'
+          +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'
+          +(r.existing_controls?'<div><div style="font-size:9px;font-weight:700;text-transform:uppercase;color:#666;margin-bottom:4px">Existing Controls</div><div class="tb">'+esc(r.existing_controls)+'</div></div>':'')
+          +(r.work_practices?'<div><div style="font-size:9px;font-weight:700;text-transform:uppercase;color:#666;margin-bottom:4px">Additional Work Practices</div><div class="tb">'+esc(r.work_practices)+'</div></div>':'')
+          +'</div>':'')
+        +(r.exposure_limits?'<div class="sec">Exposure Limits</div><div class="tb">'+esc(r.exposure_limits)+'</div>':'')
+        +(emergHtml?'<div class="sec">Emergency Information</div><div class="er">'+emergHtml+'</div>':'')
+        +((r.contents||r.notes)?'<div class="sec">Notes &amp; Contents</div>'
+          +(r.contents?'<div style="margin-bottom:8px"><div style="font-size:9px;font-weight:700;text-transform:uppercase;color:#666;margin-bottom:4px">Contents</div><div class="tb">'+esc(r.contents)+'</div></div>':'')
+          +(r.notes?'<div><div style="font-size:9px;font-weight:700;text-transform:uppercase;color:#666;margin-bottom:4px">Notes / Considerations</div><div class="tb">'+esc(r.notes)+'</div></div>':'')
+          :'')
+        +'<div class="ftr"><span>Padeswood Works &middot; HeidelbergMaterials</span>'
+        +'<span>COSHH \u2014 '+esc(r.product_name||' ')+'</span>'
+        +'<span>Printed: '+now+'</span></div>'
+        +'<div style="margin-top:12px;text-align:center">'
+        +'<button onclick="window.print()" style="padding:8px 20px;background:#1a7a35;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:12px">&#128424; Print / Save as PDF</button>'
+        +'</div>'
+        +'</body></html>';
+
+      openPrintWindow(html);
+    }catch(e){ console.error('printSingleCOSHH error:',e); showToast('Print error: '+e.message); }
   });
 }
 
@@ -1844,6 +2102,8 @@ async function openCOSHHModal(id){
   if(editBtn) editBtn.style.display=canEdit?'':'none';
   if(saveBtn) saveBtn.style.display='none';
   if(delBtn)  delBtn.style.display=(hasRole('admin','reviewer'))?'block':'none';
+  const printBtn=document.getElementById('coshhPrintBtn');
+  if(printBtn) printBtn.style.display='inline-flex';
 
   overlay.classList.add('open');
 }
@@ -1938,13 +2198,27 @@ function buildCOSHHView(r, acts){
     html+=`</div></div>`;
   }
 
-  // ── First aid / Fire / Spillage
-  const sections=[['First Aid',r.first_aid],['Fire',r.fire],['Spillage',r.spillage]].filter(s=>s[1]);
-  if(sections.length){
-    html+=`<div class="coshh-section"><div class="coshh-section-title">Emergency Information</div><div class="coshh-two-col">`;
-    sections.forEach(([title,text])=>{
-      html+=`<div><div style="font-size:10px;font-weight:700;font-family:var(--ff-mono);letter-spacing:.06em;color:var(--tx3);margin-bottom:6px;text-transform:uppercase">${esc(title)}</div><div class="coshh-text-block">${esc(text)}</div></div>`;
-    });
+  // ── First aid / Fire / Spillage — styled emergency blocks
+  if(r.first_aid||r.fire||r.spillage){
+    html+=`<div class="coshh-section"><div class="coshh-section-title">Emergency Information</div><div class="emerg-grid">`;
+    if(r.first_aid){
+      html+=`<div class="emerg-block emerg-first-aid">
+        <div class="emerg-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>First Aid</div>
+        <div class="emerg-text">${esc(r.first_aid)}</div>
+      </div>`;
+    }
+    if(r.fire){
+      html+=`<div class="emerg-block emerg-fire">
+        <div class="emerg-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>Fire</div>
+        <div class="emerg-text">${esc(r.fire)}</div>
+      </div>`;
+    }
+    if(r.spillage){
+      html+=`<div class="emerg-block emerg-spillage">
+        <div class="emerg-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Spillage</div>
+        <div class="emerg-text">${esc(r.spillage)}</div>
+      </div>`;
+    }
     html+=`</div></div>`;
   }
 
@@ -1993,6 +2267,7 @@ async function saveCOSHH(){
   const next=document.getElementById('coshhNextReview').value;
   const err=document.getElementById('coshhErr');
   if(!product){ err.textContent='Product name is required.'; err.style.display='block'; return; }
+  const user=currentProfile?.full_name||currentProfile?.email||'unknown';
   const payload={product_name:product,manufacturer:document.getElementById('coshhMfr').value.trim()||null,
     supplier:document.getElementById('coshhMfr').value.trim()||null,
     location:document.getElementById('coshhLocation').value.trim()||null,
@@ -2000,9 +2275,28 @@ async function saveCOSHH(){
     hazard_categories:document.getElementById('coshhHazards').value.split(',').map(h=>h.trim()).filter(Boolean),
     review_date:document.getElementById('coshhReviewDate').value||null,next_review_date:next||null,
     updated_at:new Date().toISOString(),updated_by:currentProfile?.email||null};
-  let error;
-  if(id){ ({error}=await sb.from('pw_coshh_sheets').update(payload).eq('id',id)); }
-  else   { ({error}=await sb.from('pw_coshh_sheets').insert({...payload,created_at:new Date().toISOString(),created_by:currentProfile?.email||null})); }
+  let error, savedId=id;
+  if(id){
+    const old=_coshh.find(x=>x.id===id)||{};
+    ({error}=await sb.from('pw_coshh_sheets').update(payload).eq('id',id));
+    if(!error){
+      try{ await sb.from('pw_audit_trail').insert({
+        table_name:'pw_coshh_sheets', record_id:id, action:'update', changed_by:user,
+        old_data:{product_name:old.product_name,next_review_date:old.next_review_date,hazard_level:old.hazard_level,work_area:old.work_area||old.location,supplier:old.supplier},
+        new_data:{product_name:product,next_review_date:next||null,work_area:payload.work_area,supplier:payload.supplier}
+      }); }catch(e){ console.warn('COSHH audit log failed:',e.message); }
+    }
+  } else {
+    const {data,error:ie}=await sb.from('pw_coshh_sheets').insert({...payload,created_at:new Date().toISOString(),created_by:currentProfile?.email||null}).select('id').single();
+    error=ie; savedId=data?.id;
+    if(!error && savedId){
+      try{ await sb.from('pw_audit_trail').insert({
+        table_name:'pw_coshh_sheets', record_id:savedId, action:'create', changed_by:user,
+        old_data:null,
+        new_data:{product_name:product,next_review_date:next||null,work_area:payload.work_area,supplier:payload.supplier}
+      }); }catch(e){ console.warn('COSHH audit log failed:',e.message); }
+    }
+  }
   if(error){ err.textContent=error.message; err.style.display='block'; return; }
   await loadCOSHH(); refreshDashboard(); closeCOSHHModal(); showToast(id?'COSHH Sheet updated ✓':'COSHH Sheet added ✓');
 }
@@ -2174,8 +2468,51 @@ document.addEventListener('keydown',function(e){
 });
 
 /* ── INIT ────────────────────────────────────────────────────────── */
-window.addEventListener('load',function(){
+window.addEventListener('load', async function(){
   sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // Update spinner text so user knows what's happening
+  const spinEl = document.getElementById('licSpinner');
+  if(spinEl){
+    const spanEl = spinEl.querySelector('span');
+    if(spanEl) spanEl.textContent = 'Loading…';
+  }
+
+  // If the user arrived from the platform, their licence was already verified.
+  // Restore their Supabase session from the token the platform stored.
+  const savedSession = localStorage.getItem('kbl_session');
+  const savedRefresh = localStorage.getItem('kbl_refresh') || '';
+  if(savedSession){
+    try{
+      // Race the setSession against a 5-second timeout
+      const sessionPromise = sb.auth.setSession({
+        access_token:  savedSession,
+        refresh_token: savedRefresh
+      });
+      const timeoutPromise = new Promise((_,reject) =>
+        setTimeout(() => reject(new Error('timeout')), 5000)
+      );
+      const {data, error} = await Promise.race([sessionPromise, timeoutPromise]);
+      if(!error && data && data.user){
+        currentUser = data.user;
+        if(data.session){
+          localStorage.setItem('kbl_session', data.session.access_token);
+          localStorage.setItem('kbl_refresh', data.session.refresh_token);
+        }
+        document.getElementById('licenceOverlay').style.display = 'none';
+        loadProfileAndLaunch();
+        return;
+      }
+    } catch(e){
+      console.warn('Session restore failed:', e.message);
+      // Clear stale tokens
+      localStorage.removeItem('kbl_session');
+      localStorage.removeItem('kbl_refresh');
+    }
+  }
+
+  // No valid platform session — run the full licence + login flow
+  if(spinEl){ const spanEl = spinEl.querySelector('span'); if(spanEl) spanEl.textContent = 'Verifying licence...'; }
   checkLicence();
 });
 
@@ -2513,6 +2850,176 @@ async function deleteCategory(name){
   renderCatList();
 }
 
+
+/* ── AI OVERDUE REVIEW ──────────────────────────────────────────────── */
+function startOverdueReview(){
+  // Show the overdue panel, hide the main AI history
+  document.getElementById('docAiHistory').style.display='none';
+  document.getElementById('docAiSuggestions').style.display='none';
+  document.getElementById('overdueReviewPanel').style.display='flex';
+  document.getElementById('overdueReviewContent').innerHTML='';
+  renderOverdueItems();
+  openDocAiPanel();
+}
+
+function closeOverdueReview(){
+  document.getElementById('overdueReviewPanel').style.display='none';
+  document.getElementById('docAiHistory').style.display='flex';
+  document.getElementById('docAiSuggestions').style.display='flex';
+}
+
+function renderOverdueItems(){
+  const list = document.getElementById('overdueItemList');
+  const overdue = [
+    ..._ra.filter(r=>r._status==='overdue'||r._status==='due-soon').map(r=>({
+      id:r.id, type:'RA', name:(r.ref?r.ref+' — ':'')+r.title, status:r._status,
+      next_review:r.next_review_date, dept:r.department||'', record:r
+    })),
+    ..._coshh.filter(r=>r._status==='overdue'||r._status==='due-soon').map(r=>({
+      id:r.id, type:'COSHH', name:r.product_name, status:r._status,
+      next_review:r.next_review_date, dept:r.supplier||r.hazard_level||'', record:r
+    }))
+  ].sort((a,b)=>(a.status==='overdue'?0:1)-(b.status==='overdue'?0:1));
+
+  if(!overdue.length){
+    list.innerHTML='<div style="color:var(--grn);font-size:12px;padding:8px 0">✓ No overdue or due-soon items found.</div>';
+    return;
+  }
+
+  list.innerHTML = overdue.map(item=>{
+    const pillStyle = item.status==='overdue'
+      ? 'background:var(--redd);color:var(--red);border:1px solid var(--redb)'
+      : 'background:var(--ambd);color:var(--amb);border:1px solid var(--ambb)';
+    return `<div style="background:var(--sf2);border:1px solid var(--bd);border-radius:7px;padding:10px 12px;cursor:pointer;transition:border-color .15s"
+      onmouseover="this.style.borderColor='var(--ac)'" onmouseout="this.style.borderColor='var(--bd)'"
+      onclick="reviewOverdueItem('${item.id}','${item.type}')">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+        <span style="padding:2px 7px;border-radius:4px;font-size:9px;font-weight:700;letter-spacing:.04em;${pillStyle}">${item.status==='overdue'?'OVERDUE':'DUE SOON'}</span>
+        <span style="font-size:10px;font-weight:700;font-family:var(--ff-mono);color:var(--tx3)">${item.type}</span>
+      </div>
+      <div style="font-size:13px;font-weight:600;color:var(--tx)">${esc(item.name||'—')}</div>
+      <div style="font-size:11px;color:var(--tx2);margin-top:2px">${esc(item.dept)} · Next review: ${item.next_review||'—'}</div>
+    </div>`;
+  }).join('');
+}
+
+async function reviewOverdueItem(id, type){
+  const content = document.getElementById('overdueReviewContent');
+  content.innerHTML = '<div style="color:var(--tx2);font-size:12px;padding:16px 0;display:flex;align-items:center;gap:8px"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div><span style="font-family:var(--ff-mono)">Analysing with Claude…</span></div>';
+
+  let record, contextText;
+  if(type==='RA'){
+    record = _ra.find(r=>r.id===id);
+    if(!record){ content.innerHTML='<p style="color:var(--red)">Record not found.</p>'; return; }
+    let hazards = [];
+    try{
+      const {data} = await sb.from('pw_ra_hazards').select('*').eq('ra_id',id).order('sort_order');
+      hazards = data||[];
+    }catch(e){}
+    contextText = `RISK ASSESSMENT REVIEW REQUEST
+Title: ${record.title||'—'}
+Reference: ${record.ref||'—'}
+Department: ${record.department||'—'}
+Location: ${record.location||record.area||'—'}
+Assessor/Owner: ${record.owner||record.assessor||'—'}
+Status: ${record.status||'—'}
+Review date: ${record.review_date||'—'}
+Next review date: ${record.next_review_date||'—'} (${record._status})
+Number of people: ${record.num_people||'—'}
+Supervision: ${record.supervision||'—'}
+Specialist equipment: ${record.specialist_equipment||'—'}
+
+HAZARD ROWS (${hazards.length}):
+${hazards.map((h,i)=>`${i+1}. Task: ${h.task_sequence||'—'} | Hazard: ${h.hazard_description||'—'} | Effect: ${h.potential_effect||'—'} | Controls: ${h.method_statement||'—'} | Risk: ${h.risk_rating||'?'} (S${h.severity||'?'}×L${h.likelihood||'?'})`).join('\n')||'None recorded'}`;
+  } else {
+    record = _coshh.find(r=>r.id===id);
+    if(!record){ content.innerHTML='<p style="color:var(--red)">Record not found.</p>'; return; }
+    let acts = [];
+    try{
+      const {data} = await sb.from('pw_coshh_activities').select('*').eq('coshh_id',id).order('act_no');
+      acts = data||[];
+    }catch(e){}
+    const haz = Array.isArray(record.health_hazards)&&record.health_hazards.length?record.health_hazards:
+      (Array.isArray(record.hazard_categories)?record.hazard_categories:[]);
+    contextText = `COSHH ASSESSMENT REVIEW REQUEST
+Product: ${record.product_name||'—'}
+Sypol ID: ${record.assessment_id||'—'}
+Supplier: ${record.supplier||record.manufacturer||'—'}
+Hazard level: ${record.hazard_level||'—'}
+Signal word: ${record.signal_word||'—'}
+Physical state: ${record.physical_state||'—'}
+Work area: ${record.work_area||record.location||'—'}
+Sub area: ${record.sub_area||'—'}
+Keyword: ${record.keyword||'—'}
+Frequency of use: ${record.frequency_of_use||'—'}
+People exposed: ${record.people_exposed||'—'}
+Quantity/day: ${record.quantity_per_day||'—'}
+Assessment owner: ${record.assessment_owner||'—'}
+Review date: ${record.review_date||'—'}
+Next review date: ${record.next_review_date||'—'} (${record._status})
+SDS reference: ${record.sds_reference_date||'—'}
+
+Health hazards: ${haz.join('; ')||'None'}
+Activities: ${acts.map(a=>`${a.act_no}. ${a.method} / ${a.area} / ${a.exposure}`).join('; ')||'None'}
+First aid: ${(record.first_aid||'—').substring(0,200)}
+Fire: ${(record.fire||'—').substring(0,200)}
+Spillage: ${(record.spillage||'—').substring(0,200)}
+Existing controls: ${(record.existing_controls||'—').substring(0,300)}
+Work practices: ${(record.work_practices||'—').substring(0,300)}
+Notes: ${(record.notes||'—').substring(0,300)}`;
+  }
+
+  const systemPrompt = `You are a Health & Safety review assistant for Padeswood Works, a HeidelbergMaterials cement plant in Wales. 
+Your role is to help safety officers review overdue ${type==='RA'?'risk assessments':'COSHH assessments'} concisely and professionally.
+When given an assessment, provide:
+1. A brief status summary (2-3 sentences)
+2. Key review points to check (bullet points, max 5)
+3. Any outdated or concerning items to flag
+4. A suggested updated review date
+Keep your response concise, practical and suitable for a UK industrial environment.`;
+
+  try{
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:systemPrompt,
+        messages:[{role:'user',content:contextText}]
+      })
+    });
+    const data = await res.json();
+    if(data.error){ throw new Error(data.error.message||'API error'); }
+    const text = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
+
+    // Render the response
+    const escaped = text
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+      .replace(/^## (.+)$/gm,'<h4 style="font-size:12px;font-weight:700;color:var(--tx);margin:12px 0 4px;text-transform:uppercase;letter-spacing:.04em">$1</h4>')
+      .replace(/^### (.+)$/gm,'<h5 style="font-size:11px;font-weight:700;color:var(--tx2);margin:8px 0 4px">$1</h5>')
+      .replace(/^[•\-\*] (.+)$/gm,'<div style="display:flex;gap:6px;padding:2px 0"><span style="color:var(--ac3);flex-shrink:0">•</span><span>$1</span></div>')
+      .replace(/^\d+\. (.+)$/gm,'<div style="display:flex;gap:6px;padding:2px 0;color:var(--tx)"><span style="color:var(--ac3);flex-shrink:0;font-family:var(--ff-mono);font-size:10px">→</span><span>$1</span></div>')
+      .replace(/\n\n/g,'<br>').replace(/\n/g,'<br>');
+
+    const recName = type==='RA'?((record.ref||'')+(record.title?' — '+record.title:'')):(record.product_name||'—');
+    content.innerHTML = `
+      <div style="padding-bottom:12px;border-bottom:1px solid var(--bd);margin-bottom:12px">
+        <div style="font-size:10px;font-weight:700;font-family:var(--ff-mono);letter-spacing:.06em;color:var(--tx3);text-transform:uppercase;margin-bottom:4px">${type} · AI Review</div>
+        <div style="font-size:14px;font-weight:700;color:var(--tx)">${esc(recName)}</div>
+      </div>
+      <div style="font-size:12.5px;color:var(--tx2);line-height:1.75">${escaped}</div>
+      <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--bd);display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-primary btn-sm" onclick="${type==='RA'?'openRAModal':'openCOSHHModal'}('${id}')">Open & Edit ${type}</button>
+        <button class="btn btn-ghost btn-sm" onclick="renderOverdueItems();document.getElementById('overdueReviewContent').innerHTML=''">← All items</button>
+      </div>`;
+  } catch(e){
+    content.innerHTML=`<div style="color:var(--red);font-size:12px">Error: ${esc(e.message)}</div>`;
+  }
+}
+
+
 </script>
 
 <!-- Documents AI Panel -->
@@ -2537,6 +3044,19 @@ async function deleteCategory(name){
     <button class="ai-suggestion" onclick="document.getElementById('docAiPrompt').value='Which equipment is overdue for inspection?';sendDocAiReport()">Overdue inspections</button>
     <button class="ai-suggestion" onclick="document.getElementById('docAiPrompt').value='List all high-risk assessments';sendDocAiReport()">High-risk items</button>
     <button class="ai-suggestion" onclick="document.getElementById('docAiPrompt').value='Summarise COSHH hazards on site';sendDocAiReport()">COSHH hazard summary</button>
+    <button class="ai-suggestion" style="background:var(--ambd);border-color:var(--ambb);color:var(--amb)" onclick="startOverdueReview()">⚠ Review overdue items</button>
+  </div>
+  <!-- Overdue Review Mode -->
+  <div id="overdueReviewPanel" style="display:none;flex:1;overflow-y:auto;flex-direction:column">
+    <div style="padding:12px 22px;background:var(--ambd);border-bottom:1px solid var(--ambb)">
+      <div style="font-size:12px;font-weight:700;color:var(--amb);margin-bottom:4px">⚠ Overdue Review Assistant</div>
+      <div style="font-size:11px;color:var(--tx2)">Select an overdue item to get an AI-assisted review summary and suggested updates.</div>
+    </div>
+    <div id="overdueItemList" style="padding:12px 22px;display:flex;flex-direction:column;gap:6px;overflow-y:auto;max-height:280px"></div>
+    <div id="overdueReviewContent" style="padding:16px 22px;flex:1;overflow-y:auto"></div>
+    <div style="padding:10px 22px;border-top:1px solid var(--bd);flex-shrink:0;display:flex;gap:8px">
+      <button class="btn btn-ghost btn-sm" onclick="closeOverdueReview()" style="flex:1">← Back to Chat</button>
+    </div>
   </div>
   <div id="docAiHistory" style="flex:1;overflow-y:auto;padding:16px 22px;display:flex;flex-direction:column;gap:10px"></div>
   <div style="padding:12px 22px;border-top:1px solid var(--bd);flex-shrink:0">

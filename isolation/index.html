@@ -1443,8 +1443,30 @@ document.addEventListener('DOMContentLoaded',function(){
 });
 
 /* ── INIT ────────────────────────────────────────────────────────── */
-window.addEventListener('load',function(){
-  sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+window.addEventListener('load', async function(){
+  sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const savedSession = localStorage.getItem('kbl_session');
+  if(savedSession){
+    try{
+      const {data, error} = await sb.auth.setSession({
+        access_token:  savedSession,
+        refresh_token: localStorage.getItem('kbl_refresh') || ''
+      });
+      if(!error && data && data.user){
+        currentUser = data.user;
+        if(data.session){
+          localStorage.setItem('kbl_session', data.session.access_token);
+          localStorage.setItem('kbl_refresh', data.session.refresh_token);
+        }
+        document.getElementById('licenceOverlay').style.display = 'none';
+        loadProfileAndLaunch();
+        return;
+      }
+    } catch(e){
+      console.warn('Session restore failed:', e.message);
+    }
+  }
   checkLicence();
 });
 
