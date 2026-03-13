@@ -570,9 +570,10 @@ th.sortable.sort-asc .sort-icon .arr-down,th.sortable.sort-desc .sort-icon .arr-
           <th class="sortable" data-col="review_date" onclick="sortRA('review_date')">Date Assessed<span class="sort-icon"><svg class="arr-up" viewBox="0 0 8 5" width="8" height="5"><path d="M4 0L8 5H0z" fill="currentColor"/></svg><svg class="arr-down" viewBox="0 0 8 5" width="8" height="5"><path d="M4 5L0 0H8z" fill="currentColor"/></svg></span></th>
           <th class="sortable" data-col="next_review_date" onclick="sortRA('next_review_date')">Expiry<span class="sort-icon"><svg class="arr-up" viewBox="0 0 8 5" width="8" height="5"><path d="M4 0L8 5H0z" fill="currentColor"/></svg><svg class="arr-down" viewBox="0 0 8 5" width="8" height="5"><path d="M4 5L0 0H8z" fill="currentColor"/></svg></span></th>
           <th class="sortable" data-col="_status" onclick="sortRA('_status')">Status<span class="sort-icon"><svg class="arr-up" viewBox="0 0 8 5" width="8" height="5"><path d="M4 0L8 5H0z" fill="currentColor"/></svg><svg class="arr-down" viewBox="0 0 8 5" width="8" height="5"><path d="M4 5L0 0H8z" fill="currentColor"/></svg></span></th>
+          <th class="sortable" data-col="created_at" onclick="sortRA('created_at')">Date Added<span class="sort-icon"><svg class="arr-up" viewBox="0 0 8 5" width="8" height="5"><path d="M4 0L8 5H0z" fill="currentColor"/></svg><svg class="arr-down" viewBox="0 0 8 5" width="8" height="5"><path d="M4 5L0 0H8z" fill="currentColor"/></svg></span></th>
           <th></th>
         </tr></thead>
-        <tbody id="raBody"><tr><td colspan="10"><div class="empty-state"><p>Loading…</p></div></td></tr></tbody></table>
+        <tbody id="raBody"><tr><td colspan="11"><div class="empty-state"><p>Loading…</p></div></td></tr></tbody></table>
       </div>
       <div id="raPrintArea" style="display:none"></div>
     </div>
@@ -1082,7 +1083,7 @@ function renderRA(rows){
   const body=document.getElementById('raBody');
   const canEdit=hasRole('editor','reviewer','admin');
   if(!rows.length){
-    body.innerHTML='<tr><td colspan="10"><div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="36" height="36"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><p>No risk assessments found.</p>'+(canEdit?'<button class="btn btn-primary" onclick="openRAModal()">Add first Risk Assessment</button>':'')+'</div></td></tr>';
+    body.innerHTML='<tr><td colspan="11"><div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="36" height="36"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><p>No risk assessments found.</p>'+(canEdit?'<button class="btn btn-primary" onclick="openRAModal()">Add first Risk Assessment</button>':'')+'</div></td></tr>';
     return;
   }
   try { body.innerHTML=rows.map(function(r){
@@ -1104,10 +1105,11 @@ function renderRA(rows){
       +'<td style="font-family:var(--ff-mono);font-size:12px;text-align:center">'+(r.hazard_count||0)+'</td>'
       +'<td class="td-date">'+fmtDate(r.review_date)+'</td>'
       +'<td class="td-date">'+fmtDate(r.next_review_date)+'</td>'
+      +'<td class="td-date">'+fmtDate(r.created_at)+'</td>'
       +'<td>'+statusPill(r._status)+'</td>'
       +'<td onclick="event.stopPropagation()" style="white-space:nowrap">'+editBtns+'</td>'
       +'</tr>';
-  }).join(''); } catch(renderErr){ console.error('renderRA crash:', renderErr); body.innerHTML='<tr><td colspan="10" style="color:red;padding:12px">Render error: '+renderErr.message+'</td></tr>'; }
+  }).join(''); } catch(renderErr){ console.error('renderRA crash:', renderErr); body.innerHTML='<tr><td colspan="11" style="color:red;padding:12px">Render error: '+renderErr.message+'</td></tr>'; }
 }
 
 function renderCOSHH(rows){
@@ -1260,7 +1262,7 @@ function sortRARows(rows){
       return dir*(av-bv);
     }
     if(col==='hazard_count'){ return dir*(Number(av)-Number(bv)); }
-    if(col==='review_date'||col==='next_review_date'){ return dir*(new Date(av)-new Date(bv)); }
+    if(col==='review_date'||col==='next_review_date'||col==='created_at'){ return dir*(new Date(av)-new Date(bv)); }
     // owner/assessor fallback
     if(col==='owner') { av=a.owner||a.assessor||''; bv=b.owner||b.assessor||''; }
     if(col==='location') { av=a.location||a.area||''; bv=b.location||b.area||''; }
