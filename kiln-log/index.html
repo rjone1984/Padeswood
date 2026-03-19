@@ -1747,6 +1747,9 @@ function doLogout(){
   _sbRefreshToken = null;
   localStorage.removeItem('kbl_session');
   localStorage.removeItem('kbl_refresh');
+  Object.keys(localStorage).forEach(function(k){
+    if(k.startsWith('sb-') || k.startsWith('supabase')) localStorage.removeItem(k);
+  });
 
   // Reset state
   state = {}; smState = {}; caState = {};
@@ -2086,37 +2089,14 @@ async function initApp(){
     }
   }
   DAYS.forEach(d=>{ if(!state[d]) state[d]=mkDay(); });
-
-  // Today
-  const todayIdx=JS_DAY[new Date().getDay()];
-  currentDay=DAYS[todayIdx]||'Monday';
-
-  buildTabs();
-  // Always land on today's day across all three logs
-  const _todayIdx=JS_DAY[new Date().getDay()];
-  const _today=DAYS[_todayIdx]||'Monday';
-  currentDay=_today; currentSmDay=_today; currentCaDay=_today;
-  ['dayNav','smNav','caNav'].forEach(function(navId){
-    const activeTab=document.getElementById(navId+'-'+_today);
-    document.querySelectorAll('#'+navId+' .day-tab').forEach(t=>t.classList.toggle('active',t===activeTab));
-    if(activeTab){ const nav=document.getElementById(navId); if(nav) nav.scrollLeft=activeTab.offsetLeft-nav.offsetWidth/2+activeTab.offsetWidth/2; }
-  });
-  // Default view depends on role
-  if(isCementAnalyst && !isBurner && !isShiftManager && !isAdmin){
-    renderCaDay(_today);
-  } else if(isShiftManager && !isBurner && !isCementAnalyst && !isAdmin){
-    renderSmDay(_today);
-  } else {
-    renderDay(_today);
-  }
-  updateDots();
+  await _gotoTodayAndSwitch(true, true);
 }
 
 async function goToToday(){
   // Navigate to today's date and then to the correct log section for this user's role
   _gotoTodayAndSwitch();
 }
-async function _gotoTodayAndSwitch(){
+async function _gotoTodayAndSwitch(silent, forceBuild){
   if(weekStart) localStorage.setItem('kbl_week_'+toISO(weekStart), JSON.stringify(state));
   const now=new Date(), dow=now.getDay();
   const mon=new Date(now); mon.setDate(now.getDate()-(dow===0?6:dow-1));
@@ -2137,8 +2117,9 @@ async function _gotoTodayAndSwitch(){
     DAYS.forEach(d=>{ if(!state[d]) state[d]=mkDay(); });
     DAYS.forEach(d=>{ if(!smState[d]) smState[d]=mkSmDay(); });
     DAYS.forEach(d=>{ if(!caState[d]) caState[d]=mkCaDay(); });
-    autoSave(); buildTabs();
+    autoSave();
   }
+  if(forceBuild || !document.getElementById('dayNav-Monday')) buildTabs();
   const todayIdx=JS_DAY[new Date().getDay()];
   const today=DAYS[todayIdx]||'Monday';
   currentDay=today;
@@ -2155,7 +2136,7 @@ async function _gotoTodayAndSwitch(){
     }
   });
   updateDots();
-  showToast('Jumped to today ✓');
+  if(!silent) showToast('Jumped to today ✓');
 
   // Render the correct log for this user's role
   if(isCementAnalyst && !isBurner && !isShiftManager && !isAdmin){
@@ -3234,15 +3215,6 @@ let _reportScope = 'week';
 let _reportHistory = []; // {role, content}
 let _reportRendered = false;
 
-const REPORT_SUGGESTIONS = [
-  'Summarise this week\'s shifts',
-  'Which equipment had the most issues?',
-  'Write a handover report for management',
-  'Any recurring problems this month?',
-  'Which burner had the most entries?',
-  'Give me a night shift summary',
-];
-
 function renderReports(){
   animateContent();
   const el = document.getElementById('mainContent');
@@ -3259,16 +3231,13 @@ function renderReports(){
         <button class="search-scope-btn${_reportScope==='year'?' active':''}" onclick="setReportScope(this,'year')">This year</button>
         <button class="search-scope-btn${_reportScope==='all'?' active':''}" onclick="setReportScope(this,'all')">All time</button>
       </div>
-      <div class="reports-suggestions" id="reportSuggestions">
-        ${REPORT_SUGGESTIONS.map(s=>`<button class="reports-suggestion" onclick="useReportSuggestion('${s}')">${s}</button>`).join('')}
-      </div>
       <div class="reports-history" id="reportHistory">
         ${_reportHistory.map(renderReportMessage).join('')}
       </div>
       <div style="height:16px"></div>
       <div class="reports-prompt-wrap">
         <textarea class="reports-prompt" id="reportPrompt" rows="3"
-          placeholder="Ask a question about your shift data... e.g. 'Which equipment had the most issues this week?'"
+          placeholder="Message... (Ctrl/Cmd+Enter to send)"
           onkeydown="if((event.ctrlKey||event.metaKey)&&event.key==='Enter'){event.preventDefault();sendReport();}"></textarea>
         <button class="reports-send" id="reportSendBtn" onclick="sendReport()">
           <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" style="width:15px;height:15px"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
@@ -3300,12 +3269,6 @@ function setReportScope(btn, scope){
   renderReports();
 }
 
-function useReportSuggestion(text){
-  const prompt = document.getElementById('reportPrompt');
-  if(prompt){ prompt.value = text; prompt.focus(); }
-  document.getElementById('reportSuggestions').style.display = 'none';
-}
-
 async function buildReportContext(){
   const mondays = getMondaysForScope(_reportScope);
   let weeksData = [];
@@ -3334,13 +3297,13 @@ async function buildReportContext(){
     } catch(e){ weeksData = [{weekKey:'current',weekState:state,weekSmState:smState,weekCaState:caState}]; }
   }
 
-  const lines = ['KILN OPERATIONS SHIFT LOG DATA — scope: '+_reportScope, '='.repeat(50)];
+  const lines = ['KILN OPERATIONS SHIFT LOG SUMMARY — scope: '+_reportScope, '='.repeat(50)];
+  let burnerIssues = 0, burnerNotes = 0, managerNotes = 0;
+  let analystHse = 0, qualityIssues = 0, labIssues = 0, grindingIssues = 0;
+  const recentLines = [];
 
   weeksData.forEach(function({weekKey, weekState, weekSmState, weekCaState}){
     if(!weekState && !weekSmState && !weekCaState) return;
-    lines.push('\nWEEK: '+weekKey);
-
-    // ── Kiln Burners ──
     if(weekState){
       DAYS.forEach(function(day){
         const d = weekState[day]; if(!d) return;
@@ -3348,15 +3311,15 @@ async function buildReportContext(){
           const s = d[sk]; if(!s) return;
           const entries = (s.entries||[]).filter(function(e){return e.equipment||e.issue;});
           const hasNotes = (s.notes||'').trim();
-          if(!entries.length && !hasNotes) return;
-          lines.push('  [KILN BURNERS] '+day+' '+(si===0?'Day':'Night')+' Shift'+(s.shift?' | Shift: '+s.shift:' | Shift: not set')+(s.burner?' | Burner: '+s.burner:'')+(s.shiftManager?' | Manager: '+s.shiftManager:'')+(s.analyst?' | Analyst: '+s.analyst:''));
-          entries.forEach(function(e){ lines.push('    Equipment: '+(e.equipment||'?')+' — '+(e.issue||'no detail')); });
-          if(hasNotes) lines.push('    Notes: '+hasNotes);
+          burnerIssues += entries.length;
+          if(hasNotes) burnerNotes++;
+          entries.slice(0,2).forEach(function(e){
+            if(recentLines.length < 16) recentLines.push('  Burner | '+weekKey+' | '+day+' '+(si===0?'Day':'Night')+' | '+(e.equipment||'?')+' — '+(e.issue||'no detail'));
+          });
+          if(hasNotes && recentLines.length < 16) recentLines.push('  Burner note | '+weekKey+' | '+day+' '+(si===0?'Day':'Night')+' | '+hasNotes.slice(0,110));
         });
       });
     }
-
-    // ── Shift Managers ──
     if(weekSmState){
       DAYS.forEach(function(day){
         const d = weekSmState[day]; if(!d) return;
@@ -3364,35 +3327,53 @@ async function buildReportContext(){
           const s = d[sk]; if(!s) return;
           const notes = (s.notes||'').trim();
           if(!notes) return;
-          lines.push('  [SHIFT MANAGER] '+day+' '+(si===0?'Day':'Night')+' Shift'+(s.shift?' | Shift: '+s.shift:''));
-          lines.push('    Notes: '+notes);
+          managerNotes++;
+          if(recentLines.length < 16) recentLines.push('  Shift manager | '+weekKey+' | '+day+' '+(si===0?'Day':'Night')+' | '+notes.slice(0,110));
         });
       });
     }
-
-    // ── Cement Analysts ──
     if(weekCaState){
       DAYS.forEach(function(day){
         const d = weekCaState[day]; if(!d) return;
         ['shift1','shift2'].forEach(function(sk,si){
           const s = d[sk]; if(!s) return;
-          const analyst = (s.name||'').trim();
           const hseItems = (s.hse||[]).filter(function(h){return h.type||h.details;});
           const grind = (s.cemQuality||[]).filter(function(q){return (q.issues||'').trim();});
           const labBad = Object.entries(s.labEquip||{}).filter(function(x){return x[1].functional==='No'||x[1].functional==='N/A';});
-          const addCom = Object.entries(s.additives||{}).filter(function(x){return typeof x[1]==='object'&&(x[1].comments||'').trim();});
           const grindLog = (s.grindingLog||[]).filter(function(g){return g.equipment||g.problem;});
-          if(!analyst&&!hseItems.length&&!grind.length&&!labBad.length&&!grindLog.length) return;
-          lines.push('  [CEMENT ANALYST] '+day+' '+(si===0?'Day':'Night')+' Shift'+(s.shift?' | Shift: '+s.shift:'')+(analyst?' | Analyst: '+analyst:''));
-          hseItems.forEach(function(h){ lines.push('    HSE: '+(h.type||'?')+(h.details?' — '+h.details:'')); });
-          grind.forEach(function(q){ lines.push('    Cement quality (Mill '+q.mill+'): '+q.issues); });
-          labBad.forEach(function(x){ lines.push('    Lab equipment issue: '+x[0]+' — '+x[1].functional+(x[1].details?' ('+x[1].details+')':'')); });
-          addCom.forEach(function(x){ lines.push('    Additive note ('+x[0]+'): '+x[1].comments); });
-          grindLog.forEach(function(g){ lines.push('    Grinding log: '+(g.zone||'')+(g.equipment?' / '+g.equipment:'')+(g.problem?' — '+g.problem:'')+(g.comments?' ('+g.comments+')':'')); });
+          analystHse += hseItems.length;
+          qualityIssues += grind.length;
+          labIssues += labBad.length;
+          grindingIssues += grindLog.length;
+          hseItems.slice(0,1).forEach(function(h){
+            if(recentLines.length < 16) recentLines.push('  Analyst HSE | '+weekKey+' | '+day+' '+(si===0?'Day':'Night')+' | '+(h.type||'?')+(h.details?' — '+h.details:''));
+          });
+          grind.slice(0,1).forEach(function(q){
+            if(recentLines.length < 16) recentLines.push('  Analyst quality | '+weekKey+' | '+day+' '+(si===0?'Day':'Night')+' | Mill '+(q.mill||'?')+' — '+q.issues);
+          });
+          labBad.slice(0,1).forEach(function(x){
+            if(recentLines.length < 16) recentLines.push('  Analyst lab | '+weekKey+' | '+day+' '+(si===0?'Day':'Night')+' | '+x[0]+' — '+x[1].functional);
+          });
+          grindLog.slice(0,1).forEach(function(g){
+            if(recentLines.length < 16) recentLines.push('  Grinding log | '+weekKey+' | '+day+' '+(si===0?'Day':'Night')+' | '+(g.equipment||g.zone||'?')+' — '+(g.problem||'no detail'));
+          });
         });
       });
     }
   });
+
+  lines.push('SUMMARY COUNTS:');
+  lines.push('  Burner issues: '+burnerIssues);
+  lines.push('  Burner note entries: '+burnerNotes);
+  lines.push('  Shift manager note entries: '+managerNotes);
+  lines.push('  Analyst HSE entries: '+analystHse);
+  lines.push('  Analyst quality issues: '+qualityIssues);
+  lines.push('  Analyst lab equipment issues: '+labIssues);
+  lines.push('  Grinding log issues: '+grindingIssues);
+  lines.push('');
+  lines.push('RECENT RECORDED ITEMS:');
+  if(recentLines.length) recentLines.forEach(function(line){ lines.push(line); });
+  else lines.push('  No recorded items found for the selected scope.');
 
   return lines.join('\n');
 }
@@ -4358,7 +4339,6 @@ async function sendReport(){
     if(!GROQ_KEY){ alert('AI service unavailable — could not load configuration.'); return; }
   }
 
-  document.getElementById('reportSuggestions').style.display = 'none';
   promptEl.value = '';
   sendBtn.disabled = true;
 
@@ -4392,7 +4372,7 @@ CEMENT PLANT KNOWLEDGE:
 - Shift rotation labels: A, B, C, D, E — these rotate through the week. Each entry includes the shift label (e.g. 'Shift: E') so you can filter by shift team when asked
 
 BEHAVIOUR — CRITICAL RULES:
-- ONLY answer from the shift log data and plant knowledge base provided. Never invent, assume, or infer anything not explicitly recorded.
+- ONLY answer from the shift log summary and plant knowledge base provided. Never invent, assume, or infer anything not explicitly recorded.
 - If something is not in the data, say "This is not recorded in the log" — do not guess.
 - Be concise and direct. No waffle. Bullet points where appropriate.
 - Use cement industry terminology naturally where relevant.
@@ -4411,26 +4391,21 @@ BEHAVIOUR — CRITICAL RULES:
     // Inject the actual log data as the first user message so the AI only answers from real data
     const dataMessage = {
       role: 'user',
-      content: 'Here is the shift log data and plant knowledge base you must use to answer questions. '
+      content: 'Here is the shift log summary and plant knowledge base you must use to answer questions. '
         + 'Only refer to information explicitly present in this data. '
         + 'If something is not recorded, say so clearly — do not guess or infer.\n\n'
         + context + knowledgeBlock
     };
-    const dataAck = {
-      role: 'assistant',
-      content: 'Understood. I have the shift log data and plant knowledge base. I will only answer based on what is explicitly recorded — I will not invent or infer anything not present.'
-    };
     const messages = [
       {role:'system', content: systemPrompt},
       dataMessage,
-      dataAck,
       ..._reportHistory
     ];
 
     const res = await fetch(GROQ_URL, {
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_KEY},
-      body: JSON.stringify({model:'llama-3.3-70b-versatile', max_tokens:1500, messages})
+      body: JSON.stringify({model:'llama-3.3-70b-versatile', max_tokens:1200, messages})
     });
     const data = await res.json();
     const reply = data.choices?.[0]?.message?.content || 'No response received.';

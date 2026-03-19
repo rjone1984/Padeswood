@@ -12,8 +12,7 @@
 <style>
 /* =====================================================================
    PADESWOOD WORKS — DOCUMENTS APP — Design System v4
-   Tables: pw_profiles, pw_risk_assessments, pw_coshh_sheets,
-           pw_equipment, pw_audit_trail
+   Tables: pw_profiles, pw_risk_assessments, pw_audit_trail
    Supabase project: xnkwrkoxvgptobnmekgv
 ===================================================================== */
 :root {
@@ -366,8 +365,6 @@ th.sortable.sort-asc .sort-icon .arr-down,th.sortable.sort-desc .sort-icon .arr-
 .ai-dot{width:6px;height:6px;border-radius:50%;background:var(--ac3);animation:aiDot 1.2s ease-in-out infinite}
 .ai-dot:nth-child(2){animation-delay:.2s}.ai-dot:nth-child(3){animation-delay:.4s}
 @keyframes aiDot{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
-.ai-suggestion{padding:5px 11px;font-size:11px;font-family:var(--ff-body);background:var(--sf3);border:1px solid var(--bd);border-radius:20px;color:var(--tx2);cursor:pointer;white-space:nowrap}
-.ai-suggestion:hover{border-color:var(--ac);color:var(--ac3)}
 
 /* ── MOBILE ──────────────────────────────────────────────────────── */
 @media(max-width:640px){
@@ -497,7 +494,7 @@ th.sortable.sort-asc .sort-icon .arr-down,th.sortable.sort-desc .sort-icon .arr-
     <div class="header-logo"><img src="data:image/png;base64,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" style="width:26px;height:26px;object-fit:contain;display:block"></div>
     <div class="header-titles">
       <div class="header-name">Documents</div>
-      <div class="header-sub">Risk Assessments · COSHH · Equipment</div>
+      <div class="header-sub">Risk Assessments · Audit Log · Sypol COSHH</div>
     </div>
     <div class="header-right">
       <div class="header-user">
@@ -531,17 +528,13 @@ th.sortable.sort-asc .sort-icon .arr-down,th.sortable.sort-desc .sort-icon .arr-
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
       Risk Assessments <span class="tab-count" id="raCount">0</span>
     </button>
+    <a class="tab-btn" href="https://cms.sypol.com/Login.aspx?ReturnUrl=/" target="_blank" rel="noopener noreferrer">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      COSHH via Sypol
+    </a>
     <button class="tab-btn" data-tab="ra-audit" onclick="switchTab('ra-audit')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
       Audit Log <span class="tab-count" id="raAuditCount">0</span>
-    </button>
-    <button class="tab-btn" data-tab="coshh" onclick="switchTab('coshh')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      COSHH <span class="tab-count" id="coshhCount">0</span>
-    </button>
-    <button class="tab-btn" data-tab="equipment" onclick="switchTab('equipment')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 0-14.14 0"/><path d="M4.93 19.07a10 10 0 0 0 14.14 0"/></svg>
-      Equipment <span class="tab-count" id="equipCount">0</span>
     </button>
   </nav>
 
@@ -551,7 +544,7 @@ th.sortable.sort-asc .sort-icon .arr-down,th.sortable.sort-desc .sort-icon .arr-
     <div id="panel-dashboard" class="tab-panel active">
       <div style="margin-bottom:20px">
         <h2 style="font-family:var(--ff-head);font-weight:700;font-size:20px;color:var(--tx);letter-spacing:-.4px;margin-bottom:4px">Dashboard</h2>
-        <p style="color:var(--tx2);font-size:13px">Overview of document status across Risk Assessments and COSHH sheets.</p>
+        <p style="color:var(--tx2);font-size:13px">Overview of document status across risk assessments, with quick access to Sypol for COSHH sheets.</p>
       </div>
       <div style="margin-bottom:12px;font-family:var(--ff-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--tx3)">Risk Assessments</div>
       <div class="dash-grid">
@@ -561,12 +554,42 @@ th.sortable.sort-asc .sort-icon .arr-down,th.sortable.sort-desc .sort-icon .arr-
         <div class="stat-card" style="border-color:var(--bd2)"><div class="stat-label">Draft</div><div class="stat-num" id="raDraft">0</div><div class="stat-sub">No review date set</div></div>
         <div class="stat-card total"><div class="stat-label">Total</div><div class="stat-num" id="raTotal">0</div><div class="stat-sub">All assessments</div></div>
       </div>
-      <div style="margin-bottom:12px;font-family:var(--ff-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--tx3)">COSHH Sheets</div>
-      <div class="dash-grid">
-        <div class="stat-card overdue"><div class="stat-label">Overdue</div><div class="stat-num" id="coshhOverdue">0</div><div class="stat-sub">Past review date</div></div>
-        <div class="stat-card due-soon"><div class="stat-label">Due Soon</div><div class="stat-num" id="coshhDueSoon">0</div><div class="stat-sub">Within 30 days</div></div>
-        <div class="stat-card current"><div class="stat-label">Current</div><div class="stat-num" id="coshhCurrent">0</div><div class="stat-sub">Up to date</div></div>
-        <div class="stat-card total"><div class="stat-label">Total</div><div class="stat-num" id="coshhTotal">0</div><div class="stat-sub">All sheets</div></div>
+      <div style="margin-bottom:18px;padding:16px 18px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r)">
+        <div style="font-family:var(--ff-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--tx3);margin-bottom:8px">COSHH Sheets</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap">
+          <p style="color:var(--tx2);font-size:13px;line-height:1.6;max-width:620px">COSHH sheets are now managed in Sypol rather than within this documents app.</p>
+          <a class="btn btn-primary" href="https://cms.sypol.com/Login.aspx?ReturnUrl=/" target="_blank" rel="noopener noreferrer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="13" height="13"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Open Sypol
+          </a>
+        </div>
+        <div id="sypolAccessCard" style="display:none;margin-top:14px;padding:14px 16px;background:var(--sf2);border:1px solid var(--bd);border-radius:var(--rsm)">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap">
+            <div style="min-width:240px">
+              <div style="font-family:var(--ff-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--tx3);margin-bottom:8px">Restricted Access</div>
+              <div style="font-size:13px;color:var(--tx);font-weight:600;margin-bottom:10px">Sypol Account Details</div>
+              <div style="display:grid;gap:8px">
+                <div>
+                  <div style="font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:var(--tx3);margin-bottom:4px">Company</div>
+                  <div id="sypolCompany" style="font-family:var(--ff-mono);font-size:12px;color:var(--tx2)">Not configured</div>
+                </div>
+                <div>
+                  <div style="font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:var(--tx3);margin-bottom:4px">Username</div>
+                  <div id="sypolUsername" style="font-family:var(--ff-mono);font-size:12px;color:var(--tx2)">Not configured</div>
+                </div>
+                <div>
+                  <div style="font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:var(--tx3);margin-bottom:4px">Password</div>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                    <div id="sypolPassword" style="font-family:var(--ff-mono);font-size:12px;color:var(--tx2)">Not configured</div>
+                    <button type="button" class="btn btn-ghost" id="sypolToggleBtn" onclick="toggleSypolPassword()" style="height:30px;padding:0 10px">Show</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="max-width:320px;color:var(--tx3);font-size:12px;line-height:1.6">
+              Only reviewers and admins can view these shared Sypol credentials.
+            </div>
+          </div>
+        </div>
       </div>
       <div style="margin-bottom:12px;font-family:var(--ff-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--tx3)">Items Requiring Attention</div>
       <div class="dash-alerts" id="alertList">
@@ -646,47 +669,6 @@ th.sortable.sort-asc .sort-icon .arr-down,th.sortable.sort-desc .sort-icon .arr-
           <th>Detail</th>
         </tr></thead>
         <tbody id="auditBody"><tr><td colspan="6"><div class="empty-state"><p>Loading…</p></div></td></tr></tbody></table>
-      </div>
-    </div>
-
-<!-- COSHH -->
-    <div id="panel-coshh" class="tab-panel">
-      <div class="list-toolbar">
-        <div class="search-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="search" class="search-input" id="coshhSearch" placeholder="Search by product, manufacturer, location…" oninput="filterCOSHH()">
-        </div>
-        <select class="filter-select" id="coshhStatusFilter" onchange="filterCOSHH()">
-          <option value="">All statuses</option>
-          <option value="overdue">Overdue</option>
-          <option value="due-soon">Due soon</option>
-          <option value="current">Current</option>
-        </select>
-        <button class="btn btn-primary" id="btnAddCOSHH" onclick="openCOSHHModal()" style="display:none">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add COSHH
-        </button>
-      </div>
-      <div class="table-wrap">
-        <table><thead><tr><th>Product</th><th>Supplier</th><th>Hazard Level</th><th>Work Area</th><th>Next Review</th><th>Status</th></tr></thead>
-        <tbody id="coshhBody"><tr><td colspan="6"><div class="empty-state"><p>Loading…</p></div></td></tr></tbody></table>
-      </div>
-    </div>
-
-    <!-- EQUIPMENT -->
-    <div id="panel-equipment" class="tab-panel">
-      <div class="list-toolbar">
-        <div class="search-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="search" class="search-input" id="equipSearch" placeholder="Search by asset tag, name, model, location…" oninput="filterEquipment()">
-        </div>
-        <select class="filter-select" id="equipCatFilter" onchange="filterEquipment()"><option value="">All categories</option></select>
-        <button class="btn btn-primary" id="btnAddEquip" onclick="openEquipModal()" style="display:none">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Equipment
-        </button>
-      </div>
-      <div class="table-wrap">
-        <table><thead><tr><th>Asset Tag</th><th>Name / Model</th><th>Manufacturer</th><th>Location</th><th>Category</th><th>Linked Docs</th></tr></thead>
-        <tbody id="equipBody"><tr><td colspan="6"><div class="empty-state"><p>Loading…</p></div></td></tr></tbody></table>
       </div>
     </div>
 
@@ -771,88 +753,6 @@ th.sortable.sort-asc .sort-icon .arr-down,th.sortable.sort-desc .sort-icon .arr-
   </div>
 </div>
 
-<!-- ── COSHH MODAL ──────────────────────────────────────────────── -->
-<div class="modal-overlay" id="coshhModal" onclick="if(event.target===this)closeCOSHHModal()">
-  <div class="modal modal-wide" id="coshhModalInner">
-    <div class="modal-header">
-      <span class="modal-title" id="coshhModalTitle">COSHH Sheet</span>
-      <div style="display:flex;gap:8px;align-items:center;margin-left:auto">
-        <button class="btn btn-ghost btn-sm" id="coshhEditBtn" onclick="switchCOSHHToEdit()" style="display:none">Edit</button>
-        <button class="modal-close" onclick="closeCOSHHModal()">×</button>
-      </div>
-    </div>
-
-    <!-- VIEW MODE -->
-    <div id="coshhViewBody" class="modal-body" style="padding:0">
-      <div id="coshhViewContent"></div>
-    </div>
-
-    <!-- EDIT MODE -->
-    <div id="coshhEditBody" class="modal-body" style="display:none">
-      <input type="hidden" id="coshhId">
-      <div class="field-row">
-        <div class="field-group"><label class="field-label">Product Name *</label><input type="text" class="field-input" id="coshhProduct" placeholder="e.g. HydroLube 220"></div>
-        <div class="field-group"><label class="field-label">Manufacturer / Supplier</label><input type="text" class="field-input" id="coshhMfr" placeholder="e.g. Shell"></div>
-      </div>
-      <div class="field-group"><label class="field-label">Hazard Categories (comma-separated)</label><input type="text" class="field-input" id="coshhHazards" placeholder="e.g. Flammable, Irritant"></div>
-      <div class="field-group"><label class="field-label">Storage Location / Work Area</label><input type="text" class="field-input" id="coshhLocation" placeholder="e.g. Store Room B, Cabinet 3"></div>
-      <div class="field-row">
-        <div class="field-group"><label class="field-label">Review Date</label><input type="date" class="field-input" id="coshhReviewDate"></div>
-        <div class="field-group"><label class="field-label">Next Review Date *</label><input type="date" class="field-input" id="coshhNextReview"></div>
-      </div>
-      <div class="form-err" id="coshhErr"></div>
-    </div>
-
-    <div class="modal-footer" style="justify-content:flex-start" id="coshhFooter">
-      <button class="btn btn-danger" id="coshhDeleteBtn" onclick="deleteCOSHH()" style="display:none;margin-right:auto">Delete</button>
-      <button class="btn btn-ghost" onclick="closeCOSHHModal()">Close</button>
-      <button class="btn btn-primary" id="coshhSaveBtn" onclick="saveCOSHH()" style="display:none">Save</button>
-    </div>
-  </div>
-</div>
-
-<!-- ── EQUIPMENT MODAL ──────────────────────────────────────────── -->
-<div class="modal-overlay" id="equipModal" onclick="if(event.target===this)closeEquipModal()">
-  <div class="modal">
-    <div class="modal-header"><span class="modal-title" id="equipModalTitle">Add Equipment</span><button class="modal-close" onclick="closeEquipModal()">×</button></div>
-    <div class="modal-body" id="equipModalBody">
-      <input type="hidden" id="equipId">
-      <div class="field-row">
-        <div class="field-group"><label class="field-label">Asset Tag *</label><input type="text" class="field-input" id="equipTag" placeholder="e.g. KLN-001"></div>
-        <div class="field-group"><label class="field-label">Category</label>
-          <div style="display:flex;gap:6px">
-            <select class="field-input" id="equipCat" style="flex:1"></select>
-            <button type="button" id="manageCatBtn" onclick="openCatManager()" title="Manage categories" style="height:36px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd);border-radius:var(--r);color:var(--tx2);cursor:pointer;font-size:11px;white-space:nowrap">Manage</button>
-          </div>
-        </div>
-      </div>
-      <div class="field-group"><label class="field-label">Name *</label><input type="text" class="field-input" id="equipName" placeholder="e.g. Kiln 1 Main Drive Motor"></div>
-      <div class="field-row">
-        <div class="field-group"><label class="field-label">Manufacturer</label><input type="text" class="field-input" id="equipMfr" placeholder="e.g. ABB"></div>
-        <div class="field-group"><label class="field-label">Serial Number</label><input type="text" class="field-input" id="equipSerial"></div>
-      </div>
-      <div class="field-group"><label class="field-label">Department</label><input type="text" class="field-input" id="equipLocation" placeholder="e.g. Kiln Bay, Raw Mill, Packing"></div>
-      <div class="form-err" id="equipErr"></div>
-    </div>
-    <div class="modal-footer" style="justify-content:flex-start"><button class="btn btn-danger" id="equipDeleteBtn" onclick="deleteEquip()" style="display:none;margin-right:auto">Delete</button><button class="btn btn-ghost" onclick="closeEquipModal()">Cancel</button><button class="btn btn-primary" id="equipSaveBtn" onclick="saveEquip()">Save</button></div>
-  </div>
-</div>
-
-
-<!-- ── CATEGORY MANAGER ──────────────────────────────────────────── -->
-<div class="modal-overlay" id="catManagerModal" onclick="if(event.target===this)closeCatManager()">
-  <div class="modal" style="max-width:380px">
-    <div class="modal-header"><span class="modal-title">Manage Categories</span><button class="modal-close" onclick="closeCatManager()">×</button></div>
-    <div class="modal-body">
-      <div id="catList" style="display:flex;flex-direction:column;gap:4px;margin-bottom:12px;max-height:240px;overflow-y:auto"></div>
-      <div style="display:flex;gap:6px">
-        <input type="text" id="newCatInput" class="field-input" placeholder="New category name" style="flex:1" onkeydown="if(event.key==='Enter')addCategory()">
-        <button class="btn btn-primary" onclick="addCategory()">Add</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- ── ADMIN PANEL ──────────────────────────────────────────────── -->
 <div id="adminOverlay" onclick="closeAdminPanel()"></div>
 <div id="adminPanel">
@@ -910,9 +810,15 @@ const SB_LIC_URL  = 'https://dviicnomxeibbuafbozp.supabase.co';
 const SB_LIC_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2aWljbm9teGVpYmJ1YWZib3pwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4ODM0MzcsImV4cCI6MjA4ODQ1OTQzN30.c1T3WXC225tdBbq_1R__9bhGFIZdSxim9dgxfvmkRjU';
 
 let sb, currentUser = null, currentProfile = null;
-let _ra = [], _coshh = [], _equipment = [], _usersCache = [];
-let _raSort = { col: null, dir: 0 }; // dir: 0=none 1=asc -1=desc
+let _ra = [], _usersCache = [];
+let _raSort = { col: 'ref', dir: 1 }; // dir: 0=none 1=asc -1=desc
 let _raAudit = []; // audit log entries;
+const SYPOL_ACCESS = {
+  company: 'Not configured',
+  username: 'Not configured',
+  password: 'Not configured'
+};
+let _sypolPasswordVisible = false;
 
 /* ── HELPERS ─────────────────────────────────────────────────────── */
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
@@ -921,6 +827,56 @@ function statusPill(s){ const m={'overdue':['pill-overdue','Overdue'],'due-soon'
 function fmtDate(d){ if(!d) return '—'; return new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); }
 function showToast(msg,dur=2800){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),dur); }
 function hasRole(...roles){ if(!currentProfile) return false; if(currentProfile.role==='admin') return true; return roles.includes(currentProfile.role); }
+function maskSecret(value){
+  const text = String(value || 'Not configured');
+  if(text === 'Not configured') return text;
+  return '•'.repeat(Math.max(8, text.length));
+}
+function syncRASortHeaders(){
+  document.querySelectorAll('#raTable thead th.sortable').forEach(function(th){
+    th.classList.remove('sort-asc','sort-desc');
+    if(th.dataset.col===_raSort.col && _raSort.dir!==0){
+      th.classList.add(_raSort.dir===1?'sort-asc':'sort-desc');
+    }
+  });
+}
+function renderSypolAccess(){
+  const card = document.getElementById('sypolAccessCard');
+  if(!card) return;
+  const allowed = hasRole('reviewer','admin');
+  card.style.display = allowed ? 'block' : 'none';
+  if(!allowed) return;
+  document.getElementById('sypolCompany').textContent = SYPOL_ACCESS.company || 'Not configured';
+  document.getElementById('sypolUsername').textContent = SYPOL_ACCESS.username || 'Not configured';
+  document.getElementById('sypolPassword').textContent = _sypolPasswordVisible ? (SYPOL_ACCESS.password || 'Not configured') : maskSecret(SYPOL_ACCESS.password);
+  document.getElementById('sypolToggleBtn').textContent = _sypolPasswordVisible ? 'Hide' : 'Show';
+}
+function toggleSypolPassword(){
+  if(!hasRole('reviewer','admin')) return;
+  _sypolPasswordVisible = !_sypolPasswordVisible;
+  renderSypolAccess();
+}
+async function loadSypolAccess(){
+  if(!hasRole('reviewer','admin')) return;
+  try{
+    const { data, error } = await sb
+      .from('pw_service_credentials')
+      .select('company, username, password')
+      .eq('service_key', 'sypol')
+      .maybeSingle();
+    if(error){
+      console.warn('loadSypolAccess error:', error.message);
+      return;
+    }
+    if(!data) return;
+    SYPOL_ACCESS.company = data.company || 'Not configured';
+    SYPOL_ACCESS.username = data.username || 'Not configured';
+    SYPOL_ACCESS.password = data.password || 'Not configured';
+    renderSypolAccess();
+  } catch(e){
+    console.warn('Could not load Sypol access:', e.message);
+  }
+}
 
 /* ── LICENCE ─────────────────────────────────────────────────────── */
 async function checkLicence(){
@@ -1073,37 +1029,23 @@ function launchApp(){
   loadUserTheme();
   if(hasRole('editor','reviewer','admin')){
     document.getElementById('btnAddRA').style.display='flex';
-    document.getElementById('btnAddCOSHH').style.display='flex';
-    document.getElementById('btnAddEquip').style.display='flex';
   }
+  _sypolPasswordVisible = false;
+  renderSypolAccess();
+  loadSypolAccess();
   loadAllData();
 }
 
 /* ── DATA ────────────────────────────────────────────────────────── */
-async function loadAllData(){ await Promise.all([loadRA(),loadAudit(),loadCOSHH(),loadEquipment()]); refreshDashboard(); }
+async function loadAllData(){ await Promise.all([loadRA(),loadAudit()]); refreshDashboard(); }
 
 async function loadRA(){
   const {data,error} = await sb.from('pw_risk_assessments').select('*').order('next_review_date');
   if(error){ console.error('loadRA error:', error); showToast('RA load error: '+error.message); return; }
   _ra = (data||[]).map(r=>({...r,_status:calcStatus(r.next_review_date)}));
-  console.log('loadRA: loaded', _ra.length, 'RAs');
   document.getElementById('raCount').textContent = _ra.length;
+  syncRASortHeaders();
   renderRA();
-}
-async function loadCOSHH(){
-  const {data,error} = await sb.from('pw_coshh_sheets').select('*').order('next_review_date');
-  if(error){ console.error(error); return; }
-  _coshh = (data||[]).map(r=>({...r,_status:calcStatus(r.next_review_date)}));
-  document.getElementById('coshhCount').textContent = _coshh.length;
-  renderCOSHH();
-}
-async function loadEquipment(){
-  await loadCategories();
-  const {data,error} = await sb.from('pw_equipment').select('*').order('asset_tag');
-  if(error){ console.error(error); return; }
-  _equipment = data||[];
-  document.getElementById('equipCount').textContent = _equipment.length;
-  renderEquipment();
 }
 
 /* ── DASHBOARD ───────────────────────────────────────────────────── */
@@ -1113,18 +1055,14 @@ function refreshDashboard(){
   document.getElementById('raCurrent').textContent  = _ra.filter(r=>r._status==='current').length;
   document.getElementById('raTotal').textContent    = _ra.length;
   const _raDraftEl = document.getElementById('raDraft'); if(_raDraftEl) _raDraftEl.textContent = _ra.filter(r=>r._status==='draft').length;
-  document.getElementById('coshhOverdue').textContent  = _coshh.filter(r=>r._status==='overdue').length;
-  document.getElementById('coshhDueSoon').textContent  = _coshh.filter(r=>r._status==='due-soon').length;
-  document.getElementById('coshhCurrent').textContent  = _coshh.filter(r=>r._status==='current').length;
-  document.getElementById('coshhTotal').textContent    = _coshh.length;
-  const alerts = [
-    ..._ra.filter(r=>r._status==='overdue'||r._status==='due-soon').map(r=>({...r,_type:'ra'})),
-    ..._coshh.filter(r=>r._status==='overdue'||r._status==='due-soon').map(r=>({...r,_type:'coshh'}))
-  ].sort((a,b)=>(a._status==='overdue'?0:1)-(b._status==='overdue'?0:1)||(new Date(a.next_review_date)-new Date(b.next_review_date)));
+  const alerts = _ra
+    .filter(r=>r._status==='overdue'||r._status==='due-soon')
+    .map(r=>({...r,_type:'ra'}))
+    .sort((a,b)=>(a._status==='overdue'?0:1)-(b._status==='overdue'?0:1)||(new Date(a.next_review_date)-new Date(b.next_review_date)));
   const al = document.getElementById('alertList');
   if(!alerts.length){ al.innerHTML='<div class="empty-state" style="padding:30px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="36" height="36"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><p>No overdue or due-soon items. All documents are current.</p></div>'; return; }
   al.innerHTML = alerts.map(a=>'<div class="alert-row '+a._status+'" onclick="switchTab(\''+a._type+'\')">'
-    +'<span class="alert-type '+a._type+'">'+(a._type==='ra'?'RA':'COSHH')+'</span>'
+    +'<span class="alert-type '+a._type+'">RA</span>'
     +'<span class="alert-title">'+esc(a.title||a.product_name)+'</span>'
     +'<span class="alert-date">'+fmtDate(a.next_review_date)+'</span>'
     +'<span class="alert-status status-'+a._status+'">'+(a._status==='overdue'?'Overdue':'Due Soon')+'</span>'
@@ -1168,43 +1106,6 @@ function renderRA(rows){
       +'<td onclick="event.stopPropagation()" style="white-space:nowrap">'+editBtns+'</td>'
       +'</tr>';
   }).join(''); } catch(renderErr){ console.error('renderRA crash:', renderErr); body.innerHTML='<tr><td colspan="11" style="color:red;padding:12px">Render error: '+renderErr.message+'</td></tr>'; }
-}
-
-function renderCOSHH(rows){
-  rows=rows||_coshh;
-  const body=document.getElementById('coshhBody');
-  if(!rows.length){ body.innerHTML='<tr><td colspan="6"><div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="36" height="36"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><p>No COSHH sheets found.</p>'+(hasRole('editor','reviewer','admin')?'<button class="btn btn-primary" onclick="openCOSHHModal()">Add first COSHH Sheet</button>':'')+'</div></td></tr>'; return; }
-  body.innerHTML=rows.map(r=>{
-    const lvl=(r.hazard_level||'').toUpperCase();
-    const lvlColor=lvl==='HIGH'?'var(--red)':lvl==='MEDIUM'?'var(--amb)':'var(--grn)';
-    const lvlBg=lvl==='HIGH'?'var(--redd)':lvl==='MEDIUM'?'var(--ambd)':'var(--grnd)';
-    const lvlPill=lvl?'<span style="padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.04em;background:'+lvlBg+';color:'+lvlColor+'">'+esc(lvl)+'</span>':'<span style="color:var(--tx3)">—</span>';
-    return '<tr onclick="openCOSHHModal(\''+esc(r.id)+'\')">'
-      +'<td><div class="td-title">'+esc(r.product_name)+'</div>'+(r.keyword?'<div class="td-sub">'+esc(r.keyword)+'</div>':'')+'</td>'
-      +'<td style="color:var(--tx2);font-size:12.5px">'+esc(r.supplier||r.manufacturer||'—')+'</td>'
-      +'<td>'+lvlPill+'</td>'
-      +'<td style="color:var(--tx2);font-size:12.5px">'+esc(r.work_area||r.location||'—')+'</td>'
-      +'<td class="td-date">'+fmtDate(r.next_review_date)+'</td>'
-      +'<td>'+statusPill(r._status)+'</td></tr>';
-    }).join('');
-}
-
-function renderEquipment(rows){
-  rows=rows||_equipment;
-  const cats=[...new Set(_equipment.map(r=>r.category).filter(Boolean))].sort();
-  const cf=document.getElementById('equipCatFilter'); const pv=cf.value;
-  cf.innerHTML='<option value="">All categories</option>'+cats.map(c=>'<option value="'+esc(c)+'"'+(c===pv?' selected':'')+'>'+esc(c)+'</option>').join('');
-  const body=document.getElementById('equipBody');
-  if(!rows.length){ body.innerHTML='<tr><td colspan="6"><div class="empty-state"><p>No equipment found.</p>'+(hasRole('editor','reviewer','admin')?'<button class="btn btn-primary" onclick="openEquipModal()">Add first Equipment record</button>':'')+'</div></td></tr>'; return; }
-  body.innerHTML=rows.map(r=>'<tr onclick="openEquipModal(\''+esc(r.id)+'\')">'
-    +'<td class="td-ref">'+esc(r.asset_tag||'—')+'</td>'
-    +'<td><div class="td-title">'+esc(r.name)+'</div><div class="td-sub">'+esc(r.model||'—')+'</div></td>'
-    +'<td style="color:var(--tx2);font-size:12.5px">'+esc(r.manufacturer||'—')+'</td>'
-    +'<td style="color:var(--tx2);font-size:12.5px">'+esc(r.location||'—')+'</td>'
-    +'<td><span class="td-tag">'+esc(r.category||'—')+'</span></td>'
-    +'<td style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">'
-    +((r.linked_ra_ids||[]).length?'📋 '+(r.linked_ra_ids.length)+' ':'')+((r.linked_coshh_ids||[]).length?'⚠️ '+(r.linked_coshh_ids.length):'')+(!(r.linked_ra_ids||[]).length&&!(r.linked_coshh_ids||[]).length?'—':'')
-    +'</td></tr>').join('');
 }
 
 /* ── RA AUDIT LOG ─────────────────────────────────────────────────── */
@@ -1339,26 +1240,9 @@ function sortRA(col){
   } else {
     _raSort.col=col; _raSort.dir=1;
   }
-  // Update header classes
-  document.querySelectorAll('#raTable thead th.sortable').forEach(function(th){
-    th.classList.remove('sort-asc','sort-desc');
-    if(th.dataset.col===_raSort.col){
-      th.classList.add(_raSort.dir===1?'sort-asc':'sort-desc');
-    }
-  });
+  syncRASortHeaders();
   filterRA();
 }
-function filterCOSHH(){
-  const q=document.getElementById('coshhSearch').value.toLowerCase();
-  const st=document.getElementById('coshhStatusFilter').value;
-  renderCOSHH(_coshh.filter(r=>(!q||[r.product_name,r.supplier,r.manufacturer,r.work_area,r.location,r.keyword,r.hazard_level].some(f=>(f||'').toLowerCase().includes(q)))&&(!st||r._status===st)));
-}
-function filterEquipment(){
-  const q=document.getElementById('equipSearch').value.toLowerCase();
-  const cat=document.getElementById('equipCatFilter').value;
-  renderEquipment(_equipment.filter(r=>(!q||[r.asset_tag,r.name,r.manufacturer,r.model,r.serial,r.location].some(f=>(f||'').toLowerCase().includes(q)))&&(!cat||r.category===cat)));
-}
-
 /* ── TABS ────────────────────────────────────────────────────────── */
 function switchTab(tab){
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
@@ -1800,257 +1684,6 @@ async function saveRA(){
   showToast(id?'Risk Assessment updated ✓':'Risk Assessment added ✓');
 }
 
-/* ── COSHH MODAL ─────────────────────────────────────────────────── */
-async function openCOSHHModal(id){
-  const overlay=document.getElementById('coshhModal');
-  const viewBody=document.getElementById('coshhViewBody');
-  const editBody=document.getElementById('coshhEditBody');
-  const editBtn=document.getElementById('coshhEditBtn');
-  const saveBtn=document.getElementById('coshhSaveBtn');
-  const delBtn=document.getElementById('coshhDeleteBtn');
-
-  if(!id){
-    // Add new — go straight to edit mode
-    document.getElementById('coshhModalTitle').textContent='Add COSHH Sheet';
-    document.getElementById('coshhId').value='';
-    document.getElementById('coshhErr').style.display='none';
-    ['coshhProduct','coshhMfr','coshhLocation','coshhHazards','coshhReviewDate','coshhNextReview'].forEach(i=>document.getElementById(i).value='');
-    viewBody.style.display='none';
-    editBody.style.display='block';
-    if(editBtn) editBtn.style.display='none';
-    if(saveBtn) saveBtn.style.display='';
-    if(delBtn)  delBtn.style.display='none';
-    overlay.classList.add('open');
-    return;
-  }
-
-  const r=_coshh.find(x=>x.id===id); if(!r) return;
-
-  // Fetch activities
-  let acts=[];
-  try{
-    const {data}=await sb.from('pw_coshh_activities').select('*').eq('coshh_id',id).order('act_no');
-    acts=data||[];
-  }catch(e){}
-
-  // Render view
-  document.getElementById('coshhId').value=id;
-  document.getElementById('coshhModalTitle').textContent=r.product_name||'COSHH Sheet';
-  document.getElementById('coshhViewContent').innerHTML=buildCOSHHView(r, acts);
-  viewBody.style.display='block';
-  editBody.style.display='none';
-
-  const canEdit=hasRole('editor','reviewer','admin');
-  if(editBtn) editBtn.style.display=canEdit?'':'none';
-  if(saveBtn) saveBtn.style.display='none';
-  if(delBtn)  delBtn.style.display=(hasRole('admin','reviewer'))?'block':'none';
-
-  overlay.classList.add('open');
-}
-
-function buildCOSHHView(r, acts){
-  const lvl=(r.hazard_level||'').toUpperCase();
-  const lvlCls=lvl==='HIGH'?'coshh-badge-high':lvl==='MEDIUM'?'coshh-badge-medium':'coshh-badge-low';
-  const swCls=(r.signal_word||'').toLowerCase()==='danger'?'coshh-badge-danger':'coshh-badge-warning';
-  const haz=Array.isArray(r.health_hazards)?r.health_hazards:
-    (Array.isArray(r.hazard_categories)?r.hazard_categories:
-    (r.hazard_categories||'').split(',').map(h=>h.trim()).filter(Boolean));
-
-  let html='';
-
-  // ── Header strip
-  html+=`<div class="coshh-view-header">
-    <div style="flex:1;min-width:0">
-      <div class="coshh-view-name">${esc(r.product_name||'—')}</div>
-      <div class="coshh-view-badges" style="margin-top:8px">
-        ${lvl?`<span class="coshh-badge ${lvlCls}">${esc(lvl)} HAZARD</span>`:''}
-        ${r.physical_state?`<span class="coshh-badge coshh-badge-neutral">${esc(r.physical_state)}</span>`:''}
-        ${r.signal_word?`<span class="coshh-badge ${swCls}">${esc(r.signal_word)}</span>`:''}
-        ${r.keyword?`<span class="coshh-badge coshh-badge-neutral">${esc(r.keyword)}</span>`:''}
-      </div>
-    </div>
-    <div style="text-align:right;flex-shrink:0">
-      ${r.assessment_id?`<div style="font-family:var(--ff-mono);font-size:10px;color:var(--tx3)">ID# ${esc(r.assessment_id)}</div>`:''}
-      ${r.material_code?`<div style="font-family:var(--ff-mono);font-size:10px;color:var(--tx3)">IMC ${esc(r.material_code)}</div>`:''}
-    </div>
-  </div>`;
-
-  // ── Meta grid — row 1
-  html+=`<div class="coshh-view-grid-3">
-    <div class="coshh-meta-cell"><div class="coshh-meta-lbl">Supplier</div><div class="coshh-meta-val">${esc(r.supplier||r.manufacturer||'—')}</div></div>
-    <div class="coshh-meta-cell"><div class="coshh-meta-lbl">Supplier Phone</div><div class="coshh-meta-val">${esc(r.supplier_phone||'—')}</div></div>
-    <div class="coshh-meta-cell"><div class="coshh-meta-lbl">Assessment Owner</div><div class="coshh-meta-val">${esc(r.assessment_owner||'—')}</div></div>
-  </div>`;
-
-  // ── Meta grid — row 2
-  html+=`<div class="coshh-view-grid-3">
-    <div class="coshh-meta-cell"><div class="coshh-meta-lbl">Work Area</div><div class="coshh-meta-val">${esc(r.work_area||r.location||'—')}</div></div>
-    <div class="coshh-meta-cell"><div class="coshh-meta-lbl">Frequency of Use</div><div class="coshh-meta-val">${esc(r.frequency_of_use||'—')}</div></div>
-    <div class="coshh-meta-cell"><div class="coshh-meta-lbl">People Exposed</div><div class="coshh-meta-val">${esc(r.people_exposed||'—')}</div></div>
-  </div>`;
-
-  // ── Meta grid — row 3 dates
-  html+=`<div class="coshh-view-grid-3">
-    <div class="coshh-meta-cell"><div class="coshh-meta-lbl">Assessment Reviewed</div><div class="coshh-meta-val">${fmtDate(r.review_date)}</div></div>
-    <div class="coshh-meta-cell"><div class="coshh-meta-lbl">Next Review</div><div class="coshh-meta-val" style="color:${calcStatus(r.next_review_date)==='overdue'?'var(--red)':calcStatus(r.next_review_date)==='due-soon'?'var(--amb)':'var(--tx)'}">${fmtDate(r.next_review_date)}</div></div>
-    <div class="coshh-meta-cell"><div class="coshh-meta-lbl">Latest SDS Reference</div><div class="coshh-meta-val">${fmtDate(r.sds_reference_date)||'—'}</div></div>
-  </div>`;
-
-  // ── Activities
-  if(acts && acts.length){
-    html+=`<div class="coshh-section">
-      <div class="coshh-section-title">Activities</div>
-      <table class="coshh-act-table">
-        <thead><tr><th>#</th><th>Method</th><th>Area</th><th>Exposure</th></tr></thead>
-        <tbody>${acts.map(a=>`<tr>
-          <td>${a.act_no||'—'}</td>
-          <td>${esc(a.method||'—')}</td>
-          <td>${esc(a.area||'—')}</td>
-          <td>${esc(a.exposure||'—')}</td>
-        </tr>`).join('')}</tbody>
-      </table>
-    </div>`;
-  }
-
-  // ── Health hazards
-  if(haz && haz.length){
-    html+=`<div class="coshh-section">
-      <div class="coshh-section-title">Health Hazards</div>
-      <div class="coshh-haz-list">${haz.map(h=>`<span class="coshh-haz-pill">${esc(h)}</span>`).join('')}</div>
-    </div>`;
-  }
-
-  // ── Exposure limits
-  if(r.exposure_limits){
-    html+=`<div class="coshh-section">
-      <div class="coshh-section-title">Exposure Limits</div>
-      <div class="coshh-text-block">${esc(r.exposure_limits)}</div>
-    </div>`;
-  }
-
-  // ── Existing controls / work practices
-  if(r.existing_controls||r.work_practices){
-    html+=`<div class="coshh-section">
-      <div class="coshh-section-title">Controls &amp; Work Practices</div>
-      <div class="coshh-two-col">`;
-    if(r.existing_controls) html+=`<div><div style="font-size:10px;font-weight:700;font-family:var(--ff-mono);letter-spacing:.06em;color:var(--tx3);margin-bottom:6px">EXISTING CONTROLS</div><div class="coshh-text-block">${esc(r.existing_controls)}</div></div>`;
-    if(r.work_practices)    html+=`<div><div style="font-size:10px;font-weight:700;font-family:var(--ff-mono);letter-spacing:.06em;color:var(--tx3);margin-bottom:6px">ADDITIONAL WORK PRACTICES</div><div class="coshh-text-block">${esc(r.work_practices)}</div></div>`;
-    html+=`</div></div>`;
-  }
-
-  // ── First aid / Fire / Spillage
-  const sections=[['First Aid',r.first_aid],['Fire',r.fire],['Spillage',r.spillage]].filter(s=>s[1]);
-  if(sections.length){
-    html+=`<div class="coshh-section"><div class="coshh-section-title">Emergency Information</div><div class="coshh-two-col">`;
-    sections.forEach(([title,text])=>{
-      html+=`<div><div style="font-size:10px;font-weight:700;font-family:var(--ff-mono);letter-spacing:.06em;color:var(--tx3);margin-bottom:6px;text-transform:uppercase">${esc(title)}</div><div class="coshh-text-block">${esc(text)}</div></div>`;
-    });
-    html+=`</div></div>`;
-  }
-
-  // ── Contents / Notes
-  if(r.contents||r.notes){
-    html+=`<div class="coshh-section">`;
-    if(r.contents) html+=`<div style="margin-bottom:12px"><div class="coshh-section-title">Contents</div><div class="coshh-text-block">${esc(r.contents)}</div></div>`;
-    if(r.notes)    html+=`<div><div class="coshh-section-title">Notes / Considerations</div><div class="coshh-text-block">${esc(r.notes)}</div></div>`;
-    html+=`</div>`;
-  }
-
-  // ── Footer meta
-  html+=`<div style="padding:10px 24px;background:var(--sf2);border-top:1px solid var(--bd);display:flex;gap:20px;flex-wrap:wrap">
-    ${r.created_by?`<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">Created by ${esc(r.created_by)}</span>`:''}
-    ${r.updated_by?`<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">Updated by ${esc(r.updated_by)}</span>`:''}
-    ${r.quantity_per_day?`<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">Qty/day: ${esc(r.quantity_per_day)}</span>`:''}
-    ${r.susceptible_workers?`<span style="font-size:11px;color:var(--amb);font-family:var(--ff-mono)">⚠ Susceptible workers</span>`:''}
-  </div>`;
-
-  return html;
-}
-
-function switchCOSHHToEdit(){
-  const rid=document.getElementById('coshhId').value||'';
-  const r=_coshh.find(x=>x.id===rid)||{};
-  document.getElementById('coshhId').value=rid;
-  document.getElementById('coshhErr').style.display='none';
-  document.getElementById('coshhProduct').value=r.product_name||'';
-  document.getElementById('coshhMfr').value=r.manufacturer||r.supplier||'';
-  document.getElementById('coshhLocation').value=r.location||r.work_area||'';
-  document.getElementById('coshhReviewDate').value=r.review_date||'';
-  document.getElementById('coshhNextReview').value=r.next_review_date||'';
-  const haz=Array.isArray(r.hazard_categories)?r.hazard_categories:(r.hazard_categories||'').split(',').map(h=>h.trim()).filter(Boolean);
-  document.getElementById('coshhHazards').value=haz.join(', ');
-  document.getElementById('coshhViewBody').style.display='none';
-  document.getElementById('coshhEditBody').style.display='block';
-  document.getElementById('coshhEditBtn').style.display='none';
-  document.getElementById('coshhSaveBtn').style.display='';
-}
-
-function closeCOSHHModal(){ document.getElementById('coshhModal').classList.remove('open'); }
-
-async function saveCOSHH(){
-  const id=document.getElementById('coshhId').value;
-  const product=document.getElementById('coshhProduct').value.trim();
-  const next=document.getElementById('coshhNextReview').value;
-  const err=document.getElementById('coshhErr');
-  if(!product){ err.textContent='Product name is required.'; err.style.display='block'; return; }
-  const payload={product_name:product,manufacturer:document.getElementById('coshhMfr').value.trim()||null,
-    supplier:document.getElementById('coshhMfr').value.trim()||null,
-    location:document.getElementById('coshhLocation').value.trim()||null,
-    work_area:document.getElementById('coshhLocation').value.trim()||null,
-    hazard_categories:document.getElementById('coshhHazards').value.split(',').map(h=>h.trim()).filter(Boolean),
-    review_date:document.getElementById('coshhReviewDate').value||null,next_review_date:next||null,
-    updated_at:new Date().toISOString(),updated_by:currentProfile?.email||null};
-  let error;
-  if(id){ ({error}=await sb.from('pw_coshh_sheets').update(payload).eq('id',id)); }
-  else   { ({error}=await sb.from('pw_coshh_sheets').insert({...payload,created_at:new Date().toISOString(),created_by:currentProfile?.email||null})); }
-  if(error){ err.textContent=error.message; err.style.display='block'; return; }
-  await loadCOSHH(); refreshDashboard(); closeCOSHHModal(); showToast(id?'COSHH Sheet updated ✓':'COSHH Sheet added ✓');
-}
-
-/* ── EQUIPMENT MODAL ─────────────────────────────────────────────── */
-function openEquipModal(id){
-  document.getElementById('equipId').value=id||'';
-  document.getElementById('equipErr').style.display='none';
-  populateCatDropdown(id ? (_equipment.find(x=>x.id===id)||{}).category||'' : '');
-  const delBtn=document.getElementById('equipDeleteBtn');
-  const catBtn=document.getElementById('manageCatBtn');
-  if(catBtn) catBtn.style.display=hasRole('admin')?'':'none';
-  if(id){
-    const r=_equipment.find(x=>x.id===id); if(!r) return;
-    document.getElementById('equipModalTitle').textContent='Edit Equipment';
-    document.getElementById('equipTag').value=r.asset_tag||'';
-    document.getElementById('equipName').value=r.name||'';
-    document.getElementById('equipMfr').value=r.manufacturer||'';
-    document.getElementById('equipSerial').value=r.serial||'';
-    document.getElementById('equipLocation').value=r.location||'';
-    if(delBtn) delBtn.style.display=hasRole('admin','reviewer')?'':'none';
-  } else {
-    document.getElementById('equipModalTitle').textContent='Add Equipment';
-    ['equipTag','equipName','equipMfr','equipSerial','equipLocation'].forEach(i=>document.getElementById(i).value='');
-    if(delBtn) delBtn.style.display='none';
-  }
-  setModalReadOnly('equipModalBody', 'equipSaveBtn', hasRole('editor','reviewer','admin'));
-  document.getElementById('equipModal').classList.add('open');
-}
-function closeEquipModal(){ document.getElementById('equipModal').classList.remove('open'); }
-async function saveEquip(){
-  const id=document.getElementById('equipId').value;
-  const tag=document.getElementById('equipTag').value.trim();
-  const name=document.getElementById('equipName').value.trim();
-  const err=document.getElementById('equipErr');
-  if(!tag||!name){ err.textContent='Asset tag and name are required.'; err.style.display='block'; return; }
-  const catEl=document.getElementById('equipCat'); const catVal=catEl?catEl.value:'';
-  const payload={asset_tag:tag,name,manufacturer:document.getElementById('equipMfr').value.trim()||null,
-    serial:document.getElementById('equipSerial').value.trim()||null,
-    location:document.getElementById('equipLocation').value.trim()||null,category:catVal||null,
-    updated_at:new Date().toISOString()};
-  let error;
-  if(id){ ({error}=await sb.from('pw_equipment').update(payload).eq('id',id)); }
-  else   { ({error}=await sb.from('pw_equipment').insert({...payload,created_at:new Date().toISOString()})); }
-  if(error){ err.textContent=error.message; err.style.display='block'; return; }
-  await loadEquipment(); closeEquipModal(); showToast(id?'Equipment updated ✓':'Equipment added ✓');
-}
-
 /* ── ADMIN PANEL ─────────────────────────────────────────────────── */
 function openAdminPanel(){
   document.getElementById('adminOverlay').classList.add('open');
@@ -2167,7 +1800,7 @@ async function loadUserTheme(){
 /* ── KEYBOARD ────────────────────────────────────────────────────── */
 document.addEventListener('keydown',function(e){
   if(e.key==='Escape'){
-    ['raModal','coshhModal','equipModal'].forEach(function(id){document.getElementById(id).classList.remove('open');});
+    ['raModal'].forEach(function(id){document.getElementById(id).classList.remove('open');});
     closeAdminPanel();
   }
   if(e.key==='Enter'&&document.getElementById('splash').style.display==='flex') doLogin();
@@ -2214,23 +1847,20 @@ async function buildDocContext() {
     const daysUntil = function(d){ if(!d) return null; return Math.round((new Date(d)-today)/86400000); };
 
     let ras = _ra.length ? _ra : null;
-    let coshh = _coshh.length ? _coshh : null;
-    let equip = _equipment.length ? _equipment : null;
-    if(!ras || !coshh || !equip){
-      const [rRes,cRes,eRes] = await Promise.all([
-        sb.from('pw_risk_assessments').select('*').order('next_review_date').limit(500),
-        sb.from('pw_coshh_sheets').select('*').order('next_review_date').limit(200),
-        sb.from('pw_equipment').select('*').order('name').limit(200)
-      ]);
-      if(!ras) ras = (rRes.data||[]).map(r=>({...r,_status:calcStatus(r.next_review_date)}));
-      if(!coshh) coshh = (cRes.data||[]).map(r=>({...r,_status:calcStatus(r.next_review_date)}));
-      if(!equip) equip = eRes.data||[];
+    if(!ras){
+      const rRes = await sb.from('pw_risk_assessments').select('*').order('next_review_date').limit(500);
+      ras = (rRes.data||[]).map(r=>({...r,_status:calcStatus(r.next_review_date)}));
     }
 
     const raOverdue  = ras.filter(r=>r._status==='overdue');
     const raDueSoon  = ras.filter(r=>r._status==='due-soon');
     const raCurrent  = ras.filter(r=>r._status==='current');
     const raDraft    = ras.filter(r=>r._status==='draft');
+    let auditRows = _raAudit.length ? _raAudit.slice(0,20) : null;
+    if(!auditRows){
+      const aRes = await sb.from('pw_audit_trail').select('action,changed_by,changed_at,new_data').eq('table_name','pw_risk_assessments').order('changed_at',{ascending:false}).limit(20);
+      auditRows = aRes.data || [];
+    }
 
     const lines = [
       'PADESWOOD WORKS — DOCUMENTS SUMMARY',
@@ -2261,25 +1891,19 @@ async function buildDocContext() {
       });
     }
 
-    // All RAs — compact one-liner each
     lines.push('');
-    lines.push('ALL RAs:');
-    ras.forEach(function(r){
+    lines.push('RISK ASSESSMENTS (sample, up to 20):');
+    ras.slice(0,20).forEach(function(r){
       lines.push('  '+esc(r.ref||'—')+' | '+esc(r.title||'—')+' | '+esc(r.department||'—')+' | Expiry: '+fmt(r.next_review_date)+' | Status: '+(r._status||'draft')+' | Assessor: '+esc(r.owner||r.assessor||'—'));
     });
 
-    // COSHH — compact
     lines.push('');
-    lines.push('COSHH SHEETS: '+coshh.length+' total | Overdue: '+coshh.filter(r=>r._status==='overdue').length+' | Due soon: '+coshh.filter(r=>r._status==='due-soon').length);
-    coshh.forEach(function(c){
-      lines.push('  '+esc(c.product_name||'—')+' | '+esc(c.supplier||'—')+' | Expiry: '+fmt(c.next_review_date)+' | Status: '+(c._status||'—'));
-    });
-
-    // Equipment — compact
+    lines.push('COSHH: Managed externally in Sypol.');
     lines.push('');
-    lines.push('EQUIPMENT: '+equip.length+' total');
-    equip.forEach(function(e){
-      lines.push('  '+esc(e.asset_tag||'—')+' — '+esc(e.name||'—')+' | '+esc(e.category||'—')+' | Status: '+esc(e.status||'—'));
+    lines.push('AUDIT LOG (latest '+auditRows.length+'):');
+    auditRows.forEach(function(r){
+      const nv = r.new_data || {};
+      lines.push('  '+(r.action||'updated')+' | '+(nv.ref||'—')+' | '+(nv.title||'—')+' | By: '+(r.changed_by||'—')+' | '+fmtDate(r.changed_at));
     });
 
     const ctx = lines.join('\n');
@@ -2293,7 +1917,7 @@ function renderDocAiHistory() {
   const hist = document.getElementById('docAiHistory');
   const clr  = document.getElementById('docAiClearBtn');
   if (!_docAiHistory.length) {
-    hist.innerHTML = '<div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);text-align:center;padding:40px 0">Ask anything about risk assessments, COSHH sheets, or equipment</div>';
+    hist.innerHTML = '<div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);text-align:center;padding:40px 0">Ask about documents data</div>';
     if (clr) clr.style.display = 'none';
     return;
   }
@@ -2319,7 +1943,6 @@ async function sendDocAiReport() {
     await loadDocGroqKey();
     if (!_docGroqKey) { alert('AI service unavailable — Groq key not configured.'); return; }
   }
-  document.getElementById('docAiSuggestions').style.display = 'none';
   promptEl.value = ''; sendBtn.disabled = true;
   _docAiHistory.push({role:'user', content:q});
   renderDocAiHistory();
@@ -2328,14 +1951,13 @@ async function sendDocAiReport() {
   hist.scrollTop = hist.scrollHeight;
   try {
     const context = await buildDocContext();
-    const systemPrompt = 'You are an expert AI assistant for Padeswood Works (HeidelbergMaterials cement plant, Wales). You have access to the documents database: risk assessments, COSHH sheets, and equipment records. Answer questions concisely and only from the provided data.';
+    const systemPrompt = 'You are an expert AI assistant for Padeswood Works (HeidelbergMaterials cement plant, Wales). You have access to the documents database for risk assessments and audit history. COSHH is managed externally in Sypol. Answer questions concisely and only from the provided data.';
     const dataMsg = {role:'user', content:'Here is the documents data:\n\n'+context+'\n\nOnly answer from this data.'};
-    const dataAck = {role:'assistant', content:'Understood. I will only answer from the documents data provided.'};
-    const messages = [{role:'system',content:systemPrompt}, dataMsg, dataAck, ..._docAiHistory];
+    const messages = [{role:'system',content:systemPrompt}, dataMsg, ..._docAiHistory];
     const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+_docGroqKey},
-      body:JSON.stringify({model:'llama-3.3-70b-versatile',max_tokens:2000,messages})
+      body:JSON.stringify({model:'llama-3.3-70b-versatile',max_tokens:1200,messages})
     });
     const data = await res.json();
     // Surface API-level errors (token limit, auth, etc.)
@@ -2418,101 +2040,6 @@ async function deleteRA(){
   await loadRA(); await loadAudit(); refreshDashboard(); closeRAModal(); showToast('Risk Assessment deleted');
 }
 
-/* ── COSHH DELETE ────────────────────────────────────────────────── */
-async function deleteCOSHH(){
-  const id=document.getElementById('coshhId').value;
-  if(!id) return;
-  const r=_coshh.find(x=>x.id===id);
-  if(!confirm('Delete "'+((r&&r.product_name)||'this COSHH Sheet')+'"?\n\nThis cannot be undone.')) return;
-  const user=currentProfile?.full_name||currentProfile?.email||'unknown';
-  try {
-    await sb.from('pw_audit_trail').insert({
-      table_name:'pw_coshh_sheets', record_id:id, action:'delete', changed_by:user,
-      new_data:{product_name:r?.product_name||'—', detail:'Deleted by '+user}
-    });
-  } catch(e){ console.warn('COSHH audit log failed:', e.message); }
-  const{error}=await sb.from('pw_coshh_sheets').delete().eq('id',id);
-  if(error){showToast('Delete failed: '+error.message);return;}
-  await loadCOSHH(); refreshDashboard(); closeCOSHHModal(); showToast('COSHH Sheet deleted');
-}
-
-/* ── EQUIPMENT DELETE ────────────────────────────────────────────── */
-async function deleteEquip(){
-  const id=document.getElementById('equipId').value;
-  if(!id) return;
-  const r=_equipment.find(x=>x.id===id);
-  if(!confirm('Delete '+((r&&r.name)||'this equipment')+'? This cannot be undone.')) return;
-  const user=currentProfile?.full_name||currentProfile?.email||'unknown';
-  try {
-    await sb.from('pw_audit_trail').insert({
-      table_name:'pw_equipment', record_id:id, action:'delete', changed_by:user,
-      new_data:{name:r?.name||'—', asset_tag:r?.asset_tag||'—', detail:'Deleted by '+user}
-    });
-  } catch(e){ console.warn('Equipment audit log failed:', e.message); }
-  const{error}=await sb.from('pw_equipment').delete().eq('id',id);
-  if(error){showToast('Delete failed: '+error.message);return;}
-  await loadEquipment(); closeEquipModal(); showToast('Equipment deleted');
-}
-
-/* ── CATEGORY MANAGEMENT ─────────────────────────────────────────── */
-let _equipCats = [];
-
-async function loadCategories(){
-  try{
-    const{data}=await sb.from('pw_equipment_categories').select('name').order('name');
-    _equipCats=(data||[]).map(r=>r.name);
-  }catch(e){
-    // Fallback: derive from existing equipment
-    _equipCats=[...new Set(_equipment.map(r=>r.category).filter(Boolean))].sort();
-  }
-}
-
-function populateCatDropdown(selected){
-  const sel=document.getElementById('equipCat'); if(!sel) return;
-  const cats=[..._equipCats];
-  if(selected&&!cats.includes(selected)) cats.push(selected);
-  cats.sort();
-  sel.innerHTML='<option value="">— select —</option>'+cats.map(c=>'<option value="'+esc(c)+'"'+(c===selected?' selected':'')+'>'+esc(c)+'</option>').join('');
-}
-
-function openCatManager(){
-  renderCatList();
-  document.getElementById('catManagerModal').classList.add('open');
-}
-function closeCatManager(){
-  document.getElementById('catManagerModal').classList.remove('open');
-  populateCatDropdown(document.getElementById('equipCat').value);
-}
-
-function renderCatList(){
-  const list=document.getElementById('catList');
-  if(!_equipCats.length){list.innerHTML='<div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono)">No categories yet</div>';return;}
-  list.innerHTML=_equipCats.map(c=>'<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--sf2);border:1px solid var(--bd);border-radius:var(--rsm)">'
-    +'<span style="flex:1;font-size:13px;color:var(--tx)">'+esc(c)+'</span>'
-    +'<button onclick="deleteCategory(\''+esc(c)+'\')" style="height:24px;padding:0 8px;font-size:10px;font-family:var(--ff-mono);background:transparent;border:1px solid var(--redb);border-radius:4px;color:var(--red);cursor:pointer">Remove</button>'
-    +'</div>').join('');
-}
-
-async function addCategory(){
-  const input=document.getElementById('newCatInput');
-  const name=input.value.trim();
-  if(!name) return;
-  if(_equipCats.includes(name)){showToast('Category already exists');return;}
-  try{
-    await sb.from('pw_equipment_categories').insert({name});
-  }catch(e){/* table may not exist yet, just add to local */}
-  _equipCats.push(name); _equipCats.sort();
-  input.value='';
-  renderCatList();
-}
-
-async function deleteCategory(name){
-  if(!confirm('Remove category "'+name+'"? Existing equipment using this category will not be affected.')) return;
-  try{ await sb.from('pw_equipment_categories').delete().eq('name',name); }catch(e){}
-  _equipCats=_equipCats.filter(c=>c!==name);
-  renderCatList();
-}
-
 </script>
 
 <!-- Documents AI Panel -->
@@ -2532,16 +2059,10 @@ async function deleteCategory(name){
       <button onclick="closeDocAiPanel()" style="width:28px;height:28px;border-radius:6px;border:1px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center">×</button>
     </div>
   </div>
-  <div id="docAiSuggestions" style="padding:12px 22px;border-bottom:1px solid var(--bd);display:flex;flex-wrap:wrap;gap:6px;flex-shrink:0">
-    <button class="ai-suggestion" onclick="document.getElementById('docAiPrompt').value='Summarise all current risk assessments';sendDocAiReport()">Summarise risk assessments</button>
-    <button class="ai-suggestion" onclick="document.getElementById('docAiPrompt').value='Which equipment is overdue for inspection?';sendDocAiReport()">Overdue inspections</button>
-    <button class="ai-suggestion" onclick="document.getElementById('docAiPrompt').value='List all high-risk assessments';sendDocAiReport()">High-risk items</button>
-    <button class="ai-suggestion" onclick="document.getElementById('docAiPrompt').value='Summarise COSHH hazards on site';sendDocAiReport()">COSHH hazard summary</button>
-  </div>
   <div id="docAiHistory" style="flex:1;overflow-y:auto;padding:16px 22px;display:flex;flex-direction:column;gap:10px"></div>
   <div style="padding:12px 22px;border-top:1px solid var(--bd);flex-shrink:0">
     <div style="display:flex;gap:8px;align-items:flex-end">
-      <textarea id="docAiPrompt" rows="2" placeholder="Ask about documents, equipment, COSHH… (⌘↵ to send)" onkeydown="if((event.ctrlKey||event.metaKey)&&event.key==='Enter'){event.preventDefault();sendDocAiReport();}" style="flex:1;padding:10px 12px;background:var(--sf3,var(--inp));border:1px solid var(--bd2,var(--bd));border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;resize:none;outline:none;line-height:1.5"></textarea>
+      <textarea id="docAiPrompt" rows="2" placeholder="Message… (⌘↵ to send)" onkeydown="if((event.ctrlKey||event.metaKey)&&event.key==='Enter'){event.preventDefault();sendDocAiReport();}" style="flex:1;padding:10px 12px;background:var(--sf3,var(--inp));border:1px solid var(--bd2,var(--bd));border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;resize:none;outline:none;line-height:1.5"></textarea>
       <button id="docAiSendBtn" onclick="sendDocAiReport()" style="width:38px;height:38px;background:linear-gradient(135deg,var(--ac),var(--ac3));border:none;border-radius:var(--rsm);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0">
         <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" width="14" height="14"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
       </button>

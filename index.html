@@ -148,11 +148,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;}
 .card-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;
   justify-content:center;font-size:20px;flex-shrink:0;}
-.card-badge{font-family:var(--ff-mono);font-size:9px;font-weight:600;letter-spacing:1.5px;
-  text-transform:uppercase;padding:3px 8px;border-radius:4px;border:1px solid;}
-.badge-live{color:var(--grn);border-color:var(--grnb);background:var(--grnd);}
-.badge-new{color:var(--ac3);border-color:var(--acd3);background:var(--acd1);}
-.badge-offline{color:var(--red);border-color:var(--redb);background:var(--redd);}
 .card-title{font-family:var(--ff-head);font-weight:700;font-size:16px;
   color:var(--tx);letter-spacing:-.3px;margin-bottom:5px;}
 .card-desc{font-size:12.5px;color:var(--tx2);line-height:1.55;margin-bottom:16px;}
@@ -332,33 +327,39 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     <div class="section-label">Live Applications</div>
     <div class="app-grid">
 
-      <a href="kiln-log/index.html" class="app-card" data-check="kiln-log/index.html">
+      <a href="kiln-log/index.html" class="app-card">
         <div class="card-top">
           <div class="card-icon" style="background:rgba(26,122,53,.15);border:1px solid rgba(46,204,92,.25)">🔥</div>
-          <span class="card-badge badge-live" id="badge-kiln">Live</span>
         </div>
         <div class="card-title">Padeswood Shift Logs</div>
         <div class="card-desc">Plant shift logs for kiln burners, cement analysts and shift managers. Track process conditions, coal additions, and shift handover notes.</div>
         <div class="card-arrow">→</div>
       </a>
 
-      <a href="documents/index.html" class="app-card" data-check="documents/index.html">
+      <a href="documents/index.html" class="app-card">
         <div class="card-top">
           <div class="card-icon" style="background:rgba(155,116,232,.12);border:1px solid rgba(155,116,232,.28)">📋</div>
-          <span class="card-badge badge-live" id="badge-docs">Checking…</span>
         </div>
         <div class="card-title">Documents</div>
-        <div class="card-desc">Risk assessments, COSHH data sheets, and equipment records. Status tracking, review dates, and audit trail for all compliance documents.</div>
+        <div class="card-desc">Risk assessments, review dates, and audit trail for compliance documents, with quick access to Sypol for COSHH sheets.</div>
         <div class="card-arrow">→</div>
       </a>
 
-      <a href="isolation/index.html" class="app-card" data-check="isolation/index.html">
+      <a href="isolation/index.html" class="app-card">
         <div class="card-top">
           <div class="card-icon" style="background:rgba(232,134,26,.12);border:1px solid rgba(232,134,26,.28)">🔌</div>
-          <span class="card-badge badge-live" id="badge-iso">Checking…</span>
         </div>
         <div class="card-title">Isolation Matrix</div>
         <div class="card-desc">Equipment isolation procedures for safe maintenance. Manage isolation points, work areas, and equipment lockout/tagout requirements.</div>
+        <div class="card-arrow">→</div>
+      </a>
+
+      <a href="shift-tracker/index.html" class="app-card">
+        <div class="card-top">
+          <div class="card-icon" style="background:rgba(14,165,160,.12);border:1px solid rgba(14,165,160,.28)">📆</div>
+        </div>
+        <div class="card-title">Shift Tracker</div>
+        <div class="card-desc">Shift rotation lookup for A, B, C, D and E teams, with date search, calendar view and quick shift summaries.</div>
         <div class="card-arrow">→</div>
       </a>
 
@@ -480,17 +481,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       <button class="ai-scope-btn" onclick="setAiScope(this,'all')">All time</button>
     </div>
   </div>
-  <div id="aiSuggestions" style="padding:12px 22px;border-bottom:1px solid var(--bd);display:flex;flex-wrap:wrap;gap:6px;flex-shrink:0">
-    <button class="ai-suggestion" onclick="useAiSuggestion('Give me an overview of all current isolation matrices and their status')">Isolation matrix overview</button>
-    <button class="ai-suggestion" onclick="useAiSuggestion('Summarise this week\'s shift log entries and any ongoing issues')">Shift log summary</button>
-    <button class="ai-suggestion" onclick="useAiSuggestion('List all equipment with outstanding or overdue documents')">Equipment document status</button>
-    <button class="ai-suggestion" onclick="useAiSuggestion('Are there any recurring issues across shifts this month?')">Recurring shift issues</button>
-    <button class="ai-suggestion" onclick="useAiSuggestion('Show me all COSHH sheets and risk assessments due for review')">Documents due for review</button>
-  </div>
   <div id="aiHistory" style="flex:1;overflow-y:auto;padding:16px 22px;display:flex;flex-direction:column;gap:10px"></div>
   <div style="padding:12px 22px;border-top:1px solid var(--bd);flex-shrink:0">
     <div style="display:flex;gap:8px;align-items:flex-end">
-      <textarea id="aiPrompt" rows="2" placeholder="Ask anything about shift data… (⌘↵ to send)" onkeydown="if((event.ctrlKey||event.metaKey)&&event.key==='Enter'){event.preventDefault();sendAiReport();}" style="flex:1;padding:10px 12px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;resize:none;outline:none;line-height:1.5"></textarea>
+      <textarea id="aiPrompt" rows="2" placeholder="Message… (⌘↵ to send)" onkeydown="if((event.ctrlKey||event.metaKey)&&event.key==='Enter'){event.preventDefault();sendAiReport();}" style="flex:1;padding:10px 12px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;resize:none;outline:none;line-height:1.5"></textarea>
       <button id="aiSendBtn" onclick="sendAiReport()" style="width:38px;height:38px;background:linear-gradient(135deg,var(--ac),var(--ac3));border:none;border-radius:var(--rsm);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0">
         <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" width="14" height="14"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
       </button>
@@ -573,8 +567,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 /* ── AI panel ─────────────────────────────────────────────────────── */
 .ai-scope-btn{padding:4px 12px;font-size:11px;font-family:var(--ff-mono);background:var(--sf3);border:1px solid var(--bd);border-radius:var(--rxs);color:var(--tx2);cursor:pointer;transition:all .15s}
 .ai-scope-btn.active{background:var(--acd2);border-color:var(--ac);color:var(--ac3)}
-.ai-suggestion{padding:5px 11px;font-size:11px;font-family:var(--ff-body);background:var(--sf3);border:1px solid var(--bd);border-radius:20px;color:var(--tx2);cursor:pointer;white-space:nowrap}
-.ai-suggestion:hover{border-color:var(--ac);color:var(--ac3)}
 .ai-bubble-user{background:var(--acd2);border:1px solid var(--acd3);border-radius:10px 10px 2px 10px;padding:10px 14px;font-size:13px;color:var(--tx);align-self:flex-end;max-width:85%}
 .ai-bubble-ai{background:var(--sf3);border:1px solid var(--bd);border-radius:2px 10px 10px 10px;padding:10px 14px;font-size:13px;color:var(--tx);align-self:flex-start;max-width:85%;white-space:pre-wrap}
 .ai-thinking{display:flex;align-items:center;gap:4px;padding:10px 14px;background:var(--sf3);border:1px solid var(--bd);border-radius:2px 10px 10px 10px}
@@ -1058,32 +1050,7 @@ async function loadUserTheme() {
   applyTheme(new Date().getHours() >= 7 && new Date().getHours() < 18);
 })();
 
-/* /* ── INIT ──────────────────────────────────────────────── */
-
-async function checkAppStatus() {
-  const apps = [
-    { id: 'badge-kiln', url: 'kiln-log/index.html' },
-    { id: 'badge-docs', url: 'documents/index.html' },
-    { id: 'badge-iso',  url: 'isolation/index.html' }
-  ];
-  for (const app of apps) {
-    const el = document.getElementById(app.id);
-    if (!el) continue;
-    try {
-      const res = await fetch(app.url, { method: 'HEAD', cache: 'no-cache' });
-      if (res.ok) {
-        el.textContent = 'Live';
-        el.className = 'card-badge badge-live';
-      } else {
-        el.textContent = 'Offline';
-        el.className = 'card-badge badge-offline';
-      }
-    } catch (e) {
-      el.textContent = 'Offline';
-      el.className = 'card-badge badge-offline';
-    }
-  }
-}
+/* ── INIT ──────────────────────────────────────────────── */
 
 window.addEventListener('load', function() {
   sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -1644,16 +1611,11 @@ function setAiScope(btn, scope) {
   _aiHistory = [];
   renderAiHistory();
 }
-function useAiSuggestion(text) {
-  document.getElementById('aiPrompt').value = text;
-  document.getElementById('aiSuggestions').style.display = 'none';
-  document.getElementById('aiPrompt').focus();
-}
 function renderAiHistory() {
   const el = document.getElementById('aiHistory');
   const clr = document.getElementById('aiClearBtn');
   if (!_aiHistory.length) {
-    el.innerHTML = '<div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);text-align:center;padding:40px 0">Ask anything about the shift log and documents data</div>';
+    el.innerHTML = '<div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);text-align:center;padding:40px 0">Ask about data across documents, isolation and kiln log</div>';
     if (clr) clr.style.display = 'none';
     return;
   }
@@ -1675,32 +1637,59 @@ async function buildPlatformContext() {
   if (_aiScope==='month') { const d=new Date(now); d.setMonth(d.getMonth()-1);     sinceDate=d.toISOString().slice(0,10); }
   if (_aiScope==='year')  { const d=new Date(now); d.setFullYear(d.getFullYear()-1);sinceDate=d.toISOString().slice(0,10); }
   try {
-    // Fetch shift log + documents in parallel
     let kilnQuery = sb.from('kiln_log').select('week_key,data').order('week_key',{ascending:false}).limit(200).neq('week_key','__lists__');
     if (sinceDate) kilnQuery = kilnQuery.gte('week_key', sinceDate);
-    const [kilnRes, raRes, coshhRes, equipRes] = await Promise.all([
+    const [kilnRes, raRes, matrixRes, pointRes, equipRes] = await Promise.all([
       kilnQuery,
-      sb.from('pw_risk_assessments').select('title,category,risk_level,status,updated_at,description').order('updated_at',{ascending:false}).limit(200),
-      sb.from('pw_coshh_sheets').select('product_name,supplier,hazard_classification,updated_at').order('updated_at',{ascending:false}).limit(200),
-      sb.from('pw_equipment').select('name,category,status,last_inspection,notes').order('name').limit(200)
+      sb.from('pw_risk_assessments').select('ref,title,next_review_date,department').limit(300),
+      sb.from('pw_isolation_matrices').select('id,title,status,area,equipment_id').limit(200),
+      sb.from('pw_isolation_points').select('matrix_id').limit(1000),
+      sb.from('pw_equipment').select('id,name').limit(500)
     ]);
-    const rows = kilnRes.data;
+    const lines = ['PADESWOOD WORKS — PLATFORM SUMMARY — scope: '+_aiScope,'='.repeat(60)];
+
+    const ras = (raRes.data||[]).map(function(r){
+      const next = r.next_review_date ? new Date(r.next_review_date) : null;
+      let status = 'draft';
+      if (next) {
+        const diff = Math.round((next - now) / 86400000);
+        status = diff < 0 ? 'overdue' : diff <= 30 ? 'due-soon' : 'current';
+      }
+      return Object.assign({}, r, { _status: status });
+    });
+    const raCounts = {
+      overdue: ras.filter(r=>r._status==='overdue').length,
+      dueSoon: ras.filter(r=>r._status==='due-soon').length,
+      current: ras.filter(r=>r._status==='current').length,
+      draft: ras.filter(r=>r._status==='draft').length
+    };
+    lines.push('');
+    lines.push('DOCUMENTS APP:');
+    lines.push('  Risk assessments: '+ras.length+' total | Overdue: '+raCounts.overdue+' | Due soon: '+raCounts.dueSoon+' | Current: '+raCounts.current+' | Draft: '+raCounts.draft);
+    ras.filter(r=>r._status==='overdue'||r._status==='due-soon').slice(0,8).forEach(function(r){
+      lines.push('  Attention: '+(r.ref||'—')+' | '+(r.title||'—')+' | '+r._status+' | Dept: '+(r.department||'—'));
+    });
+    lines.push('  COSHH: managed externally in Sypol.');
+
+    const equipmentById = new Map((equipRes.data||[]).map(function(e){ return [e.id, e.name]; }));
+    const pointCounts = {};
+    (pointRes.data||[]).forEach(function(p){ pointCounts[p.matrix_id] = (pointCounts[p.matrix_id] || 0) + 1; });
+    const matrices = matrixRes.data || [];
+    const matrixStatus = {};
+    matrices.forEach(function(m){ matrixStatus[m.status||'draft'] = (matrixStatus[m.status||'draft'] || 0) + 1; });
+    lines.push('');
+    lines.push('ISOLATION APP:');
+    lines.push('  Matrices: '+matrices.length+' total | Statuses: '+Object.keys(matrixStatus).sort().map(function(k){ return k+': '+matrixStatus[k]; }).join(' | '));
+    matrices.slice(0,8).forEach(function(m){
+      lines.push('  Matrix: '+(m.title||'—')+' | Status: '+(m.status||'draft')+' | Equipment: '+(equipmentById.get(m.equipment_id)||'—')+' | Area: '+(m.area||'—')+' | Points: '+(pointCounts[m.id]||0));
+    });
+
+    const rows = kilnRes.data || [];
     const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-    const lines = ['PADESWOOD WORKS — COMPLETE PLATFORM DATA — scope: '+_aiScope,'='.repeat(60)];
-
-    // ── Documents section ────────────────────────────────────────────
-    lines.push('\n--- RISK ASSESSMENTS ('+((raRes.data||[]).length)+' records) ---');
-    (raRes.data||[]).forEach(function(r){ lines.push('  [RA] '+r.title+' | Cat: '+r.category+' | Risk: '+r.risk_level+' | Status: '+r.status+(r.description?' | '+r.description.slice(0,120):'')); });
-    lines.push('\n--- COSHH SHEETS ('+((coshhRes.data||[]).length)+' records) ---');
-    (coshhRes.data||[]).forEach(function(r){ lines.push('  [COSHH] '+r.product_name+' | Supplier: '+r.supplier+' | Hazard: '+r.hazard_classification); });
-    lines.push('\n--- EQUIPMENT ('+((equipRes.data||[]).length)+' records) ---');
-    (equipRes.data||[]).forEach(function(r){ lines.push('  [EQUIP] '+r.name+' | Cat: '+r.category+' | Status: '+r.status+(r.last_inspection?' | Last inspected: '+r.last_inspection:'')+(r.notes?' | '+r.notes.slice(0,80):'')); });
-
-    // ── Shift log section ────────────────────────────────────────────
-    lines.push('\n--- KILN SHIFT LOG DATA ---');
-    (rows||[]).forEach(function(r) {
+    let burnerIssues = 0, burnerNotes = 0, managerNotes = 0, analystIssues = 0;
+    const recentItems = [];
+    rows.forEach(function(r) {
       if (!r.data) return;
-      lines.push('\nWEEK: '+r.week_key);
       const weekState   = r.data.state   || r.data;
       const weekSmState = r.data.smState || null;
       const weekCaState = r.data.caState || null;
@@ -1709,12 +1698,13 @@ async function buildPlatformContext() {
           const d = weekState[day]; if (!d) return;
           ['shift1','shift2'].forEach(function(sk,si) {
             const s = d[sk]; if (!s) return;
-            const entries = (s.entries||[]).filter(function(e){return e.equipment||e.issue;});
+            const entries = (s.entries||[]).filter(function(e){ return e.equipment || e.issue; });
             const hasNotes = (s.notes||'').trim();
-            if (!entries.length && !hasNotes) return;
-            lines.push('  [KILN BURNERS] '+day+' '+(si===0?'Day':'Night')+' Shift'+(s.shift?' | Shift: '+s.shift:'')+(s.burner?' | Burner: '+s.burner:'')+(s.shiftManager?' | Manager: '+s.shiftManager:''));
-            entries.forEach(function(e){lines.push('    Equipment: '+(e.equipment||'?')+' — '+(e.issue||'no detail'));});
-            if (hasNotes) lines.push('    Notes: '+hasNotes);
+            burnerIssues += entries.length;
+            if (hasNotes) burnerNotes++;
+            entries.slice(0,2).forEach(function(e){
+              if (recentItems.length < 12) recentItems.push('  Kiln '+r.week_key+' '+day+' '+(si===0?'Day':'Night')+': '+(e.equipment||'?')+' — '+(e.issue||'no detail'));
+            });
           });
         });
       }
@@ -1723,9 +1713,10 @@ async function buildPlatformContext() {
           const d = weekSmState[day]; if (!d) return;
           ['shift1','shift2'].forEach(function(sk,si) {
             const s = d[sk]; if (!s) return;
-            const notes = (s.notes||'').trim(); if (!notes) return;
-            lines.push('  [SHIFT MANAGER] '+day+' '+(si===0?'Day':'Night')+' Shift'+(s.shift?' | Shift: '+s.shift:''));
-            lines.push('    Notes: '+notes);
+            const notes = (s.notes||'').trim();
+            if (!notes) return;
+            managerNotes++;
+            if (recentItems.length < 12) recentItems.push('  Shift manager '+r.week_key+' '+day+' '+(si===0?'Day':'Night')+': '+notes.slice(0,110));
           });
         });
       }
@@ -1734,17 +1725,28 @@ async function buildPlatformContext() {
           const d = weekCaState[day]; if (!d) return;
           ['shift1','shift2'].forEach(function(sk,si) {
             const s = d[sk]; if (!s) return;
-            const analyst  = (s.name||'').trim();
-            const hseItems = (s.hse||[]).filter(function(h){return h.type||h.details;});
-            const grind    = (s.cemQuality||[]).filter(function(q){return (q.issues||'').trim();});
-            if (!analyst && !hseItems.length && !grind.length) return;
-            lines.push('  [CEMENT ANALYST] '+day+' '+(si===0?'Day':'Night')+' Shift'+(analyst?' | Analyst: '+analyst:''));
-            hseItems.forEach(function(h){lines.push('    HSE: '+(h.type||'?')+(h.details?' — '+h.details:''));});
-            grind.forEach(function(q){lines.push('    Cement quality (Mill '+q.mill+'): '+q.issues);});
+            const hseItems = (s.hse||[]).filter(function(h){ return h.type || h.details; });
+            const grind = (s.cemQuality||[]).filter(function(q){ return (q.issues||'').trim(); });
+            analystIssues += hseItems.length + grind.length;
+            hseItems.slice(0,1).forEach(function(h){
+              if (recentItems.length < 12) recentItems.push('  Analyst '+r.week_key+' '+day+' '+(si===0?'Day':'Night')+': HSE '+(h.type||'?')+(h.details?' — '+h.details:''));
+            });
+            grind.slice(0,1).forEach(function(q){
+              if (recentItems.length < 12) recentItems.push('  Analyst '+r.week_key+' '+day+' '+(si===0?'Day':'Night')+': Mill '+(q.mill||'?')+' — '+q.issues);
+            });
           });
         });
       }
     });
+    lines.push('');
+    lines.push('KILN LOG APP:');
+    lines.push('  Burner issue entries: '+burnerIssues+' | Burner note entries: '+burnerNotes+' | Shift manager note entries: '+managerNotes+' | Analyst issue entries: '+analystIssues);
+    if (recentItems.length) {
+      lines.push('  Recent recorded items:');
+      recentItems.forEach(function(line){ lines.push(line); });
+    } else {
+      lines.push('  No recent recorded items found for the selected scope.');
+    }
     return lines.join('\n');
   } catch(e) { return 'Error loading shift data: '+e.message; }
 }
@@ -1757,7 +1759,6 @@ async function sendAiReport() {
     await loadPlatformGroqKey();
     if (!_platformGroqKey) { alert('AI service unavailable — Groq key not configured.'); return; }
   }
-  document.getElementById('aiSuggestions').style.display = 'none';
   promptEl.value = ''; sendBtn.disabled = true;
   _aiHistory.push({role:'user',content:q});
   renderAiHistory();
@@ -1766,14 +1767,13 @@ async function sendAiReport() {
   hist.scrollTop = hist.scrollHeight;
   try {
     const context = await buildPlatformContext();
-    const systemPrompt = 'You are an expert AI assistant for Padeswood Works (HeidelbergMaterials cement plant, Wales). You have access to both shift log records (kiln burners, shift managers, cement analysts) and the documents system (risk assessments, COSHH sheets, equipment records). Answer questions concisely from the provided data only. If something is not recorded, say so. Do not refer to individuals by name — use their role instead.';
-    const dataMsg = {role:'user',content:'Here is the shift log data. Only answer from this data.\n\n'+context};
-    const dataAck = {role:'assistant',content:'Understood. I will only answer from the shift log data provided.'};
-    const messages = [{role:'system',content:systemPrompt},dataMsg,dataAck,..._aiHistory];
+    const systemPrompt = 'You are an expert AI assistant for Padeswood Works (HeidelbergMaterials cement plant, Wales). You have access only to the provided platform summary covering the Documents app, Isolation app, and Kiln Log app. Answer concisely from that summary only. If something is not present in the summary, say it is not recorded here. Do not refer to individuals by name — use their role instead.';
+    const dataMsg = {role:'user',content:'Here is the platform summary. Only answer from this data.\n\n'+context};
+    const messages = [{role:'system',content:systemPrompt},dataMsg,..._aiHistory];
     const res = await fetch('https://api.groq.com/openai/v1/chat/completions',{
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+_platformGroqKey},
-      body:JSON.stringify({model:'llama-3.3-70b-versatile',max_tokens:1500,messages})
+      body:JSON.stringify({model:'llama-3.3-70b-versatile',max_tokens:1200,messages})
     });
     const data = await res.json();
     const reply = data.choices?.[0]?.message?.content || 'No response received.';
