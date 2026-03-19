@@ -361,6 +361,10 @@ tbody tr:hover{background:var(--sf2);}
 .ai-dot{width:6px;height:6px;border-radius:50%;background:var(--ac3);animation:aiDot 1.2s ease-in-out infinite}
 .ai-dot:nth-child(2){animation-delay:.2s}.ai-dot:nth-child(3){animation-delay:.4s}
 @keyframes aiDot{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+.ai-suggestion{padding:5px 11px;font-size:11px;font-family:var(--ff-body);
+  background:var(--sf3);border:1px solid var(--bd);border-radius:20px;
+  color:var(--tx2);cursor:pointer;white-space:nowrap}
+.ai-suggestion:hover{border-color:var(--ac3);color:var(--ac3)}
 
 /* ── TOAST ───────────────────────────────────────────────────────── */
 #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(12px);
@@ -503,7 +507,7 @@ tbody tr:hover{background:var(--sf2);}
           <option value="">All statuses</option>
           <option value="draft">Draft</option>
           <option value="active">Active</option>
-          <option value="review">Under Review</option>
+          
           <option value="archived">Archived</option>
         </select>
         <select class="filter-select" id="matrixAreaFilter" onchange="renderMatrices()">
@@ -593,36 +597,43 @@ tbody tr:hover{background:var(--sf2);}
     </div>
     <div class="modal-body">
       <input type="hidden" id="mxId">
-      <div class="field-group">
-        <div class="field-label">Equipment *</div>
-        <select class="field-select" id="mxEquip"><option value="">— Select equipment —</option></select>
-      </div>
-      <div class="field-group">
-        <div class="field-label">Matrix Title *</div>
-        <input type="text" class="field-input" id="mxTitle" placeholder="e.g. Kiln Drive Motor Isolation Procedure">
+      <div class="field-row">
+        <div class="field-group">
+          <div class="field-label">Plant Name *</div>
+          <input type="text" class="field-input" id="mxPlantName" placeholder="e.g. SRF Plant (131)">
+        </div>
+        <div class="field-group">
+          <div class="field-label">Plant Reference</div>
+          <input type="text" class="field-input" id="mxPlantRef" placeholder="e.g. 131">
+        </div>
       </div>
       <div class="field-row">
         <div class="field-group">
-          <div class="field-label">Work Area / Location</div>
-          <input type="text" class="field-input" id="mxArea" placeholder="e.g. Kiln Drive, Raw Mill…" list="areaList"><datalist id="areaList"></datalist>
+          <div class="field-label">Area / Zone</div>
+          <input type="text" class="field-input" id="mxArea" placeholder="e.g. North Silo, Kiln Drive" list="areaList"><datalist id="areaList"></datalist>
         </div>
         <div class="field-group">
           <div class="field-label">Status</div>
           <select class="field-select" id="mxStatus">
-            <option value="draft">Draft</option>
             <option value="active">Active</option>
-            <option value="review">Under Review</option>
+            <option value="draft">Draft</option>
             <option value="archived">Archived</option>
           </select>
         </div>
       </div>
-      <div class="field-group">
-        <div class="field-label">Scope of Work / Description</div>
-        <textarea class="field-textarea" id="mxDesc" placeholder="Describe what work this isolation procedure covers…"></textarea>
+      <div class="field-row">
+        <div class="field-group">
+          <div class="field-label">Reviewed By</div>
+          <input type="text" class="field-input" id="mxReviewedBy" placeholder="e.g. S. Williams">
+        </div>
+        <div class="field-group">
+          <div class="field-label">Review Date</div>
+          <input type="date" class="field-input" id="mxReviewedAt">
+        </div>
       </div>
       <div class="field-group">
-        <div class="field-label">Safety Notes / Special Precautions</div>
-        <textarea class="field-textarea" id="mxNotes" placeholder="Any special safety precautions or warnings…" style="min-height:60px"></textarea>
+        <div class="field-label">Description / Scope</div>
+        <textarea class="field-textarea" id="mxDesc" placeholder="Describe what work this isolation procedure covers…"></textarea>
       </div>
       <div class="form-err" id="mxErr"></div>
     </div>
@@ -632,7 +643,6 @@ tbody tr:hover{background:var(--sf2);}
     </div>
   </div>
 </div>
-
 <!-- ── ISOLATION POINT MODAL ──────────────────────────────────────── -->
 <div class="modal-overlay" id="pointModal">
   <div class="modal">
@@ -797,10 +807,16 @@ tbody tr:hover{background:var(--sf2);}
       <button onclick="closeAiPanel()" style="width:28px;height:28px;border-radius:6px;border:1px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center">×</button>
     </div>
   </div>
+  <div id="aiSuggestions" style="padding:12px 22px;border-bottom:1px solid var(--bd);display:flex;flex-wrap:wrap;gap:6px;flex-shrink:0">
+    <button class="ai-suggestion" onclick="useAiSuggestion('Summarise all active isolation matrix')">Active matrices</button>
+    <button class="ai-suggestion" onclick="useAiSuggestion('Which equipment has the most isolation points?')">Most complex</button>
+    <button class="ai-suggestion" onclick="useAiSuggestion('List all electrical isolation points across all matrices')">All electrical</button>
+    <button class="ai-suggestion" onclick="useAiSuggestion('Which matrices are in draft or under review and need attention?')">Needs attention</button>
+  </div>
   <div id="aiHistory" style="flex:1;overflow-y:auto;padding:16px 22px;display:flex;flex-direction:column;gap:10px"></div>
   <div style="padding:12px 22px;border-top:1px solid var(--bd);flex-shrink:0">
     <div style="display:flex;gap:8px;align-items:flex-end">
-      <textarea id="aiPrompt" rows="2" placeholder="Message… (⌘↵ to send)"
+      <textarea id="aiPrompt" rows="2" placeholder="Ask about isolation matrix or equipment… (⌘↵ to send)"
         onkeydown="if((event.ctrlKey||event.metaKey)&&event.key==='Enter'){event.preventDefault();sendAiMessage();}"
         style="flex:1;padding:10px 12px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;resize:none;outline:none;line-height:1.5"></textarea>
       <button id="aiSendBtn" onclick="sendAiMessage()" style="width:38px;height:38px;background:linear-gradient(135deg,var(--ac),var(--ac3));border:none;border-radius:var(--rsm);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0">
@@ -829,6 +845,7 @@ let sb, currentUser = null, currentProfile = null;
 let _matrices = [], _points = {}, _equipment = [], _areas = [];
 let _groqKey = null, _aiHistory = [];
 let _openMatrixId = null;
+let _entries = {}; // cached pw_isolation_entries per matrix id
 
 /* ── HELPERS ─────────────────────────────────────────────────────── */
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
@@ -984,47 +1001,61 @@ async function loadAllData(){
   await Promise.all([loadMatrices(),loadEquipment()]);
 }
 async function loadMatrices(){
-  const {data}=await sb.from('pw_isolation_matrices').select('*').order('title');
+  const {data,error}=await sb.from('pw_isolation_matrices')
+    .select('*').order('plant_name').order('area');
+  if(error){ console.error('loadMatrices:',error); showToast('Failed to load matrices'); return; }
   _matrices=data||[];
   document.getElementById('matrixCount').textContent=_matrices.length;
   renderMatrices(); renderMatrixStats(); buildAreasFromData();
 }
+
 async function loadEquipment(){
   const {data}=await sb.from('pw_equipment').select('*').order('name');
   _equipment=data||[];
-  document.getElementById('equipCount').textContent=_equipment.length;
-  renderEquipment(); populateEquipDropdown(); populateCatFilter(); buildAreasFromData();
+  renderEquipment(); populateEquipDropdown(); populateCatFilter();
 }
+
 function buildAreasFromData(){
-  // Derive unique area names from equipment location and matrix area fields
-  const fromEquip=(_equipment||[]).map(e=>e.location).filter(Boolean);
-  const fromMatrix=(_matrices||[]).map(m=>m.area).filter(Boolean);
-  _areas=[...new Set([...fromEquip,...fromMatrix])].sort();
-  populateAreaDatalist();
+  const areas=[...new Set(_matrices.map(m=>m.area||'').filter(Boolean))].sort();
+  const af=document.getElementById('matrixAreaFilter');
+  if(af){
+    const cur=af.value;
+    af.innerHTML='<option value="">All areas</option>'+areas.map(a=>`<option ${a===cur?'selected':''} value="${esc(a)}">${esc(a)}</option>`).join('');
+  }
+  populateAreaDatalist(areas);
 }
-function populateAreaDatalist(){
-  const opts=_areas.map(a=>`<option value="${esc(a)}">`).join('');
-  ['areaList','areaList2'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=opts;});
+
+function populateAreaDatalist(areas){
+  const dl=document.getElementById('areaList');
+  if(dl) dl.innerHTML=areas.map(a=>`<option value="${esc(a)}">`).join('');
 }
+
 async function loadPointsForMatrix(id){
   if(_points[id]) return _points[id];
   const {data}=await sb.from('pw_isolation_points').select('*').eq('matrix_id',id).order('sort_order');
-  _points[id]=data||[]; return _points[id];
+  _points[id]=data||[];
+  return _points[id];
 }
 
-/* ── RENDER MATRICES ─────────────────────────────────────────────── */
+async function loadEntriesForMatrix(id){
+  if(_entries[id]) return _entries[id];
+  const {data}=await sb.from('pw_isolation_entries').select('*').eq('matrix_id',id).order('sort_order');
+  _entries[id]=data||[];
+  return _entries[id];
+}
+
 function renderMatrixStats(){
   const total=_matrices.length;
   const active=_matrices.filter(m=>m.status==='active').length;
   const draft=_matrices.filter(m=>m.status==='draft'||!m.status).length;
-  const review=_matrices.filter(m=>m.status==='review').length;
+  const archived=_matrices.filter(m=>m.status==='archived').length;
   document.getElementById('matrixStats').innerHTML=`
     <div class="stat-card s-total"><div class="stat-label">Total Matrices</div><div class="stat-num">${total}</div><div class="stat-sub">All procedures</div></div>
-    <div class="stat-card s-active"><div class="stat-label">Active</div><div class="stat-num">${active}</div><div class="stat-sub">Approved & in use</div></div>
+    <div class="stat-card s-active"><div class="stat-label">Active</div><div class="stat-num">${active}</div><div class="stat-sub">Approved &amp; in use</div></div>
     <div class="stat-card s-draft"><div class="stat-label">Draft</div><div class="stat-num">${draft}</div><div class="stat-sub">Awaiting approval</div></div>
-    <div class="stat-card s-review"><div class="stat-label">Under Review</div><div class="stat-num">${review}</div><div class="stat-sub">Being checked</div></div>
-  `;
+    <div class="stat-card s-review"><div class="stat-label">Archived</div><div class="stat-num">${archived}</div><div class="stat-sub">No longer active</div></div>`;
 }
+
 function renderMatrices(){
   const q=(document.getElementById('matrixSearch').value||'').toLowerCase();
   const sf=document.getElementById('matrixStatusFilter').value;
@@ -1032,82 +1063,208 @@ function renderMatrices(){
   let list=_matrices.filter(m=>{
     if(sf&&(m.status||'draft')!==sf) return false;
     if(af&&(m.area||'')!==af) return false;
-    if(q&&![m.title,m.description,m.notes].some(f=>(f||'').toLowerCase().includes(q))) return false;
+    if(q&&![m.plant_name,m.plant_ref,m.area,m.matrix_ref,m.description].some(f=>(f||'').toLowerCase().includes(q))) return false;
     return true;
   });
   const grid=document.getElementById('matrixGrid');
   if(!list.length){
     grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="42" height="42"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
-      <p>${_matrices.length?'No matrices match your filters':'No isolation matrix yet'}</p>
-      ${canEdit()?'<button class="btn btn-iso" onclick="openMatrixModal()">Create First Matrix</button>':''}
+      <p>No matrices found</p>
+      ${canEdit()?`<button class="btn btn-iso" onclick="openMatrixModal()">Create First Matrix</button>`:''}
     </div>`;
     return;
   }
+  const STATUS_CLS={active:'s-active-pill',draft:'s-draft-pill',archived:'s-archived-pill'};
+  const STATUS_LBL={active:'Active',draft:'Draft',archived:'Archived'};
   grid.innerHTML=list.map(m=>{
-    const equip=_equipment.find(e=>e.id===m.equipment_id);
-    const area=m.area||null;
-    const pts=_points[m.id]||[];
     const st=m.status||'draft';
+    const ptCount=(_points[m.id]||[]).length;
     return `<div class="matrix-card" onclick="openDetail('${m.id}')">
-      <div class="mc-top">
-        <div class="mc-icon">🔌</div>
-        <span class="mc-status-pill s-${st}-pill">${STATUS_LABELS[st]||st}</span>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:10px">
+        <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+          <span class="mc-status-pill ${STATUS_CLS[st]||'s-draft-pill'}">${STATUS_LBL[st]||st}</span>
+          ${m.matrix_ref?`<span style="font-family:var(--ff-mono);font-size:9px;color:var(--tx3);background:var(--sf2);padding:2px 7px;border-radius:4px;border:1px solid var(--bd)">${esc(m.matrix_ref)}</span>`:''}
+        </div>
+        ${canEdit()?`<button class="icon-btn" style="flex-shrink:0" onclick="event.stopPropagation();openMatrixModal('${m.id}')" title="Edit">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>`:''}
       </div>
-      <div class="mc-title">${esc(m.title)}</div>
-      <div class="mc-equip">${equip?esc(equip.name):''}</div>
-      <div class="mc-meta">
-        ${area?`<span class="mc-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/></svg>${esc(area)}</span>`:''}
-        ${pts.length?`<span class="mc-pts-badge">${pts.length} point${pts.length!==1?'s':''}</span>`:'<span class="mc-meta-item" style="color:var(--tx3)">No points yet</span>'}
-        <span class="mc-meta-item" style="margin-left:auto">${fmtDate(m.updated_at)}</span>
+      <div class="matrix-card-title">${esc(m.plant_name||'—')}</div>
+      <div style="font-size:11px;color:var(--tx2);margin-top:3px;display:flex;gap:10px;flex-wrap:wrap">
+        ${m.plant_ref?`<span style="font-family:var(--ff-mono)">Ref: ${esc(m.plant_ref)}</span>`:''}
+        ${m.area?`<span>📍 ${esc(m.area)}</span>`:''}
+      </div>
+      ${m.description?`<div style="font-size:11px;color:var(--tx2);margin-top:8px;line-height:1.5">${esc(m.description).substring(0,90)}${m.description.length>90?'…':''}</div>`:''}
+      <div style="display:flex;gap:12px;margin-top:12px;font-family:var(--ff-mono);font-size:10px;color:var(--tx3)">
+        ${ptCount?`<span>${ptCount} isolation pt${ptCount!==1?'s':''}</span>`:'<span>No points loaded</span>'}
+        ${m.reviewed_by?`<span>Reviewed: ${esc(m.reviewed_by)}</span>`:''}
+        ${m.reviewed_at?`<span>${fmtDate(m.reviewed_at)}</span>`:''}
       </div>
     </div>`;
   }).join('');
 }
 
-/* ── MATRIX DETAIL ───────────────────────────────────────────────── */
 async function openDetail(id){
   _openMatrixId=id;
   const m=_matrices.find(x=>x.id===id); if(!m) return;
-  const equip=_equipment.find(e=>e.id===m.equipment_id);
-  const area=m.area||null;
-  const points=await loadPointsForMatrix(id);
   const st=m.status||'draft';
-  document.getElementById('detailStatusRow').innerHTML=`<span class="mc-status-pill s-${st}-pill">${STATUS_LABELS[st]||st}</span>${area?`<span style="font-family:var(--ff-mono);font-size:10px;color:var(--tx3)">${esc(area)}</span>`:''}`;
-  document.getElementById('detailTitle').textContent=m.title;
-  document.getElementById('detailEquip').textContent=equip?`Equipment: ${equip.name}${equip.asset_tag?' ('+equip.asset_tag+')':''}` : '';
+  const STATUS_CLS={active:'s-active-pill',draft:'s-draft-pill',archived:'s-archived-pill'};
+  const STATUS_LBL={active:'Active',draft:'Draft',archived:'Archived'};
+  document.getElementById('detailStatusRow').innerHTML=
+    `<span class="mc-status-pill ${STATUS_CLS[st]||'s-draft-pill'}">${STATUS_LBL[st]||st}</span>`+
+    (m.matrix_ref?`<span style="font-family:var(--ff-mono);font-size:9px;color:var(--tx3);background:var(--sf2);padding:2px 7px;border-radius:4px;border:1px solid var(--bd);margin-left:6px">${esc(m.matrix_ref)}</span>`:'');
+  document.getElementById('detailTitle').textContent=m.plant_name||'—';
+  document.getElementById('detailEquip').textContent=
+    [m.plant_ref?`Ref: ${m.plant_ref}`:'', m.area?`Area: ${m.area}`:''].filter(Boolean).join('  ·  ');
   document.getElementById('detailActions').innerHTML=canEdit()?`
     <button class="btn btn-ghost" style="font-size:12px" onclick="openMatrixModal('${id}')">Edit Matrix</button>
     <button class="btn btn-iso" style="font-size:12px" onclick="openPointModal('${id}')">+ Add Point</button>`:'';
   const metaItems=[];
-  if(equip&&equip.asset_tag) metaItems.push(`<span class="detail-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 0-14.14 0"/><path d="M4.93 19.07a10 10 0 0 0 14.14 0"/></svg>Asset: ${esc(equip.asset_tag)}</span>`);
-  metaItems.push(`<span class="detail-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>${points.length} isolation point${points.length!==1?'s':''}</span>`);
-  if(m.updated_at) metaItems.push(`<span class="detail-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Updated ${fmtDate(m.updated_at)}</span>`);
+  if(m.reviewed_by) metaItems.push(`<span class="detail-meta-item">Reviewed by: ${esc(m.reviewed_by)}</span>`);
+  if(m.reviewed_at) metaItems.push(`<span class="detail-meta-item">Date: ${fmtDate(m.reviewed_at)}</span>`);
   document.getElementById('detailMeta').innerHTML=metaItems.join('');
-  document.getElementById('detailDesc').innerHTML=m.description?`<div class="detail-desc">${esc(m.description)}</div>`:'';
-  document.getElementById('detailNotesEl').innerHTML=m.notes?`<div class="detail-notes">⚠ ${esc(m.notes)}</div>`:'';
-  document.getElementById('detailAddPoint').innerHTML=canEdit()?`<button class="btn btn-iso" style="height:28px;font-size:11px;padding:0 12px" onclick="openPointModal('${id}')">+ Add Point</button>`:'';
-  if(!points.length){
-    document.getElementById('pointsList').innerHTML=`<div class="no-points">No isolation points added yet.${canEdit()?' Use "Add Point" to build the isolation procedure.':''}</div>`;
+  if(m.description){
+    document.getElementById('detailDesc').innerHTML=`<div style="padding:0 20px 12px;font-size:13px;color:var(--tx2);line-height:1.6">${esc(m.description)}</div>`;
   } else {
-    document.getElementById('pointsList').innerHTML=points.map((pt,i)=>`
-      <div class="point-row">
-        <div class="pt-num">${i+1}</div>
-        <div class="pt-body">
-          <div class="pt-desc">${esc(pt.description)}</div>
-          <div class="pt-detail">${[pt.reference?`Ref: ${esc(pt.reference)}`:'',pt.location?esc(pt.location):'',pt.method?`Method: ${esc(pt.method)}`:''].filter(Boolean).join(' · ')}</div>
-          ${pt.notes?`<div class="pt-notes">${esc(pt.notes)}</div>`:''}
-        </div>
-        <div class="pt-type">
-          <span class="type-badge t-${pt.isolation_type||'other'}">${ISO_TYPES[pt.isolation_type]||'Other'}</span>
-        </div>
-      </div>`).join('');
+    document.getElementById('detailDesc').innerHTML='';
   }
-  document.getElementById('detailOverlay').classList.add('open');
-}
-function closeDetail(){ document.getElementById('detailOverlay').classList.remove('open'); _openMatrixId=null; }
+  document.getElementById('detailNotesEl').innerHTML='';
 
-/* ── RENDER EQUIPMENT ────────────────────────────────────────────── */
+  const [points, entries] = await Promise.all([
+    loadPointsForMatrix(id),
+    loadEntriesForMatrix(id)
+  ]);
+
+  // Render isolation points summary
+  const ptHtml = points.length
+    ? `<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">
+        <thead><tr style="background:var(--sf3)">
+          <th style="padding:7px 12px;text-align:left;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Plant No.</th>
+          <th style="padding:7px 12px;text-align:left;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Description</th>
+          <th style="padding:7px 12px;text-align:center;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Local Isol</th>
+          <th style="padding:7px 12px;text-align:center;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Lockable</th>
+          <th style="padding:7px 12px;text-align:center;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">View Win.</th>
+          <th style="padding:7px 12px;text-align:left;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Label</th>
+        </tr></thead>
+        <tbody>${points.map((p,i)=>`<tr style="${i%2===1?'background:var(--sf2)':''}">
+          <td style="padding:7px 12px;font-family:var(--ff-mono);font-size:10px;color:var(--ac3)">${esc(p.plant_number)}</td>
+          <td style="padding:7px 12px;color:var(--tx)">${esc(p.description)}</td>
+          <td style="padding:7px 12px;text-align:center">${p.local_isolation?'<span style="color:var(--grn)">●</span>':'<span style="color:var(--bd2)">○</span>'}</td>
+          <td style="padding:7px 12px;text-align:center">${p.lockable?'<span style="color:var(--grn)">●</span>':'<span style="color:var(--bd2)">○</span>'}</td>
+          <td style="padding:7px 12px;text-align:center">${p.view_window?'<span style="color:var(--grn)">●</span>':'<span style="color:var(--bd2)">○</span>'}</td>
+          <td style="padding:7px 12px;font-size:11px;color:var(--tx2)">${esc(p.label||'')}</td>
+        </tr>`).join('')}</tbody>
+      </table></div>`
+    : `<div class="empty-state" style="padding:20px"><p style="font-size:12px">No isolation points.</p></div>`;
+
+  document.getElementById('pointsList').innerHTML = ptHtml;
+
+  // Render work items / entries
+  const entHtml = entries.length
+    ? `<div style="margin-top:20px;padding:0 20px">
+        <h3 style="font-size:13px;font-weight:600;margin-bottom:10px">Work Items (${entries.length})</h3>
+        <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">
+          <thead><tr style="background:var(--sf3)">
+            <th style="padding:7px 12px;text-align:left;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Ref</th>
+            <th style="padding:7px 12px;text-align:left;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Equipment / Work Item</th>
+            <th style="padding:7px 12px;text-align:center;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Isolation Points Required</th>
+          </tr></thead>
+          <tbody>${entries.map((e,i)=>`<tr style="${i%2===1?'background:var(--sf2)':''}">
+            <td style="padding:7px 12px;font-family:var(--ff-mono);font-size:10px;color:var(--ac3)">${esc(e.work_item_ref)}</td>
+            <td style="padding:7px 12px;color:var(--tx)">${esc(e.work_item_name)}</td>
+            <td style="padding:7px 12px;text-align:center">
+              ${(e.isolation_points||[]).length
+                ? `<span style="font-family:var(--ff-mono);font-size:10px">${e.isolation_points.join(', ')}</span>`
+                : '<span style="color:var(--tx3);font-size:11px">None</span>'}
+            </td>
+          </tr>`).join('')}</tbody>
+        </table></div>
+      </div>`
+    : '';
+  document.getElementById('detailNotesEl').innerHTML = entHtml;
+
+  // Show the detail panel
+  const detail=document.getElementById('detail');
+  if(detail){ detail.classList.add('open'); }
+}
+
+function closeDetail(){
+  _openMatrixId=null;
+  const detail=document.getElementById('detail');
+  if(detail) detail.classList.remove('open');
+}
+
+function openMatrixModal(id){
+  document.getElementById('matrixModalTitle').textContent=id?'Edit Matrix':'New Isolation Matrix';
+  document.getElementById('mxId').value=id||'';
+  document.getElementById('mxErr').style.display='none';
+  if(id){
+    const m=_matrices.find(x=>x.id===id); if(!m) return;
+    document.getElementById('mxPlantName').value=m.plant_name||'';
+    document.getElementById('mxPlantRef').value=m.plant_ref||'';
+    document.getElementById('mxArea').value=m.area||'';
+    document.getElementById('mxStatus').value=m.status||'active';
+    document.getElementById('mxReviewedBy').value=m.reviewed_by||'';
+    document.getElementById('mxReviewedAt').value=m.reviewed_at||'';
+    document.getElementById('mxDesc').value=m.description||'';
+  } else {
+    ['mxPlantName','mxPlantRef','mxArea','mxReviewedBy','mxReviewedAt','mxDesc'].forEach(i=>document.getElementById(i).value='');
+    document.getElementById('mxStatus').value='active';
+  }
+  document.getElementById('matrixModal').classList.add('open');
+}
+
+function closeMatrixModal(){
+  document.getElementById('matrixModal').classList.remove('open');
+}
+
+async function saveMatrix(){
+  const id=document.getElementById('mxId').value;
+  const plantName=document.getElementById('mxPlantName').value.trim();
+  const err=document.getElementById('mxErr');
+  err.style.display='none';
+  if(!plantName){ err.textContent='Plant Name is required.'; err.style.display='block'; return; }
+  const payload={
+    plant_name:  plantName,
+    plant_ref:   document.getElementById('mxPlantRef').value.trim()||'',
+    area:        document.getElementById('mxArea').value.trim()||null,
+    status:      document.getElementById('mxStatus').value||'active',
+    reviewed_by: document.getElementById('mxReviewedBy').value.trim()||null,
+    reviewed_at: document.getElementById('mxReviewedAt').value||null,
+    description: document.getElementById('mxDesc').value.trim()||null,
+    updated_at:  new Date().toISOString()
+  };
+  let error;
+  if(id){
+    ({error}=await sb.from('pw_isolation_matrices').update(payload).eq('id',id));
+  } else {
+    // Generate matrix_ref for new manual entries
+    const plantRef=(payload.plant_ref||'MAN').toUpperCase();
+    const existing=_matrices.filter(m=>(m.matrix_ref||'').startsWith(plantRef+'-'));
+    const nextNum=existing.length+1;
+    payload.matrix_ref=plantRef+'-'+String(nextNum).padStart(2,'0');
+    ({error}=await sb.from('pw_isolation_matrices').insert(payload));
+  }
+  if(error){ err.textContent=error.message; err.style.display='block'; return; }
+  delete _points[id]; delete _entries[id];
+  await loadMatrices();
+  closeMatrixModal();
+  if(_openMatrixId===id) await openDetail(id);
+  showToast(id?'Matrix updated ✓':'Matrix created ✓');
+}
+
+async function deleteMatrix(){
+  const id=document.getElementById('mxId').value; if(!id) return;
+  if(!confirm('Delete this matrix and all its isolation points and work items?')) return;
+  const {error}=await sb.from('pw_isolation_matrices').delete().eq('id',id);
+  if(error){ showToast('Delete failed: '+error.message); return; }
+  delete _points[id]; delete _entries[id];
+  closeMatrixModal(); closeDetail();
+  await loadMatrices();
+  showToast('Matrix deleted');
+}
+
 function renderEquipment(){
   const q=(document.getElementById('equipSearch').value||'').toLowerCase();
   const cf=document.getElementById('equipCatFilter').value;
@@ -1358,11 +1515,12 @@ function closeAiPanel(){
   document.getElementById('isoAiOverlay').style.display='none';
   document.getElementById('isoAiPanel').style.transform='translateX(100%)';
 }
+function useAiSuggestion(text){ document.getElementById('aiPrompt').value=text; sendAiMessage(); }
 function clearAiHistory(){ _aiHistory=[]; renderAiHistory(); }
 function renderAiHistory(){
   const hist=document.getElementById('aiHistory'); const clr=document.getElementById('aiClearBtn');
   if(!_aiHistory.length){
-    hist.innerHTML='<div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);text-align:center;padding:40px 0">Ask about isolation data</div>';
+    hist.innerHTML='<div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);text-align:center;padding:40px 0">Ask anything about isolation matrix or equipment</div>';
     if(clr) clr.style.display='none'; return;
   }
   hist.innerHTML=_aiHistory.map(m=>{
@@ -1375,21 +1533,16 @@ function renderAiHistory(){
 async function buildAiContext(){
   try{
     const lines=['PADESWOOD WORKS — ISOLATION MATRIX DATA','='.repeat(50)];
-    lines.push(`\nWORK AREAS (${_areas.length}): ${_areas.join(', ') || 'none recorded'}`);
-    lines.push(`\nEQUIPMENT COUNT: ${_equipment.length}`);
-    const statusCounts={};
-    _matrices.forEach(m=>{ const key=m.status||'draft'; statusCounts[key]=(statusCounts[key]||0)+1; });
-    lines.push(`\nMATRICES: ${_matrices.length} total`);
-    lines.push('STATUS COUNTS: '+(Object.keys(statusCounts).sort().map(k=>`${k}: ${statusCounts[k]}`).join(' | ') || 'none recorded'));
-    lines.push('\nMATRIX SUMMARY (up to 12):');
-    for(const m of _matrices.slice(0,12)){
+    lines.push(`\nWORK AREAS (${_areas.length}): ${_areas.join(', ')}`);
+    lines.push(`\nEQUIPMENT (${_equipment.length}):`);
+    _equipment.forEach(e=>lines.push(`  [${e.asset_tag||'—'}] ${e.name} | Cat: ${e.category||'—'} | Area: ${e.location||'—'} | Status: ${e.status||'active'}`));
+    lines.push(`\nISOLATION MATRIX (${_matrices.length}):`);
+    for(const m of _matrices){
       const equip=_equipment.find(e=>e.id===m.equipment_id);
+      const area=m.area||null;
       const pts=await loadPointsForMatrix(m.id);
-      const typeCounts={};
-      pts.forEach(pt=>{ const key=pt.isolation_type||'other'; typeCounts[key]=(typeCounts[key]||0)+1; });
-      lines.push(`  Matrix: ${m.title} | Status: ${m.status||'draft'} | Equipment: ${equip?equip.name:'—'} | Area: ${m.area||'—'} | Points: ${pts.length}`);
-      const breakdown = Object.keys(typeCounts).sort().map(k=>`${k}: ${typeCounts[k]}`).join(' | ');
-      if(breakdown) lines.push(`    Point types: ${breakdown}`);
+      lines.push(`  Matrix: ${m.title} | Status: ${m.status||'draft'} | Equipment: ${equip?equip.name:'—'} | Area: ${m.area||'—'}`);
+      pts.forEach((pt,i)=>lines.push(`    Point ${i+1}: [${pt.isolation_type||'other'}] ${pt.description}${pt.reference?' Ref:'+pt.reference:''}${pt.method?' Method:'+pt.method:''}`));
     }
     return lines.join('\n');
   }catch(e){ return 'Error loading data: '+e.message; }
@@ -1398,6 +1551,7 @@ async function sendAiMessage(){
   const promptEl=document.getElementById('aiPrompt'); const sendBtn=document.getElementById('aiSendBtn');
   const q=promptEl.value.trim(); if(!q) return;
   if(!_groqKey){ await loadGroqKey(); if(!_groqKey){ alert('AI unavailable — Groq key not configured.'); return; } }
+  document.getElementById('aiSuggestions').style.display='none';
   promptEl.value=''; sendBtn.disabled=true;
   _aiHistory.push({role:'user',content:q}); renderAiHistory();
   const hist=document.getElementById('aiHistory');
@@ -1407,8 +1561,9 @@ async function sendAiMessage(){
     const context=await buildAiContext();
     const systemPrompt='You are an expert AI assistant for Padeswood Works (HeidelbergMaterials cement plant, Wales). You help with isolation matrix, equipment isolation procedures, and work area information. Answer concisely based only on the provided data.';
     const dataMsg={role:'user',content:'Here is the isolation matrix data:\n\n'+context+'\n\nOnly answer from this data.'};
-    const messages=[{role:'system',content:systemPrompt},dataMsg,..._aiHistory];
-    const res=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+_groqKey},body:JSON.stringify({model:'llama-3.3-70b-versatile',max_tokens:1200,messages})});
+    const dataAck={role:'assistant',content:'Understood. I will only answer from the isolation matrix data provided.'};
+    const messages=[{role:'system',content:systemPrompt},dataMsg,dataAck,..._aiHistory];
+    const res=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+_groqKey},body:JSON.stringify({model:'llama-3.3-70b-versatile',max_tokens:1500,messages})});
     const data=await res.json();
     const reply=data.choices?.[0]?.message?.content||'No response received.';
     document.getElementById('aiThinking')?.remove();
