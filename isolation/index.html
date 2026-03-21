@@ -194,6 +194,67 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .btn-ghost:hover{border-color:var(--ac3);color:var(--ac3);background:var(--acd1);}
 .btn-danger{background:transparent;border:1px solid var(--redb);color:var(--red);height:28px;padding:0 10px;font-size:11px;font-family:var(--ff-mono);cursor:pointer;border-radius:var(--rxs);}
 .btn-danger:hover{background:var(--redd);}
+.btn-soft{
+  background:var(--sf3);
+  border:1px solid var(--bd2);
+  color:var(--tx);
+}
+.btn-soft:hover{border-color:var(--ac3);color:var(--ac3);background:var(--acd1);}
+.btn-soft:disabled{opacity:.5;cursor:not-allowed;}
+.matrix-select-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  min-height:30px;
+  padding:0 10px;
+  border-radius:999px;
+  border:1px solid var(--bd2);
+  background:var(--sf2);
+  color:var(--tx);
+  font-family:var(--ff-mono);
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.4px;
+  cursor:pointer;
+  user-select:none;
+  transition:border-color .18s,background .18s,color .18s,box-shadow .18s,transform .18s;
+  box-shadow:0 1px 0 rgba(0,0,0,.04);
+}
+.matrix-select-pill:hover{
+  border-color:var(--ac3);
+  color:var(--ac3);
+  background:var(--acd1);
+  transform:translateY(-1px);
+}
+.matrix-select-pill input{
+  width:15px;
+  height:15px;
+  margin:0;
+  accent-color:var(--ac3);
+  cursor:pointer;
+}
+.matrix-select-check{
+  width:16px;
+  height:16px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:4px;
+  background:var(--sf);
+  border:1px solid var(--bd2);
+  color:var(--ac3);
+  font-size:11px;
+  line-height:1;
+  flex-shrink:0;
+}
+.matrix-select-pill span{
+  line-height:1;
+}
+.matrix-select-pill.is-selected{
+  border-color:var(--ac3);
+  background:var(--acd1);
+  color:var(--ac3);
+}
 
 /* ── STATS GRID ──────────────────────────────────────────────────── */
 .dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:28px;}
@@ -215,7 +276,15 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .stat-sub{font-size:11px;color:var(--tx3);margin-top:4px;}
 
 /* ── MATRIX LIST ─────────────────────────────────────────────────── */
-.matrix-grid{display:flex;flex-direction:column;gap:10px;max-width:980px;width:100%;margin:0;}
+.matrix-grid{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  width:100%;
+  max-width:none;
+  margin:0;
+  align-items:stretch;
+}
 .matrix-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);
   padding:12px 14px;cursor:pointer;transition:border-color .18s,box-shadow .14s,transform .14s;
   position:relative;overflow:hidden;}
@@ -372,6 +441,10 @@ tbody tr:hover{background:var(--sf2);}
 .matrix-sheet-title{font-family:var(--ff-head);font-weight:700;font-size:14px;color:var(--tx);}
 .matrix-sheet-sub{font-family:var(--ff-mono);font-size:10px;color:var(--tx3);margin-top:3px;}
 .matrix-sheet-warn{font-size:11px;color:var(--amb);margin-top:8px;line-height:1.45;}
+.matrix-sheet-edit-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:10px;}
+.matrix-sheet-edit-grid .field-label{margin-bottom:4px;}
+.matrix-sheet-edit-grid .field-input,.matrix-sheet-edit-grid .field-select{height:32px;padding:0 10px;font-size:12px;}
+.matrix-sheet-edit-note{margin-top:8px;font-size:11px;color:var(--tx3);line-height:1.45;font-family:var(--ff-mono);}
 .matrix-preview{overflow-x:auto;border:1px solid var(--bd);border-radius:var(--rsm);background:var(--sf);margin-top:10px;}
 .matrix-preview table{width:100%;border-collapse:collapse;font-size:11px;}
 .matrix-preview th{background:var(--sf3);padding:7px 10px;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd);text-align:left;white-space:nowrap;}
@@ -379,6 +452,49 @@ tbody tr:hover{background:var(--sf2);}
 .matrix-preview tbody tr:last-child td{border-bottom:none;}
 .matrix-preview tbody tr:hover td{background:var(--sf2);}
 .matrix-reader-tools{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
+.matrix-toolbar-actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-left:auto;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+.matrix-toolbar-actions .btn{
+  box-shadow:none;
+}
+.matrix-toolbar-actions .btn-iso{
+  box-shadow:var(--eac);
+}
+.matrix-toolbar-actions .btn-danger{
+  height:36px;
+  padding:0 14px;
+  font-size:12px;
+  border-radius:var(--rsm);
+}
+.matrix-reader-actions{
+  display:flex;
+  align-items:flex-end;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.matrix-reader-actions .field-group{
+  margin:0;
+}
+.matrix-reader-actions .field-select{
+  min-width:240px;
+}
+.matrix-reader-actions-note{
+  margin-top:8px;
+  font-size:11px;
+  color:var(--tx3);
+  font-family:var(--ff-mono);
+  line-height:1.45;
+}
+.matrix-reader-tools .btn{
+  min-width:108px;
+  justify-content:center;
+}
 .matrix-reader-print{display:none;}
 @media print{
   body *{visibility:hidden !important;}
@@ -578,9 +694,17 @@ tbody tr:hover{background:var(--sf2);}
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           New Matrix
         </button>
-        <button class="btn btn-danger" id="btnBulkDeleteMatrices" onclick="bulkDeleteSelectedMatrices()" style="display:none">
-          Delete Selected <span id="matrixSelectionCount" style="margin-left:6px">0</span>
-        </button>
+        <div class="matrix-toolbar-actions">
+          <button class="btn btn-soft" id="btnSelectAllMatrices" onclick="selectAllVisibleMatrices()" style="display:none">
+            Select All
+          </button>
+          <button class="btn btn-soft" id="btnClearMatrixSelection" onclick="clearMatrixSelection()" style="display:none">
+            Clear
+          </button>
+          <button class="btn btn-danger" id="btnBulkDeleteMatrices" onclick="bulkDeleteSelectedMatrices()" style="display:none">
+            Delete Selected <span id="matrixSelectionCount" style="margin-left:6px">0</span>
+          </button>
+        </div>
       </div>
       <div class="dash-grid" id="matrixStats"></div>
       <div class="matrix-grid" id="matrixGrid"></div>
@@ -880,6 +1004,17 @@ tbody tr:hover{background:var(--sf2);}
         </label>
       </div>
       <div id="matrixReaderStatus" class="import-state" style="display:none"></div>
+      <div class="matrix-reader-actions" style="margin-top:14px">
+        <label class="field-group">
+          <div class="field-label">Duplicate Handling</div>
+          <select class="field-select" id="matrixDuplicateMode" onchange="setMatrixDuplicateMode(this.value)">
+            <option value="detect">Detect duplicates</option>
+            <option value="skip">Skip duplicates</option>
+            <option value="overwrite">Overwrite duplicates</option>
+          </select>
+        </label>
+      </div>
+      <div class="matrix-reader-actions-note" id="matrixDuplicateNote">Detect duplicates will flag any workbook sheets that already match an existing isolation matrix.</div>
       <div id="matrixReaderSummary" class="matrix-reader-summary"></div>
       <div id="matrixReaderList" class="matrix-reader-list"></div>
       <div id="matrixReaderPrint" class="matrix-reader-print"></div>
@@ -887,7 +1022,7 @@ tbody tr:hover{background:var(--sf2);}
     <div class="modal-footer">
       <div class="matrix-reader-tools">
         <button class="btn btn-iso" onclick="importSelectedSheets()">Import Selected</button>
-        <button class="btn btn-ghost" onclick="window.print()">Print</button>
+        <button class="btn btn-soft" onclick="window.print()">Print</button>
         <button class="btn btn-ghost" onclick="closeMatrixReader()">Close</button>
       </div>
     </div>
@@ -962,9 +1097,10 @@ let _openMatrixId = null;
 let _entries = {}; // cached pw_isolation_entries per matrix id
 let _matrixSearchIndex = {}; // searchable text per matrix id
 let _isoAudit = [];
-let _readerState = {fileNames:[], sheets:[], selected:{}};
+let _readerState = {fileNames:[], sheets:[], selected:{}, edits:{}, duplicateMode:'detect'};
 let _matrixSelection = new Set();
 let _matrixSort = { col: 'status', dir: 1 };
+let _matrixVisibleIds = [];
 
 /* ── HELPERS ─────────────────────────────────────────────────────── */
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
@@ -1151,7 +1287,7 @@ function buildIsolationPrintDoc(matrix, points, entries){
   ${reviewedInfo ? `<div style="margin-bottom:8px;font-size:10px;color:#666">${reviewedInfo}</div>` : ''}
   <div class="section-title">Work Items (${(entries || []).length})</div>
   <table>
-    <thead><tr><th style="width:18%">Work Item Code</th><th style="width:24%">Work Item</th><th>Required Isolation Equipment</th><th style="width:24%">Notes</th></tr></thead>
+    <thead><tr><th style="width:18%">Work Item Code</th><th style="width:24%">Work Item</th><th>Required Isolation Equipment</th><th style="width:24%">Comments</th></tr></thead>
     <tbody>
       ${entryRows || '<tr><td colspan="4" class="muted">No work items recorded.</td></tr>'}
     </tbody>
@@ -1333,7 +1469,7 @@ async function doLogout(){
 /* ── LAUNCH ──────────────────────────────────────────────────────── */
 async function launchApp(){
   document.getElementById('splash').style.display='none';
-  const app=document.getElementById('appWrapper'); app.style.display='flex';
+  const app=document.getElementById('appWrapper');
   document.getElementById('headerEmail').textContent=currentProfile.email||currentProfile.full_name||'—';
   const role=isoRole();
   if(role==='none'){
@@ -1351,7 +1487,9 @@ async function launchApp(){
     document.getElementById('btnAddEquip').style.display='flex';
   }
   document.getElementById('isoAiBtn').style.display='flex';
-  loadUserTheme(); loadGroqKey(); loadAllData();
+  await loadUserTheme();
+  app.style.display='flex';
+  loadGroqKey(); loadAllData();
 }
 
 /* ── TABS ────────────────────────────────────────────────────────── */
@@ -1418,11 +1556,15 @@ function openMatrixReader(){
     showToast('Read Workbook is admin-only');
     return;
   }
-  _readerState = {fileNames:[], sheets:[], selected:{}};
+  _readerState = {fileNames:[], sheets:[], selected:{}, edits:{}, duplicateMode:'detect'};
   document.getElementById('matrixReaderTitle').textContent = 'Read Isolation Workbook';
   document.getElementById('matrixReaderFile').value = '';
   document.getElementById('matrixReaderFileName').textContent = 'No files selected';
   document.getElementById('matrixReaderStatus').style.display = 'none';
+  const dupModeEl = document.getElementById('matrixDuplicateMode');
+  if(dupModeEl) dupModeEl.value = 'detect';
+  const dupNoteEl = document.getElementById('matrixDuplicateNote');
+  if(dupNoteEl) dupNoteEl.textContent = 'Detect duplicates will flag any workbook sheets that already match an existing isolation matrix.';
   document.getElementById('matrixReaderSummary').innerHTML = '';
   document.getElementById('matrixReaderList').innerHTML = '';
   document.getElementById('matrixReaderPrint').innerHTML = '';
@@ -1459,11 +1601,11 @@ function readerCellIsRed(ws, r, c){
   const cell = readerGetCell(ws, r, c);
   const fg = readerCellFill(cell);
   if(!fg) return false;
+  if(Number(fg.indexed) === 10) return true;
   if(fg.type === 'rgb' && typeof fg.rgb === 'string'){
     const rgb = fg.rgb.toUpperCase();
     return rgb.endsWith('FF0000') || rgb === 'FFFF0000';
   }
-  if(fg.type === 'indexed' && Number(fg.indexed) === 10) return true;
   if(typeof fg.rgb === 'string'){
     const rgb = fg.rgb.toUpperCase();
     return rgb.endsWith('FF0000') || rgb === 'FFFF0000';
@@ -1483,6 +1625,243 @@ function readerCountRedFills(ws){
 function readerRowText(row){
   return (row || []).map(function(c){ return readerClean(c); }).filter(Boolean).join(' ');
 }
+function readerIsFormulaRef(text){
+  return /^\s*=?\s*(?:'[^']+'\!)?[A-Z]{1,3}\d+\s*$/i.test(readerClean(text));
+}
+function readerCellText(cell){
+  if(!cell) return '';
+  return readerClean(cell.w || cell.v || cell.f || '');
+}
+function readerFileToText(file){
+  if(!file) return '';
+  if(typeof file === 'string') return file;
+  if(file.content != null) return readerFileToText(file.content);
+  if(file.data != null) return readerFileToText(file.data);
+  if(file.asText && typeof file.asText === 'function'){
+    try{ return readerClean(file.asText()); }catch(e){}
+  }
+  if(file.text && typeof file.text === 'function'){
+    try{ return readerClean(file.text()); }catch(e){}
+  }
+  if(file instanceof ArrayBuffer) return new TextDecoder('utf-8').decode(new Uint8Array(file));
+  if(ArrayBuffer.isView(file)) return new TextDecoder('utf-8').decode(file);
+  if(file instanceof Uint8Array) return new TextDecoder('utf-8').decode(file);
+  return '';
+}
+function readerGetBookFileText(wb, path){
+  if(!wb || !wb.files || !path) return '';
+  const file = wb.files[path] || wb.files[path.replace(/^\//,'')] || null;
+  return readerFileToText(file);
+}
+function readerParseXmlDoc(text){
+  if(!text) return null;
+  try{ return new DOMParser().parseFromString(text, 'application/xml'); }
+  catch(e){ return null; }
+}
+function readerXlsxRedStyleIds(stylesXml){
+  const doc = readerParseXmlDoc(stylesXml);
+  if(!doc) return new Set();
+  const fillsParent = doc.getElementsByTagName('fills')[0];
+  const fills = fillsParent ? Array.from(fillsParent.getElementsByTagName('fill')) : [];
+  const redFillIds = new Set();
+  fills.forEach(function(fill, idx){
+    const pat = fill.getElementsByTagName('patternFill')[0];
+    if(!pat || (pat.getAttribute('patternType') || '').toLowerCase() !== 'solid') return;
+    const fg = pat.getElementsByTagName('fgColor')[0];
+    if(!fg) return;
+    const rgb = String(fg.getAttribute('rgb') || '').toUpperCase();
+    const indexed = Number(fg.getAttribute('indexed'));
+    if(rgb === 'FFFF0000' || rgb.endsWith('FF0000') || indexed === 10) redFillIds.add(idx);
+  });
+  const xfsParent = doc.getElementsByTagName('cellXfs')[0];
+  const xfs = xfsParent ? Array.from(xfsParent.getElementsByTagName('xf')) : [];
+  const redStyleIds = new Set();
+  xfs.forEach(function(xf, idx){
+    if(redFillIds.has(Number(xf.getAttribute('fillId') || 0))) redStyleIds.add(idx);
+  });
+  return redStyleIds;
+}
+function readerXlsxSharedStrings(sharedStringsXml){
+  const doc = readerParseXmlDoc(sharedStringsXml);
+  if(!doc) return [];
+  const sis = doc.getElementsByTagName('si');
+  const out = [];
+  for(let i=0; i<sis.length; i++){
+    out.push(readerClean(sis[i].textContent || ''));
+  }
+  return out;
+}
+function readerXlsxSheetRows(sheetXml, sharedStrings){
+  const doc = readerParseXmlDoc(sheetXml);
+  if(!doc) return [];
+  const rows = [];
+  Array.from(doc.getElementsByTagName('row')).forEach(function(row){
+    const r = Number(row.getAttribute('r') || 0);
+    const cells = {};
+    Array.from(row.getElementsByTagName('c')).forEach(function(cell){
+      const ref = cell.getAttribute('r') || '';
+      const colMatch = ref.match(/^([A-Z]+)\d+$/i);
+      if(!colMatch) return;
+      const col = XLSX.utils.decode_col(colMatch[1].toUpperCase());
+      let text = '';
+      const type = cell.getAttribute('t') || '';
+      const f = cell.getElementsByTagName('f')[0];
+      const v = cell.getElementsByTagName('v')[0];
+      if(type === 's' && v){
+        const idx = Number(readerClean(v.textContent));
+        text = readerClean(sharedStrings[idx] || v.textContent || '');
+      } else if(type === 'inlineStr'){
+        text = readerClean(cell.textContent);
+      } else if(f && readerClean(f.textContent)){
+        text = readerClean(f.textContent);
+      } else if(v && readerClean(v.textContent)){
+        text = readerClean(v.textContent);
+      } else {
+        text = readerClean(cell.textContent);
+      }
+      cells[col] = { text:text, style:Number(cell.getAttribute('s') || 0) };
+    });
+    rows[r] = cells;
+  });
+  return rows;
+}
+function readerParseXlsxWorkbook(wb, filename){
+  if(!wb || !wb.files || !wb.SheetNames || !wb.SheetNames.length) return [];
+  const redStyleIds = readerXlsxRedStyleIds(readerGetBookFileText(wb, 'xl/styles.xml'));
+  if(!redStyleIds.size) return [];
+  const sharedStrings = readerXlsxSharedStrings(readerGetBookFileText(wb, 'xl/sharedStrings.xml'));
+  const sheets = [];
+  wb.SheetNames.forEach(function(name, idx){
+    const sheetXml = readerGetBookFileText(wb, 'xl/worksheets/sheet' + (idx + 1) + '.xml');
+    if(!sheetXml) return;
+    const rows = readerXlsxSheetRows(sheetXml, sharedStrings);
+    if(!rows.length) return;
+    const title = readerClean(rows[3]?.[2]?.text || rows[2]?.[2]?.text || name) || name;
+    const reviewedAt = readerNormalizeDate(rows[2]?.[2]?.text || rows[1]?.[2]?.text || rows[1]?.[1]?.text || '');
+    const reviewedByMatch = readerClean(rows[2]?.[1]?.text || rows[1]?.[1]?.text || '').match(/Reviewed\s+(.+)/i);
+    const reviewedBy = reviewedByMatch ? readerClean(reviewedByMatch[1]) : null;
+    const equipment = [];
+    for(let c=3; c<=48; c++){
+      const header = rows[4]?.[c];
+      if(!header || !readerClean(header.text)) continue;
+      if(header.text.toLowerCase() === 'plant no') continue;
+      let nameText = header.text;
+      const m = nameText.match(/^=?\s*(?:'[^']+'\!)?([A-Z]{1,3})(\d+)\s*$/i);
+      if(m){
+        const rr = Number(m[2]);
+        const refText = rows[rr]?.[2]?.text || '';
+        if(refText) nameText = refText;
+      }
+      equipment.push({col:c, code:'', name:nameText});
+    }
+    const workItems = [];
+    for(let r=5; r<rows.length; r++){
+      const row = rows[r] || {};
+      const workName = readerClean(row[2]?.text || '');
+      if(!workName) continue;
+      if(/reason for isolation|completion|reviewed|comments/i.test(workName)) continue;
+      const required = [];
+      equipment.forEach(function(eq){
+        const cell = row[eq.col];
+        if(cell && redStyleIds.has(cell.style)) required.push({code:'', name:eq.name});
+      });
+      workItems.push({
+        work_item_ref: workName,
+        work_item_name: workName,
+        required: required,
+        notes: ''
+      });
+    }
+    sheets.push({
+      filename: filename,
+      sheetName: name,
+      title: title,
+      reviewedBy: reviewedBy,
+      reviewedAt: reviewedAt,
+      equipment: equipment,
+      workItems: workItems,
+      redCount: workItems.reduce(function(n, w){ return n + (w.required || []).length; }, 0),
+      warnings: []
+    });
+  });
+  return sheets;
+}
+function readerParsedWorkbookScore(sheets){
+  return (sheets || []).reduce(function(total, s){
+    const items = Array.isArray(s?.workItems) ? s.workItems : [];
+    const reqCount = items.reduce(function(n, w){
+      return n + (Array.isArray(w?.required) ? w.required.length : 0);
+    }, 0);
+    const nonEmptyItems = items.filter(function(w){ return Array.isArray(w?.required) && w.required.length; }).length;
+    const titleScore = s && s.title ? 1 : 0;
+    return total + (items.length * 2) + (reqCount * 6) + (nonEmptyItems * 10) + titleScore;
+  }, 0);
+}
+function readerResolveCellText(ws, grid, r, c){
+  const raw = readerClean((grid[r] || [])[c]);
+  if(!raw) return '';
+  const m = raw.match(/^\s*=?\s*(?:'[^']+'\!)?([A-Z]{1,3})(\d+)\s*$/i);
+  if(m){
+    const rr = parseInt(m[2], 10) - 1;
+    const cc = XLSX.utils.decode_col(m[1].toUpperCase());
+    const direct = readerGetCell(ws, rr, cc);
+    const val = direct ? (direct.w != null && direct.w !== '' ? direct.w : direct.v) : ((grid[rr] || [])[cc] || '');
+    return readerClean(val);
+  }
+  return raw;
+}
+function readerFindFormulaHeaderRow(ws, grid){
+  const b = readerBounds(ws);
+  const maxRow = Math.min(b.e.r, 7);
+  for(let r=0; r<=maxRow; r++){
+    let hits = 0;
+    for(let c=b.s.c; c<=b.e.c; c++){
+      const cell = readerGetCell(ws, r, c);
+      const text = readerCellText(cell);
+      if(readerIsFormulaRef(text)) hits++;
+    }
+    if(hits >= 4) return r;
+  }
+  return -1;
+}
+function readerFindDominantTextCol(grid, startRow, endRow, maxCol){
+  let bestCol = 2;
+  let bestCount = -1;
+  let bestChars = -1;
+  const end = Math.min(grid.length, endRow || grid.length);
+  for(let c=0; c<=maxCol; c++){
+    let count = 0;
+    let chars = 0;
+    for(let r=startRow; r<end; r++){
+      const v = readerClean((grid[r] || [])[c]);
+      if(!v) continue;
+      count++;
+      chars += v.length;
+    }
+    if(count > bestCount || (count === bestCount && chars > bestChars)){
+      bestCol = c;
+      bestCount = count;
+      bestChars = chars;
+    }
+  }
+  return bestCol;
+}
+function readerTitleScore(text, rowIndex, row){
+  const t = readerClean(text);
+  if(!t) return -999;
+  if(/^(reviewed|equipment to isolate|equipment to be worked on|equipment to be isolated|plant no|comments?|notes?|reason for isolation|completion)$/i.test(t)) return -999;
+  let score = t.length;
+  const cells = (row || []).filter(function(c){ return readerClean(c); }).length;
+  if(rowIndex <= 1) score += 40;
+  else if(rowIndex <= 3) score += 18;
+  if(cells <= 2) score += 14;
+  else if(cells >= 6) score -= 18;
+  if(/matrix|isolation/.test(t.toLowerCase())) score += 20;
+  if(/\b(work item|equipment to|comments?|notes?|reviewed by)\b/i.test(t)) score -= 45;
+  if(/\d{4,}/.test(t)) score -= 10;
+  if(/\b[A-Z]{1,4}\d{1,4}\b/.test(t) && !/matrix/i.test(t)) score -= 8;
+  return score;
+}
 function readerFindRow(grid, predicate, limit){
   const end = Math.min(grid.length, limit || grid.length);
   for(let r=0; r<end; r++){
@@ -1491,17 +1870,54 @@ function readerFindRow(grid, predicate, limit){
   return -1;
 }
 function readerBestTitle(grid, fallback){
-  const ignore = ['REVIEWED','EQUIPMENT TO ISOLATE','EQUIPMENT TO BE WORKED ON','EQUIPMENT TO BE ISOLATED','PLANT NO'];
   let best = '';
+  let bestScore = -999;
   for(let r=0; r<Math.min(grid.length, 6); r++){
     for(let c=0; c<Math.min((grid[r]||[]).length, 8); c++){
       const v = readerClean(grid[r][c]);
       if(!v) continue;
-      if(ignore.includes(v.toUpperCase())) continue;
-      if(v.length > best.length) best = v;
+      const score = readerTitleScore(v, r, grid[r]);
+      if(score > bestScore){
+        bestScore = score;
+        best = v;
+      }
     }
   }
   return best || fallback;
+}
+function readerSheetEdit(idx){
+  if(!_readerState.edits[idx]) _readerState.edits[idx] = {};
+  return _readerState.edits[idx];
+}
+function readerResolveSheetMeta(s, idx){
+  const edit = _readerState.edits[idx] || {};
+  return {
+    title: smartTitleCase(readerClean(edit.title || s.title || s.sheetName || 'Untitled')),
+    area: smartTitleCase(readerClean(edit.area || s.sheetName || '')),
+    reviewedBy: readerClean(edit.reviewedBy || s.reviewedBy || ''),
+    reviewedAt: readerClean(edit.reviewedAt || s.reviewedAt || ''),
+    status: readerClean(edit.status || 'active')
+  };
+}
+function readerSetSheetEdit(idx, field, value){
+  const edit = readerSheetEdit(idx);
+  edit[field] = value;
+  if(field === 'title' || field === 'area' || field === 'reviewedBy' || field === 'reviewedAt' || field === 'status'){
+    renderMatrixReader();
+  }
+}
+function setMatrixDuplicateMode(mode){
+  _readerState.duplicateMode = mode || 'detect';
+  const dupNoteEl = document.getElementById('matrixDuplicateNote');
+  if(dupNoteEl){
+    const notes = {
+      detect: 'Detect duplicates will flag any workbook sheets that already match an existing isolation matrix.',
+      skip: 'Skip duplicates will import only new matrices and leave matched ones unchanged.',
+      overwrite: 'Overwrite duplicates will replace any matched matrices with the imported workbook version.'
+    };
+    dupNoteEl.textContent = notes[_readerState.duplicateMode] || notes.detect;
+  }
+  renderMatrixReader();
 }
 function readerNormalizeDate(value){
   const t = readerClean(value);
@@ -1544,11 +1960,30 @@ function readerBuildMatrixRef(base){
   }
   return candidate;
 }
+function readerMatrixRefRoot(ref){
+  return readerClean(String(ref || '').replace(/-\d+$/,'')).toUpperCase();
+}
+function readerFindDuplicateMatrix(meta, sheetName, filename){
+  const titleKey = readerNorm(meta?.title || sheetName || '').toUpperCase();
+  const areaKey = readerNorm(meta?.area || sheetName || '').toUpperCase();
+  const refBase = readerGuessMatrixRefBase(meta?.title || sheetName || '', sheetName, filename).toUpperCase();
+  if(!titleKey && !areaKey && !refBase) return null;
+  return (_matrices || []).find(function(m){
+    const mTitle = readerNorm(m.plant_name || '').toUpperCase();
+    const mArea = readerNorm(m.area || '').toUpperCase();
+    const mRefBase = readerMatrixRefRoot(m.matrix_ref || '');
+    if(refBase && mRefBase && mRefBase === refBase) return true;
+    if(titleKey && mTitle === titleKey && (!areaKey || mArea === areaKey)) return true;
+    if(titleKey && mTitle === titleKey && !areaKey) return true;
+    return false;
+  }) || null;
+}
 function readerSheetLooksLikeMatrix(grid, ws){
   const text = grid.slice(0, 8).map(readerRowText).join(' ').toUpperCase();
   return /EQUIPMENT TO ISOLATE|EQUIPMENT TO BE WORKED ON|EQUIPMENT TO BE ISOLATED/.test(text) || readerCountRedFills(ws) > 0;
 }
 function readerParseWorkbook(wb, filename){
+  const xmlSheets = readerParseXlsxWorkbook(wb, filename);
   const sheets = [];
   wb.SheetNames.forEach(function(name){
     const ws = wb.Sheets[name];
@@ -1560,6 +1995,55 @@ function readerParseWorkbook(wb, filename){
     const reviewedAt = readerNormalizeDate((grid[0] || [])[2] || (grid[0] || [])[1] || '');
     const reviewedByMatch = readerRowText(grid[0]).match(/Reviewed\s+([0-9]{1,2}[\/-][0-9]{1,2}[\/-][0-9]{2,4})\s*-\s*(.+)$/i);
     const reviewedBy = reviewedByMatch ? readerClean(reviewedByMatch[2]) : null;
+    const formulaHeaderRow = readerFindFormulaHeaderRow(ws, grid);
+    if(formulaHeaderRow >= 0){
+      const dataStart = formulaHeaderRow + 1;
+      const b = readerBounds(ws);
+      const lastCol = b.e.c;
+      const workCol = Math.min(readerFindDominantTextCol(grid, dataStart, Math.min(grid.length, dataStart + 30), Math.min(lastCol, 5)), lastCol);
+      const equipment = [];
+      for(let c=workCol + 1; c<=lastCol; c++){
+        const name = readerResolveCellText(ws, grid, formulaHeaderRow, c);
+        if(!name) continue;
+        equipment.push({col:c, code:'', name:name});
+      }
+      const workItems = [];
+      const notesColStart = equipment.length ? equipment[equipment.length - 1].col + 1 : lastCol + 1;
+      for(let r=dataStart; r<grid.length; r++){
+        const row = grid[r] || [];
+        const rowText = readerRowText(row);
+        if(!rowText) continue;
+        if(/reason for isolation|completion|reviewed|comments/i.test(rowText)) continue;
+        const workName = readerClean(row[workCol] || row[workCol - 1] || row[workCol + 1] || '');
+        if(!workName) continue;
+        const notes = row.slice(notesColStart).map(readerClean).filter(Boolean).join(' · ');
+        const required = [];
+        equipment.forEach(function(eq){
+          if(readerCellIsRed(ws, r, eq.col)){
+            required.push({ code:'', name:eq.name || '' });
+          }
+        });
+        workItems.push({
+          work_item_ref: workName,
+          work_item_name: workName,
+          required: required,
+          notes: notes,
+          warnings: required.length ? [] : ['No red isolation boxes found on this row.']
+        });
+      }
+      sheets.push({
+        filename: filename,
+        sheetName: name,
+        title: title,
+        reviewedBy: reviewedBy,
+        reviewedAt: reviewedAt,
+        equipment: equipment,
+        workItems: workItems,
+        redCount: readerCountRedFills(ws),
+        warnings: workItems.length ? [] : ['No work items were extracted from this formula-based sheet.']
+      });
+      return;
+    }
     const workHeaderRow = readerFindRow(grid, function(text){ return /equipment to be worked on|equipment to be isolated/i.test(text); }, 12);
     const namesRow = workHeaderRow >= 2 ? workHeaderRow - 2 : 2;
     const codesRow = workHeaderRow >= 1 ? workHeaderRow - 1 : 3;
@@ -1599,7 +2083,8 @@ function readerParseWorkbook(wb, filename){
         work_item_ref: workCode || workName,
         work_item_name: workName || workCode,
         required: required,
-        notes: notes
+        notes: notes,
+        warnings: required.length ? [] : ['No red isolation boxes found on this row.']
       });
     }
     sheets.push({
@@ -1614,7 +2099,8 @@ function readerParseWorkbook(wb, filename){
       warnings: workItems.length ? [] : ['No red isolation boxes were found on the work-item rows.']
     });
   });
-  return sheets;
+  if(!xmlSheets.length) return sheets;
+  return readerParsedWorkbookScore(xmlSheets) >= readerParsedWorkbookScore(sheets) ? xmlSheets : sheets;
 }
 async function handleMatrixWorkbookFiles(fileList){
   const files = Array.from(fileList || []).filter(function(f){ return /\.(xls|xlsx)$/i.test(f.name); });
@@ -1634,7 +2120,7 @@ async function handleMatrixWorkbookFiles(fileList){
   for(const file of files){
     try{
       const buf = await file.arrayBuffer();
-      const wb = XLSX.read(new Uint8Array(buf), {type:'array', raw:false, cellDates:true, cellText:true, cellStyles:true});
+      const wb = XLSX.read(new Uint8Array(buf), {type:'array', raw:false, cellDates:true, cellText:true, cellStyles:true, bookFiles:true});
       const parsed = readerParseWorkbook(wb, file.name);
       parsed.forEach(function(s){ sheets.push(s); });
     }catch(e){
@@ -1652,6 +2138,15 @@ async function handleMatrixWorkbookFiles(fileList){
       });
     }
   }
+  sheets.forEach(function(s, idx){
+    _readerState.edits[idx] = {
+      title: s.title || s.sheetName || '',
+      area: s.sheetName || '',
+      reviewedBy: s.reviewedBy || '',
+      reviewedAt: s.reviewedAt || '',
+      status: 'active'
+    };
+  });
   _readerState.sheets = sheets;
   _readerState.selected = {};
   sheets.forEach(function(s, idx){ _readerState.selected[idx] = !s.error; });
@@ -1664,11 +2159,16 @@ function renderMatrixReader(){
   const printArea = document.getElementById('matrixReaderPrint');
   const selectedCount = sheets.reduce(function(n, s, idx){ return n + (s.error ? 0 : (_readerState.selected[idx] !== false ? 1 : 0)); }, 0);
   const okSheets = sheets.filter(function(s){ return !s.error; });
-  const selectedSheets = sheets.filter(function(s, idx){ return s && !s.error && _readerState.selected[idx] !== false; });
+  const selectedSheets = sheets.map(function(s, idx){ return {s:s, idx:idx}; }).filter(function(item){ return item.s && !item.s.error && _readerState.selected[item.idx] !== false; });
+  const duplicateSheets = okSheets.reduce(function(n, s, idx){
+    const meta = readerResolveSheetMeta(s, sheets.indexOf(s));
+    return n + (readerFindDuplicateMatrix(meta, s.sheetName, s.filename) ? 1 : 0);
+  }, 0);
   summary.innerHTML = [
     {l:'Sheets', v: okSheets.length},
     {l:'Files failed', v: sheets.filter(function(s){ return s.error; }).length},
     {l:'Selected', v: selectedCount},
+    {l:'Duplicates', v: duplicateSheets},
     {l:'Work items', v: okSheets.reduce(function(n, s){ return n + (s.workItems ? s.workItems.length : 0); }, 0)},
     {l:'Red cells', v: okSheets.reduce(function(n, s){ return n + (s.redCount || 0); }, 0)}
   ].map(function(card){
@@ -1689,6 +2189,9 @@ function renderMatrixReader(){
         + '<div class="matrix-sheet-warn">'+esc(s.error)+'</div>'
         + '</div>';
     }
+    const meta = readerResolveSheetMeta(s, idx);
+    const dup = readerFindDuplicateMatrix(meta, s.sheetName, s.filename);
+    const dupMode = _readerState.duplicateMode || 'detect';
     const requiredRows = (s.workItems || []).slice(0, 8).map(function(w){
       return '<tr>'
         + '<td class="mono">'+esc(w.work_item_ref || '')+'</td>'
@@ -1701,31 +2204,41 @@ function renderMatrixReader(){
     return '<div class="matrix-sheet">'
       + '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">'
       + '<div>'
-      + '<div class="matrix-sheet-title">'+esc(smartTitleCase(s.title || s.sheetName || 'Untitled'))+'</div>'
+      + '<div class="matrix-sheet-title">'+esc(meta.title)+'</div>'
       + '<div class="matrix-sheet-sub">'+esc(s.filename || 'Unknown file')+' · '+esc(s.sheetName)+' · '+esc(String(s.workItems.length))+' work items · '+esc(String(s.redCount))+' red cells</div>'
-      + (s.reviewedBy || s.reviewedAt ? '<div class="matrix-sheet-sub">'+[s.reviewedBy ? 'Reviewed by ' + esc(s.reviewedBy) : '', s.reviewedAt ? 'Reviewed ' + esc(s.reviewedAt) : ''].filter(Boolean).join(' · ')+'</div>' : '')
+      + (meta.reviewedBy || meta.reviewedAt ? '<div class="matrix-sheet-sub">'+[meta.reviewedBy ? 'Reviewed by ' + esc(meta.reviewedBy) : '', meta.reviewedAt ? 'Reviewed ' + esc(meta.reviewedAt) : ''].filter(Boolean).join(' · ')+'</div>' : '')
+      + (dup ? '<div class="matrix-sheet-warn">'+(dupMode === 'overwrite' ? 'Duplicate found, will overwrite: ' : dupMode === 'skip' ? 'Duplicate found, will skip: ' : 'Duplicate found, detect only: ')+esc(dup.plant_name || dup.matrix_ref || 'existing matrix')+'</div>' : '')
       + '</div>'
       + '<label style="display:flex;align-items:center;gap:8px;font-family:var(--ff-mono);font-size:10px;color:var(--tx2);white-space:nowrap">'
       + '<input type="checkbox" data-reader-idx="'+idx+'" '+(checked?'checked':'')+' onchange="toggleMatrixReaderSelection(this)">'
       + 'Include'
       + '</label>'
       + '</div>'
+      + '<div class="matrix-sheet-edit-grid">'
+      + '<label class="field-group"><div class="field-label">Matrix Title</div><input class="field-input" value="'+esc(meta.title)+'" onchange="readerSetSheetEdit('+idx+','+"'title'"+',this.value)"></label>'
+      + '<label class="field-group"><div class="field-label">Area / Zone</div><input class="field-input" value="'+esc(meta.area)+'" onchange="readerSetSheetEdit('+idx+','+"'area'"+',this.value)"></label>'
+      + '<label class="field-group"><div class="field-label">Review Date</div><input class="field-input" type="date" value="'+esc(meta.reviewedAt ? readerNormalizeDate(meta.reviewedAt) || meta.reviewedAt : '')+'" onchange="readerSetSheetEdit('+idx+','+"'reviewedAt'"+',this.value)"></label>'
+      + '</div>'
+      + '<div class="matrix-sheet-edit-note">Edit these values before import if the parser has picked the wrong matrix title or area.</div>'
       + (s.warnings && s.warnings.length ? '<div class="matrix-sheet-warn">'+s.warnings.map(function(w){ return '- ' + esc(w); }).join('<br>')+'</div>' : '')
       + '<div class="matrix-preview">'
-      + '<table><thead><tr><th>Work Item Code</th><th>Work Item</th><th>Required Isolations</th><th>Notes</th></tr></thead><tbody>'
+      + '<table><thead><tr><th>Work Item Code</th><th>Work Item</th><th>Required Isolations</th><th>Comments</th></tr></thead><tbody>'
       + (requiredRows || '<tr><td colspan="4" style="color:var(--tx3);text-align:center">No work items extracted</td></tr>')
       + '</tbody></table></div>'
       + '</div>';
   }).join('');
 
-  const printable = selectedSheets.map(function(s){
+  const printable = selectedSheets.map(function(item){
+    const s = item.s;
+    const idx = item.idx;
+    const meta = readerResolveSheetMeta(s, idx);
     const rows = (s.workItems || []).map(function(w){
       return '<tr><td>'+esc(w.work_item_ref || '')+'</td><td>'+esc(smartTitleCase(w.work_item_name || ''))+'</td><td>'+esc((w.required || []).map(function(p){ return (p.code ? p.code + ' - ' : '') + smartTitleCase(p.name || ''); }).join(', '))+'</td><td>'+esc(w.notes || '')+'</td></tr>';
     }).join('');
     return '<section style="margin-bottom:18px">'
-      + '<h2 style="font-size:18px;margin:0 0 6px">'+esc(smartTitleCase(s.title || s.sheetName || 'Untitled'))+'</h2>'
-      + '<div style="font-family:monospace;font-size:10px;margin-bottom:8px">'+esc(s.filename || '')+' · '+esc(s.sheetName)+' · Reviewed '+esc(s.reviewedAt || '—')+'</div>'
-      + '<table><thead><tr><th>Work Item Code</th><th>Work Item</th><th>Required Isolations</th><th>Notes</th></tr></thead><tbody>'
+      + '<h2 style="font-size:18px;margin:0 0 6px">'+esc(meta.title)+'</h2>'
+      + '<div style="font-family:monospace;font-size:10px;margin-bottom:8px">'+esc(s.filename || '')+' · '+esc(s.sheetName)+' · Reviewed '+esc(meta.reviewedAt || '—')+'</div>'
+      + '<table><thead><tr><th>Work Item Code</th><th>Work Item</th><th>Required Isolations</th><th>Comments</th></tr></thead><tbody>'
       + (rows || '<tr><td colspan="4">No work items extracted</td></tr>')
       + '</tbody></table></section>';
   }).join('');
@@ -1741,22 +2254,61 @@ async function importSelectedSheets(){
     showToast('Import is admin-only');
     return;
   }
-  const sheets = (_readerState.sheets || []).filter(function(s, idx){ return s && !s.error && _readerState.selected[idx] !== false; });
+  const duplicateMode = _readerState.duplicateMode || 'detect';
+  const sheets = (_readerState.sheets || []).map(function(s, idx){ return {s:s, idx:idx}; }).filter(function(item){ return item.s && !item.s.error && _readerState.selected[item.idx] !== false; });
   if(!sheets.length){
     showToast('No sheets selected for import');
     return;
   }
   const status = document.getElementById('matrixReaderStatus');
   status.style.display = 'block';
-  status.textContent = 'Importing selected sheets…';
+  status.textContent = duplicateMode === 'detect' ? 'Checking for duplicates…' : 'Importing selected sheets…';
   const imported = [];
+  const duplicateHits = [];
+  let skipped = 0;
+  let overwritten = 0;
   let failed = 0;
   let firstError = '';
   const usedRefs = new Set((_matrices || []).map(function(m){ return readerNorm(m.matrix_ref || '').toUpperCase(); }).filter(Boolean));
-  for(const s of sheets){
+  if(duplicateMode === 'detect'){
+    sheets.forEach(function(item){
+      const meta = readerResolveSheetMeta(item.s, item.idx);
+      const duplicate = readerFindDuplicateMatrix(meta, item.s.sheetName, item.s.filename);
+      if(duplicate) duplicateHits.push(item.s.sheetName + ' → ' + (duplicate.plant_name || duplicate.matrix_ref || 'existing matrix'));
+    });
+    if(duplicateHits.length){
+      status.textContent = 'Duplicate check complete: ' + duplicateHits.length + ' duplicates found';
+      showToast(duplicateHits.length + ' duplicate' + (duplicateHits.length === 1 ? '' : 's') + ' found');
+      console.warn('Duplicate sheets detected:', duplicateHits);
+      renderMatrixReader();
+      return;
+    }
+  }
+  for(const item of sheets){
     try{
-      const base = readerGuessMatrixRefBase(s.title || s.sheetName, s.sheetName, s.filename);
-      let matrixRef = readerBuildMatrixRef(base);
+      const idx = item.idx;
+      const s = item.s;
+      const meta = readerResolveSheetMeta(s, idx);
+      const duplicate = readerFindDuplicateMatrix(meta, s.sheetName, s.filename);
+      if(duplicate){
+        const dupLabel = duplicate.plant_name || duplicate.matrix_ref || 'existing matrix';
+        if(duplicateMode === 'skip'){
+          skipped++;
+          continue;
+        }
+        if(duplicateMode === 'overwrite'){
+          const deleted = await deleteMatrixRecord(duplicate.id, {silent:true, refresh:false});
+          if(!deleted) throw new Error('Could not overwrite duplicate matrix ' + dupLabel);
+          overwritten++;
+          usedRefs.delete(readerNorm(duplicate.matrix_ref || '').toUpperCase());
+          _matrices = (_matrices || []).filter(function(m){ return m.id !== duplicate.id; });
+          delete _points[duplicate.id];
+          delete _entries[duplicate.id];
+        }
+      }
+      const reviewedAt = readerNormalizeDate(meta.reviewedAt || s.reviewedAt || '') || null;
+      const base = readerGuessMatrixRefBase(meta.title || s.title || s.sheetName, s.sheetName, s.filename);
+      let matrixRef = (duplicate && duplicateMode === 'overwrite' && duplicate.matrix_ref) ? duplicate.matrix_ref : readerBuildMatrixRef(base);
       while(usedRefs.has(matrixRef.toUpperCase())){
         const mm = matrixRef.match(/^(.*?)-(\d+)$/);
         if(!mm) break;
@@ -1764,12 +2316,12 @@ async function importSelectedSheets(){
       }
       usedRefs.add(matrixRef.toUpperCase());
       const matrixPayload = {
-        plant_name: smartTitleCase(s.title || s.sheetName || 'Imported matrix'),
-        plant_ref: (s.title || s.sheetName || '').match(/[A-Z0-9]+/i)?.[0]?.toUpperCase() || '',
-        area: smartTitleCase(s.sheetName) || null,
-        status: 'active',
-        reviewed_by: s.reviewedBy || null,
-        reviewed_at: s.reviewedAt || null,
+        plant_name: smartTitleCase(meta.title || s.title || s.sheetName || 'Imported matrix'),
+        plant_ref: (meta.title || s.title || s.sheetName || '').match(/[A-Z0-9]+/i)?.[0]?.toUpperCase() || '',
+        area: smartTitleCase(meta.area || s.sheetName) || null,
+        status: meta.status === 'draft' ? 'draft' : 'active',
+        reviewed_by: meta.reviewedBy || null,
+        reviewed_at: reviewedAt,
         matrix_ref: matrixRef,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
@@ -1808,7 +2360,7 @@ async function importSelectedSheets(){
         if(entryErr) throw entryErr;
       }
       await logIsolationAction('import', 'pw_isolation_matrices', matrixId, matrixPayload.matrix_ref || '', matrixPayload.plant_name || '', 'Imported ' + (s.sheetName || 'sheet') + ' from ' + (s.filename || 'workbook') + ' · ' + (s.equipment || []).length + ' equipment · ' + (s.workItems || []).length + ' work items');
-      imported.push(s.title || s.sheetName || 'Imported matrix');
+      imported.push(meta.title || s.title || s.sheetName || 'Imported matrix');
     }catch(e){
       failed++;
       if(!firstError) firstError = e && e.message ? e.message : String(e || 'Unknown import error');
@@ -1817,8 +2369,12 @@ async function importSelectedSheets(){
   }
   await loadMatrices();
   renderMatrixReader();
-  status.textContent = 'Import complete: ' + imported.length + ' imported' + (failed ? ' · ' + failed + ' failed' + (firstError ? ' · ' + firstError : '') : '');
-  showToast(imported.length + ' matrix' + (imported.length===1?'':'es') + ' imported ✓' + (failed ? ' · ' + failed + ' failed' : ''));
+  const summaryBits = ['Import complete: ' + imported.length + ' imported'];
+  if(overwritten) summaryBits.push(overwritten + ' overwritten');
+  if(skipped) summaryBits.push(skipped + ' skipped');
+  if(failed) summaryBits.push(failed + ' failed' + (firstError ? ' · ' + firstError : ''));
+  status.textContent = summaryBits.join(' · ');
+  showToast(imported.length + ' matrix' + (imported.length===1?'':'es') + ' imported ✓' + (overwritten ? ' · ' + overwritten + ' overwritten' : '') + (skipped ? ' · ' + skipped + ' skipped' : '') + (failed ? ' · ' + failed + ' failed' : ''));
   if(!failed) closeMatrixReader();
 }
 
@@ -1978,13 +2534,37 @@ function toggleMatrixSelection(id, checked){
 
 function updateMatrixBulkControls(){
   const btn=document.getElementById('btnBulkDeleteMatrices');
+  const btnAll=document.getElementById('btnSelectAllMatrices');
+  const btnClear=document.getElementById('btnClearMatrixSelection');
   const cnt=document.getElementById('matrixSelectionCount');
   if(cnt) cnt.textContent=String(_matrixSelection.size);
   if(btn) btn.style.display = canBulkDelete() && _matrixSelection.size ? 'inline-flex' : 'none';
+  if(btnAll){
+    const visibleCount = (_matrixVisibleIds || []).length;
+    const visibleSelected = visibleCount > 0 && (_matrixVisibleIds || []).every(function(id){ return _matrixSelection.has(id); });
+    btnAll.style.display = canBulkDelete() ? 'inline-flex' : 'none';
+    btnAll.disabled = !visibleCount;
+    btnAll.textContent = visibleSelected ? 'Deselect All' : 'Select All';
+  }
+  if(btnClear) btnClear.style.display = canBulkDelete() && _matrixSelection.size ? 'inline-flex' : 'none';
 }
 
 function clearMatrixSelection(){
   _matrixSelection.clear();
+  updateMatrixBulkControls();
+  renderMatrices();
+}
+
+function selectAllVisibleMatrices(){
+  if(!canBulkDelete()) return;
+  const ids = (_matrixVisibleIds || []).slice();
+  if(!ids.length){ showToast('No matrices to select'); return; }
+  const allSelected = ids.every(function(id){ return _matrixSelection.has(id); });
+  if(allSelected){
+    ids.forEach(function(id){ _matrixSelection.delete(id); });
+  }else{
+    ids.forEach(function(id){ _matrixSelection.add(id); });
+  }
   updateMatrixBulkControls();
   renderMatrices();
 }
@@ -2041,6 +2621,7 @@ function renderMatrices(){
     return true;
   });
   list = sortMatrixRows(list);
+  _matrixVisibleIds = list.map(function(m){ return m.id; });
   const grid=document.getElementById('matrixGrid');
   if(!list.length){
     grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1">
@@ -2062,7 +2643,10 @@ function renderMatrices(){
           <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center">
             <span class="mc-status-pill ${STATUS_CLS[st]||'s-draft-pill'}">${STATUS_LBL[st]||st}</span>
             ${m.matrix_ref?`<span style="font-family:var(--ff-mono);font-size:9px;color:var(--tx3);background:var(--sf2);padding:2px 7px;border-radius:4px;border:1px solid var(--bd)">${esc(m.matrix_ref)}</span>`:''}
-            ${canBulkDelete()?`<label style="display:inline-flex;align-items:center;gap:5px;margin-left:auto;font-family:var(--ff-mono);font-size:9px;color:var(--tx2)" onclick="event.stopPropagation()"><input type="checkbox" ${selected?'checked':''} onchange="toggleMatrixSelection('${m.id}',this.checked)">Select</label>`:''}
+            ${canBulkDelete()?`<button type="button" class="matrix-select-pill ${selected?'is-selected':''}" style="margin-left:auto" onclick="event.stopPropagation();toggleMatrixSelection('${m.id}',${selected ? 'false' : 'true'})" title="${selected?'Deselect matrix':'Select matrix'}">
+              <span class="matrix-select-check" aria-hidden="true">${selected ? '✓' : ''}</span>
+              <span>${selected?'Selected':'Select'}</span>
+            </button>`:''}
           </div>
           <div class="matrix-title">${esc(smartTitleCase(m.plant_name||'—'))}</div>
           <div class="matrix-sub">
@@ -2143,11 +2727,13 @@ async function openDetail(id){
         <thead><tr style="background:var(--sf3)">
           <th style="padding:7px 12px;text-align:left;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Code</th>
           <th style="padding:7px 12px;text-align:left;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Equipment Name</th>
-          <th style="padding:7px 12px;text-align:right;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Actions</th>
+          <th style="padding:7px 12px;text-align:left;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Comments</th>
+          <th style="padding:7px 12px;text-align:right;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Edit</th>
         </tr></thead>
         <tbody>${points.map((p,i)=>`<tr style="${i%2===1?'background:var(--sf2)':''}">
           <td style="padding:7px 12px;font-family:var(--ff-mono);font-size:10px;color:var(--ac3)">${esc(p.plant_number)}</td>
           <td style="padding:7px 12px;color:var(--tx)">${esc(smartTitleCase(p.description))}</td>
+          <td style="padding:7px 12px;color:var(--tx2);font-size:11px;line-height:1.5">${esc(p.notes || '—')}</td>
           <td style="padding:7px 12px;text-align:right">${canEdit()?`<button class="icon-btn" onclick="openPointModal('${id}','${p.id}')">Edit</button>`:''}</td>
         </tr>`).join('')}</tbody>
       </table></div>`
@@ -2164,7 +2750,8 @@ async function openDetail(id){
             <th style="padding:7px 12px;text-align:left;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Ref</th>
             <th style="padding:7px 12px;text-align:left;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Equipment / Work Item</th>
             <th style="padding:7px 12px;text-align:left;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Isolation Equipment Required</th>
-            <th style="padding:7px 12px;text-align:right;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Actions</th>
+            <th style="padding:7px 12px;text-align:left;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Comments</th>
+            <th style="padding:7px 12px;text-align:right;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Edit</th>
           </tr></thead>
           <tbody>${entries.map((e,i)=>`<tr style="${i%2===1?'background:var(--sf2)':''}">
             <td style="padding:7px 12px;font-family:var(--ff-mono);font-size:10px;color:var(--ac3)">${esc(e.work_item_ref)}</td>
@@ -2172,6 +2759,7 @@ async function openDetail(id){
             <td style="padding:7px 12px;color:var(--tx2);font-size:11px;line-height:1.5">
               ${renderIsolationEquipmentList(e.isolation_points || [], pointMap)}
             </td>
+            <td style="padding:7px 12px;color:var(--tx2);font-size:11px;line-height:1.5">${esc(e.notes || '—')}</td>
             <td style="padding:7px 12px;text-align:right">${canEdit()?`<button class="icon-btn" onclick="openEntryModal('${id}','${e.id}')">Edit</button>`:''}</td>
           </tr>`).join('')}</tbody>
         </table></div>
@@ -2587,6 +3175,22 @@ async function deleteEquip(id, name){
 
 
 /* ── THEME ───────────────────────────────────────────────────────── */
+function readStoredThemePref(){
+  const shared = localStorage.getItem('pw_theme');
+  if(shared === 'light' || shared === 'dark') return shared;
+  const kiln = localStorage.getItem('kbl_theme');
+  if(kiln === 'light' || kiln === 'dark'){
+    localStorage.setItem('pw_theme', kiln);
+    return kiln;
+  }
+  const darkFlag = localStorage.getItem('dark');
+  if(darkFlag === '1' || darkFlag === '0'){
+    const theme = darkFlag === '1' ? 'dark' : 'light';
+    localStorage.setItem('pw_theme', theme);
+    return theme;
+  }
+  return null;
+}
 function applyTheme(light){
   document.body.classList.toggle('light-mode',light);
   const icon=document.getElementById('themeIcon');
@@ -2609,7 +3213,7 @@ async function loadUserTheme(){
     const rows=await res.json(); if(rows&&rows.length) applyTheme(rows[0].value==='light');
   }catch(e){}
 }
-(function(){ const s=localStorage.getItem('pw_theme'); if(s){applyTheme(s==='light');return;} applyTheme(new Date().getHours()>=7&&new Date().getHours()<18); })();
+(function(){ const s=readStoredThemePref(); if(s){applyTheme(s==='light');return;} applyTheme(new Date().getHours()>=7&&new Date().getHours()<18); })();
 
 /* ── GROQ / AI ───────────────────────────────────────────────────── */
 async function loadGroqKey(){
@@ -2706,7 +3310,7 @@ function matrixAiFormatDirectAnswer(matrix, entry, points){
     `Work Item: ${entry.work_item_ref || '—'} - ${smartTitleCase(entry.work_item_name || '—')}`,
     `Required Isolation Equipment:`,
     ...(requiredLines.length ? requiredLines : ['- None captured']),
-    entry.notes ? `Notes: ${entry.notes}` : null
+    entry.notes ? `Comments: ${entry.notes}` : null
   ].filter(Boolean).join('\n');
 }
 async function matrixAiDirectLookup(question){
@@ -2791,7 +3395,7 @@ async function buildAiContext(question){
           }).filter(Boolean).join(', ');
           lines.push(`      - ${e.work_item_ref || '—'} : ${smartTitleCase(e.work_item_name || '—')}`);
           lines.push(`        Requires: ${reqText || 'None captured'}`);
-          if(e.notes) lines.push(`        Notes: ${e.notes}`);
+          if(e.notes) lines.push(`        Comments: ${e.notes}`);
         });
       } else {
         lines.push('    Work items: none captured');
@@ -2823,7 +3427,7 @@ async function sendAiMessage(){
     const context=await buildAiContext(q);
     const matrixMode = _aiMatrixMode;
     const systemPrompt = matrixMode
-      ? 'You are an expert AI assistant for Padeswood Works (HeidelbergMaterials cement plant, Wales). You help with isolation matrices. When the user asks about a matrix or work item, answer in a compact matrix-answer format with only these headings: Matrix, Work Item, Required Isolation Equipment, Notes. Always include equipment codes and names. Do not guess. If the data is missing, say so clearly.'
+      ? 'You are an expert AI assistant for Padeswood Works (HeidelbergMaterials cement plant, Wales). You help with isolation matrices. When the user asks about a matrix or work item, answer in a compact matrix-answer format with only these headings: Matrix, Work Item, Required Isolation Equipment, Comments. Always include equipment codes and names. Do not guess. If the data is missing, say so clearly.'
       : 'You are an expert AI assistant for Padeswood Works (HeidelbergMaterials cement plant, Wales). You help with isolation matrix, equipment isolation procedures, and work area information. If the data contains a work item, always answer with the required isolation equipment list and mention the equipment codes and names. If the answer is not in the data, say so clearly. Answer concisely and avoid guessing.';
     const dataMsg={role:'user',content:'Here is the isolation matrix data:\n\n'+context+'\n\nOnly answer from this data. When a work item has required isolations, list them explicitly.'};
     const dataAck={role:'assistant',content:matrixMode

@@ -961,10 +961,9 @@ async function doLogout(){
   window.location.href = '../index.html';
 }
 
-function launchApp(){
+async function launchApp(){
   document.getElementById('splash').style.display='none';
   const app = document.getElementById('appWrapper');
-  app.style.display='flex';
   document.getElementById('headerEmail').textContent = currentProfile.email || currentProfile.full_name || '—';
   const role = currentProfile.role||'viewer';
   const rb = document.getElementById('headerRole');
@@ -972,7 +971,8 @@ function launchApp(){
   rb.className = 'role-badge role-'+role;
   document.getElementById('docAiBtn').style.display = 'flex';
   loadDocGroqKey();
-  loadUserTheme();
+  await loadUserTheme();
+  app.style.display='flex';
   if(hasRole('editor','reviewer','admin')){
     document.getElementById('btnAddRA').style.display='flex';
   }
@@ -1643,6 +1643,27 @@ async function saveRA(){
 }
 
 /* ── THEME ───────────────────────────────────────────────────────── */
+function readStoredThemePref(){
+  const shared = localStorage.getItem('pw_theme');
+  if(shared === 'light' || shared === 'dark') return shared;
+  const legacy = localStorage.getItem('pw_docs_theme');
+  if(legacy === 'light' || legacy === 'dark'){
+    localStorage.setItem('pw_theme', legacy);
+    return legacy;
+  }
+  const kiln = localStorage.getItem('kbl_theme');
+  if(kiln === 'light' || kiln === 'dark'){
+    localStorage.setItem('pw_theme', kiln);
+    return kiln;
+  }
+  const darkFlag = localStorage.getItem('dark');
+  if(darkFlag === '1' || darkFlag === '0'){
+    const theme = darkFlag === '1' ? 'dark' : 'light';
+    localStorage.setItem('pw_theme', theme);
+    return theme;
+  }
+  return null;
+}
 function applyTheme(light){
   document.body.classList.toggle('light-mode',light);
   const icon=document.getElementById('themeIcon');
@@ -1650,6 +1671,7 @@ function applyTheme(light){
     ?'<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>'
     :'<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
   localStorage.setItem('pw_theme',light?'light':'dark');
+  localStorage.setItem('pw_docs_theme',light?'light':'dark');
 }
 function toggleTheme(){
   const light=!document.body.classList.contains('light-mode');
@@ -1677,7 +1699,7 @@ async function loadUserTheme(){
     if(rows&&rows.length) applyTheme(rows[0].value==='light');
   }catch(e){}
 }
-(function(){ const s=localStorage.getItem('pw_theme')||localStorage.getItem('pw_docs_theme'); if(s){applyTheme(s==='light');return;} applyTheme(new Date().getHours()>=7&&new Date().getHours()<18); })();
+(function(){ const s=readStoredThemePref(); if(s){applyTheme(s==='light');return;} applyTheme(new Date().getHours()>=7&&new Date().getHours()<18); })();
 
 /* ── KEYBOARD ────────────────────────────────────────────────────── */
 document.addEventListener('keydown',function(e){

@@ -321,7 +321,9 @@
     width: 32px;
     height: 32px;
     border-radius: 7px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    background: none;
+    border: none;
+    padding: 0;
     color: #fff;
     display: flex;
     align-items: center;
@@ -330,8 +332,14 @@
     font-weight: 800;
     font-size: 13px;
     letter-spacing: -0.06em;
-    box-shadow: 0 4px 22px rgba(26,122,53,.24);
+    box-shadow: none;
     flex-shrink: 0;
+  }
+  .tracker-shell-mark img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
   }
   .tracker-shell-copy {
     min-width: 0;
@@ -540,7 +548,7 @@
 <body>
 
 <div id="splash">
-  <div class="splash-icon">PW</div>
+  <div class="splash-icon" id="splashLogo"></div>
   <div class="splash-title">Padeswood Works</div>
   <div class="splash-sub">Shift Tracker · A · B · C · D · E</div>
   <div id="splash-login" style="display:none">
@@ -573,7 +581,7 @@
       <a href="../index.html" class="tracker-shell-back" title="Back to platform">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="15 18 9 12 15 6"/></svg>
       </a>
-      <div class="tracker-shell-mark">PW</div>
+      <div class="tracker-shell-mark"><img alt="Padeswood Works" src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCACEAHgDASIAAhEBAxEB/8QAHQABAAMBAQEBAQEAAAAAAAAAAAcICQYEBQMBAv/EAEgQAAEDAgMBCgkHCgcAAAAAAAEAAgMEBQYHEQgSFyExN1FWdLLSNkFhc5OUobO0ExRCcXWBgxYjMkNSVXKRsdEiNGOCkqLB/8QAGwEBAAMBAQEBAAAAAAAAAAAAAAIFBgMEBwH/xAAvEQACAQIDBQcEAwEAAAAAAAAAAQIDEQQFMRIUgZHBBiEyNEFScRNRcrEiM2Fi/9oADAMBAAIRAxEAPwC5aIiAIiIAiIgCIiAIiIAiIgCIiAIiIAqo7TeaOPcJ5qT2jD2IpqGhbSQyCFsMTgHOB1Ormkq1yo9tk8tlT1Gn7JUZaFdmk5QoXi7d58Pf2zZ6Y1Hq0HcTf2zZ6Y1Hq0HcUbIud2Z3ea3vfNkk7+2bPTGo9Wg7ib+2bPTGo9Wg7ijZEuxvNb3vmySd/bNnpjUerQdxN/bNnpjUerQdxRsiXY3mt73zZJkOfWbUTw9uL5ieZ1HTuH8jGuhse05mRQztdcDarrF9Jk1L8mSPIYy3Q/cfqUJIl2SjjK8dJvmXPy62mcI3+dlFiSkkw5Uv0DZXyfK0zj5XgAs+8aeVTnS1FPV00dTSzxTwStDo5I3hzXtPEQRwELL1SvkNnLeMvLjFbq2SStw3NJ+fpXHV0Gp4ZIuY+Mt4j5Dwqal9yzwubO+zW5l70XmtdfR3S209xt9THU0lTG2WGaM6tewjUEL0qZfahERAFR7bJ5bKnqNP2Srwqj22Ty2VPUafslRnoVmbeX4ohpaJ5aWKyS5cYZkks1ue99opHOc6mYS4mFmpJ0Wdi0kyv5NMLfY1J7lijDU8WTK8p8D3/k9YP3HbPVGf2T8nrB+47Z6oz+y+mi6F/sohnass9ppMjr1PS2uhglbJTbl8VO1rhrOwHhAVH1e7a35B7552m+IjVEVzlqZvN1auvjqwiIolUEREBaTYlx253z3AFwqCdAau27p3EP1sY9jwP4yrRLOPKG/HDOZ2Hr1utyynroxKf9J53En/AFc5aOLpF9xp8qrOpR2X6BERSLMKj22Ty2VPUafslXhVHtsnlsqeo0/ZKjPQrM28vxRDS0kyv5NMLfY1J7lizbWkmV/Jphb7GpPcsUYanjybxT4HRIiLoX5E+1vyD3zztN8RGqYYEstLfbxLR1kkzI2QGQGIgHUOaPGDwcJVz9rfkHvnnab4iNVDyh8Jp+pu7bF4cwnKFCUouzSMZ2rqTpU5zg7NR6s6I5cWTTgq7gD5xndXzLpltI1hfbbgJHDijnbpr/uH9lI6LKQzPFRd9o+W088x0Hf6l/mzK/3Ghq7dVupa2B8MzeNrv6jnHlXnU14zsMN8tL4wxoq4gXQP8YP7P1FQq4Fri1wIIOhB8S0mAxqxUL6Nam2ynM44+k5WtJarqGktcHNJBB1BHiWn1vn+dUFPUj9dE2T+YBWYC03w54PW3qkXYCsoGyyXWfDqe9ERTL0Kj22Ty2VPUafslXhVINstjm51TOcNA+307m+UaEf1BUZ6FZm3l+KIYWkmV/Jphb7GpPcsWba0iyscH5Y4Ve06h1loyPQsUYanjybxT4HSIiLoX5E+1vyD3zztN8RGqh5Q+E0/U3dtit5tb8g9887TfERqoeUJ0xNP5aR3bYq/M/Lz+DEdsP6J/j1ZKyIiw58bCg/G1O2lxXcYWDRvyxeB/EA7/wBU4KGMyPDSv/D921XWRt/Xkv8AOqNN2Wk96nH/AJ6o55ab4c8Hrb1SLsBZkLTfDng9beqRdgLVwPq+S6z4dT3oiKZfBU725bbLBmNZ7pudIKu1iJp53xyvLvZIxXEUJbY+EpsQZYsvFHH8pU2Oc1LwBqTA4bmTT6v8Dj5GlRku48WYU3Uw8kvTvKTK/ezHfob9ktYXMeDLQRGgmaD+g6I6NB+tm4P3qgilrZszVGXWJJaS6mR+H7kWiqDQXGB44GygePmcBwkacZAChF2ZRZdiFRrfy0fcXsReW1XGgu1uguNsrIKyjnaHxTQvD2PHOCF6l1NVqRPtb8g9887TfERqmWXda2hxXSukIDJtYXH+IcHt0VzdrfkHvnnab4iNURaS0hzSQRwgjxLz4imqsHB+qMr2goqvJ0n6xt+yxCLlsDYqgvFIylqpGx3Bg0cHHT5XT6Q8vOF1KwlajOjNwmu8+K4nDVMNUdOorNBQxmR4aV/4fu2qZ1DGZHhpX/h+7arTJPMP46ovuy3m5fi/2jnlpvhzwetvVIuwFmQtN8OeD1t6pF2AtZA+sZLrPh1PeiIpl8F+dVBDVUstLUxNlhmYY5GOGoc0jQg+QhfoiAoDn9ljWZb4sdFC2Sax1pL7fUHh0Hjicf2m+0aHnAjdaZYpw/Z8UWSost9oIq2hnGj45BxHxOaeNrh4iOEKouauzZifD8k9wwkXX+2AlwgaNKuJvMW8UmnO3hP7K5uNjOY3LZQk50ldfb7EV4Kx3i/Bkxkw1fquga47p8TXB0TzzmNwLSfLpqpNotqLMmCIMlpsP1bh9OWkeCf+EjR7FCtfR1lBVPpa6lnpZ2fpRTRlj2/WDwhfgo3aPBDE1qStGTRLGYmfmMcc4TqsNXe32KGjqnRue+mglbINw8PGhdI4cbR4lE6Il7nOpVnVd5u7P60lrg5pIIOoI4wuhtuNMQ0TBGKwVDBxCdu79vH7VzqLlUo06qtNJnlrYalXVqsU/lHZDMa+af5a3n8N/eXM3u4z3a5zXCpbG2WXTdCMEN4GgcGpPMvGihSwtGi9qEbM5YfAYfDy2qUEmFpvhzwetvVIuwFmQtN8OeD1t6pF2AvXA0+S6z4dT3oiKZfBERAEREB8++WKy32n+b3q0UFyh8TKqnZKB9zgVydZk5lfVn87gq0t81GYuyQu8RLEJU4S8STI63jsqehtH6WXvpvHZU9DaP0svfUiovyyI7vS9q5Edbx2VPQ2j9LL303jsqehtH6WXvqRUSyG70vauRHW8dlT0No/Sy99N47KnobR+ll76kVEshu9L2rkR1vHZU9DaP0svfUhU8UcEEcELdxHG0MY3mAGgC/2i/bEo04Q8KsEREJhERAEREAREQBERAEREAREQBERAEREB//Z" style="width:100%;height:100%;object-fit:contain;display:block"></div>
       <div class="tracker-shell-copy">
         <div class="tracker-shell-title">Shift Tracker</div>
         <div class="tracker-shell-sub">Padeswood Works · Shared Shift Rotation Tool</div>
@@ -695,8 +703,40 @@ function _0xa5b6(){
     }
   return list.sort((a,b)=>a.date-b.date);
 }
-function _0xb7c8(){ return localStorage.getItem("dark")==="1"; }
-function _0xc9d0(v){ localStorage.setItem("dark",v?"1":"0"); }
+function _0xsyncThemeAlias(){
+  const shared = localStorage.getItem("pw_theme");
+  if(shared==="light" || shared==="dark"){
+    localStorage.setItem("dark", shared==="dark" ? "1" : "0");
+    return shared==="dark";
+  }
+  const legacy = localStorage.getItem("dark");
+  if(legacy==="1" || legacy==="0"){
+    const dark = legacy==="1";
+    localStorage.setItem("pw_theme", dark?"dark":"light");
+    return dark;
+  }
+  return null;
+}
+function _0xb7c8(){ const synced=_0xsyncThemeAlias(); if(synced!==null) return synced; return localStorage.getItem("dark")==="1" || localStorage.getItem("pw_theme")==="dark"; }
+function _0xc9d0(v){ localStorage.setItem("dark",v?"1":"0"); localStorage.setItem("pw_theme",v?"dark":"light"); }
+function _0xda0b(){ const s=localStorage.getItem("pw_theme"); if(s==="light"||s==="dark"){ localStorage.setItem("dark",s==="dark"?"1":"0"); return s==="light"; } return localStorage.getItem("pw_theme")==="light"; }
+function _0xeb1c(v){ localStorage.setItem("pw_theme",v?"light":"dark"); localStorage.setItem("dark",v?"0":"1"); }
+function syncSplashLogo(){
+  const splash = document.getElementById('splashLogo');
+  const headerLogo = document.querySelector('.tracker-shell-mark img');
+  if(!splash || !headerLogo || splash.dataset.branded === '1') return;
+  splash.dataset.branded = '1';
+  splash.style.background = 'none';
+  splash.style.border = 'none';
+  splash.style.padding = '0';
+  splash.textContent = '';
+  const img = document.createElement('img');
+  img.alt = 'Padeswood Works';
+  img.src = headerLogo.src;
+  img.style.cssText = 'width:100%;height:100%;object-fit:contain;display:block';
+  splash.appendChild(img);
+}
+syncSplashLogo();
 
 // ── Active shift detection ────────────────────────────────────────────────────
 function _0xd1e2(){
@@ -862,7 +902,9 @@ function _0xb9c0(){
     const isToday=_0xd5e6(TODAY,date)===0;
     const fSt=status(active,date),fM=meta(fSt);
     const hasNote=_0xd9e0()[active.id]&&_0xd9e0()[active.id][_0xb3c4(date)];
-    const cell=h("div",{style:{borderRadius:"7px",background:isToday?active.color+"18":fM.bg+"bb",border:`1px solid ${isToday?active.color:fM.br+"88"}`,padding:"3px 2px 4px",minHeight:"58px",position:"relative"}});
+    const cell=h("div",{style:{borderRadius:"7px",background:isToday?active.color+"18":fM.bg+"bb",border:`1px solid ${isToday?active.color:fM.br+"88"}`,padding:"3px 2px 4px",minHeight:"58px",position:"relative",cursor:"pointer",transition:"transform .12s, box-shadow .12s, border-color .12s"},title:_0xf9a0(date),onClick:()=>set({tab:"Today",viewOffset:_0xd5e6(TODAY,date)})});
+    cell.onmouseenter=function(){ this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,.08)'; };
+    cell.onmouseleave=function(){ this.style.transform='none'; this.style.boxShadow='none'; };
     if(hasNote) cell.appendChild(h("div",{style:{position:"absolute",top:"2px",right:"3px",fontSize:"8px"}},"📝"));
     cell.appendChild(h("div",{class:"mono",style:{textAlign:"center",fontSize:"10px",fontWeight:isToday?"700":"400",color:isToday?active.color:"var(--text2)",marginBottom:"2px"}},String(date.getDate())));
     const bdgs=h("div",{style:{display:"flex",flexDirection:"column",gap:"2px",padding:"0 1px"}});
@@ -1019,14 +1061,44 @@ function syncTrackerThemeButton(){
   themeBtn.setAttribute('aria-label',themeBtn.title);
 }
 
-function toggleTrackerTheme(){
+let stCurrentUser = null;
+let stCurrentProfile = null;
+
+async function stPersistSharedTheme(user, light){
+  if(!stSb || !user || !user.id) return;
+  try{
+    await stSb.from('kiln_config').upsert({
+      key:'theme_uid_'+user.id,
+      value:light?'light':'dark'
+    });
+  }catch(e){}
+}
+
+async function stLoadSharedTheme(user){
+  if(!stSb || !user || !user.id) return null;
+  try{
+    const { data } = await stSb.from('kiln_config')
+      .select('value')
+      .eq('key','theme_uid_'+user.id)
+      .maybeSingle();
+    if(data && data.value) return data.value === 'light';
+  }catch(e){}
+  return null;
+}
+
+async function toggleTrackerTheme(){
   const dark=!S.dark;
   _0xc9d0(dark);
+  _0xeb1c(!dark);
+  if(stCurrentUser) await stPersistSharedTheme(stCurrentUser, !dark);
   set({dark});
 }
 
 function initShiftTrackerUi(){
-  if(_0xb7c8()){
+  if(_0xda0b()){
+    document.body.classList.remove('dark');
+    document.getElementById('app-wrap').classList.remove('dark');
+  }else if(_0xb7c8()){
     document.body.classList.add('dark');
     document.getElementById('app-wrap').classList.add('dark');
   }
@@ -1102,6 +1174,15 @@ async function stRefreshLicenceFooter() {
       el.textContent = 'Licence active · expires ' + exp;
     }
   } catch (e) {}
+}
+
+async function stSyncThemeFromUser(user) {
+  if (!user) return;
+  const sharedLight = await stLoadSharedTheme(user);
+  if (sharedLight === null || sharedLight === undefined) return;
+  _0xc9d0(!sharedLight);
+  _0xeb1c(sharedLight);
+  set({ dark: !sharedLight });
 }
 
 function stRevealApp() {
@@ -1225,7 +1306,10 @@ async function initShiftTrackerSupabaseAuth() {
         stShowAccessDenied('Your account is not approved for access.');
         return false;
       }
+      stCurrentUser = user;
+      stCurrentProfile = profileState.profile || null;
       stApplyHeaderProfile(user, profileState.profile);
+      await stSyncThemeFromUser(user);
       stRevealApp();
       return true;
     } catch (e) {
@@ -1261,7 +1345,10 @@ async function initShiftTrackerSupabaseAuth() {
         stShowAccessDenied('Your account is not approved for access.');
         return;
       }
+      stCurrentUser = user;
+      stCurrentProfile = profileState.profile || null;
       stApplyHeaderProfile(user, profileState.profile);
+      await stSyncThemeFromUser(user);
       stRevealApp();
     } catch (e) {
       stShowError(e.message || 'Sign-in failed.');
@@ -1294,6 +1381,8 @@ async function initShiftTrackerSupabaseAuth() {
           if (key.startsWith('sb-') || key.startsWith('supabase')) localStorage.removeItem(key);
         });
       } catch (e) {}
+      stCurrentUser = null;
+      stCurrentProfile = null;
       sessionStorage.removeItem('auth');
       window.location.href = '../index.html';
     });

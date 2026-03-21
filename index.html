@@ -376,7 +376,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   </main>
 
   <footer class="platform-footer">
-    <span class="footer-left">Padeswood Works · HeidelbergMaterials · Wales</span>
+    <span class="footer-left">Padeswood Works · Platform · HeidelbergMaterials</span>
     <span class="footer-lic"><span class="lic-dot"></span><span id="licStatus">Licence active</span></span>
   </footer>
 
@@ -505,6 +505,96 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" width="14" height="14"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
       </button>
     </div>
+  </div>
+</div>
+
+<!-- ── USER ROLE EDITOR ─────────────────────────────────────────── -->
+<div id="roleEditOverlay" onclick="closeRoleEditor()" style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:805;display:none"></div>
+<div id="roleEditPanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.98);width:640px;max-width:94vw;background:var(--sf);border:1px solid var(--bd);border-radius:14px;z-index:806;display:none;flex-direction:column;overflow:hidden;box-shadow:var(--e3)">
+  <div style="padding:18px 22px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0">
+    <div>
+      <div style="font-family:var(--ff-head);font-weight:700;font-size:16px;color:var(--tx)">Edit User Roles</div>
+      <div id="roleEditSub" style="font-family:var(--ff-mono);font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:var(--tx3);margin-top:4px">—</div>
+    </div>
+    <button onclick="closeRoleEditor()" style="width:28px;height:28px;border-radius:6px;border:1px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center">×</button>
+  </div>
+  <div style="padding:18px 22px 20px;overflow:auto;display:flex;flex-direction:column;gap:16px">
+    <input type="hidden" id="roleEditProfileId">
+    <input type="hidden" id="roleEditKilnUsername">
+    <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px">
+      <label style="display:flex;flex-direction:column;gap:6px">
+        <div style="font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3)">Documents Role</div>
+        <select id="roleEditDocs" style="height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
+          <option value="none">No Access</option>
+          <option value="viewer">Viewer</option>
+          <option value="editor">Editor</option>
+          <option value="reviewer">Reviewer</option>
+          <option value="admin">Admin</option>
+        </select>
+      </label>
+      <label style="display:flex;flex-direction:column;gap:6px">
+        <div style="font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3)">Isolation Role</div>
+        <select id="roleEditIso" style="height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
+          <option value="none">No Access</option>
+          <option value="viewer">Viewer</option>
+          <option value="editor">Editor</option>
+          <option value="reviewer">Reviewer</option>
+          <option value="admin">Admin</option>
+        </select>
+      </label>
+      <label style="display:flex;flex-direction:column;gap:6px">
+        <div style="font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3)">Shift Tracker</div>
+        <select id="roleEditTracker" style="height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
+          <option value="true">Allow Access</option>
+          <option value="false">No Access</option>
+        </select>
+      </label>
+      <label style="display:flex;flex-direction:column;gap:6px">
+        <div style="font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3)">Shift Log Access</div>
+        <select id="roleEditKilnAccess" style="height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
+          <option value="true">Allow Access</option>
+          <option value="false">No Access</option>
+        </select>
+      </label>
+    </div>
+    <div style="border:1px solid var(--bd);border-radius:var(--rsm);background:var(--sf2);padding:14px 14px 12px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px">
+        <div style="font-family:var(--ff-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--tx3)">Shift Log Roles</div>
+        <div style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">Select one or more</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+        <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--bd2);border-radius:var(--rsm);background:var(--sf);cursor:pointer">
+          <input type="checkbox" id="roleEditKilnAdmin" style="accent-color:var(--ac3)">
+          <span style="font-size:12px;color:var(--tx)">Admin</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--bd2);border-radius:var(--rsm);background:var(--sf);cursor:pointer">
+          <input type="checkbox" id="roleEditKilnManager" style="accent-color:var(--ac3)">
+          <span style="font-size:12px;color:var(--tx)">Shift Manager</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--bd2);border-radius:var(--rsm);background:var(--sf);cursor:pointer">
+          <input type="checkbox" id="roleEditKilnAnalyst" style="accent-color:var(--ac3)">
+          <span style="font-size:12px;color:var(--tx)">Cement Analyst</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--bd2);border-radius:var(--rsm);background:var(--sf);cursor:pointer">
+          <input type="checkbox" id="roleEditKilnDay" style="accent-color:var(--ac3)">
+          <span style="font-size:12px;color:var(--tx)">Day Staff</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--bd2);border-radius:var(--rsm);background:var(--sf);cursor:pointer">
+          <input type="checkbox" id="roleEditKilnBurner" style="accent-color:var(--ac3)">
+          <span style="font-size:12px;color:var(--tx)">Burner</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--bd2);border-radius:var(--rsm);background:var(--sf);cursor:pointer">
+          <input type="checkbox" id="roleEditKilnReadOnly" style="accent-color:var(--ac3)">
+          <span style="font-size:12px;color:var(--tx)">Read Only</span>
+        </label>
+      </div>
+      <div style="margin-top:10px;font-size:11px;color:var(--tx3);line-height:1.45;font-family:var(--ff-mono)">Uncheck Shift Log Access to clear all shift-log roles at once.</div>
+    </div>
+    <div id="roleEditMsg" style="display:none;font-size:12px;padding:8px 12px;border-radius:var(--rsm)"></div>
+  </div>
+  <div style="padding:14px 22px;border-top:1px solid var(--bd);display:flex;justify-content:flex-end;gap:10px;flex-shrink:0">
+    <button class="btn btn-ghost" onclick="closeRoleEditor()">Cancel</button>
+    <button class="btn btn-iso" onclick="saveRoleEditor()">Save Roles</button>
   </div>
 </div>
 
@@ -1052,8 +1142,6 @@ async function showAppSelector(user) {
   document.getElementById('headerUser').style.display = 'flex';
   document.getElementById('logoutBtn').style.display = 'flex';
   document.getElementById('changePwBtn').style.display = 'flex';
-  document.getElementById('mainWrapper').style.display = 'block';
-  loadUserTheme();
   loadPlatformGroqKey();
   try {
     const {data} = await sb.from('pw_profiles').select('*').eq('id', user.id).single();
@@ -1117,6 +1205,8 @@ async function showAppSelector(user) {
     document.getElementById('aiReportBtn').style.display = 'flex';
     return false;
   }
+  await loadUserTheme();
+  document.getElementById('mainWrapper').style.display = 'block';
   // Check each app is reachable
   checkAppStatus();
   return true;
@@ -1256,6 +1346,27 @@ document.addEventListener('keydown', function(e) {
 });
 
 /* ── THEME ───────────────────────────────────────────────────────── */
+function readStoredThemePref() {
+  const shared = localStorage.getItem('pw_theme');
+  if (shared === 'light' || shared === 'dark') return shared;
+  const legacy = localStorage.getItem('pw_platform_theme');
+  if (legacy === 'light' || legacy === 'dark') {
+    localStorage.setItem('pw_theme', legacy);
+    return legacy;
+  }
+  const kiln = localStorage.getItem('kbl_theme');
+  if (kiln === 'light' || kiln === 'dark') {
+    localStorage.setItem('pw_theme', kiln);
+    return kiln;
+  }
+  const darkFlag = localStorage.getItem('dark');
+  if (darkFlag === '1' || darkFlag === '0') {
+    const theme = darkFlag === '1' ? 'dark' : 'light';
+    localStorage.setItem('pw_theme', theme);
+    return theme;
+  }
+  return null;
+}
 function applyTheme(light) {
   document.body.classList.toggle('light-mode', light);
   const icon = document.getElementById('themeIcon');
@@ -1263,6 +1374,7 @@ function applyTheme(light) {
     ? '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>'
     : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
   localStorage.setItem('pw_theme', light ? 'light' : 'dark');
+  localStorage.setItem('pw_platform_theme', light ? 'light' : 'dark');
 }
 function toggleTheme() {
   const light = !document.body.classList.contains('light-mode');
@@ -1295,7 +1407,7 @@ async function loadUserTheme() {
   } catch(e) {}
 }
 (function() {
-  const s = localStorage.getItem('pw_theme') || localStorage.getItem('pw_platform_theme');
+  const s = readStoredThemePref();
   if (s) { applyTheme(s === 'light'); return; }
   applyTheme(new Date().getHours() >= 7 && new Date().getHours() < 18);
 })();
@@ -1729,6 +1841,7 @@ function renderAllUsers() {
 function renderUserCard(m, DS, LS, RS, rc) {
   const p = m.prof, ku = m.kiln;
   const PROTECTED_USERNAME = 'rjone';
+  const canManageUsers = _platformProfile && _platformProfile.role === 'admin';
   const isSelf = _platformProfile && p && p.id === _platformProfile.id;
   const isProtectedKiln = ku && ku.username === PROTECTED_USERNAME;
   const displayName = (p&&(p.full_name||p.email))||(ku&&(ku.locked_name||ku.username))||'?';
@@ -1739,6 +1852,15 @@ function renderUserCard(m, DS, LS, RS, rc) {
   const trackerAccess = p ? (p.shift_tracker_access !== false) : null;
   const kilnAccess = ku ? (ku.shift_log_access !== false) : null;
   const kilnRole = !ku ? null : (kilnAccess === false ? 'none' : ku.is_admin ? 'admin' : ku.is_shift_manager ? 'shift_manager' : ku.is_cement_analyst ? 'cement_analyst' : ku.is_day_staff ? 'day_staff' : ku.is_burner ? 'burner' : 'read_only');
+  const kilnRoles = [];
+  if (ku) {
+    if (ku.is_admin) kilnRoles.push('Admin');
+    if (ku.is_shift_manager) kilnRoles.push('Shift Manager');
+    if (ku.is_cement_analyst) kilnRoles.push('Cement Analyst');
+    if (ku.is_day_staff) kilnRoles.push('Day Staff');
+    if (ku.is_burner) kilnRoles.push('Burner');
+    if (ku.is_readonly) kilnRoles.push('Read Only');
+  }
   const col = docsRole?(rc[docsRole]||'var(--tx3)'):'var(--tx3)';
   let h = '<div style="background:var(--sf2);border:1px solid var(--bd);border-radius:var(--r);padding:14px 16px;margin-bottom:6px">';
   h += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:13px">'
@@ -1764,7 +1886,10 @@ function renderUserCard(m, DS, LS, RS, rc) {
     if(isProtectedKiln){
       h+='<div style="height:30px;padding:0 8px;font-size:11px;font-family:var(--ff-mono);background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--ac3);display:flex;align-items:center;flex:1">Admin (protected)</div>';
     } else {
-      h+='<select onchange="updateKilnRole(\''+esc(ku.username)+'\',this.value)" style="'+DS+'"><option value="none"'+(kilnRole==='none'?' selected':'')+'>No Access</option><option value="burner"'+(kilnRole==='burner'?' selected':'')+'>Burner</option><option value="shift_manager"'+(kilnRole==='shift_manager'?' selected':'')+'>Shift Manager</option><option value="cement_analyst"'+(kilnRole==='cement_analyst'?' selected':'')+'>Cement Analyst</option><option value="day_staff"'+(kilnRole==='day_staff'?' selected':'')+'>Day Staff</option><option value="read_only"'+(kilnRole==='read_only'?' selected':'')+'>Read Only</option><option value="admin"'+(kilnRole==='admin'?' selected':'')+'>Admin</option></select>';
+      h+='<div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0">'
+        +'<div style="height:30px;padding:0 8px;font-size:11px;font-family:var(--ff-mono);background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--tx);display:flex;align-items:center;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(kilnRoles.length ? kilnRoles.join(' · ') : 'No Access')+'</div>'
+        +(canManageUsers ? '<button type="button" onclick="openRoleEditor(\''+esc(p.id)+'\')" style="height:30px;padding:0 10px;font-size:11px;font-family:var(--ff-head);font-weight:600;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--ac3);cursor:pointer;white-space:nowrap">Edit Roles</button>' : '')
+        +'</div>';
     }
   } else{h+='<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">No shift log account</span>';}
   h+='</div><div style="'+RS+'"><span style="'+LS+'">Shift Tracker</span>';
@@ -1824,10 +1949,11 @@ async function updateKilnRole(username, role) {
 }
 
 async function updateDocsRole(profileId, role) {
-  const {error} = await sb.from('pw_profiles').update({role: role || 'viewer'}).eq('id', profileId);
+  const nextRole = role || 'none';
+  const {error} = await sb.from('pw_profiles').update({role: nextRole}).eq('id', profileId);
   if (error) { showPlatformToast('Failed: ' + error.message); return; }
   const u = _usersCache.find(x => x.id === profileId);
-  if (u) u.role = role || 'viewer';
+  if (u) u.role = nextRole;
   renderAllUsers();
   showPlatformToast('Documents role updated ✓');
 }
@@ -1849,6 +1975,108 @@ async function updateShiftTrackerAccess(profileId, value) {
   if (u) u.shift_tracker_access = allowed;
   renderAllUsers();
   showPlatformToast('Shift Tracker access updated ✓');
+}
+
+function roleEditorShowMsg(type, text) {
+  const msg = document.getElementById('roleEditMsg');
+  if (!msg) return;
+  msg.textContent = text || '';
+  msg.style.display = text ? 'block' : 'none';
+  msg.style.background = type === 'ok' ? 'var(--grnd)' : type === 'err' ? 'var(--redd)' : '';
+  msg.style.color = type === 'ok' ? 'var(--grn)' : type === 'err' ? 'var(--red)' : '';
+  msg.style.border = type === 'ok' ? '1px solid var(--grnb)' : type === 'err' ? '1px solid var(--redb)' : 'none';
+}
+
+function openRoleEditor(profileId) {
+  if (!_platformProfile || _platformProfile.role !== 'admin') {
+    showPlatformToast('Admin only');
+    return;
+  }
+  const p = _usersCache.find(function(x){ return x.id === profileId; });
+  if (!p) { showPlatformToast('User not found'); return; }
+  const ku = _kilnUsersCache.find(function(x){ return x.auth_user_id === profileId; }) || null;
+  document.getElementById('roleEditProfileId').value = profileId;
+  document.getElementById('roleEditKilnUsername').value = ku ? (ku.username || '') : '';
+  document.getElementById('roleEditSub').textContent = (p.full_name || p.email || 'User') + ' · ' + (p.email || '—');
+  document.getElementById('roleEditDocs').value = p.role || 'none';
+  document.getElementById('roleEditIso').value = p.isolation_role || 'none';
+  document.getElementById('roleEditTracker').value = p.shift_tracker_access === false ? 'false' : 'true';
+  const access = !ku ? false : (ku.shift_log_access !== false);
+  document.getElementById('roleEditKilnAccess').value = access ? 'true' : 'false';
+  document.getElementById('roleEditKilnAdmin').checked = !!(ku && ku.is_admin);
+  document.getElementById('roleEditKilnManager').checked = !!(ku && ku.is_shift_manager);
+  document.getElementById('roleEditKilnAnalyst').checked = !!(ku && ku.is_cement_analyst);
+  document.getElementById('roleEditKilnDay').checked = !!(ku && ku.is_day_staff);
+  document.getElementById('roleEditKilnBurner').checked = !!(ku && ku.is_burner);
+  document.getElementById('roleEditKilnReadOnly').checked = !!(ku && ku.is_readonly);
+  roleEditorShowMsg('', '');
+  document.getElementById('roleEditOverlay').style.display = 'block';
+  document.getElementById('roleEditPanel').style.display = 'flex';
+}
+
+function closeRoleEditor() {
+  const overlay = document.getElementById('roleEditOverlay');
+  const panel = document.getElementById('roleEditPanel');
+  if (overlay) overlay.style.display = 'none';
+  if (panel) panel.style.display = 'none';
+  roleEditorShowMsg('', '');
+}
+
+async function saveRoleEditor() {
+  if (!_platformProfile || _platformProfile.role !== 'admin') {
+    roleEditorShowMsg('err', 'Admin only');
+    return;
+  }
+  const profileId = document.getElementById('roleEditProfileId').value;
+  const p = _usersCache.find(function(x){ return x.id === profileId; });
+  if (!p) { roleEditorShowMsg('err', 'User not found'); return; }
+  const ku = _kilnUsersCache.find(function(x){ return x.auth_user_id === profileId; }) || null;
+  const docsRole = document.getElementById('roleEditDocs').value || 'none';
+  const isoRole = document.getElementById('roleEditIso').value || 'none';
+  const trackerAccess = document.getElementById('roleEditTracker').value !== 'false';
+  const kilnAccess = document.getElementById('roleEditKilnAccess').value !== 'false';
+  const kilnFlags = {
+    is_admin: !!document.getElementById('roleEditKilnAdmin').checked,
+    is_shift_manager: !!document.getElementById('roleEditKilnManager').checked,
+    is_cement_analyst: !!document.getElementById('roleEditKilnAnalyst').checked,
+    is_day_staff: !!document.getElementById('roleEditKilnDay').checked,
+    is_burner: !!document.getElementById('roleEditKilnBurner').checked,
+    is_readonly: !!document.getElementById('roleEditKilnReadOnly').checked,
+    shift_log_access: kilnAccess
+  };
+  if (!kilnAccess) {
+    kilnFlags.is_admin = false;
+    kilnFlags.is_shift_manager = false;
+    kilnFlags.is_cement_analyst = false;
+    kilnFlags.is_day_staff = false;
+    kilnFlags.is_burner = false;
+    kilnFlags.is_readonly = false;
+  }
+  if (kilnAccess && !kilnFlags.is_admin && !kilnFlags.is_shift_manager && !kilnFlags.is_cement_analyst && !kilnFlags.is_day_staff && !kilnFlags.is_burner && !kilnFlags.is_readonly) {
+    kilnFlags.is_readonly = true;
+  }
+  roleEditorShowMsg('', '');
+  try {
+    const {error: profErr} = await sb.from('pw_profiles').update({
+      role: docsRole,
+      isolation_role: isoRole,
+      shift_tracker_access: trackerAccess
+    }).eq('id', profileId);
+    if (profErr) throw profErr;
+    if (ku) {
+      const {error: kilnErr} = await sb.from('kiln_users').update(kilnFlags).eq('username', ku.username);
+      if (kilnErr) throw kilnErr;
+    }
+    p.role = docsRole;
+    p.isolation_role = isoRole;
+    p.shift_tracker_access = trackerAccess;
+    if (ku) Object.assign(ku, kilnFlags);
+    renderAllUsers();
+    closeRoleEditor();
+    showPlatformToast('Roles updated ✓');
+  } catch(e) {
+    roleEditorShowMsg('err', e && e.message ? e.message : 'Failed to update roles.');
+  }
 }
 
 async function removeUser(userId, email) {
@@ -2005,16 +2233,40 @@ async function buildPlatformContext() {
   if (_aiScope==='month') { const d=new Date(now); d.setMonth(d.getMonth()-1);     sinceDate=d.toISOString().slice(0,10); }
   if (_aiScope==='year')  { const d=new Date(now); d.setFullYear(d.getFullYear()-1);sinceDate=d.toISOString().slice(0,10); }
   try {
+    const sessionData = await sb.auth.getSession();
+    const sessionUser = sessionData && sessionData.data && sessionData.data.session && sessionData.data.session.user;
+    const profile = _platformProfile || null;
+    const docsAllowed = !!(profile && profile.approved !== false && profile.disabled !== true && profile.role && profile.role !== 'none');
+    const isolationAllowed = !!(profile && profile.approved !== false && profile.disabled !== true && profile.isolation_role && profile.isolation_role !== 'none');
+    let kilnAllowed = false;
+    let kilnUser = null;
+    if (sessionUser) {
+      const kilnRes = await sb.from('kiln_users')
+        .select('shift_log_access,is_admin')
+        .eq('auth_user_id', sessionUser.id)
+        .maybeSingle();
+      kilnUser = kilnRes.data || null;
+      kilnAllowed = !!(kilnUser && (kilnUser.shift_log_access !== false || kilnUser.is_admin));
+    }
+
     let kilnQuery = sb.from('kiln_log').select('week_key,data').order('week_key',{ascending:false}).limit(200).neq('week_key','__lists__');
     if (sinceDate) kilnQuery = kilnQuery.gte('week_key', sinceDate);
     const [kilnRes, raRes, matrixRes, pointRes, equipRes] = await Promise.all([
-      kilnQuery,
-      sb.from('pw_risk_assessments').select('ref,title,next_review_date,department').limit(300),
-      sb.from('pw_isolation_matrices').select('id,title,status,area,equipment_id').limit(200),
-      sb.from('pw_isolation_points').select('matrix_id').limit(1000),
-      sb.from('pw_equipment').select('id,name').limit(500)
+      kilnAllowed ? kilnQuery : Promise.resolve({ data: [] }),
+      docsAllowed ? sb.from('pw_risk_assessments').select('ref,title,next_review_date,department').limit(300) : Promise.resolve({ data: [] }),
+      isolationAllowed ? sb.from('pw_isolation_matrices').select('id,title,status,area,equipment_id').limit(200) : Promise.resolve({ data: [] }),
+      isolationAllowed ? sb.from('pw_isolation_points').select('matrix_id').limit(1000) : Promise.resolve({ data: [] }),
+      isolationAllowed ? sb.from('pw_equipment').select('id,name').limit(500) : Promise.resolve({ data: [] })
     ]);
     const lines = ['PADESWOOD WORKS — PLATFORM SUMMARY — scope: '+_aiScope,'='.repeat(60)];
+
+    const accessLine = [
+      'Accessible apps:',
+      docsAllowed ? 'Documents' : null,
+      isolationAllowed ? 'Isolation' : null,
+      kilnAllowed ? 'Kiln Log' : null
+    ].filter(Boolean).join(', ') || 'Accessible apps: none';
+    lines.push(accessLine);
 
     const ras = (raRes.data||[]).map(function(r){
       const next = r.next_review_date ? new Date(r.next_review_date) : null;
@@ -2031,13 +2283,15 @@ async function buildPlatformContext() {
       current: ras.filter(r=>r._status==='current').length,
       draft: ras.filter(r=>r._status==='draft').length
     };
-    lines.push('');
-    lines.push('DOCUMENTS APP:');
-    lines.push('  Risk assessments: '+ras.length+' total | Overdue: '+raCounts.overdue+' | Due soon: '+raCounts.dueSoon+' | Current: '+raCounts.current+' | Draft: '+raCounts.draft);
-    ras.filter(r=>r._status==='overdue'||r._status==='due-soon').slice(0,8).forEach(function(r){
-      lines.push('  Attention: '+(r.ref||'—')+' | '+(r.title||'—')+' | '+r._status+' | Dept: '+(r.department||'—'));
-    });
-    lines.push('  COSHH: managed externally in Sypol.');
+    if (docsAllowed) {
+      lines.push('');
+      lines.push('DOCUMENTS APP:');
+      lines.push('  Risk assessments: '+ras.length+' total | Overdue: '+raCounts.overdue+' | Due soon: '+raCounts.dueSoon+' | Current: '+raCounts.current+' | Draft: '+raCounts.draft);
+      ras.filter(r=>r._status==='overdue'||r._status==='due-soon').slice(0,8).forEach(function(r){
+        lines.push('  Attention: '+(r.ref||'—')+' | '+(r.title||'—')+' | '+r._status+' | Dept: '+(r.department||'—'));
+      });
+      lines.push('  COSHH: managed externally in Sypol.');
+    }
 
     const equipmentById = new Map((equipRes.data||[]).map(function(e){ return [e.id, e.name]; }));
     const pointCounts = {};
@@ -2045,75 +2299,79 @@ async function buildPlatformContext() {
     const matrices = matrixRes.data || [];
     const matrixStatus = {};
     matrices.forEach(function(m){ matrixStatus[m.status||'draft'] = (matrixStatus[m.status||'draft'] || 0) + 1; });
-    lines.push('');
-    lines.push('ISOLATION APP:');
-    lines.push('  Matrices: '+matrices.length+' total | Statuses: '+Object.keys(matrixStatus).sort().map(function(k){ return k+': '+matrixStatus[k]; }).join(' | '));
-    matrices.slice(0,8).forEach(function(m){
-      lines.push('  Matrix: '+(m.title||'—')+' | Status: '+(m.status||'draft')+' | Equipment: '+(equipmentById.get(m.equipment_id)||'—')+' | Area: '+(m.area||'—')+' | Points: '+(pointCounts[m.id]||0));
-    });
+    if (isolationAllowed) {
+      lines.push('');
+      lines.push('ISOLATION APP:');
+      lines.push('  Matrices: '+matrices.length+' total | Statuses: '+Object.keys(matrixStatus).sort().map(function(k){ return k+': '+matrixStatus[k]; }).join(' | '));
+      matrices.slice(0,8).forEach(function(m){
+        lines.push('  Matrix: '+(m.title||'—')+' | Status: '+(m.status||'draft')+' | Equipment: '+(equipmentById.get(m.equipment_id)||'—')+' | Area: '+(m.area||'—')+' | Points: '+(pointCounts[m.id]||0));
+      });
+    }
 
     const rows = kilnRes.data || [];
     const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
     let burnerIssues = 0, burnerNotes = 0, managerNotes = 0, analystIssues = 0;
     const recentItems = [];
-    rows.forEach(function(r) {
-      if (!r.data) return;
-      const weekState   = r.data.state   || r.data;
-      const weekSmState = r.data.smState || null;
-      const weekCaState = r.data.caState || null;
-      if (weekState) {
-        DAYS.forEach(function(day) {
-          const d = weekState[day]; if (!d) return;
-          ['shift1','shift2'].forEach(function(sk,si) {
-            const s = d[sk]; if (!s) return;
-            const entries = (s.entries||[]).filter(function(e){ return e.equipment || e.issue; });
-            const hasNotes = (s.notes||'').trim();
-            burnerIssues += entries.length;
-            if (hasNotes) burnerNotes++;
-            entries.slice(0,2).forEach(function(e){
-              if (recentItems.length < 12) recentItems.push('  Kiln '+r.week_key+' '+day+' '+(si===0?'Day':'Night')+': '+(e.equipment||'?')+' — '+(e.issue||'no detail'));
+    if (kilnAllowed) {
+      rows.forEach(function(r) {
+        if (!r.data) return;
+        const weekState   = r.data.state   || r.data;
+        const weekSmState = r.data.smState || null;
+        const weekCaState = r.data.caState || null;
+        if (weekState) {
+          DAYS.forEach(function(day) {
+            const d = weekState[day]; if (!d) return;
+            ['shift1','shift2'].forEach(function(sk,si) {
+              const s = d[sk]; if (!s) return;
+              const entries = (s.entries||[]).filter(function(e){ return e.equipment || e.issue; });
+              const hasNotes = (s.notes||'').trim();
+              burnerIssues += entries.length;
+              if (hasNotes) burnerNotes++;
+              entries.slice(0,2).forEach(function(e){
+                if (recentItems.length < 12) recentItems.push('  Kiln '+r.week_key+' '+day+' '+(si===0?'Day':'Night')+': '+(e.equipment||'?')+' — '+(e.issue||'no detail'));
+              });
             });
           });
-        });
-      }
-      if (weekSmState) {
-        DAYS.forEach(function(day) {
-          const d = weekSmState[day]; if (!d) return;
-          ['shift1','shift2'].forEach(function(sk,si) {
-            const s = d[sk]; if (!s) return;
-            const notes = (s.notes||'').trim();
-            if (!notes) return;
-            managerNotes++;
-            if (recentItems.length < 12) recentItems.push('  Shift manager '+r.week_key+' '+day+' '+(si===0?'Day':'Night')+': '+notes.slice(0,110));
-          });
-        });
-      }
-      if (weekCaState) {
-        DAYS.forEach(function(day) {
-          const d = weekCaState[day]; if (!d) return;
-          ['shift1','shift2'].forEach(function(sk,si) {
-            const s = d[sk]; if (!s) return;
-            const hseItems = (s.hse||[]).filter(function(h){ return h.type || h.details; });
-            const grind = (s.cemQuality||[]).filter(function(q){ return (q.issues||'').trim(); });
-            analystIssues += hseItems.length + grind.length;
-            hseItems.slice(0,1).forEach(function(h){
-              if (recentItems.length < 12) recentItems.push('  Analyst '+r.week_key+' '+day+' '+(si===0?'Day':'Night')+': HSE '+(h.type||'?')+(h.details?' — '+h.details:''));
-            });
-            grind.slice(0,1).forEach(function(q){
-              if (recentItems.length < 12) recentItems.push('  Analyst '+r.week_key+' '+day+' '+(si===0?'Day':'Night')+': Mill '+(q.mill||'?')+' — '+q.issues);
+        }
+        if (weekSmState) {
+          DAYS.forEach(function(day) {
+            const d = weekSmState[day]; if (!d) return;
+            ['shift1','shift2'].forEach(function(sk,si) {
+              const s = d[sk]; if (!s) return;
+              const notes = (s.notes||'').trim();
+              if (!notes) return;
+              managerNotes++;
+              if (recentItems.length < 12) recentItems.push('  Shift manager '+r.week_key+' '+day+' '+(si===0?'Day':'Night')+': '+notes.slice(0,110));
             });
           });
-        });
+        }
+        if (weekCaState) {
+          DAYS.forEach(function(day) {
+            const d = weekCaState[day]; if (!d) return;
+            ['shift1','shift2'].forEach(function(sk,si) {
+              const s = d[sk]; if (!s) return;
+              const hseItems = (s.hse||[]).filter(function(h){ return h.type || h.details; });
+              const grind = (s.cemQuality||[]).filter(function(q){ return (q.issues||'').trim(); });
+              analystIssues += hseItems.length + grind.length;
+              hseItems.slice(0,1).forEach(function(h){
+                if (recentItems.length < 12) recentItems.push('  Analyst '+r.week_key+' '+day+' '+(si===0?'Day':'Night')+': HSE '+(h.type||'?')+(h.details?' — '+h.details:''));
+              });
+              grind.slice(0,1).forEach(function(q){
+                if (recentItems.length < 12) recentItems.push('  Analyst '+r.week_key+' '+day+' '+(si===0?'Day':'Night')+': Mill '+(q.mill||'?')+' — '+q.issues);
+              });
+            });
+          });
+        }
+      });
+      lines.push('');
+      lines.push('KILN LOG APP:');
+      lines.push('  Burner issue entries: '+burnerIssues+' | Burner note entries: '+burnerNotes+' | Shift manager note entries: '+managerNotes+' | Analyst issue entries: '+analystIssues);
+      if (recentItems.length) {
+        lines.push('  Recent recorded items:');
+        recentItems.forEach(function(line){ lines.push(line); });
+      } else {
+        lines.push('  No recent recorded items found for the selected scope.');
       }
-    });
-    lines.push('');
-    lines.push('KILN LOG APP:');
-    lines.push('  Burner issue entries: '+burnerIssues+' | Burner note entries: '+burnerNotes+' | Shift manager note entries: '+managerNotes+' | Analyst issue entries: '+analystIssues);
-    if (recentItems.length) {
-      lines.push('  Recent recorded items:');
-      recentItems.forEach(function(line){ lines.push(line); });
-    } else {
-      lines.push('  No recent recorded items found for the selected scope.');
     }
     return lines.join('\n');
   } catch(e) { return 'Error loading shift data: '+e.message; }
@@ -2135,7 +2393,7 @@ async function sendAiReport() {
   hist.scrollTop = hist.scrollHeight;
   try {
     const context = await buildPlatformContext();
-    const systemPrompt = 'You are an expert AI assistant for Padeswood Works (HeidelbergMaterials cement plant, Wales). You have access only to the provided platform summary covering the Documents app, Isolation app, and Kiln Log app. Answer concisely from that summary only. If something is not present in the summary, say it is not recorded here. Do not refer to individuals by name — use their role instead.';
+    const systemPrompt = 'You are an expert AI assistant for Padeswood Works (HeidelbergMaterials cement plant, Wales). You have access only to the provided platform summary. Some app sections may be omitted because the current user does not have access to them. Answer concisely from the summary only. If something is not present in the summary, say it is not recorded here. Do not refer to individuals by name — use their role instead.';
     const dataMsg = {role:'user',content:'Here is the platform summary. Only answer from this data.\n\n'+context};
     const messages = [{role:'system',content:systemPrompt},dataMsg,..._aiHistory];
     const res = await fetch('https://api.groq.com/openai/v1/chat/completions',{

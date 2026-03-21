@@ -754,11 +754,17 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
 @keyframes toastIn { from{transform:translateY(12px) scale(.95);opacity:0} to{transform:translateY(0) scale(1);opacity:1} }
 
 /* ── WEEK DATE ───────────────────────────────────────────────────── */
-#weekDate { background:var(--sf2); border:1px solid var(--bd); color:var(--tx); font-family:var(--ff-mono); font-size:11px; padding:5px 10px; border-radius:var(--rxs); cursor:pointer; }
+#weekDate {
+  background:var(--sf2); border:1px solid var(--bd); color:var(--tx);
+  font-family:var(--ff-mono); font-size:11px; padding:5px 10px;
+  border-radius:var(--rxs); cursor:pointer; flex-shrink:0;
+  width:126px; min-width:126px; max-width:126px; box-sizing:border-box;
+  flex:0 0 126px;
+}
 #weekDate::-webkit-calendar-picker-indicator { cursor:pointer; filter:invert(0.6); }
 #weekDate::-webkit-inner-spin-button { display:none; }
 /* Ensure full tap area opens picker on mobile */
-#weekDate { -webkit-appearance:none; appearance:none; min-width:120px; }adius:var(--rsm); cursor:pointer }
+#weekDate { -webkit-appearance:none; appearance:none; }
 #weekDate:focus { border-color:var(--ac); outline:none; box-shadow:0 0 0 3px var(--acd1) }
 #weekDate:disabled { opacity:.45; cursor:default }
 
@@ -813,15 +819,6 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
     gap:4px;
     align-items:center;
     justify-content:flex-start;
-    overflow-x:auto;
-    overflow-y:visible;
-    -webkit-overflow-scrolling:touch;
-    scrollbar-width:none;
-    padding-bottom:4px;
-    width:100%;
-    max-width:100%;
-    box-sizing:border-box;
-    touch-action:pan-x;
   }
   .topbar-right::-webkit-scrollbar { display:none }
   /* Hide admin/nav buttons on mobile — use overflow menu instead */
@@ -1027,41 +1024,41 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
     </div>
     <div class="topbar-right">
       <input type="date" id="weekDate" title="Set week start (Monday)">
-      <button class="btn btn-ghost" onclick="goToToday()" title="Jump to today">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><circle cx="12" cy="16" r="2" fill="currentColor" stroke="none"/></svg>
-        Today
-      </button>
-
-      <button class="btn btn-ghost" onclick="switchDay('Overview')" id="btn-weekly-overview" title="Weekly Overview" style="display:none">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-        <span class="btn-label">Weekly Overview</span>
-      </button>
-      <button class="btn btn-ghost" onclick="switchDay('AI Reporting')" id="btn-ai-reporting" title="AI Reporting" style="display:none">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="9" y1="14" x2="13" y2="14"/></svg>
-        <span class="btn-label">AI Reporting</span>
-      </button>
-      <button class="btn btn-ghost" onclick="switchDay('Whiteboard')" id="btn-whiteboard" title="Whiteboard" style="display:none">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-        <span class="btn-label">Whiteboard</span>
-      </button>
-      <button class="btn btn-ghost" onclick="switchDay('Feedback')" id="btn-feedback" title="Feedback" style="display:none">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-        <span class="btn-label">Feedback</span>
-      </button>
-
-      <button class="btn btn-ghost" id="manageListsBtn" onclick="openManageModal()" style="display:none">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
-        <span class="btn-label">Manage Lists</span>
-      </button>
-
-      <div id="mobileMenuWrap" style="display:none;position:relative">
-        <button class="btn btn-ghost btn-icon" id="mobileMenuBtn" onclick="toggleMobileMenu()" aria-label="More options">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1" fill="currentColor"/><circle cx="12" cy="12" r="1" fill="currentColor"/><circle cx="12" cy="19" r="1" fill="currentColor"/></svg>
+        <button class="btn btn-ghost" onclick="goToToday()" title="Jump to today">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><circle cx="12" cy="16" r="2" fill="currentColor" stroke="none"/></svg>
+          Today
         </button>
-        <div id="mobileMenuDropdown" style="display:none;position:absolute;top:calc(100% + 6px);right:0;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);box-shadow:var(--e2);min-width:160px;z-index:200">
+
+        <button class="btn btn-ghost" onclick="switchDay('Overview')" id="btn-weekly-overview" title="Overview" style="display:none">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <span class="btn-label">Overview</span>
+        </button>
+        <button class="btn btn-ghost" onclick="switchDay('AI Reporting')" id="btn-ai-reporting" title="AI Reporting" style="display:none">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="9" y1="14" x2="13" y2="14"/></svg>
+          <span class="btn-label">AI Reporting</span>
+        </button>
+        <button class="btn btn-ghost" onclick="switchDay('Whiteboard')" id="btn-whiteboard" title="Whiteboard" style="display:none">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          <span class="btn-label">Whiteboard</span>
+        </button>
+        <button class="btn btn-ghost" onclick="switchDay('Feedback')" id="btn-feedback" title="Feedback" style="display:none">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+          <span class="btn-label">Feedback</span>
+        </button>
+
+        <button class="btn btn-ghost" id="manageListsBtn" onclick="openManageModal()" style="display:none">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+          <span class="btn-label">Manage Lists</span>
+        </button>
+
+        <div id="mobileMenuWrap" style="display:none;position:relative">
+          <button class="btn btn-ghost btn-icon" id="mobileMenuBtn" onclick="toggleMobileMenu()" aria-label="More options">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1" fill="currentColor"/><circle cx="12" cy="12" r="1" fill="currentColor"/><circle cx="12" cy="19" r="1" fill="currentColor"/></svg>
+          </button>
+          <div id="mobileMenuDropdown" style="display:none;position:absolute;top:calc(100% + 6px);right:0;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);box-shadow:var(--e2);min-width:160px;z-index:200">
           <div id="mobileWeeklyOverview" onclick="switchDay('Overview');closeMobileMenu()" style="padding:10px 14px;font-size:13px;color:var(--tx);cursor:pointer;align-items:center;gap:10px;transition:background .1s" onmouseover="this.style.background='var(--sf2)'" onmouseout="this.style.background='transparent'">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;flex-shrink:0"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-            Weekly Overview
+            Overview
           </div>
           <div id="mobileAiReporting" onclick="switchDay('AI Reporting');closeMobileMenu()" style="padding:10px 14px;font-size:13px;color:var(--tx);cursor:pointer;align-items:center;gap:10px;transition:background .1s" onmouseover="this.style.background='var(--sf2)'" onmouseout="this.style.background='transparent'">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;flex-shrink:0"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="9" y1="14" x2="13" y2="14"/></svg>
@@ -1082,6 +1079,7 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
           </div>
         </div>
       </div>
+    </div>
 
       <button class="btn btn-ghost" id="printBtn" onclick="showPrintModal()" style="display:none">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
@@ -1380,6 +1378,7 @@ let readOnly   = false;
 
 let currentUser = null;
 let currentUserLogon = null;
+let currentUserThemeId = null;
 let isAdmin = false;
 let isShiftManager = false;
 let isCementAnalyst = false;
@@ -1506,6 +1505,7 @@ async function doLogin(){
 async function _applyUserSession(match){
   currentUser     = match.username;
   currentUserLogon = match.email || match.username || null;
+  currentUserThemeId = match.auth_user_id || match.email || match.username || null;
   isAdmin         = match.is_admin || false;
   isShiftManager  = match.is_shift_manager || false;
   isCementAnalyst = match.is_cement_analyst || false;
@@ -1550,8 +1550,8 @@ async function _applyUserSession(match){
   document.querySelectorAll('.write-only').forEach(el => el.style.display = readOnly ? 'none' : '');
   document.body.classList.toggle('read-only-mode', readOnly);
   const _wdLogin=document.getElementById('weekDate'); if(_wdLogin)_wdLogin.disabled=false;
+  await sbLoadUserTheme();
   initApp().then(function(){ });
-  sbLoadUserTheme();
 }
 function doLogout(){
   // Cancel any pending saves FIRST
@@ -1582,6 +1582,7 @@ function doLogout(){
   readOnly   = false;
   currentUser = null;
   currentUserLogon = null;
+  currentUserThemeId = null;
   currentUserLogon = null;
   isAdmin = false;
   isShiftManager = false;
@@ -1639,24 +1640,52 @@ document.addEventListener('click', e => {
 
 // theme
 async function sbSaveTheme(isDark){
-  if(!currentUser) return;
+  const theme = isDark ? 'dark' : 'light';
+  const themeKey = currentUserThemeId ? ('theme_uid_' + currentUserThemeId) : (currentUser ? ('theme_uid_' + currentUser) : null);
+  localStorage.setItem('pw_theme', theme);
+  localStorage.setItem('kbl_theme', theme);
+  if(!themeKey) return;
   try {
     await sbFetch('/rest/v1/kiln_config', {
       method: 'POST',
       headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
-      body: JSON.stringify({ key: 'theme_' + currentUser, value: isDark ? 'dark' : 'light' })
+      body: JSON.stringify({ key: themeKey, value: theme })
     });
   } catch(e){}
 }
 
 async function sbLoadUserTheme(){
-  if(!currentUser) return;
+  const themeKey = currentUserThemeId ? ('theme_uid_' + currentUserThemeId) : (currentUser ? ('theme_uid_' + currentUser) : null);
+  if(themeKey){
+    try {
+      const rows = await sbFetch('/rest/v1/kiln_config?key=eq.' + encodeURIComponent(themeKey) + '&select=value');
+      if(rows && rows.length){
+        const theme = rows[0].value;
+        lightMode = theme === 'light';
+        document.body.classList.toggle('light-mode', lightMode);
+        localStorage.setItem('pw_theme', theme);
+        localStorage.setItem('kbl_theme', theme);
+        updateThemeIcon();
+        return;
+      }
+    } catch(e){}
+  }
+  const localTheme = localStorage.getItem('pw_theme') || localStorage.getItem('kbl_theme');
+  if(localTheme === 'light' || localTheme === 'dark'){
+    lightMode = localTheme === 'light';
+    document.body.classList.toggle('light-mode', lightMode);
+    localStorage.setItem('pw_theme', localTheme);
+    localStorage.setItem('kbl_theme', localTheme);
+    updateThemeIcon();
+    return;
+  }
   try {
-    const rows = await sbFetch('/rest/v1/kiln_config?key=eq.theme_' + encodeURIComponent(currentUser) + '&select=value');
+    const rows = await sbFetch('/rest/v1/kiln_config?key=eq.theme_' + encodeURIComponent(currentUser || '') + '&select=value');
     if(rows && rows.length){
       const theme = rows[0].value;
       lightMode = theme === 'light';
       document.body.classList.toggle('light-mode', lightMode);
+      localStorage.setItem('pw_theme', theme);
       localStorage.setItem('kbl_theme', theme);
       updateThemeIcon();
       return;
@@ -1678,7 +1707,6 @@ function updateThemeIcon(){
 function toggleTheme(){
   lightMode=!lightMode;
   document.body.classList.toggle('light-mode',lightMode);
-  localStorage.setItem('kbl_theme',lightMode?'light':'dark');
   sbSaveTheme(!lightMode);
   updateThemeIcon();
 }
@@ -1776,6 +1804,7 @@ async function _gotoTodayAndSwitch(silent, forceBuild){
   currentDay=today;
   currentSmDay=today;
   currentCaDay=today;
+  syncWeekDateInput(today);
   // Highlight today on ALL nav rows and scroll each into view
   ['dayNav','smNav','caNav'].forEach(function(navId){
     const activeTab = document.getElementById(navId+'-'+today);
@@ -1789,14 +1818,7 @@ async function _gotoTodayAndSwitch(silent, forceBuild){
   updateDots();
   if(!silent) showToast('Jumped to today ✓');
 
-  // Render the correct log for this user's role
-  if(isCementAnalyst && !isBurner && !isShiftManager && !isAdmin){
-    renderCaDay(today);
-  } else if(isShiftManager && !isBurner && !isCementAnalyst && !isAdmin){
-    renderSmDay(today);
-  } else {
-    renderDay(today);
-  }
+  renderPrimaryDay(today);
 }
 
 
@@ -1811,6 +1833,35 @@ function setWeekToNow(){
 
 function toISO(d){ const z=n=>String(n).padStart(2,'0'); return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}`; }
 function parseLocalDate(s){ if(!s)return new Date(); const[y,m,d]=s.split('-').map(Number); return new Date(y,m-1,d); }
+function getDateForDay(day){
+  if(!weekStart) return null;
+  const idx = DAYS.indexOf(day);
+  if(idx < 0) return new Date(weekStart);
+  const d = new Date(weekStart);
+  d.setDate(d.getDate()+idx);
+  return d;
+}
+function syncWeekDateInput(day){
+  const input = document.getElementById('weekDate');
+  if(!input || !weekStart) return;
+  const target = getDateForDay(day);
+  if(!target) return;
+  input.value = toISO(target);
+  input.title = DAYS.includes(day)
+    ? 'Selected log date for ' + day + ' (week stays anchored to Monday)'
+    : 'Set week start (Monday)';
+}
+function renderPrimaryDay(day){
+  if(isCementAnalyst && !isBurner && !isShiftManager && !isAdmin){
+    renderCaDay(day);
+    return;
+  }
+  if(isShiftManager && !isBurner && !isCementAnalyst && !isAdmin){
+    renderSmDay(day);
+    return;
+  }
+  renderDay(day);
+}
 function sortAll(){
   equipment.sort((a,b)=>a.localeCompare(b));
   burners.sort((a,b)=>a.localeCompare(b));
@@ -1827,7 +1878,6 @@ document.getElementById('weekDate').addEventListener('change', async function(){
   monday.setDate(pickedDate.getDate() - (dow === 0 ? 6 : dow - 1));
   weekStart = monday;
   const iso = toISO(monday);
-  this.value = iso;
   localStorage.setItem('kbl_wk5', iso);
   state = {}; smState = {}; caState = {};
   showSyncDot('syncing');
@@ -1849,14 +1899,17 @@ document.getElementById('weekDate').addEventListener('change', async function(){
   buildTabs();
   const dayIdx = JS_DAY[dow];
   currentDay = DAYS[dayIdx] || 'Monday';
-  renderDay(currentDay);
+  currentSmDay = currentDay;
+  currentCaDay = currentDay;
+  syncWeekDateInput(currentDay);
+  renderPrimaryDay(currentDay);
   updateDots();
   showToast('Switched to week of ' + toISO(weekStart));
 });
 
 function dayDate(day){
-  if(!weekStart) return '';
-  const d=new Date(weekStart); d.setDate(d.getDate()+DAYS.indexOf(day));
+  const d = getDateForDay(day);
+  if(!d) return '';
   return d.toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});
 }
 function weekRange(){
@@ -1912,6 +1965,7 @@ function switchDay(day){
   document.querySelectorAll('#dayNav .day-tab').forEach(t=>t.classList.remove('active'));
   const tab=document.getElementById('dayNav-'+day)||document.getElementById('tab-'+day);
   if(tab) tab.classList.add('active');
+  syncWeekDateInput(day);
   renderDay(day);
 }
 function switchSmDay(day){
@@ -1919,6 +1973,7 @@ function switchSmDay(day){
   document.querySelectorAll('#smNav .day-tab').forEach(t=>t.classList.remove('active'));
   const tab=document.getElementById('smNav-'+day);
   if(tab) tab.classList.add('active');
+  syncWeekDateInput(day);
   renderSmDay(day);
 }
 function switchCaDay(day){
@@ -1926,6 +1981,7 @@ function switchCaDay(day){
   document.querySelectorAll('#caNav .day-tab').forEach(t=>t.classList.remove('active'));
   const tab=document.getElementById('caNav-'+day);
   if(tab) tab.classList.add('active');
+  syncWeekDateInput(day);
   renderCaDay(day);
 }
 
@@ -4380,7 +4436,7 @@ function renderOverview(){
   mc.innerHTML = '';
   const hdr = document.createElement('div');
   hdr.className = 'page-header';
-  hdr.innerHTML = '<div><div class="page-title">Weekly Overview</div><div class="page-date">'+weekRange()+'</div></div>';
+  hdr.innerHTML = '<div><div class="page-title">Overview</div><div class="page-date">'+weekRange()+'</div></div>';
   mc.appendChild(hdr);
   const filterBar = document.createElement('div');
   filterBar.style.cssText = 'display:flex;align-items:center;gap:8px;margin-bottom:18px;flex-wrap:wrap;';
