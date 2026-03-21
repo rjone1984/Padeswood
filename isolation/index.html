@@ -325,11 +325,32 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .detail-title-area{flex:1;min-width:0;}
 .detail-title{font-family:var(--ff-head);font-weight:700;font-size:18px;color:var(--tx);letter-spacing:-.3px;}
 .detail-equip{font-size:12.5px;color:var(--tx2);margin-top:3px;}
-.detail-actions{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap;}
+.detail-actions{
+  display:flex;
+  gap:8px;
+  flex-shrink:0;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:flex-end;
+  max-width:52%;
+}
+.detail-actions .btn{
+  min-height:30px;
+  padding:0 12px;
+  font-size:11px;
+  white-space:nowrap;
+}
 .detail-meta-bar{padding:12px 24px;background:var(--sf2);border-bottom:1px solid var(--bd);
   display:flex;gap:14px;flex-wrap:wrap;}
 .detail-meta-item{font-family:var(--ff-mono);font-size:10px;color:var(--tx3);
   display:flex;align-items:center;gap:5px;}
+.detail-search-stick{
+  position:sticky;
+  top:0;
+  z-index:5;
+  background:var(--sf);
+  border-bottom:1px solid var(--bd);
+}
 .detail-notes{margin:16px 24px;background:var(--ambd);border:1px solid var(--ambb);
   border-radius:var(--rsm);padding:10px 14px;font-size:12.5px;color:var(--amb);}
 .detail-desc{margin:16px 24px 0;font-size:13px;color:var(--tx2);line-height:1.65;}
@@ -795,10 +816,18 @@ tbody tr:hover{background:var(--sf2);}
       <div class="detail-actions" id="detailActions"></div>
     </div>
     <div class="detail-meta-bar" id="detailMeta"></div>
+    <div class="detail-search-stick" style="padding:14px 20px 12px">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;background:var(--sf2);border:1px solid var(--bd);border-radius:10px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" style="color:var(--tx3);flex-shrink:0"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input id="detailSearch" type="search" placeholder="Search equipment code, name, comments or work item…" oninput="setDetailSearch(this.value)" style="flex:1;min-width:180px;height:34px;border:1px solid var(--bd);border-radius:8px;background:var(--sf);color:var(--tx);padding:0 10px;font-family:var(--ff-body);font-size:12px;outline:none">
+        <button class="btn btn-ghost" style="height:34px;padding:0 12px;font-size:11px" onclick="document.getElementById('detailSearch').value='';setDetailSearch('')">Clear</button>
+      </div>
+      <div id="detailSearchStatus" style="margin-top:8px;font-size:10px;font-family:var(--ff-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--tx3)"></div>
+    </div>
     <div id="detailDesc"></div>
     <div id="detailNotesEl"></div>
     <div class="points-header">
-      <h3>Isolation Equipment</h3>
+      <h3>Equipment</h3>
     </div>
     <div class="points-list" id="pointsList"></div>
     <div class="detail-close-bar">
@@ -1040,10 +1069,6 @@ tbody tr:hover{background:var(--sf2);}
       AI Assistant — Isolation
     </div>
     <div style="display:flex;align-items:center;gap:8px">
-      <label style="display:inline-flex;align-items:center;gap:7px;font-family:var(--ff-mono);font-size:10px;color:var(--tx2);padding:5px 8px;border:1px solid var(--bd);border-radius:999px;background:var(--sf2);cursor:pointer">
-        <input type="checkbox" id="aiMatrixMode" checked onchange="setAiMatrixMode(this.checked)" style="accent-color:var(--ac3)">
-        Matrix mode
-      </label>
       <button id="aiClearBtn" onclick="clearAiHistory()" title="Clear conversation" style="display:none;width:28px;height:28px;border-radius:6px;border:1px solid var(--bd);background:transparent;color:var(--tx3);cursor:pointer;align-items:center;justify-content:center">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
       </button>
@@ -1092,7 +1117,6 @@ const SB_LIC_KEY        = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 let sb, currentUser = null, currentProfile = null;
 let _matrices = [], _points = {}, _equipment = [], _areas = [];
 let _groqKey = null, _aiHistory = [];
-let _aiMatrixMode = true;
 let _openMatrixId = null;
 let _entries = {}; // cached pw_isolation_entries per matrix id
 let _matrixSearchIndex = {}; // searchable text per matrix id
@@ -1101,6 +1125,8 @@ let _readerState = {fileNames:[], sheets:[], selected:{}, edits:{}, duplicateMod
 let _matrixSelection = new Set();
 let _matrixSort = { col: 'status', dir: 1 };
 let _matrixVisibleIds = [];
+let _detailSearch = '';
+let _detailCache = null;
 
 /* ── HELPERS ─────────────────────────────────────────────────────── */
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
@@ -1123,6 +1149,106 @@ function smartTitleCase(text){
     .join('')
     .replace(/\s+/g, ' ')
     .trim();
+}
+function matrixDetailMatch(query, parts){
+  if(!query) return true;
+  const hay = parts.map(function(v){ return readerNorm(v || '').toLowerCase(); }).join(' ');
+  return hay.includes(query);
+}
+function highlightHtml(text, query){
+  const safe = esc(text == null ? '' : text);
+  const q = String(query || '').trim();
+  if(!q) return safe;
+  const re = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig');
+  return safe.replace(re, '<mark>$1</mark>');
+}
+function renderDetailView(){
+  const detail = _detailCache;
+  const pointsWrap = document.getElementById('pointsList');
+  const notesWrap = document.getElementById('detailNotesEl');
+  const searchWrap = document.getElementById('detailSearchStatus');
+  if(!detail || !pointsWrap || !notesWrap) return;
+  const m = detail.matrix;
+  const points = detail.points || [];
+  const entries = detail.entries || [];
+  const qRaw = String(_detailSearch || '').trim();
+  const q = readerNorm(_detailSearch).toLowerCase();
+
+  const pointMap = {};
+  points.forEach(function(p){
+    const code = (p.plant_number || '').trim();
+    if(!code) return;
+    const key = readerNorm(code).toUpperCase();
+    pointMap[key] = { code: code, name: p.description || '' };
+    const nameKey = readerNorm(p.description || '').toUpperCase();
+    if(nameKey && !pointMap[nameKey]) pointMap[nameKey] = { code: code, name: p.description || '' };
+  });
+
+  const filteredPoints = points.filter(function(p){
+    return matrixDetailMatch(q, [p.plant_number, p.description, p.notes]);
+  });
+  const filteredEntries = entries.filter(function(e){
+    const requiredText = (e.isolation_points || []).map(function(p){
+      const key = readerNorm(p || '').toUpperCase();
+      const match = pointMap[key];
+      return match ? `${match.code} ${match.name}` : p;
+    }).join(' ');
+    return matrixDetailMatch(q, [e.work_item_ref, e.work_item_name, e.notes, requiredText]);
+  });
+
+  const pointsHtml = filteredPoints.length
+    ? `<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed">
+        <thead><tr style="background:var(--sf3)">
+          <th style="padding:7px 12px;text-align:left;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Code</th>
+          <th style="padding:7px 12px;text-align:left;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Equipment Name</th>
+          <th style="padding:7px 12px;text-align:left;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Comments</th>
+          <th style="padding:7px 12px;text-align:right;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Edit</th>
+        </tr></thead>
+        <tbody>${filteredPoints.map(function(p,i){ return `<tr style="${i%2===1?'background:var(--sf2)':''}">
+          <td style="padding:7px 12px;font-family:var(--ff-mono);font-size:10px;color:var(--ac3);word-break:break-word">${highlightHtml(p.plant_number, qRaw)}</td>
+          <td style="padding:7px 12px;color:var(--tx);word-break:break-word">${highlightHtml(smartTitleCase(p.description), qRaw)}</td>
+          <td style="padding:7px 12px;color:var(--tx2);font-size:11px;line-height:1.5;word-break:break-word">${highlightHtml(p.notes || '—', qRaw)}</td>
+          <td style="padding:7px 12px;text-align:right">${canEdit()?`<button class="icon-btn" onclick="openPointModal('${m.id}','${p.id}')">Edit</button>`:''}</td>
+        </tr>`; }).join('')}</tbody>
+      </table></div>`
+    : `<div class="empty-state" style="padding:20px"><p style="font-size:12px">No isolation equipment matches the search.</p></div>`;
+
+  pointsWrap.innerHTML = pointsHtml;
+
+  const entriesHtml = filteredEntries.length
+    ? `<div style="margin-top:20px;padding:0 20px">
+        <h3 style="font-size:13px;font-weight:600;margin-bottom:10px">Work Items (${filteredEntries.length}${q ? ' filtered' : ''})</h3>
+        <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed">
+          <thead><tr style="background:var(--sf3)">
+            <th style="padding:7px 12px;text-align:left;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Ref</th>
+            <th style="padding:7px 12px;text-align:left;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Equipment / Work Item</th>
+            <th style="padding:7px 12px;text-align:left;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Isolation Equipment Required</th>
+            <th style="padding:7px 12px;text-align:left;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Comments</th>
+            <th style="padding:7px 12px;text-align:right;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Edit</th>
+          </tr></thead>
+          <tbody>${filteredEntries.map(function(e,i){ return `<tr style="${i%2===1?'background:var(--sf2)':''}">
+            <td style="padding:7px 12px;font-family:var(--ff-mono);font-size:10px;color:var(--ac3);word-break:break-word">${highlightHtml(e.work_item_ref, qRaw)}</td>
+            <td style="padding:7px 12px;color:var(--tx);word-break:break-word">${highlightHtml(smartTitleCase(e.work_item_name), qRaw)}</td>
+            <td style="padding:7px 12px;color:var(--tx2);font-size:11px;line-height:1.5;word-break:break-word">
+              ${renderIsolationEquipmentList(e.isolation_points || [], pointMap)}
+            </td>
+            <td style="padding:7px 12px;color:var(--tx2);font-size:11px;line-height:1.5;word-break:break-word">${highlightHtml(e.notes || '—', qRaw)}</td>
+            <td style="padding:7px 12px;text-align:right">${canEdit()?`<button class="icon-btn" onclick="openEntryModal('${m.id}','${e.id}')">Edit</button>`:''}</td>
+          </tr>`; }).join('')}</tbody>
+        </table></div>
+      </div>`
+    : `<div style="margin-top:20px;padding:0 20px 0;font-size:12px;color:var(--tx3)">No work items match the search.</div>`;
+
+  notesWrap.innerHTML = entriesHtml;
+  if(searchWrap){
+    searchWrap.textContent = q
+      ? `Showing ${filteredPoints.length} equipment row${filteredPoints.length===1?'':'s'} and ${filteredEntries.length} work item row${filteredEntries.length===1?'':'s'}`
+      : `Showing ${points.length} equipment row${points.length===1?'':'s'} and ${entries.length} work item row${entries.length===1?'':'s'}`;
+  }
+}
+function setDetailSearch(value){
+  _detailSearch = value || '';
+  renderDetailView();
 }
 function normalizeAreaKey(text){
   return String(text || '').trim().replace(/\s+/g, ' ').toLowerCase();
@@ -1249,15 +1375,18 @@ function buildIsolationPrintDoc(matrix, points, entries){
   .status-active{background:#d4edda;color:#155724}
   .status-draft{background:#e9ecef;color:#495057}
   .section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#1a7a35;border-bottom:2px solid #1a7a35;padding-bottom:4px;margin:14px 0 8px}
-  table{width:100%;border-collapse:collapse;font-size:10px}
-  th{background:#1a7a35;color:#fff;padding:5px 7px;text-align:left;font-size:9px;font-weight:600;letter-spacing:.3px;text-transform:uppercase;vertical-align:top}
-  td{padding:5px 7px;border-bottom:1px solid #e8e8e8;vertical-align:top}
+  table{width:100%;border-collapse:collapse;font-size:10px;table-layout:fixed}
+  thead{display:table-header-group}
+  tr{break-inside:avoid;page-break-inside:avoid}
+  th{background:#1a7a35;color:#fff;padding:6px 7px;text-align:left;font-size:9px;font-weight:600;letter-spacing:.3px;text-transform:uppercase;vertical-align:top}
+  td{padding:6px 7px;border-bottom:1px solid #e8e8e8;vertical-align:top;word-break:break-word}
   tr:nth-child(even) td{background:#f8faf8}
   .mono{font-family:monospace;font-size:9.5px;white-space:nowrap}
   .muted{color:#777;font-style:italic}
-  .iso-tag{display:inline-block;margin:0 6px 6px 0;padding:2px 6px;border-radius:3px;background:#eef6ef;border:1px solid #cfe6d3;font-size:9px;line-height:1.35}
+  .iso-tag{display:inline-block;margin:0 6px 6px 0;padding:2px 6px;border-radius:3px;background:#eef6ef;border:1px solid #cfe6d3;font-size:9px;line-height:1.35;max-width:100%}
   .footer{margin-top:14px;padding-top:8px;border-top:1px solid #ddd;display:flex;justify-content:space-between;gap:12px;font-size:9px;color:#999}
   .foot-left{max-width:70%}
+  .print-section{page-break-inside:avoid;margin-bottom:18px}
   @media print{@page{size:A4 landscape;margin:10mm} button{display:none!important}}
 </style>
 </head>
@@ -1287,7 +1416,7 @@ function buildIsolationPrintDoc(matrix, points, entries){
   ${reviewedInfo ? `<div style="margin-bottom:8px;font-size:10px;color:#666">${reviewedInfo}</div>` : ''}
   <div class="section-title">Work Items (${(entries || []).length})</div>
   <table>
-    <thead><tr><th style="width:18%">Work Item Code</th><th style="width:24%">Work Item</th><th>Required Isolation Equipment</th><th style="width:24%">Comments</th></tr></thead>
+    <thead><tr><th style="width:16%">Work Item Code</th><th style="width:23%">Work Item</th><th>Required Isolation Equipment</th><th style="width:23%">Comments</th></tr></thead>
     <tbody>
       ${entryRows || '<tr><td colspan="4" class="muted">No work items recorded.</td></tr>'}
     </tbody>
@@ -2674,6 +2803,7 @@ function renderMatrices(){
 
 async function openDetail(id){
   _openMatrixId=id;
+  _detailSearch='';
   const m=_matrices.find(x=>x.id===id); if(!m) return;
   const st=calcMatrixStatus(m);
   const STATUS_CLS={overdue:'s-archived-pill','due-soon':'s-draft-pill',active:'s-active-pill',draft:'s-draft-pill'};
@@ -2687,6 +2817,11 @@ async function openDetail(id){
   const detailActions = [
     `<button class="btn btn-ghost" style="font-size:12px" onclick="printMatrix('${id}')">Print Matrix</button>`
   ];
+  if(canAdmin()){
+    detailActions.push(
+      `<button class="btn btn-danger" style="font-size:12px" onclick="deleteMatrixFromDetail('${id}')">Delete Matrix</button>`
+    );
+  }
   if(canEdit()){
     detailActions.push(
       `<button class="btn btn-ghost" style="font-size:12px" onclick="openMatrixModal('${id}')">Edit Matrix</button>`,
@@ -2711,61 +2846,10 @@ async function openDetail(id){
     loadEntriesForMatrix(id)
   ]);
 
-  const pointMap = {};
-  points.forEach(function(p){
-    const code = (p.plant_number || '').trim();
-    if(!code) return;
-    const key = readerNorm(code).toUpperCase();
-    pointMap[key] = { code: code, name: p.description || '' };
-    const nameKey = readerNorm(p.description || '').toUpperCase();
-    if(nameKey && !pointMap[nameKey]) pointMap[nameKey] = { code: code, name: p.description || '' };
-  });
-
-  // Render isolation equipment summary
-  const ptHtml = points.length
-    ? `<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">
-        <thead><tr style="background:var(--sf3)">
-          <th style="padding:7px 12px;text-align:left;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Code</th>
-          <th style="padding:7px 12px;text-align:left;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Equipment Name</th>
-          <th style="padding:7px 12px;text-align:left;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Comments</th>
-          <th style="padding:7px 12px;text-align:right;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Edit</th>
-        </tr></thead>
-        <tbody>${points.map((p,i)=>`<tr style="${i%2===1?'background:var(--sf2)':''}">
-          <td style="padding:7px 12px;font-family:var(--ff-mono);font-size:10px;color:var(--ac3)">${esc(p.plant_number)}</td>
-          <td style="padding:7px 12px;color:var(--tx)">${esc(smartTitleCase(p.description))}</td>
-          <td style="padding:7px 12px;color:var(--tx2);font-size:11px;line-height:1.5">${esc(p.notes || '—')}</td>
-          <td style="padding:7px 12px;text-align:right">${canEdit()?`<button class="icon-btn" onclick="openPointModal('${id}','${p.id}')">Edit</button>`:''}</td>
-        </tr>`).join('')}</tbody>
-      </table></div>`
-    : `<div class="empty-state" style="padding:20px"><p style="font-size:12px">No isolation equipment.</p></div>`;
-
-  document.getElementById('pointsList').innerHTML = ptHtml;
-
-  // Render work items / entries
-  const entHtml = entries.length
-    ? `<div style="margin-top:20px;padding:0 20px">
-        <h3 style="font-size:13px;font-weight:600;margin-bottom:10px">Work Items (${entries.length})</h3>
-        <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">
-          <thead><tr style="background:var(--sf3)">
-            <th style="padding:7px 12px;text-align:left;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Ref</th>
-            <th style="padding:7px 12px;text-align:left;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Equipment / Work Item</th>
-            <th style="padding:7px 12px;text-align:left;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Isolation Equipment Required</th>
-            <th style="padding:7px 12px;text-align:left;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Comments</th>
-            <th style="padding:7px 12px;text-align:right;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Edit</th>
-          </tr></thead>
-          <tbody>${entries.map((e,i)=>`<tr style="${i%2===1?'background:var(--sf2)':''}">
-            <td style="padding:7px 12px;font-family:var(--ff-mono);font-size:10px;color:var(--ac3)">${esc(e.work_item_ref)}</td>
-            <td style="padding:7px 12px;color:var(--tx)">${esc(smartTitleCase(e.work_item_name))}</td>
-            <td style="padding:7px 12px;color:var(--tx2);font-size:11px;line-height:1.5">
-              ${renderIsolationEquipmentList(e.isolation_points || [], pointMap)}
-            </td>
-            <td style="padding:7px 12px;color:var(--tx2);font-size:11px;line-height:1.5">${esc(e.notes || '—')}</td>
-            <td style="padding:7px 12px;text-align:right">${canEdit()?`<button class="icon-btn" onclick="openEntryModal('${id}','${e.id}')">Edit</button>`:''}</td>
-          </tr>`).join('')}</tbody>
-        </table></div>
-      </div>`
-    : '';
-  document.getElementById('detailNotesEl').innerHTML = entHtml;
+  _detailCache = { matrix: m, points: points, entries: entries };
+  renderDetailView();
+  const searchInput = document.getElementById('detailSearch');
+  if(searchInput) searchInput.value = '';
 
   // Show the detail panel
   const detail=document.getElementById('detailOverlay');
@@ -2774,8 +2858,19 @@ async function openDetail(id){
 
 function closeDetail(){
   _openMatrixId=null;
+  _detailCache=null;
+  _detailSearch='';
   const detail=document.getElementById('detailOverlay');
   if(detail) detail.classList.remove('open');
+}
+
+async function deleteMatrixFromDetail(id){
+  if(!canAdmin()) { showToast('Delete is admin-only'); return; }
+  const m=_matrices.find(function(x){ return x.id===id; });
+  const label = m ? (m.plant_name || m.matrix_ref || id) : id;
+  if(!confirm('Delete matrix "' + label + '" and all its isolation equipment and work items? This cannot be undone.')) return;
+  const ok = await deleteMatrixRecord(id, {silent:false, refresh:true, closeDetailView:true});
+  if(ok) showToast('Matrix deleted ✓');
 }
 
 function openMatrixModal(id){
@@ -3227,8 +3322,6 @@ async function loadGroqKey(){
 function openAiPanel(){
   document.getElementById('isoAiOverlay').style.display='block';
   document.getElementById('isoAiPanel').style.transform='translateX(0)';
-  const mm = document.getElementById('aiMatrixMode');
-  if(mm) mm.checked = _aiMatrixMode;
   renderAiHistory(); document.getElementById('aiPrompt').focus();
 }
 function closeAiPanel(){
@@ -3237,9 +3330,6 @@ function closeAiPanel(){
 }
 function useAiSuggestion(text){ document.getElementById('aiPrompt').value=text; sendAiMessage(); }
 function clearAiHistory(){ _aiHistory=[]; renderAiHistory(); }
-function setAiMatrixMode(on){
-  _aiMatrixMode = !!on;
-}
 function renderAiHistory(){
   const hist=document.getElementById('aiHistory'); const clr=document.getElementById('aiClearBtn');
   if(!_aiHistory.length){
@@ -3287,7 +3377,7 @@ function matrixAiMatchScore(text, q, qTerms){
   if(q && text.includes(q)) score += 3;
   return score;
 }
-function matrixAiFormatDirectAnswer(matrix, entry, points){
+function matrixAiFormatAnswer(matrix, entry, points){
   const pointMap = {};
   (points || []).forEach(function(p){
     const code = String(p.plant_number || '').trim();
@@ -3314,17 +3404,17 @@ function matrixAiFormatDirectAnswer(matrix, entry, points){
   ].filter(Boolean).join('\n');
 }
 async function matrixAiDirectLookup(question){
-  const q = String(question || '').trim();
+  const q = String(question || '').trim().toLowerCase();
   const qTerms = matrixAiQuestionTerms(q);
   if(!qTerms.length) return null;
   const ranked = _matrices.map(function(m){
     const text = matrixAiSearchText(m);
-    return { m, score: matrixAiMatchScore(text, q.toLowerCase(), qTerms) };
+    return { m, score: matrixAiMatchScore(text, q, qTerms) };
   }).filter(function(item){
     return item.score > 0;
   }).sort(function(a,b){
     return b.score - a.score || String(a.m.plant_name || a.m.matrix_ref || '').localeCompare(String(b.m.plant_name || b.m.matrix_ref || ''));
-  }).slice(0, 8);
+  }).slice(0, 6);
   for(const item of ranked){
     const m = item.m;
     const [pts, entries] = await Promise.all([
@@ -3340,7 +3430,7 @@ async function matrixAiDirectLookup(question){
       ].join(' ').toLowerCase();
       return {
         entry: e,
-        score: matrixAiMatchScore(entryText, q.toLowerCase(), qTerms)
+        score: matrixAiMatchScore(entryText, q, qTerms)
       };
     }).filter(function(item){
       return item.score > 0;
@@ -3348,7 +3438,7 @@ async function matrixAiDirectLookup(question){
       return b.score - a.score || String(a.entry.work_item_ref || a.entry.work_item_name || '').localeCompare(String(b.entry.work_item_ref || b.entry.work_item_name || ''));
     })[0];
     if(best){
-      return matrixAiFormatDirectAnswer(m, best.entry, pts || []);
+      return matrixAiFormatAnswer(m, best.entry, pts || []);
     }
   }
   return null;
@@ -3366,7 +3456,7 @@ async function buildAiContext(question){
     }).sort(function(a,b){
       return b.score - a.score || String(a.m.plant_name || a.m.matrix_ref || '').localeCompare(String(b.m.plant_name || b.m.matrix_ref || ''));
     });
-    const focus = ranked.length ? ranked.slice(0, 8).map(function(item){ return item.m; }) : _matrices.slice(0, 8);
+    const focus = ranked.length ? ranked.slice(0, 4).map(function(item){ return item.m; }) : _matrices.slice(0, 4);
     const lines=['PADESWOOD WORKS — ISOLATION MATRIX DATA','='.repeat(50)];
     if(q) lines.push(`\nUSER QUESTION: ${question}`);
     lines.push(`\nWORK AREAS (${_areas.length}): ${_areas.map(smartTitleCase).join(', ')}`);
@@ -3375,16 +3465,28 @@ async function buildAiContext(question){
       const pts=await loadPointsForMatrix(m.id);
       const entries=await loadEntriesForMatrix(m.id);
       lines.push(`  Matrix: ${smartTitleCase(m.plant_name || m.matrix_ref || 'Untitled')} | Ref: ${m.matrix_ref || '—'} | Status: ${m.status || 'draft'} | Area: ${smartTitleCase(m.area || '—')}`);
-      if(m.description) lines.push(`    Scope: ${m.description}`);
+      if(m.description) lines.push(`    Scope: ${String(m.description).slice(0,180)}`);
       if(pts.length){
-        lines.push(`    Isolation equipment (${pts.length}):`);
-        pts.forEach(function(pt){
+        lines.push(`    Equipment (${pts.length}):`);
+        pts.slice(0,6).forEach(function(pt){
           lines.push(`      - ${pt.plant_number || '—'} : ${smartTitleCase(pt.description || '—')}`);
         });
+        if(pts.length > 6) lines.push(`      ... ${pts.length - 6} more equipment row${pts.length - 6 === 1 ? '' : 's'}`);
       }
       if(entries.length){
-        lines.push(`    Work items (${entries.length}):`);
-        entries.forEach(function(e){
+        const matchingEntries = qTerms.length
+          ? entries.filter(function(e){
+              return matrixAiMatchScore([
+                e.work_item_ref || '',
+                e.work_item_name || '',
+                Array.isArray(e.isolation_points) ? e.isolation_points.join(' ') : '',
+                e.notes || ''
+              ].join(' ').toLowerCase(), q, qTerms) > 0;
+            })
+          : entries;
+        const listedEntries = (matchingEntries.length ? matchingEntries : entries).slice(0,6);
+        lines.push(`    Work items (${entries.length}${matchingEntries.length ? `, ${matchingEntries.length} matching` : ''}):`);
+        listedEntries.forEach(function(e){
           const req = Array.isArray(e.isolation_points) ? e.isolation_points : [];
           const reqText = req.map(function(code){
             const match = pts.find(function(pt){
@@ -3397,6 +3499,9 @@ async function buildAiContext(question){
           lines.push(`        Requires: ${reqText || 'None captured'}`);
           if(e.notes) lines.push(`        Comments: ${e.notes}`);
         });
+        if((matchingEntries.length ? matchingEntries.length : entries.length) > listedEntries.length){
+          lines.push('      ... more rows omitted');
+        }
       } else {
         lines.push('    Work items: none captured');
       }
@@ -3416,7 +3521,7 @@ async function sendAiMessage(){
   hist.innerHTML+=`<div style="display:flex" id="aiThinking"><div class="ai-thinking"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div><span style="margin-left:6px;font-size:12px;color:var(--tx3);font-family:var(--ff-mono)">Analysing…</span></div></div>`;
   hist.scrollTop=hist.scrollHeight;
   try{
-    const direct = _aiMatrixMode ? await matrixAiDirectLookup(q) : null;
+    const direct = await matrixAiDirectLookup(q);
     if(direct){
       document.getElementById('aiThinking')?.remove();
       _aiHistory.push({role:'assistant',content:direct});
@@ -3425,23 +3530,27 @@ async function sendAiMessage(){
       return;
     }
     const context=await buildAiContext(q);
-    const matrixMode = _aiMatrixMode;
-    const systemPrompt = matrixMode
-      ? 'You are an expert AI assistant for Padeswood Works (HeidelbergMaterials cement plant, Wales). You help with isolation matrices. When the user asks about a matrix or work item, answer in a compact matrix-answer format with only these headings: Matrix, Work Item, Required Isolation Equipment, Comments. Always include equipment codes and names. Do not guess. If the data is missing, say so clearly.'
-      : 'You are an expert AI assistant for Padeswood Works (HeidelbergMaterials cement plant, Wales). You help with isolation matrix, equipment isolation procedures, and work area information. If the data contains a work item, always answer with the required isolation equipment list and mention the equipment codes and names. If the answer is not in the data, say so clearly. Answer concisely and avoid guessing.';
+    const systemPrompt = 'You are an expert AI assistant for Padeswood Works (HeidelbergMaterials cement plant, Wales). You help with isolation matrix, equipment isolation procedures, and work area information. If the data contains a work item, always answer with the required isolation equipment list and mention the equipment codes and names. If the answer is not in the data, say so clearly. Answer concisely and avoid guessing.';
     const dataMsg={role:'user',content:'Here is the isolation matrix data:\n\n'+context+'\n\nOnly answer from this data. When a work item has required isolations, list them explicitly.'};
-    const dataAck={role:'assistant',content:matrixMode
-      ? 'Understood. I will answer in the compact matrix-answer format and include codes, names, and notes when available.'
-      : 'Understood. I will only answer from the isolation matrix data provided.'};
+    const dataAck={role:'assistant',content:'Understood. I will only answer from the isolation matrix data provided.'};
     const messages=[{role:'system',content:systemPrompt},dataMsg,dataAck,..._aiHistory];
-    const res=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+_groqKey},body:JSON.stringify({model:'llama-3.3-70b-versatile',max_tokens:1500,messages})});
-    const data=await res.json();
-    const reply=data.choices?.[0]?.message?.content||'No response received.';
+    const res=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+_groqKey},body:JSON.stringify({model:'llama-3.3-70b-versatile',max_tokens:900,messages})});
+    const raw = await res.text();
+    let data = {};
+    try{ data = raw ? JSON.parse(raw) : {}; }catch(parseErr){ throw new Error('Invalid AI response: ' + (raw ? raw.slice(0,160) : 'empty body')); }
+    if(!res.ok){
+      throw new Error((data && data.error && (data.error.message || data.error)) ? (data.error.message || data.error) : `Groq request failed (${res.status})`);
+    }
+    if(data.error){
+      throw new Error(data.error.message || 'Groq returned an error');
+    }
+    const reply = String(data.choices?.[0]?.message?.content || '').trim();
+    if(!reply) throw new Error('No response received from the AI service.');
     document.getElementById('aiThinking')?.remove();
     _aiHistory.push({role:'assistant',content:reply}); renderAiHistory();
   }catch(e){
     document.getElementById('aiThinking')?.remove();
-    _aiHistory.push({role:'assistant',content:'Error: '+e.message}); renderAiHistory();
+    _aiHistory.push({role:'assistant',content:'Error: '+(e && e.message ? e.message : 'Unknown AI failure')}); renderAiHistory();
   }
   sendBtn.disabled=false;
 }
