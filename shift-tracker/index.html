@@ -522,13 +522,18 @@
   @media (max-width: 640px) {
     .tracker-shell {
       padding: 8px 12px 10px;
-      flex-direction: column;
-      align-items: stretch;
-      gap: 6px;
+      flex-direction: row;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: none;
     }
+    .tracker-shell::-webkit-scrollbar { display: none; }
     .tracker-shell-left {
-      width: 100%;
+      width: auto;
       min-width: 0;
+      flex: 1 1 auto;
     }
     .tracker-shell-copy {
       min-width: 0;
@@ -538,26 +543,43 @@
       display: none;
     }
     .tracker-shell-actions {
-      width: 100%;
-      justify-content: flex-start;
+      width: auto;
+      justify-content: flex-end;
       gap: 5px;
-      overflow-x: auto;
-      scrollbar-width: none;
-      padding-bottom: 2px;
-    }
-    .tracker-shell-actions::-webkit-scrollbar {
-      display: none;
+      overflow: visible;
+      flex: 0 0 auto;
+      margin-left: auto;
+      padding-bottom: 0;
     }
     .tracker-shell-user {
       display: inline-flex !important;
       max-width: 100%;
       flex: 0 0 auto;
     }
+    .tracker-shell-mark {
+      width: 36px;
+      height: 36px;
+    }
+    .tracker-shell-title {
+      font-size: 15px;
+    }
+    .tracker-shell-icon {
+      width: 30px;
+      height: 30px;
+    }
+    .tracker-shell-user {
+      max-width: 180px;
+      padding: 3px 8px;
+    }
+    .tracker-shell-role {
+      font-size: 7px;
+      padding: 2px 5px;
+    }
     .tracker-shell-footer {
       flex-direction: column;
       align-items: flex-start;
-      padding-left: 20px;
-      padding-right: 20px;
+      padding-left: 12px;
+      padding-right: 12px;
     }
   }
 </style>
