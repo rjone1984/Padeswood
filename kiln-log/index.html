@@ -201,15 +201,15 @@ body::before {
   color:var(--tx3); margin-bottom:7px; font-family:var(--ff-mono);
 }
 .splash-field input {
-  width:100%; background:var(--sf2);
+  width:100%; height:40px; background:var(--sf2);
   border:1px solid var(--bd); border-radius:var(--rsm); color:var(--tx);
-  font-family:var(--ff-body); font-size:14px; padding:11px 14px; outline:none;
+  font-family:var(--ff-body); font-size:13.5px; padding:0 12px; outline:none;
   transition:all .16s; -webkit-appearance:none;
 }
 .splash-field input:focus { border-color:var(--ac); box-shadow:0 0 0 3px var(--acd2) }
 .splash-field input::placeholder { color:var(--tx3) }
 .splash-btn {
-  width:100%; padding:12px; background:var(--ac); color:#fff;
+  width:100%; height:42px; background:var(--ac); color:#fff;
   border:none; border-radius:var(--rsm);
   font-family:var(--ff-head); font-weight:600; font-size:14px;
   cursor:pointer; letter-spacing:.3px; margin-top:8px;
@@ -217,7 +217,12 @@ body::before {
 }
 .splash-btn:hover { background:var(--ac2); transform:translateY(-1px) }
 .splash-btn:active { transform:translateY(0) }
-.splash-err { color:var(--red); font-size:11px; text-align:center; margin-top:10px; min-height:16px; font-family:var(--ff-mono) }
+.splash-err {
+  color:var(--red); font-size:12px; text-align:center; margin-top:10px; min-height:18px;
+  font-family:var(--ff-mono); line-height:1.5;
+  background:var(--redd); border:1px solid var(--redb); border-radius:var(--rsm);
+  padding:8px 12px;
+}
 .splash-line { height:1px; background:var(--bd); margin:18px 0 }
 .splash-version { text-align:center; font-size:9px; color:var(--tx3); font-family:var(--ff-mono); letter-spacing:.5px }
 
@@ -820,9 +825,8 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
   }
   .topbar-right::-webkit-scrollbar { display:none }
   /* Hide admin/nav buttons on mobile — use overflow menu instead */
-  #manageListsBtn, #manageUsersBtn, #managePwBtn,
-  #btn-weekly-overview, #btn-ai-reporting, #btn-whiteboard,
-  #resetRequestsBtn { display:none !important }
+  #manageListsBtn,
+  #btn-weekly-overview, #btn-ai-reporting, #btn-whiteboard { display:none !important }
   /* Hide print on mobile */
   button[onclick="showPrintModal()"] { display:none !important }
   /* Show overflow menu */
@@ -832,8 +836,7 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
   button[onclick="saveAll()"],
   button[onclick="doLogout()"],
   button[onclick="toggleTheme()"],
-  #searchTopbarBtn,
-  button[onclick="openMyPwModal()"] { display:inline-flex !important }
+  #searchTopbarBtn { display:inline-flex !important }
   #clearDayBtn { display:none !important }
   .topbar-sub { display:none }
   .page-header { top:90px; }
@@ -899,7 +902,7 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
 
 @media print {
   .topbar,.day-nav,.topbar-right,.add-row-btn,.del-btn,.btn,
-  #toast,.overlay,#splash,#pwModal,#myPwModal,.search-wrap,.page-header-actions,.btn-icon { display:none!important }
+  #toast,.overlay,#splash,.search-wrap,.page-header-actions,.btn-icon { display:none!important }
   body { background:#fff; color:#000 }
   :root { --bg:#fff;--sf:#fff;--sf2:#f5f5f5;--sf3:#eee;--bd:#ddd;--bd2:#ccc;--tx:#000;--tx2:#444;--tx3:#777;--ac:#0a8a86;--inp:#eee }
   .main { padding:0; max-width:100% }
@@ -920,11 +923,8 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
 
 /* ── Topbar button label collapse at medium widths ─────────────────── */
 @media(max-width:1100px){
-  #resetRequestsBtn .btn-label,
-  #manageListsBtn .btn-label,
-  #manageUsersBtn .btn-label,
-  #managePwBtn .btn-label { display:none }
-  #resetRequestsBtn, #manageListsBtn, #manageUsersBtn, #managePwBtn { padding:6px 8px }
+  #manageListsBtn .btn-label { display:none }
+  #manageListsBtn { padding:6px 8px }
 }
 @media(max-width:1260px){
   #btn-weekly-overview .btn-label,
@@ -1006,73 +1006,14 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
       </div>
       <button class="splash-btn" onclick="doLogin()">Sign In</button>
       <div class="splash-err" id="splashErr"></div>
-      <div style="text-align:center;margin-top:6px">
-        <button onclick="showForgotPassword()" style="background:none;border:none;color:var(--tx3);font-size:11px;font-family:var(--ff-mono);cursor:pointer;text-decoration:underline;padding:0">Forgot password?</button>
-      </div>
       <div class="splash-line"></div>
       <div class="splash-version">Padeswood Works &nbsp;&#8226;&nbsp; Shift Record System</div>
     </div>
   </div>
 </div>
 
-<!-- Forgot Password Modal -->
-<div class="overlay" id="forgotModal" style="display:none;z-index:10001">
-  <div class="modal" style="max-width:400px">
-    <div class="modal-head">
-      <div class="modal-title">Reset Password Request</div>
-      <button class="btn btn-ghost btn-icon" onclick="closeForgotModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    </div>
-    <div style="padding:20px">
-      <p style="font-size:13px;color:var(--tx2);margin-bottom:16px;line-height:1.6">Enter your username and a reset request will be sent to your administrator for approval.</p>
-      <div class="splash-field" style="margin-bottom:12px">
-        <label>Username</label>
-        <input type="text" id="forgotUsername" placeholder="Enter your username" autocomplete="off" onkeydown="if(event.key==='Enter')submitForgotRequest()">
-      </div>
-      <div id="forgotErr" style="color:var(--red);font-size:11px;font-family:var(--ff-mono);min-height:16px;margin-bottom:12px"></div>
-      <div id="forgotSuccess" style="display:none;color:var(--ac);font-size:12px;font-family:var(--ff-mono);line-height:1.6;padding:10px;background:var(--sf2);border-radius:var(--rsm);border:1px solid var(--bd)">
-        ✓ Reset request submitted. Your administrator will review it shortly.
-      </div>
-      <button class="btn btn-primary" onclick="submitForgotRequest()" id="forgotSubmitBtn" style="width:100%;justify-content:center">Submit Request</button>
-    </div>
-  </div>
-</div>
-
 <div id="app">
 
-<!-- Forced Password Reset Modal -->
-<div class="overlay" id="forceResetModal" style="display:none">
-  <div class="modal" style="max-width:400px">
-    <div class="modal-head">
-      <div class="modal-title">Set New Password</div>
-    </div>
-    <div style="padding:20px">
-      <p style="font-size:13px;color:var(--tx2);margin-bottom:16px;line-height:1.6">Your administrator has approved a password reset. Please set a new password to continue.</p>
-      <div class="splash-field" style="margin-bottom:10px">
-        <label>New Password</label>
-        <input type="password" id="forceNewPw" placeholder="New password (min 3 characters)" onkeydown="if(event.key==='Enter')document.getElementById('forceConfirmPw').focus()">
-      </div>
-      <div class="splash-field" style="margin-bottom:12px">
-        <label>Confirm Password</label>
-        <input type="password" id="forceConfirmPw" placeholder="Confirm new password" onkeydown="if(event.key==='Enter')submitForceReset()">
-      </div>
-      <div id="forceResetErr" style="color:var(--red);font-size:11px;font-family:var(--ff-mono);min-height:16px;margin-bottom:12px"></div>
-      <button class="btn btn-primary" onclick="submitForceReset()" style="width:100%;justify-content:center">Set Password &amp; Continue</button>
-    </div>
-  </div>
-</div>
-
-<!-- Reset Requests Admin Modal -->
-<div class="overlay" id="resetRequestsModal" style="display:none">
-  <div class="modal" style="max-width:520px">
-    <div class="modal-head">
-      <div class="modal-title">Password Reset Requests</div>
-      <button class="btn btn-ghost btn-icon" onclick="closeResetRequestsModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    </div>
-    <div style="padding:20px">
-      <div id="resetRequestsList"></div>
-    </div>
-  </div>
-</div>
   <div class="topbar">
     <div class="topbar-left">
       <a href="../index.html" title="Back to platform" style="width:32px;height:32px;border-radius:7px;border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;color:var(--tx2);text-decoration:none;flex-shrink:0;transition:all .15s" onmouseover="this.style.borderColor='var(--ac3)';this.style.color='var(--ac3)'" onmouseout="this.style.borderColor='var(--bd)';this.style.color='var(--tx2)'">
@@ -1110,23 +1051,9 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
         <span class="btn-label">Feedback</span>
       </button>
 
-      <!-- Admin buttons -->
-      <button class="btn btn-ghost" id="resetRequestsBtn" onclick="openResetRequestsModal()" style="display:none;position:relative">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        <span class="btn-label">Requests</span>
-        <span id="resetBadge" style="display:none;position:absolute;top:2px;right:2px;background:var(--red);color:#fff;font-size:9px;font-weight:700;font-family:var(--ff-mono);border-radius:10px;padding:1px 5px;min-width:16px;text-align:center;line-height:16px"></span>
-      </button>
       <button class="btn btn-ghost" id="manageListsBtn" onclick="openManageModal()" style="display:none">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
         <span class="btn-label">Manage Lists</span>
-      </button>
-      <button class="btn btn-ghost" id="manageUsersBtn" onclick="openUMPanel()" style="display:none">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        <span class="btn-label">Users</span>
-      </button>
-      <button class="btn btn-ghost" id="managePwBtn" onclick="openPwModal()" style="display:none">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><circle cx="12" cy="16" r="1" fill="currentColor" stroke="none"/></svg>
-        <span class="btn-label">Passwords</span>
       </button>
 
       <!-- Mobile overflow menu -->
@@ -1147,22 +1074,9 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;flex-shrink:0"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
             Whiteboard
           </div>
-          <div id="mobileResetRequests" onclick="openResetRequestsModal();closeMobileMenu()" style="display:none;padding:10px 14px;font-size:13px;color:var(--tx);cursor:pointer;align-items:center;gap:10px;transition:background .1s;position:relative" onmouseover="this.style.background='var(--sf2)'" onmouseout="this.style.background='transparent'">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;flex-shrink:0"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-            Requests
-            <span id="mobilResetBadge" style="display:none;margin-left:auto;background:var(--red);color:#fff;font-size:9px;font-weight:700;font-family:var(--ff-mono);border-radius:10px;padding:1px 6px"></span>
-          </div>
           <div id="mobileManageLists" onclick="openManageModal();closeMobileMenu()" style="display:none;padding:10px 14px;font-size:13px;color:var(--tx);cursor:pointer;display:flex;align-items:center;gap:10px;transition:background .1s" onmouseover="this.style.background='var(--sf2)'" onmouseout="this.style.background='transparent'">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;flex-shrink:0"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
             Manage Lists
-          </div>
-          <div id="mobileManageUsers" onclick="openUMPanel();closeMobileMenu()" style="display:none;padding:10px 14px;font-size:13px;color:var(--tx);cursor:pointer;display:flex;align-items:center;gap:10px;transition:background .1s" onmouseover="this.style.background='var(--sf2)'" onmouseout="this.style.background='transparent'">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;flex-shrink:0"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            Users
-          </div>
-          <div id="mobileManagePw" onclick="openPwModal();closeMobileMenu()" style="display:none;padding:10px 14px;font-size:13px;color:var(--tx);cursor:pointer;display:flex;align-items:center;gap:10px;transition:background .1s" onmouseover="this.style.background='var(--sf2)'" onmouseout="this.style.background='transparent'">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;flex-shrink:0"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><circle cx="12" cy="16" r="1" fill="currentColor" stroke="none"/></svg>
-            Passwords
           </div>
           <div style="height:1px;background:var(--bd);margin:4px 0"></div>
           <div onclick="doLogout();closeMobileMenu()" style="padding:10px 14px;font-size:13px;color:var(--red);cursor:pointer;display:flex;align-items:center;gap:10px;transition:background .1s" onmouseover="this.style.background='var(--sf2)'" onmouseout="this.style.background='transparent'">
@@ -1201,9 +1115,6 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         <span id="userLabel">operator</span>
       </div>
-      <button class="btn-icon" onclick="openMyPwModal()" title="Change my password" style="color:var(--tx2)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-      </button>
       <button class="btn-icon" onclick="doLogout()" title="Sign out">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
       </button>
@@ -1319,74 +1230,6 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
 
 
 
-<div class="overlay" id="pwModal">
-  <div class="modal" style="width:520px">
-    <div class="modal-head">
-      <div class="modal-title">Manage Passwords</div>
-      <button class="modal-close" onclick="closePwModal()">&#x2715;</button>
-    </div>
-    <div class="modal-body">
-      <p style="font-size:12px;color:var(--tx2);margin-bottom:18px;font-family:var(--ff-mono);line-height:1.7;background:var(--sf2);border:1.5px solid var(--bd);border-radius:var(--rsm);padding:12px 14px">Set a new password for any account. Leave blank to keep the current password.</p>
-      <div id="pwList" style="display:flex;flex-direction:column;gap:8px"></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closePwModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="savePwChanges()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-        Save Changes
-      </button>
-    </div>
-  </div>
-</div>
-
-<div class="overlay" id="myPwModal">
-  <div class="modal" style="width:420px">
-    <div class="modal-head">
-      <div class="modal-title">Change My Password</div>
-      <button class="modal-close" onclick="closeMyPwModal()">&#x2715;</button>
-    </div>
-    <div class="modal-body">
-      <div class="modal-field">
-        <label>Current Password</label>
-        <input type="password" id="myPwCurrent" placeholder="Enter current password" autocomplete="current-password" onkeydown="if(event.key==='Enter')document.getElementById('myPwNew').focus()">
-      </div>
-      <div class="modal-field">
-        <label>New Password</label>
-        <input type="password" id="myPwNew" placeholder="Enter new password" autocomplete="new-password" onkeydown="if(event.key==='Enter')document.getElementById('myPwConfirm').focus()">
-      </div>
-      <div class="modal-field">
-        <label>Confirm New Password</label>
-        <input type="password" id="myPwConfirm" placeholder="Repeat new password" autocomplete="new-password" onkeydown="if(event.key==='Enter')saveMyPassword()">
-      </div>
-      <div id="myPwErr" style="color:var(--red);font-size:12px;font-family:var(--ff-mono);min-height:18px;margin-top:4px"></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeMyPwModal()">Cancel</button>
-      <button class="btn btn-primary" onclick="saveMyPassword()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><circle cx="12" cy="16" r="1" fill="currentColor" stroke="none"/></svg>
-        Update Password
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- ── UNIFIED USER MANAGEMENT PANEL ─────────────────────────────── -->
-<div id="umOverlay" onclick="closeUMPanel()" style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:800;display:none"></div>
-<div id="umPanel" style="position:fixed;top:0;right:0;bottom:0;width:560px;max-width:96vw;background:var(--sf);border-left:1px solid var(--bd);z-index:801;transform:translateX(100%);transition:transform .28s ease;display:flex;flex-direction:column;overflow:hidden">
-  <div style="padding:18px 22px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
-    <div style="display:flex;align-items:center;gap:10px;font-family:var(--ff-head);font-weight:700;font-size:16px;color:var(--tx)">
-      <div style="width:30px;height:30px;border-radius:7px;background:var(--acd2);display:flex;align-items:center;justify-content:center">
-        <svg viewBox="0 0 24 24" fill="none" stroke="var(--ac3)" stroke-width="2" width="14" height="14"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      </div>
-      User Management
-    </div>
-    <button onclick="closeUMPanel()" style="width:28px;height:28px;border-radius:6px;border:1px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center">&times;</button>
-  </div>
-  <div style="flex:1;overflow-y:auto;padding:20px 22px;display:flex;flex-direction:column;gap:16px">
-    <div id="umUserList"><div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);padding:12px 0">Loading users&hellip;</div></div>
-  </div>
-</div>
-
 </div>
 
 <!-- SEARCH MODAL -->
@@ -1416,27 +1259,6 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
 </div>
 
 <!-- Forgot Password Modal -->
-<div class="overlay" id="forgotModal" style="display:none;z-index:10001">
-  <div class="modal" style="max-width:400px">
-    <div class="modal-head">
-      <div class="modal-title">Reset Password Request</div>
-      <button class="btn btn-ghost btn-icon" onclick="closeForgotModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    </div>
-    <div style="padding:20px">
-      <p style="font-size:13px;color:var(--tx2);margin-bottom:16px;line-height:1.6">Enter your username and a reset request will be sent to your administrator for approval.</p>
-      <div class="splash-field" style="margin-bottom:12px">
-        <label>Username</label>
-        <input type="text" id="forgotUsername" placeholder="Enter your username" autocomplete="off" onkeydown="if(event.key==='Enter')submitForgotRequest()">
-      </div>
-      <div id="forgotErr" style="color:var(--red);font-size:11px;font-family:var(--ff-mono);min-height:16px;margin-bottom:12px"></div>
-      <div id="forgotSuccess" style="display:none;color:var(--ac);font-size:12px;font-family:var(--ff-mono);line-height:1.6;padding:10px;background:var(--sf2);border-radius:var(--rsm);border:1px solid var(--bd)">
-        ✓ Reset request submitted. Your administrator will review it shortly.
-      </div>
-      <button class="btn btn-primary" onclick="submitForgotRequest()" id="forgotSubmitBtn" style="width:100%;justify-content:center">Submit Request</button>
-    </div>
-  </div>
-</div>
-
 <script>
 // config
 const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
@@ -1698,8 +1520,6 @@ async function _applyUserSession(match){
   const _cdBtn = document.getElementById('clearDayBtn'); if(_cdBtn) _cdBtn.style.display = isAdmin ? '' : 'none';
   const _canPrint = isAdmin || isShiftManager;
   document.querySelectorAll('#printBtn, .printBtn').forEach(function(b){ b.style.display = _canPrint ? '' : 'none'; });
-  document.getElementById('managePwBtn').style.display = isAdmin ? '' : 'none';
-  document.getElementById('manageUsersBtn').style.display = isAdmin ? '' : 'none';
   document.getElementById('btn-weekly-overview').style.display = '';
   document.getElementById('btn-ai-reporting').style.display = '';
   document.getElementById('btn-whiteboard').style.display = '';
@@ -1710,23 +1530,12 @@ async function _applyUserSession(match){
   const _mar = document.getElementById('mobileAiReporting'); if(_mar) _mar.style.display = 'flex';
   const _mwb = document.getElementById('mobileWhiteboard'); if(_mwb) _mwb.style.display = 'flex';
   const _mmw = document.getElementById('mobileMenuWrap'); if(_mmw) _mmw.dataset.hasItems = '1';
-  const _rrBtnLogin = document.getElementById('resetRequestsBtn');
-  if(_rrBtnLogin) _rrBtnLogin.style.display = 'none';
-  const _mrrLogin = document.getElementById('mobileResetRequests');
-  if(_mrrLogin) _mrrLogin.style.display = 'none';
   updateMobileMenu();
   document.querySelectorAll('.write-only').forEach(el => el.style.display = readOnly ? 'none' : '');
   document.body.classList.toggle('read-only-mode', readOnly);
   const _wdLogin=document.getElementById('weekDate'); if(_wdLogin)_wdLogin.disabled=false;
   initApp().then(function(){ });
   sbLoadUserTheme();
-  loadResetBadge();
-  if(match.must_reset_password){
-    setTimeout(()=>{
-      document.getElementById('forceResetModal').style.display='flex';
-      setTimeout(()=>document.getElementById('forceNewPw').focus(),100);
-    }, 600);
-  }
 }
 function doLogout(){
   // Cancel any pending saves FIRST
@@ -1772,9 +1581,6 @@ function doLogout(){
   const _wdLogout=document.getElementById('weekDate'); if(_wdLogout)_wdLogout.disabled=false;
   // Redirect to platform login instead of showing kiln splash
   window.location.href = '../index.html';
-  document.getElementById('manageUsersBtn').style.display='none';
-  const _rrBtn = document.getElementById('resetRequestsBtn');
-  if(_rrBtn) _rrBtn.style.display='none';
   const _mwo2 = document.getElementById('mobileWeeklyOverview'); if(_mwo2) _mwo2.style.display='none';
   const _mar2 = document.getElementById('mobileAiReporting'); if(_mar2) _mar2.style.display='none';
 }
@@ -1788,183 +1594,11 @@ function closeMobileMenu(){
   if(dd) dd.style.display = 'none';
 }
 
-// ── PASSWORD RESET REQUESTS ──────────────────────────────────────────
-
-function showForgotPassword(){
-  document.getElementById('forgotModal').style.display='flex';
-  document.getElementById('forgotUsername').value='';
-  document.getElementById('forgotErr').textContent='';
-  document.getElementById('forgotSuccess').style.display='none';
-  document.getElementById('forgotSubmitBtn').style.display='block';
-  setTimeout(()=>document.getElementById('forgotUsername').focus(),100);
-}
-function closeForgotModal(){
-  document.getElementById('forgotModal').style.display='none';
-}
-
-async function submitForgotRequest(){
-  const err = document.getElementById('forgotErr');
-  const username = document.getElementById('forgotUsername').value.trim().toLowerCase();
-  err.textContent = '';
-  if(!username){ err.textContent = 'Please enter your username.'; return; }
-  try {
-    const users = await sbFetch('/rest/v1/kiln_users?username=eq.' + encodeURIComponent(username) + '&select=username');
-    if(!users || !users.length){ err.textContent = 'Username not found.'; return; }
-    const existing = await sbFetch('/rest/v1/kiln_reset_requests?username=eq.' + encodeURIComponent(username) + '&status=eq.pending&select=id');
-    if(existing && existing.length){ err.textContent = 'A reset request is already pending for this account.'; return; }
-    await sbFetch('/rest/v1/kiln_reset_requests', {
-      method: 'POST',
-      headers: { 'Prefer': 'return=minimal' },
-      body: JSON.stringify({ username, status: 'pending', requested_at: new Date().toISOString() })
-    });
-    document.getElementById('forgotSuccess').style.display='block';
-    document.getElementById('forgotSubmitBtn').style.display='none';
-    document.getElementById('forgotErr').textContent='';
-    loadResetBadge();
-  } catch(e){
-    err.textContent = 'Failed to submit request — please try again.';
-  }
-}
-
-async function loadResetBadge(){
-  if(!isAdmin) return;
-  // Always show Requests button for admins
-  const btn = document.getElementById('resetRequestsBtn');
-  if(btn) btn.style.display = '';
-  try {
-    const rows = await sbFetch('/rest/v1/kiln_reset_requests?status=eq.pending&select=id');
-    const count = rows ? rows.length : 0;
-    const badge = document.getElementById('resetBadge');
-    if(badge){ badge.textContent = count; badge.style.display = count > 0 ? 'block' : 'none'; }
-    const mbadge = document.getElementById('mobilResetBadge');
-    if(mbadge){ mbadge.textContent = count; mbadge.style.display = count > 0 ? 'inline' : 'none'; }
-    const mitem = document.getElementById('mobileResetRequests');
-    if(mitem) mitem.style.display = isAdmin ? 'flex' : 'none';
-  } catch(e){}
-}
-
-function openResetRequestsModal(){
-  if(!isAdmin) return;
-  document.getElementById('resetRequestsModal').style.display='flex';
-  renderResetRequests();
-}
-function closeResetRequestsModal(){
-  document.getElementById('resetRequestsModal').style.display='none';
-}
-
-async function renderResetRequests(){
-  const list = document.getElementById('resetRequestsList');
-  list.innerHTML = '<div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono)">Loading...</div>';
-  try {
-    const rows = await sbFetch('/rest/v1/kiln_reset_requests?order=requested_at.desc&select=id,username,status,requested_at');
-    if(!rows || !rows.length){
-      list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--tx3);font-size:13px">No password reset requests.</div>';
-      return;
-    }
-    list.innerHTML = rows.map(r => {
-      const date = new Date(r.requested_at).toLocaleString('en-GB');
-      const isPending = r.status === 'pending';
-      const statusCol = r.status==='pending'?'var(--amb)':r.status==='approved'?'var(--ac)':'var(--tx3)';
-      return `<div style="display:flex;align-items:center;gap:10px;background:var(--sf2);border:1px solid var(--bd);border-radius:var(--rsm);padding:10px 14px;margin-bottom:8px;flex-wrap:wrap">
-        <div style="flex:1;min-width:0">
-          <div style="font-family:var(--ff-mono);font-size:13px;font-weight:600;color:var(--tx)">${esc(r.username)}</div>
-          <div style="font-size:10px;color:var(--tx3);font-family:var(--ff-mono);margin-top:2px">${esc(date)}</div>
-        </div>
-        <span style="font-size:10px;font-weight:600;font-family:var(--ff-mono);padding:2px 8px;border-radius:4px;background:${statusCol}22;color:${statusCol};border:1px solid ${statusCol}">${r.status.toUpperCase()}</span>
-        ${isPending ? `
-          <button data-rid="${esc(r.id)}" data-ruser="${esc(r.username)}" onclick="approveReset(this.dataset.rid,this.dataset.ruser)" class="btn btn-primary" style="font-size:11px;padding:5px 10px">Approve</button>
-          <button data-rid="${esc(r.id)}" onclick="declineReset(this.dataset.rid)" class="btn btn-ghost" style="font-size:11px;padding:5px 10px;color:var(--red);border-color:var(--redb)">Decline</button>
-        ` : `
-          <button data-rid="${esc(r.id)}" onclick="deleteResetRequest(this.dataset.rid)" class="btn btn-ghost" style="font-size:11px;padding:5px 10px;opacity:0.6">Remove</button>
-        `}
-      </div>`;
-    }).join('');
-  } catch(e){
-    list.innerHTML = '<div style="color:var(--red);font-size:12px">Failed to load requests.</div>';
-  }
-}
-
-async function approveReset(id, username){
-  // Prompt for temporary password inline
-  const tempPw = prompt(`Set a temporary password for "${username}":\n\nThey will be forced to change it on next login.`);
-  if(tempPw === null) return; // cancelled
-  if(!tempPw || tempPw.trim().length < 3){
-    showToast('Temporary password must be at least 3 characters');
-    return;
-  }
-  try {
-    const hashed = await hashPassword(tempPw.trim().toLowerCase());
-    await sbSavePassword(username, hashed);
-    await sbFetch('/rest/v1/kiln_users?username=eq.' + encodeURIComponent(username), {
-      method: 'PATCH',
-      headers: { 'Prefer': 'return=minimal' },
-      body: JSON.stringify({ must_reset_password: true })
-    });
-    await sbFetch('/rest/v1/kiln_reset_requests?id=eq.' + encodeURIComponent(id), {
-      method: 'PATCH',
-      headers: { 'Prefer': 'return=minimal' },
-      body: JSON.stringify({ status: 'approved' })
-    });
-    showToast(`Approved ✓ — tell ${username} their temp password is: ${tempPw.trim()}`);
-    renderResetRequests();
-    loadResetBadge();
-  } catch(e){ showToast('Failed to approve reset'); }
-}
-
-async function declineReset(id){
-  try {
-    await sbFetch('/rest/v1/kiln_reset_requests?id=eq.' + encodeURIComponent(id), {
-      method: 'PATCH',
-      headers: { 'Prefer': 'return=minimal' },
-      body: JSON.stringify({ status: 'declined' })
-    });
-    renderResetRequests();
-    loadResetBadge();
-  } catch(e){ showToast('Failed to decline request'); }
-}
-
-async function deleteResetRequest(id){
-  try {
-    await sbFetch('/rest/v1/kiln_reset_requests?id=eq.' + encodeURIComponent(id), { method: 'DELETE' });
-    renderResetRequests();
-  } catch(e){}
-}
-
-async function submitForceReset(){
-  const err = document.getElementById('forceResetErr');
-  const pw1 = document.getElementById('forceNewPw').value;
-  const pw2 = document.getElementById('forceConfirmPw').value;
-  err.textContent = '';
-  if(!pw1 || pw1.length < 3){ err.textContent = 'Password must be at least 3 characters.'; return; }
-  if(pw1 !== pw2){ err.textContent = 'Passwords do not match.'; return; }
-  try {
-    const hashed = await hashPassword(pw1.toLowerCase());
-    await sbSavePassword(currentUser, hashed);
-    await sbFetch('/rest/v1/kiln_users?username=eq.' + encodeURIComponent(currentUser), {
-      method: 'PATCH',
-      headers: { 'Prefer': 'return=minimal' },
-      body: JSON.stringify({ must_reset_password: false })
-    });
-    await sbFetch('/rest/v1/kiln_reset_requests?username=eq.' + encodeURIComponent(currentUser) + '&status=eq.approved', {
-      method: 'PATCH',
-      headers: { 'Prefer': 'return=minimal' },
-      body: JSON.stringify({ status: 'completed' })
-    });
-    document.getElementById('forceResetModal').style.display='none';
-    showToast('Password updated successfully ✓');
-  } catch(e){
-    err.textContent = 'Failed to update password — please try again.';
-  }
-}
-
 function updateMobileMenu(){
   const items = [
     ['mobileWeeklyOverview', 'btn-weekly-overview'],
     ['mobileAiReporting',   'btn-ai-reporting'],
-    ['mobileResetRequests', 'resetRequestsBtn'],
     ['mobileManageLists',   'manageListsBtn'],
-    ['mobileManageUsers',   'manageUsersBtn'],
-    ['mobileManagePw',      'managePwBtn'],
   ];
   let anyVisible = false;
   items.forEach(([mobileId, desktopId]) => {
@@ -5587,105 +5221,10 @@ function openPrintOverview(note, win){
 }
 
 
-function openPwModal(){
-  const cp=_pwCache;
-  const list=document.getElementById('pwList'); list.innerHTML='';
-  const userList = _usersCache.length ? _usersCache : CREDENTIALS;
-  userList.forEach(cr=>{
-    const has=cp[cr.user]!==undefined;
-    const row=document.createElement('div');
-    row.style.cssText='display:flex;align-items:center;gap:10px;background:var(--sf2);border:1.5px solid var(--bd);border-radius:var(--rsm);padding:11px 14px';
-    const lbl=document.createElement('span');
-    lbl.style.cssText='min-width:105px;font-family:JetBrains Mono,monospace;font-size:12px;color:var(--tx);font-weight:600';
-    lbl.textContent=cr.user;
-    const status=document.createElement('span');
-    status.className='pw-status';
-    status.style.cssText='font-size:10px;color:var(--tx3);font-family:JetBrains Mono,monospace;flex:1';
-    status.textContent = has ? 'password set' : 'not in database!';
-    status.style.color = has ? '' : 'var(--red)';
-    const inp=document.createElement('input');
-    inp.type='password'; inp.dataset.user=cr.user; inp.placeholder='New password';
-    inp.autocomplete='new-password';
-    inp.style.cssText='width:148px;font-size:13px;padding:7px 10px;background:var(--sf3);border:1.5px solid var(--bd);border-radius:var(--rxs);color:var(--tx);outline:none;font-family:Inter,sans-serif';
-    inp.onfocus=function(){this.style.borderColor='var(--ac)'};
-    inp.onblur=function(){this.style.borderColor='var(--bd)'};
-    const btn=document.createElement('button');
-    btn.textContent = 'Change';
-    btn.style.cssText='padding:5px 10px;font-size:10px;border-radius:var(--rxs);border:1.5px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;font-family:JetBrains Mono,monospace;white-space:nowrap';
-    const u=cr.user; btn.onclick=function(){resetPw(u,this);};
-    row.appendChild(lbl); row.appendChild(status); row.appendChild(inp); row.appendChild(btn);
-    list.appendChild(row);
-  });
-  document.getElementById('pwModal').classList.add('open');
-}
-function closePwModal(){ document.getElementById('pwModal').classList.remove('open'); }
-function resetPw(user,btn){
-  const row = btn.closest('div');
-  const inp = row.querySelector('input');
-  const status = row.querySelector('.pw-status');
-    inp.value = '';
-  inp.placeholder = 'Set new password…';
-  inp.style.borderColor = 'var(--ac)';
-  inp.focus();
-  status.textContent = 'enter new password above';
-  status.style.color = 'var(--amb)';
-  btn.textContent = 'Clear';
-  showToast('Enter a new password for ' + user);
-}
-async function savePwChanges(){
-  let n=0;
-  const saves=[];
-  const inputs = document.querySelectorAll('#pwList input[data-user]');
-  for(const inp of inputs){
-    const v=inp.value.trim();
-    if(v){
-      const hashed = await hashPassword(v.toLowerCase());
-      _pwCache[inp.dataset.user]=hashed;
-      saves.push(sbSavePassword(inp.dataset.user, hashed));
-      n++;
-    }
-  }
-  await Promise.all(saves);
-  closePwModal();
-  showToast(n?n+' password(s) updated':'No changes made');
-}
-// openUsersModal/closeUsersModal removed - replaced by openUMPanel/closeUMPanel
-
-// Old renderUsersList and group functions removed
-
-function openMyPwModal(){
-  document.getElementById('myPwNew').value='';
-  document.getElementById('myPwConfirm').value='';
-  document.getElementById('myPwErr').textContent='';
-  document.getElementById('myPwModal').classList.add('open');
-  setTimeout(()=>document.getElementById('myPwCurrent').focus(),100);
-}
-function closeMyPwModal(){ document.getElementById('myPwModal').classList.remove('open'); }
-async function saveMyPassword(){
-  const cp = _pwCache;
-  const cr = CREDENTIALS.find(x=>x.user===currentUser);
-  const currentPass = cp[currentUser]!==undefined ? cp[currentUser] : cr.pass;
-  const entered = document.getElementById('myPwCurrent').value.trim().toLowerCase();
-  const nw      = document.getElementById('myPwNew').value.trim().toLowerCase();
-  const conf    = document.getElementById('myPwConfirm').value.trim().toLowerCase();
-  const err     = document.getElementById('myPwErr');
-    const enteredHash = await hashPassword(entered);
-  if(enteredHash!==currentPass){err.textContent='Current password is incorrect.';return;}
-  if(!nw||nw.length<3){err.textContent='New password must be at least 3 characters.';return;}
-  if(nw!==conf){err.textContent='New passwords do not match.';return;}
-  const newHash = await hashPassword(nw);
-  _pwCache[currentUser]=newHash;
-  await sbSavePassword(currentUser, newHash);
-  closeMyPwModal();
-  showToast('Password updated ✓');
-}
-
 window.addEventListener("load",()=>{
   document.getElementById("splashUser").focus();
   document.getElementById("manageModal").addEventListener("click",function(e){if(e.target===this)closeManageModal();});
   document.getElementById("printModal").addEventListener("click",function(e){if(e.target===this)closePrintModal();});
-  document.getElementById("pwModal").addEventListener("click",function(e){if(e.target===this)closePwModal();});
-  document.getElementById("myPwModal").addEventListener("click",function(e){if(e.target===this)closeMyPwModal();});
   // usersModal event listener removed
   document.getElementById("searchModal").addEventListener("click",function(e){if(e.target===this)closeSearchModal();});
     const wd = document.getElementById('weekDate');
@@ -5809,140 +5348,6 @@ const UM_SB = {
     return q;
   }
 };
-
-function openUMPanel() {
-  document.getElementById('umOverlay').style.display = 'block';
-  document.getElementById('umPanel').style.transform = 'translateX(0)';
-  loadUMUsers();
-}
-function closeUMPanel() {
-  document.getElementById('umOverlay').style.display = 'none';
-  document.getElementById('umPanel').style.transform = 'translateX(100%)';
-}
-
-async function loadUMUsers() {
-  const list = document.getElementById('umUserList');
-  list.innerHTML = '<div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);padding:12px 0">Loading users\u2026</div>';
-  try {
-    const [profRes, kilnRes] = await Promise.all([
-      UM_SB.from('pw_profiles').select('*').order('email'),
-      UM_SB.from('kiln_users').select('username,locked_name,email,is_admin,is_burner,is_shift_manager,is_cement_analyst,is_day_staff,is_readonly,is_locked,must_reset_password,auth_user_id').order('username')
-    ]);
-    _umProfiles  = profRes.data || [];
-    _umKilnUsers = kilnRes.data || [];
-    renderUMUsers();
-  } catch(e) {
-    list.innerHTML = '<div style="color:var(--red);font-size:12px;font-family:var(--ff-mono)">Failed to load: ' + (e.message||'error') + '</div>';
-  }
-}
-
-function umEsc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
-
-function renderUMUsers() {
-  const list = document.getElementById('umUserList');
-  const merged = _umProfiles.map(function(p) {
-    return { prof: p, kiln: _umKilnUsers.find(function(k){ return k.auth_user_id === p.id; }) || null };
-  });
-  _umKilnUsers.forEach(function(ku) {
-    if (!ku.auth_user_id || !_umProfiles.find(function(p){ return p.id === ku.auth_user_id; }))
-      merged.push({ prof: null, kiln: ku });
-  });
-  if (!merged.length) { list.innerHTML = '<div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);padding:12px 0">No users found.</div>'; return; }
-
-  const DS = 'height:30px;padding:0 8px;font-size:11px;font-family:var(--ff-mono);background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--tx);outline:none;cursor:pointer;flex:1;min-width:0';
-  const LS = 'font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);flex-shrink:0;width:72px';
-  const RS = 'display:flex;align-items:center;gap:8px;margin-bottom:7px';
-  const rc = {admin:'var(--ac3)',reviewer:'var(--pur)',editor:'var(--amb)',viewer:'var(--tx3)',none:'var(--tx3)'};
-
-  // Role group ordering
-  // Users appear in EVERY group they qualify for (multi-group)
-  const ROLE_GROUPS = [
-    { label:'Admins',           key:'admin',          color:'var(--ac3)', test: function(m){ const ku=m.kiln; const p=m.prof; return !!(ku&&ku.is_admin)||(p&&p.role==='admin'); } },
-    { label:'Shift Managers',   key:'shift_manager',  color:'#7c3aed',    test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_shift_manager); } },
-    { label:'Cement Analysts',  key:'cement_analyst', color:'#b45309',    test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_cement_analyst); } },
-    { label:'Day Staff',        key:'day_staff',      color:'#0891b2',    test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_day_staff); } },
-    { label:'Burners',          key:'burner',         color:'var(--amb)', test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_burner); } },
-    { label:'Read Only',        key:'readonly',       color:'var(--tx2)', test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_readonly); } },
-    { label:'Platform Only',    key:'platform',       color:'var(--tx3)', test: function(m){ return !!(m.prof && !m.kiln); } },
-  ];
-
-  const _umCollapsed = window._umCollapsed = window._umCollapsed || {};
-  let html = '';
-
-  ROLE_GROUPS.forEach(function(grp) {
-    const members = merged.filter(grp.test);
-    if (!members.length) return;
-    const collapsed = !!_umCollapsed[grp.key];
-    html += '<div style="margin-bottom:4px">';
-    html += '<div onclick="window._umCollapsed[\''+grp.key+'\']=!window._umCollapsed[\''+grp.key+'\'];renderUMUsers()" style="display:flex;align-items:center;gap:8px;padding:7px 12px;background:'+grp.color+'18;border:1px solid '+grp.color+'44;border-radius:var(--rsm);cursor:pointer;user-select:none;margin-bottom:4px">'
-      +'<span style="flex:1;font-size:11px;font-weight:700;font-family:var(--ff-mono);color:'+grp.color+'">'+grp.label+'</span>'
-      +'<span style="font-size:10px;font-family:var(--ff-mono);color:'+grp.color+';opacity:.7">'+members.length+' user'+(members.length!==1?'s':'')+'</span>'
-      +'<svg viewBox="0 0 24 24" fill="none" stroke="'+grp.color+'" stroke-width="2.5" style="width:12px;height:12px;transition:transform .15s;transform:rotate('+(collapsed?'-90deg':'0deg')+')"><polyline points="6 9 12 15 18 9"/></svg>'
-      +'</div>';
-    if (!collapsed) {
-      members.forEach(function(m) {
-        html += renderUMCard(m, DS, LS, RS, rc);
-      });
-    }
-    html += '</div>';
-  });
-
-  // Any users not caught by any group
-  const ungrouped = merged.filter(function(m){ return !ROLE_GROUPS.some(function(g){ return g.test(m); }); });
-  ungrouped.forEach(function(m){ html += renderUMCard(m, DS, LS, RS, rc); });
-
-  list.innerHTML = html;
-}
-
-function renderUMCard(m, DS, LS, RS, rc) {
-  const p = m.prof, ku = m.kiln;
-  const PROTECTED_USERNAME = 'rjone';
-  const isSelf = UM_SELF_ID && p && p.id === UM_SELF_ID;
-  const isProtectedKiln = ku && ku.username === PROTECTED_USERNAME;
-  const displayName = (p&&(p.full_name||p.email))||(ku&&(ku.locked_name||ku.username))||'?';
-  const email = (p&&p.email)||(ku&&ku.email)||'\u2014';
-  const initials = displayName.split(' ').map(function(w){return w[0]||'';}).join('').slice(0,2).toUpperCase()||'?';
-  const docsRole = p?(p.role||'viewer'):null;
-  const isoRole  = p?(p.isolation_role||'none'):null;
-  const kilnRole = !ku?null:ku.is_admin?'admin':ku.is_shift_manager?'shift_manager':ku.is_cement_analyst?'cement_analyst':ku.is_day_staff?'day_staff':ku.is_burner?'burner':'read_only';
-  const col = docsRole?(rc[docsRole]||'var(--tx3)'):'var(--tx3)';
-  let h = '<div style="background:var(--sf2);border:1px solid var(--bd);border-radius:var(--r);padding:14px 16px;margin-bottom:6px">';
-  h += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:13px">'
-    +'<div style="width:36px;height:36px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--ff-head);font-weight:700;font-size:13px;color:'+col+';border:1px solid '+col+'33;background:'+col+'18">'+umEsc(initials)+'</div>'
-    +'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:var(--tx);font-family:var(--ff-head);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+umEsc(displayName)+'</div>'
-    +'<div style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+umEsc(email)+'</div></div>'
-    +(p&&p.approved===false?'<span style="font-size:9px;font-family:var(--ff-mono);color:var(--amb);border:1px solid var(--ambb);background:var(--ambd);padding:2px 6px;border-radius:4px;flex-shrink:0;white-space:nowrap">PENDING</span>':'')
-    +(ku&&ku.must_reset_password?'<span style="font-size:9px;font-family:var(--ff-mono);color:var(--amb);border:1px solid var(--ambb);background:var(--ambd);padding:2px 6px;border-radius:4px;flex-shrink:0;white-space:nowrap">PW RESET</span>':'')
-    +(ku&&ku.is_locked?'<span style="font-size:9px;font-family:var(--ff-mono);color:var(--red);border:1px solid var(--redb);background:var(--redd);padding:2px 6px;border-radius:4px;flex-shrink:0">LOCKED</span>':'')
-    +'</div>';
-  h += '<div style="'+RS+'"><span style="'+LS+'">Docs</span>';
-  if(p){h+='<select onchange="umUpdateDocsRole(\''+umEsc(p.id)+'\',this.value)"'+(isSelf?' disabled':'')+' style="'+DS+'"><option value="viewer"'+(docsRole==='viewer'?' selected':'')+'>Viewer</option><option value="editor"'+(docsRole==='editor'?' selected':'')+'>Editor</option><option value="reviewer"'+(docsRole==='reviewer'?' selected':'')+'>Reviewer</option><option value="admin"'+(docsRole==='admin'?' selected':'')+'>Admin</option></select>';}
-  else{h+='<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">No platform account</span>';}
-  h+='</div><div style="'+RS+'"><span style="'+LS+'">Isolation</span>';
-  if(p){h+='<select onchange="umUpdateIsoRole(\''+umEsc(p.id)+'\',this.value)"'+(isSelf?' disabled':'')+' style="'+DS+'"><option value="none"'+(isoRole==='none'?' selected':'')+'>No Access</option><option value="viewer"'+(isoRole==='viewer'?' selected':'')+'>Viewer</option><option value="editor"'+(isoRole==='editor'?' selected':'')+'>Editor</option><option value="reviewer"'+(isoRole==='reviewer'?' selected':'')+'>Reviewer</option><option value="admin"'+(isoRole==='admin'?' selected':'')+'>Admin</option></select>';}
-  else{h+='<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">No platform account</span>';}
-  h+='</div><div style="'+RS+'"><span style="'+LS+'">Shift Log</span>';
-  if(ku){
-    if(isProtectedKiln){
-      h+='<div style="height:30px;padding:0 8px;font-size:11px;font-family:var(--ff-mono);background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--ac3);display:flex;align-items:center;flex:1">Admin (protected)</div>';
-    } else {
-      h+='<select onchange="umUpdateKilnRole(\''+umEsc(ku.username)+'\',this.value)" style="'+DS+'"><option value="burner"'+(kilnRole==='burner'?' selected':'')+'>Burner</option><option value="shift_manager"'+(kilnRole==='shift_manager'?' selected':'')+'>Shift Manager</option><option value="cement_analyst"'+(kilnRole==='cement_analyst'?' selected':'')+'>Cement Analyst</option><option value="day_staff"'+(kilnRole==='day_staff'?' selected':'')+'>Day Staff</option><option value="read_only"'+(kilnRole==='read_only'?' selected':'')+'>Read Only</option><option value="admin"'+(kilnRole==='admin'?' selected':'')+'>Admin</option></select>';
-    }
-  } else{h+='<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">No shift log account</span>';}
-  h+='</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid var(--bd)">';
-  if(p&&p.approved===false){h+='<button onclick="umApproveUser(\''+umEsc(p.id)+'\')" style="height:26px;padding:0 12px;font-size:11px;font-family:var(--ff-head);font-weight:600;background:var(--grnd);border:1px solid var(--grnb);border-radius:var(--rsm);color:var(--grn);cursor:pointer">\u2713 Approve</button>';}
-  if(ku&&!isProtectedKiln){h+='<button onclick="umForceReset(\''+umEsc(ku.username)+'\')" style="height:26px;padding:0 10px;font-size:11px;font-family:var(--ff-body);background:var(--sf3);border:1px solid var(--bd);border-radius:var(--rsm);color:var(--tx2);cursor:pointer">Force PW Reset</button>';}
-  if(p&&!isSelf&&!isProtectedKiln){h+='<button onclick="umRemoveUser(\''+umEsc(p.id)+'\',\''+umEsc(email)+'\')" style="height:26px;padding:0 10px;font-size:11px;font-family:var(--ff-mono);background:transparent;border:1px solid var(--redb);border-radius:var(--rsm);color:var(--red);cursor:pointer;margin-left:auto">Remove</button>';}
-  h+='</div></div>';
-  return h;
-}
-
-async function umUpdateDocsRole(id,role){const{error}=await UM_SB.from('pw_profiles').update({role}).eq('id',id);if(error){showToast('Failed: '+error.message);return;}const u=_umProfiles.find(x=>x.id===id);if(u)u.role=role;renderUMUsers();showToast('Docs role updated \u2713');}
-async function umUpdateIsoRole(id,role){const{error}=await UM_SB.from('pw_profiles').update({isolation_role:role}).eq('id',id);if(error){showToast('Failed: '+error.message);return;}const u=_umProfiles.find(x=>x.id===id);if(u)u.isolation_role=role;renderUMUsers();showToast('Isolation role updated \u2713');}
-async function umUpdateKilnRole(username,role){const flags={is_admin:role==='admin',is_shift_manager:role==='shift_manager',is_cement_analyst:role==='cement_analyst',is_day_staff:role==='day_staff',is_burner:role==='burner',is_readonly:role==='read_only'};const{error}=await UM_SB.from('kiln_users').update(flags).eq('username',username);if(error){showToast('Failed: '+error.message);return;}const u=_umKilnUsers.find(x=>x.username===username);if(u)Object.assign(u,flags);renderUMUsers();showToast('Shift Log role updated \u2713');}
-async function umApproveUser(id){const{error}=await UM_SB.from('pw_profiles').update({approved:true}).eq('id',id);if(error){showToast('Failed: '+error.message);return;}const u=_umProfiles.find(x=>x.id===id);if(u)u.approved=true;renderUMUsers();showToast('User approved \u2713');}
-async function umForceReset(username){const{error}=await UM_SB.from('kiln_users').update({must_reset_password:true}).eq('username',username);if(error){showToast('Failed: '+error.message);return;}const u=_umKilnUsers.find(x=>x.username===username);if(u)u.must_reset_password=true;renderUMUsers();showToast(username+' will be prompted to reset \u2713');}
-async function umRemoveUser(id,email){if(!confirm('Remove '+email+'? This will revoke their platform access immediately.'))return;const{error}=await UM_SB.from('pw_profiles').delete().eq('id',id);if(error){showToast('Failed: '+error.message);return;}_umProfiles=_umProfiles.filter(x=>x.id!==id);renderUMUsers();showToast('User removed \u2713');}
 
 </script>
 </body>

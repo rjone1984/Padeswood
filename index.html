@@ -233,6 +233,12 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       </div>
       <button class="login-btn" id="loginBtn" onclick="doLogin()">Sign In</button>
       <div class="login-err" id="loginErr"></div>
+      <button class="login-btn" id="bioLoginBtn" onclick="doBiometricLogin()" style="display:none;background:var(--sf3);border:1px solid var(--bd2);color:var(--tx);box-shadow:none;margin-top:10px">
+        Use Biometric Login
+      </button>
+      <div id="bioLoginHint" style="display:none;margin-top:8px;font-size:11px;font-family:var(--ff-mono);color:var(--tx3);line-height:1.5">
+        Biometric unlock is set up on this device.
+      </div>
       <div id="forgotWrap" style="margin-top:12px">
         <div style="text-align:center;display:flex;justify-content:center;gap:16px">
           <button onclick="toggleForgot()" style="background:none;border:none;color:var(--tx3);font-size:11px;font-family:var(--ff-mono);cursor:pointer;text-decoration:underline;padding:0">Forgot password?</button>
@@ -401,7 +407,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
             <input type="email" id="inviteEmail" placeholder="name@heidelbergmaterials.com" style="width:100%;height:38px;padding:0 12px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none;box-sizing:border-box">
           </div>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px">
           <div><label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Docs / Platform</label>
             <select id="inviteRole" style="width:100%;height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
               <option value="viewer">Viewer</option>
@@ -428,6 +434,12 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
               <option value="day_staff">Day Staff</option>
               <option value="read_only">Read Only</option>
               <option value="admin">Admin</option>
+            </select>
+          </div>
+          <div><label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Shift Tracker</label>
+            <select id="inviteTrackerAccess" style="width:100%;height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
+              <option value="true">Allow Access</option>
+              <option value="false">No Access</option>
             </select>
           </div>
         </div>
@@ -552,6 +564,28 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     </div>
   </div>
 </div>
+<div id="bioSetupOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;align-items:center;justify-content:center">
+  <div id="bioSetupModal" style="width:380px;max-width:94vw;background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:28px;box-shadow:var(--e3);position:relative;overflow:hidden">
+    <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--ac3),transparent)"></div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
+      <div style="width:30px;height:30px;border-radius:8px;background:var(--acd2);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--ac3)" stroke-width="2" width="14" height="14"><path d="M12 2a3 3 0 0 1 3 3v3h-6V5a3 3 0 0 1 3-3z"/><rect x="4" y="8" width="16" height="14" rx="2"/><path d="M12 13v3"/></svg>
+      </div>
+      <div>
+        <div style="font-family:var(--ff-head);font-weight:700;font-size:16px;color:var(--tx)">Enable biometric unlock?</div>
+        <div style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">This device can use Face ID, Touch ID, or Windows Hello.</div>
+      </div>
+    </div>
+    <div style="margin-bottom:16px;padding:10px 14px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);font-size:12px;color:var(--tx2);line-height:1.6">
+      This is optional and only applies to this browser/device. Your normal password sign-in will still work everywhere else.
+    </div>
+    <div id="bioSetupMsg" style="display:none;font-size:12px;padding:8px 12px;border-radius:var(--rsm);margin-bottom:14px"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button id="bioSetupSkipBtn" onclick="closeBioSetupModal()" style="height:38px;padding:0 14px;background:var(--sf3);border:1px solid var(--bd);border-radius:var(--rsm);color:var(--tx2);font-family:var(--ff-head);font-weight:600;font-size:13px;cursor:pointer">Not now</button>
+      <button id="bioSetupBtn" onclick="enableBiometricLogin()" style="height:38px;padding:0 14px;background:linear-gradient(135deg,var(--ac),var(--ac3));border:none;border-radius:var(--rsm);color:#fff;font-family:var(--ff-head);font-weight:600;font-size:13px;cursor:pointer">Enable</button>
+    </div>
+  </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -610,6 +644,8 @@ const SB_LIC_URL  = 'https://dviicnomxeibbuafbozp.supabase.co';
 const SB_LIC_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2aWljbm9teGVpYmJ1YWZib3pwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4ODM0MzcsImV4cCI6MjA4ODQ1OTQzN30.c1T3WXC225tdBbq_1R__9bhGFIZdSxim9dgxfvmkRjU';
 
 let sb;
+const BIO_STORAGE_KEY = 'pw_bio_unlock_v1';
+let _bioEnrollment = null;
 
 /* ── STEP 1: LICENCE CHECK ───────────────────────────────────────── */
 async function checkLicence() {
@@ -657,6 +693,86 @@ function hideLicenceOverlay() {
   }, 320);
 }
 
+function canUseBiometricUnlock() {
+  return !!(window.isSecureContext && window.PublicKeyCredential && navigator.credentials && navigator.credentials.create && navigator.credentials.get);
+}
+
+function bufferToBase64Url(buffer) {
+  const bytes = new Uint8Array(buffer);
+  let binary = '';
+  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
+}
+
+function base64UrlToBuffer(value) {
+  const base64 = (value || '').replace(/-/g, '+').replace(/_/g, '/');
+  const padded = base64 + '==='.slice((base64.length + 3) % 4);
+  const binary = atob(padded);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes.buffer;
+}
+
+function getBiometricEnrollment() {
+  if (_bioEnrollment) return _bioEnrollment;
+  try {
+    const raw = localStorage.getItem(BIO_STORAGE_KEY);
+    _bioEnrollment = raw ? JSON.parse(raw) : null;
+  } catch (e) {
+    _bioEnrollment = null;
+  }
+  return _bioEnrollment;
+}
+
+function saveBiometricEnrollment(enrollment) {
+  _bioEnrollment = enrollment;
+  localStorage.setItem(BIO_STORAGE_KEY, JSON.stringify(enrollment));
+  refreshBiometricLoginButton();
+}
+
+function clearBiometricEnrollment() {
+  _bioEnrollment = null;
+  localStorage.removeItem(BIO_STORAGE_KEY);
+  refreshBiometricLoginButton();
+}
+
+function refreshBiometricLoginButton() {
+  const btn = document.getElementById('bioLoginBtn');
+  const hint = document.getElementById('bioLoginHint');
+  const enrolled = !!getBiometricEnrollment();
+  const visible = canUseBiometricUnlock() && enrolled;
+  if (btn) btn.style.display = visible ? 'block' : 'none';
+  if (hint) hint.style.display = visible ? 'block' : 'none';
+}
+
+function openBioSetupModal() {
+  const overlay = document.getElementById('bioSetupOverlay');
+  const msg = document.getElementById('bioSetupMsg');
+  const btn = document.getElementById('bioSetupBtn');
+  msg.style.display = 'none';
+  msg.textContent = '';
+  btn.disabled = false;
+  btn.textContent = 'Enable';
+  overlay.style.display = 'flex';
+}
+
+function closeBioSetupModal() {
+  const overlay = document.getElementById('bioSetupOverlay');
+  const msg = document.getElementById('bioSetupMsg');
+  msg.style.display = 'none';
+  msg.textContent = '';
+  overlay.style.display = 'none';
+}
+
+function showBioSetupMessage(type, text) {
+  const msg = document.getElementById('bioSetupMsg');
+  msg.textContent = text;
+  msg.style.display = 'block';
+  msg.style.background = type === 'ok' ? 'var(--grnd)' : 'var(--redd)';
+  msg.style.color = type === 'ok' ? 'var(--grn)' : 'var(--red)';
+  msg.style.border = '1px solid ' + (type === 'ok' ? 'var(--grnb)' : 'var(--redb)');
+}
+
 /* ── STEP 2: CHECK SESSION / SHOW LOGIN ──────────────────────────── */
 function checkExistingSession() {
   const safetyTimer = setTimeout(function() {
@@ -680,6 +796,15 @@ function checkExistingSession() {
           // Keep kbl_session fresh so kiln-log can use it without re-login
           localStorage.setItem('kbl_session', session.access_token);
           if (session.refresh_token) localStorage.setItem('kbl_refresh', session.refresh_token);
+          const bio = getBiometricEnrollment();
+          if (bio && bio.userId === session.user.id && canUseBiometricUnlock()) {
+            showLoginScreen();
+            setLoginEmailFromAddress(bio.email || session.user.email || '');
+            const hint = document.getElementById('bioLoginHint');
+            if (hint) hint.textContent = 'Biometric unlock is set up on this device.';
+            refreshBiometricLoginButton();
+            return;
+          }
           showAppSelector(session.user);
         } else {
           Object.keys(localStorage).forEach(function(k) {
@@ -705,6 +830,38 @@ function syncLoginEmail() {
   const user   = document.getElementById('loginEmailUser').value.trim();
   const domain = document.getElementById('loginDomain').value;
   document.getElementById('loginEmail').value = (domain === 'other') ? user : user + domain;
+}
+
+function setLoginEmailFromAddress(email) {
+  const emailValue = (email || '').trim();
+  const userField = document.getElementById('loginEmailUser');
+  const domainField = document.getElementById('loginDomain');
+  if (!emailValue) {
+    userField.value = '';
+    domainField.value = '@heidelbergmaterials.com';
+    userField.placeholder = 'username';
+    userField.type = 'text';
+    syncLoginEmail();
+    return;
+  }
+  const parts = emailValue.split('@');
+  if (parts.length === 2 && parts[1].toLowerCase() === 'heidelbergmaterials.com') {
+    userField.type = 'text';
+    userField.placeholder = 'username';
+    userField.value = parts[0];
+    domainField.value = '@heidelbergmaterials.com';
+  } else if (parts.length === 2) {
+    userField.type = 'email';
+    userField.placeholder = 'full@address.com';
+    userField.value = emailValue;
+    domainField.value = 'other';
+  } else {
+    userField.type = 'text';
+    userField.placeholder = 'username';
+    userField.value = emailValue;
+    domainField.value = '@heidelbergmaterials.com';
+  }
+  syncLoginEmail();
 }
 
 function toggleForgot() {
@@ -744,6 +901,7 @@ async function submitResetRequest() {
 function showLoginScreen() {
   const screen = document.getElementById('loginScreen');
   screen.style.display = 'flex';
+  refreshBiometricLoginButton();
   setTimeout(function() { document.getElementById('loginEmailUser').focus(); }, 100);
 }
 
@@ -765,7 +923,117 @@ async function doLogin() {
     localStorage.setItem('kbl_refresh', data.session.refresh_token);
   }
   document.getElementById('loginScreen').style.display = 'none';
-  showAppSelector(data.user);
+  const opened = await showAppSelector(data.user);
+  if (opened) maybePromptBiometricSetup(data.user);
+}
+
+function maybePromptBiometricSetup(user) {
+  if (!canUseBiometricUnlock()) return;
+  if (getBiometricEnrollment() && getBiometricEnrollment().userId === user.id) return;
+  const overlay = document.getElementById('bioSetupOverlay');
+  if (overlay.style.display === 'flex') return;
+  setTimeout(function() {
+    if (document.getElementById('mainWrapper').style.display === 'block') openBioSetupModal();
+  }, 600);
+}
+
+async function enableBiometricLogin() {
+  const btn = document.getElementById('bioSetupBtn');
+  const userCheck = await sb.auth.getSession();
+  const session = userCheck && userCheck.data && userCheck.data.session;
+  if (!canUseBiometricUnlock()) {
+    showBioSetupMessage('err', 'This browser or device does not support biometric unlock.');
+    return;
+  }
+  if (!session || !session.user) {
+    showBioSetupMessage('err', 'Please sign in again before enabling biometric unlock.');
+    return;
+  }
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+  try {
+    const challenge = crypto.getRandomValues(new Uint8Array(32));
+    const userId = new TextEncoder().encode(session.user.id);
+    const credential = await navigator.credentials.create({
+      publicKey: {
+        challenge,
+        rp: { name: 'Padeswood Works' },
+        user: {
+          id: userId,
+          name: session.user.email || session.user.id,
+          displayName: (session.user.user_metadata && session.user.user_metadata.full_name) || session.user.email || 'Padeswood user'
+        },
+        pubKeyCredParams: [
+          { type: 'public-key', alg: -7 },
+          { type: 'public-key', alg: -257 }
+        ],
+        timeout: 60000,
+        attestation: 'none',
+        authenticatorSelection: {
+          userVerification: 'preferred',
+          residentKey: 'preferred'
+        }
+      }
+    });
+    if (!credential) throw new Error('Biometric setup was cancelled.');
+    saveBiometricEnrollment({
+      userId: session.user.id,
+      email: session.user.email || '',
+      fullName: (session.user.user_metadata && session.user.user_metadata.full_name) || '',
+      credentialId: bufferToBase64Url(credential.rawId || new Uint8Array()),
+      createdAt: new Date().toISOString()
+    });
+    showBioSetupMessage('ok', 'Biometric unlock enabled for this device.');
+    setTimeout(function() { closeBioSetupModal(); }, 1400);
+  } catch (e) {
+    showBioSetupMessage('err', e.message || 'Biometric setup failed.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Enable';
+  }
+}
+
+async function doBiometricLogin() {
+  const btn = document.getElementById('bioLoginBtn');
+  const err = document.getElementById('loginErr');
+  const enrollment = getBiometricEnrollment();
+  err.style.display = 'none';
+  if (!enrollment) return;
+  if (!canUseBiometricUnlock()) {
+    err.textContent = 'This browser or device does not support biometric unlock.';
+    err.style.display = 'block';
+    return;
+  }
+  btn.disabled = true;
+  btn.textContent = 'Checking…';
+  try {
+    const challenge = crypto.getRandomValues(new Uint8Array(32));
+    await navigator.credentials.get({
+      publicKey: {
+        challenge,
+        allowCredentials: [{
+          type: 'public-key',
+          id: base64UrlToBuffer(enrollment.credentialId)
+        }],
+        timeout: 60000,
+        userVerification: 'preferred'
+      }
+    });
+    const sessionData = await sb.auth.getSession();
+    const session = sessionData && sessionData.data && sessionData.data.session;
+    if (!session || !session.user) throw new Error('Please sign in with your password first.');
+    if (enrollment.userId && enrollment.userId !== session.user.id) {
+      throw new Error('This biometric profile belongs to a different account.');
+    }
+    document.getElementById('loginScreen').style.display = 'none';
+    await showAppSelector(session.user);
+  } catch (e) {
+    err.textContent = e.message || 'Biometric login failed.';
+    err.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Use Biometric Login';
+  }
 }
 
 /* ── STEP 3: APP SELECTOR ────────────────────────────────────────── */
@@ -803,7 +1071,7 @@ async function showAppSelector(user) {
         err.style.borderColor = 'var(--ambb)';
       }
       err.style.display = 'block';
-      return;
+      return false;
     }
     // Show full name, fall back to email prefix
     const displayName = (data && data.full_name) ? data.full_name : (user.email ? user.email.split('@')[0] : '—');
@@ -825,21 +1093,24 @@ async function showAppSelector(user) {
         }
         if (ku.must_reset_password) {
           setTimeout(function() { openForcePwResetModal(ku.username); }, 600);
-          return; // handled
+          return false; // handled
         }
       }
       // Also check pw_profiles must_reset_password column
       if (data && data.must_reset_password) {
         setTimeout(function() { openForcePwResetModal(null); }, 600);
+        return false;
       }
     } catch(e2) {}
   } catch(e) {
     const fallback = user.email ? user.email.split('@')[0] : '—';
     document.getElementById('headerEmail').textContent = fallback;
     document.getElementById('aiReportBtn').style.display = 'flex';
+    return false;
   }
   // Check each app is reachable
   checkAppStatus();
+  return true;
 }
 
 async function doLogout() {
@@ -945,9 +1216,11 @@ async function activateAccessRequest(reqId, email, fullName, role, isoRole, kiln
     const userId = authData.user ? authData.user.id : null;
     if (!userId) throw new Error('Failed to create auth user');
     // Create pw_profiles
+    const req = _accessRequestsCache.find(function(x){ return x.id === reqId; }) || null;
+    const trackerAllowed = req ? req.shift_tracker_access !== false : true;
     await sb.from('pw_profiles').upsert({
       id: userId, email, full_name: fullName,
-      role: role || 'viewer', isolation_role: isoRole || 'none', approved: true
+      role: role || 'viewer', isolation_role: isoRole || 'none', shift_tracker_access: trackerAllowed, approved: true
     });
     // Create kiln_users if kiln role set
     if (kilnRole && kilnRole !== 'none') {
@@ -1420,6 +1693,7 @@ function renderUserCard(m, DS, LS, RS, rc) {
   const initials = displayName.split(' ').map(function(w){return w[0]||'';}).join('').slice(0,2).toUpperCase()||'?';
   const docsRole = p?(p.role||'viewer'):null;
   const isoRole  = p?(p.isolation_role||'none'):null;
+  const trackerAccess = p ? (p.shift_tracker_access !== false) : null;
   const kilnRole = !ku?null:ku.is_admin?'admin':ku.is_shift_manager?'shift_manager':ku.is_cement_analyst?'cement_analyst':ku.is_day_staff?'day_staff':ku.is_burner?'burner':'read_only';
   const col = docsRole?(rc[docsRole]||'var(--tx3)'):'var(--tx3)';
   let h = '<div style="background:var(--sf2);border:1px solid var(--bd);border-radius:var(--r);padding:14px 16px;margin-bottom:6px">';
@@ -1433,7 +1707,7 @@ function renderUserCard(m, DS, LS, RS, rc) {
     +'</div>';
   h += '<div style="'+RS+'"><span style="'+LS+'">Docs</span>';
   if(p){
-    if(isProtectedKiln){h+='<div style="height:30px;padding:0 8px;font-size:11px;font-family:var(--ff-mono);background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--ac3);display:flex;align-items:center;flex:1">Admin (protected)</div>';}
+    if(docsRole==='admin' || isProtectedKiln){h+='<div style="height:30px;padding:0 8px;font-size:11px;font-family:var(--ff-mono);background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--ac3);display:flex;align-items:center;flex:1">Admin (protected)</div>';}
     else{h+='<select onchange="updateDocsRole(\''+esc(p.id)+'\',this.value)"'+(isSelf?' disabled':'')+' style="'+DS+'"><option value="viewer"'+(docsRole==='viewer'?' selected':'')+'>Viewer</option><option value="editor"'+(docsRole==='editor'?' selected':'')+'>Editor</option><option value="reviewer"'+(docsRole==='reviewer'?' selected':'')+'>Reviewer</option><option value="admin"'+(docsRole==='admin'?' selected':'')+'>Admin</option></select>';}
   } else{h+='<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">No platform account</span>';}
   h+='</div><div style="'+RS+'"><span style="'+LS+'">Isolation</span>';
@@ -1449,6 +1723,15 @@ function renderUserCard(m, DS, LS, RS, rc) {
       h+='<select onchange="updateKilnRole(\''+esc(ku.username)+'\',this.value)" style="'+DS+'"><option value="burner"'+(kilnRole==='burner'?' selected':'')+'>Burner</option><option value="shift_manager"'+(kilnRole==='shift_manager'?' selected':'')+'>Shift Manager</option><option value="cement_analyst"'+(kilnRole==='cement_analyst'?' selected':'')+'>Cement Analyst</option><option value="day_staff"'+(kilnRole==='day_staff'?' selected':'')+'>Day Staff</option><option value="read_only"'+(kilnRole==='read_only'?' selected':'')+'>Read Only</option><option value="admin"'+(kilnRole==='admin'?' selected':'')+'>Admin</option></select>';
     }
   } else{h+='<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">No shift log account</span>';}
+  h+='</div><div style="'+RS+'"><span style="'+LS+'">Shift Tracker</span>';
+  if(p){
+    h+='<select onchange="updateShiftTrackerAccess(\''+esc(p.id)+'\',this.value)"'+(isSelf?' disabled':'')+' style="'+DS+'">'
+      +'<option value="true"'+(trackerAccess!==false?' selected':'')+'>Allow Access</option>'
+      +'<option value="false"'+(trackerAccess===false?' selected':'')+'>No Access</option>'
+      +'</select>';
+  } else {
+    h+='<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">No platform account</span>';
+  }
   h+='</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid var(--bd)">';
   if(p&&p.approved===false){h+='<button onclick="approveUser(\''+esc(p.id)+'\')" style="height:26px;padding:0 12px;font-size:11px;font-family:var(--ff-head);font-weight:600;background:var(--grnd);border:1px solid var(--grnb);border-radius:var(--rsm);color:var(--grn);cursor:pointer">\u2713 Approve</button>';}
   if(!isSelf&&!isProtectedKiln){
@@ -1485,6 +1768,34 @@ async function updateKilnRole(username, role) {
   const u = _kilnUsersCache.find(x=>x.username===username);
   if (u) Object.assign(u, flags);
   renderAllUsers(); showPlatformToast('Shift Log role updated ✓');
+}
+
+async function updateDocsRole(profileId, role) {
+  const {error} = await sb.from('pw_profiles').update({role: role || 'viewer'}).eq('id', profileId);
+  if (error) { showPlatformToast('Failed: ' + error.message); return; }
+  const u = _usersCache.find(x => x.id === profileId);
+  if (u) u.role = role || 'viewer';
+  renderAllUsers();
+  showPlatformToast('Documents role updated ✓');
+}
+
+async function updateIsoRole(profileId, role) {
+  const {error} = await sb.from('pw_profiles').update({isolation_role: role || 'none'}).eq('id', profileId);
+  if (error) { showPlatformToast('Failed: ' + error.message); return; }
+  const u = _usersCache.find(x => x.id === profileId);
+  if (u) u.isolation_role = role || 'none';
+  renderAllUsers();
+  showPlatformToast('Isolation role updated ✓');
+}
+
+async function updateShiftTrackerAccess(profileId, value) {
+  const allowed = String(value) !== 'false';
+  const {error} = await sb.from('pw_profiles').update({shift_tracker_access: allowed}).eq('id', profileId);
+  if (error) { showPlatformToast('Failed: ' + error.message); return; }
+  const u = _usersCache.find(x => x.id === profileId);
+  if (u) u.shift_tracker_access = allowed;
+  renderAllUsers();
+  showPlatformToast('Shift Tracker access updated ✓');
 }
 
 async function removeUser(userId, email) {
@@ -1544,6 +1855,7 @@ async function inviteUser() {
   const role  = document.getElementById('inviteRole').value;
   const isoRoleVal = document.getElementById('inviteIsoRole').value;
   const kilnRoleVal = document.getElementById('inviteKilnRole').value;
+  const trackerAccessVal = document.getElementById('inviteTrackerAccess').value === 'true';
   const btn = document.getElementById('inviteBtn');
   showInviteMsg('','');
   if (!email) { showInviteMsg('err','Please enter an email address.'); return; }
@@ -1556,7 +1868,8 @@ async function inviteUser() {
     // Insert into pw_access_requests — admin will set password and activate
     const {error} = await sb.from('pw_access_requests').insert({
       email, full_name: name, role, isolation_role: isoRoleVal,
-      kiln_role: kilnRoleVal, status: 'pending', requested_at: new Date().toISOString()
+      kiln_role: kilnRoleVal, shift_tracker_access: trackerAccessVal,
+      status: 'pending', requested_at: new Date().toISOString()
     });
     if (error) throw new Error(error.message);
     document.getElementById('inviteEmail').value = '';
@@ -1564,7 +1877,9 @@ async function inviteUser() {
     document.getElementById('inviteKilnRole').value='none';
     document.getElementById('inviteIsoRole').value='none';
     document.getElementById('inviteRole').value='viewer';
+    document.getElementById('inviteTrackerAccess').value='true';
     showInviteMsg('ok', name + ' added to pending queue — set their password in the Users list below.');
+    showPlatformToast(name + ' added to queue ✓');
     await loadAllUsers(); loadPendingBadge();
   } catch(e) { showInviteMsg('err', e.message || 'Failed to add user.'); }
   btn.disabled = false; btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add User';
