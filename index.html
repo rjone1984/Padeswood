@@ -233,11 +233,11 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       </div>
       <button class="login-btn" id="loginBtn" onclick="doLogin()">Sign In</button>
       <div class="login-err" id="loginErr"></div>
-      <button class="login-btn" id="bioLoginBtn" onclick="doBiometricLogin()" style="display:none;background:var(--sf3);border:1px solid var(--bd2);color:var(--tx);box-shadow:none;margin-top:10px">
-        Use Biometric Login
+      <button class="login-btn" id="bioLoginBtn" onclick="handleBiometricButton()" style="display:block;background:var(--sf3);border:1px solid var(--bd2);color:var(--tx);box-shadow:none;margin-top:10px">
+        Enable Biometric Unlock
       </button>
-      <div id="bioLoginHint" style="display:none;margin-top:8px;font-size:11px;font-family:var(--ff-mono);color:var(--tx3);line-height:1.5">
-        Biometric unlock is set up on this device.
+      <div id="bioLoginHint" style="display:block;margin-top:8px;font-size:11px;font-family:var(--ff-mono);color:var(--tx3);line-height:1.5">
+        Checking this device for Touch ID / Face ID support...
       </div>
       <div id="forgotWrap" style="margin-top:12px">
         <div style="text-align:center;display:flex;justify-content:center;gap:16px">
@@ -311,6 +311,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       <button class="icon-btn" id="adminPanelBtn" onclick="openAdminPanel()" title="User Management" style="display:none;position:relative">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         <span id="pendingBadge" style="display:none;position:absolute;top:2px;right:2px;background:var(--amb);color:#000;font-size:9px;font-weight:700;border-radius:10px;padding:1px 5px;min-width:16px;text-align:center;line-height:16px"></span>
+      </button>
+      <button class="icon-btn" id="headerBioBtn" onclick="handleBiometricButton()" title="Biometric Unlock" style="display:none">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M12 22c4-2 7-6 7-11V6l-7-4-7 4v5c0 5 3 9 7 11z"/><path d="M9 12a3 3 0 1 1 6 0"/></svg>
       </button>
       <button class="icon-btn" id="resetReqBtn" onclick="openResetReqModal()" title="Password Reset Requests" style="display:none;position:relative">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
@@ -844,20 +847,47 @@ function clearBiometricEnrollment() {
 
 async function refreshBiometricLoginButton() {
   const btn = document.getElementById('bioLoginBtn');
+  const headerBtn = document.getElementById('headerBioBtn');
   const hint = document.getElementById('bioLoginHint');
   const enrolled = !!getBiometricEnrollment();
   const supported = await canUseBiometricUnlockAsync();
-  const visible = supported;
   if (btn) {
-    btn.style.display = visible ? 'block' : 'none';
+    btn.style.display = 'block';
+    btn.disabled = !supported;
     btn.textContent = enrolled ? 'Use Biometric Login' : 'Enable Biometric Unlock';
   }
-  if (hint) {
-    hint.style.display = visible ? 'block' : 'none';
-    hint.textContent = enrolled
-      ? 'Biometric unlock is set up on this device.'
-      : 'Touch ID / Face ID is available on this device. Sign in once to set it up.';
+  if (headerBtn) {
+    headerBtn.style.display = 'flex';
+    headerBtn.disabled = !supported && !enrolled;
+    headerBtn.title = enrolled ? 'Use Biometric Login' : 'Set Up Biometric Unlock';
   }
+  if (hint) {
+    hint.style.display = 'block';
+    hint.textContent = supported
+      ? (enrolled
+          ? 'Biometric unlock is set up on this device.'
+          : 'Touch ID / Face ID is available on this device. Sign in once to set it up.')
+      : 'Biometric unlock is not available in this browser/device or the site is not in a secure context.';
+  }
+}
+
+async function handleBiometricButton() {
+  const enrollment = getBiometricEnrollment();
+  const sessionData = await sb.auth.getSession();
+  const session = sessionData && sessionData.data && sessionData.data.session;
+  if (enrollment && enrollment.userId) {
+    await doBiometricLogin();
+    return;
+  }
+  if (!session || !session.user) {
+    const err = document.getElementById('loginErr');
+    if (err) {
+      err.textContent = 'Sign in with your password first, then you can enable biometric unlock on this device.';
+      err.style.display = 'block';
+    }
+    return;
+  }
+  openBioSetupModal();
 }
 
 function openBioSetupModal() {
@@ -920,7 +950,9 @@ function checkExistingSession() {
             refreshBiometricLoginButton();
             return;
           }
-          showAppSelector(session.user);
+          showAppSelector(session.user).then(function(opened) {
+            if (opened) maybePromptBiometricSetup(session.user);
+          });
         } else {
           Object.keys(localStorage).forEach(function(k) {
             if (k.startsWith('sb-') || k.startsWith('supabase')) localStorage.removeItem(k);
@@ -1050,15 +1082,12 @@ async function doLogin() {
 }
 
 function maybePromptBiometricSetup(user) {
-  canUseBiometricUnlockAsync().then(function(supported) {
-    if (!supported) return;
-    if (getBiometricEnrollment() && getBiometricEnrollment().userId === user.id) return;
-    const overlay = document.getElementById('bioSetupOverlay');
-    if (overlay.style.display === 'flex') return;
+  if (getBiometricEnrollment() && getBiometricEnrollment().userId === user.id) return;
+  const overlay = document.getElementById('bioSetupOverlay');
+  if (overlay.style.display === 'flex') return;
+  requestAnimationFrame(function() {
     requestAnimationFrame(function() {
-      requestAnimationFrame(function() {
-        openBioSetupModal();
-      });
+      openBioSetupModal();
     });
   });
 }
@@ -1167,6 +1196,7 @@ async function showAppSelector(user) {
   document.getElementById('headerUser').style.display = 'flex';
   document.getElementById('logoutBtn').style.display = 'flex';
   document.getElementById('changePwBtn').style.display = 'flex';
+  document.getElementById('headerBioBtn').style.display = 'flex';
   loadPlatformGroqKey();
   try {
     const {data} = await sb.from('pw_profiles').select('*').eq('id', user.id).single();
@@ -1181,6 +1211,7 @@ async function showAppSelector(user) {
       document.getElementById('headerUser').style.display = 'none';
       document.getElementById('logoutBtn').style.display = 'none';
       document.getElementById('changePwBtn').style.display = 'none';
+      document.getElementById('headerBioBtn').style.display = 'none';
       document.getElementById('loginScreen').style.display = 'flex';
       const err = document.getElementById('loginErr');
       if (data.disabled === true) {
