@@ -10,7 +10,6 @@
 <title>Padeswood Works — Isolation Matrix</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Figtree:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 /* =====================================================================
    PADESWOOD WORKS — ISOLATION MATRIX — Design System v4
@@ -516,15 +515,6 @@ tbody tr:hover{background:var(--sf2);}
   min-width:108px;
   justify-content:center;
 }
-.matrix-reader-print{display:none;}
-@media print{
-  body *{visibility:hidden !important;}
-  #matrixReaderPrint, #matrixReaderPrint *{visibility:visible !important;}
-  #matrixReaderPrint{display:block !important;position:fixed;left:0;top:0;right:0;bottom:0;overflow:visible;background:#fff;color:#000;padding:20px;font-family:Arial, sans-serif;}
-  #matrixReaderPrint table{width:100%;border-collapse:collapse;font-size:11px;}
-  #matrixReaderPrint th,#matrixReaderPrint td{border:1px solid #999;padding:6px 8px;vertical-align:top;}
-  #matrixReaderPrint th{background:#eee;}
-}
 .footer-left{font-family:var(--ff-mono);font-size:10px;color:var(--tx3);letter-spacing:.5px;}
 .footer-lic{display:flex;align-items:center;gap:6px;font-family:var(--ff-mono);font-size:10px;color:var(--tx3);}
 .lic-dot{width:7px;height:7px;border-radius:50%;background:var(--grn);box-shadow:0 0 5px var(--grn);}
@@ -558,11 +548,12 @@ tbody tr:hover{background:var(--sf2);}
 
 /* ── MOBILE ──────────────────────────────────────────────────────── */
 @media(max-width:640px){
-  #mainHeader{padding:0 12px;height:auto;min-height:52px;}
+  #mainHeader{padding:8px 12px;height:auto;min-height:52px;flex-wrap:wrap;align-items:flex-start;gap:6px;overflow:visible;}
+  .header-titles{min-width:0;flex:1 1 auto;}
   .header-sub{display:none;}
-  .header-right{gap:5px;flex-wrap:nowrap;overflow-x:auto;flex-shrink:0;scrollbar-width:none;}
+  .header-right{flex:1 1 100%;width:100%;gap:5px;flex-wrap:nowrap;overflow-x:auto;flex-shrink:0;scrollbar-width:none;justify-content:flex-start;padding-bottom:2px;}
   .header-right::-webkit-scrollbar{display:none;}
-  .header-user{display:none;}
+  .header-user{display:inline-flex;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .icon-btn{width:30px;height:30px;}
   #mainContent{padding-left:12px;padding-right:12px;}
   .matrix-grid{grid-template-columns:1fr;}
@@ -706,10 +697,6 @@ tbody tr:hover{background:var(--sf2);}
         </select>
         <button class="icon-btn" id="matrixSortDir" onclick="toggleMatrixSortDir()" title="Toggle sort direction" style="width:36px;height:36px">
           <svg id="matrixSortDirIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="14" height="14"><path d="M7 14l5-5 5 5"/></svg>
-        </button>
-        <button class="btn btn-ghost" id="btnReadWorkbook" onclick="openMatrixReader()" style="display:none">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 3H20v18H6.5A2.5 2.5 0 0 1 4 18.5v-13A2.5 2.5 0 0 1 6.5 3z"/></svg>
-          Read Workbook
         </button>
         <button class="btn btn-iso" id="btnAddMatrix" onclick="openMatrixModal()" style="display:none">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -1012,48 +999,6 @@ tbody tr:hover{background:var(--sf2);}
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeEquipModal()">Cancel</button>
       <button class="btn btn-primary" onclick="saveEquip()">Save Equipment</button>
-    </div>
-  </div>
-</div>
-
-<!-- ── MATRIX READER MODAL ─────────────────────────────────────── -->
-<div class="modal-overlay" id="matrixReaderModal">
-  <div class="modal" style="max-width:1040px">
-    <div class="modal-header">
-      <div class="modal-title" id="matrixReaderTitle">Read Isolation Workbook</div>
-      <button class="modal-close" onclick="closeMatrixReader()">×</button>
-    </div>
-    <div class="modal-body">
-      <div class="import-drop" id="matrixReaderDrop" style="border:2px dashed var(--bd2);border-radius:var(--r);padding:24px 18px;text-align:center;background:var(--sf2);transition:border-color .18s,background .18s">
-        <label style="display:block;cursor:pointer">
-          <input type="file" id="matrixReaderFile" accept=".xls,.xlsx" multiple webkitdirectory onchange="handleMatrixWorkbookFiles(this.files)" style="display:none">
-          <div style="font-family:var(--ff-head);font-weight:700;font-size:14px;color:var(--tx)">Drop workbook files or a folder here</div>
-          <div style="font-size:12px;color:var(--tx2);margin-top:6px">This only reads the sheets and builds a printable summary. Nothing is saved.</div>
-          <div id="matrixReaderFileName" style="font-family:var(--ff-mono);font-size:11px;color:var(--tx2);margin-top:8px;word-break:break-all">No files selected</div>
-        </label>
-      </div>
-      <div id="matrixReaderStatus" class="import-state" style="display:none"></div>
-      <div class="matrix-reader-actions" style="margin-top:14px">
-        <label class="field-group">
-          <div class="field-label">Duplicate Handling</div>
-          <select class="field-select" id="matrixDuplicateMode" onchange="setMatrixDuplicateMode(this.value)">
-            <option value="detect">Detect duplicates</option>
-            <option value="skip">Skip duplicates</option>
-            <option value="overwrite">Overwrite duplicates</option>
-          </select>
-        </label>
-      </div>
-      <div class="matrix-reader-actions-note" id="matrixDuplicateNote">Detect duplicates will flag any workbook sheets that already match an existing isolation matrix.</div>
-      <div id="matrixReaderSummary" class="matrix-reader-summary"></div>
-      <div id="matrixReaderList" class="matrix-reader-list"></div>
-      <div id="matrixReaderPrint" class="matrix-reader-print"></div>
-    </div>
-    <div class="modal-footer">
-      <div class="matrix-reader-tools">
-        <button class="btn btn-iso" onclick="importSelectedSheets()">Import Selected</button>
-        <button class="btn btn-soft" onclick="window.print()">Print</button>
-        <button class="btn btn-ghost" onclick="closeMatrixReader()">Close</button>
-      </div>
     </div>
   </div>
 </div>
@@ -1704,6 +1649,99 @@ function closeMatrixReader(){
 }
 function readerNorm(s){ return String(s||'').toLowerCase().replace(/\s+/g,' ').trim(); }
 function readerClean(s){ return String(s||'').replace(/\s+/g,' ').trim(); }
+function readerLooksLikeEquipmentCode(text){
+  const t = readerClean(text);
+  if(!t) return false;
+  if(/\s{2,}/.test(t)) return false;
+  if(t.length > 24) return false;
+  if(/\b(matrix|isolation|equipment|comments?|notes?|reviewed|worked on|reason|completion)\b/i.test(t)) return false;
+  const compact = t.replace(/[^A-Z0-9]/gi, '');
+  if(!compact) return false;
+  if(/^[0-9]+$/.test(compact)) return true;
+  if(/^[A-Z]{1,6}[0-9]{1,6}[A-Z0-9\-\/]*$/i.test(compact)) return true;
+  if(/^[A-Z0-9]{2,12}[-\/][A-Z0-9\-\/]{1,12}$/i.test(t)) return true;
+  return false;
+}
+function readerLooksLikeEquipmentName(text){
+  const t = readerClean(text);
+  if(!t) return false;
+  if(/\s/.test(t)) return true;
+  return /[a-z]/i.test(t) && t.length > 8;
+}
+function readerPickHeaderPair(current, left, fallbackCode){
+  const cur = readerClean(current);
+  const lef = readerClean(left);
+  let code = '';
+  let name = '';
+  if(readerLooksLikeEquipmentCode(cur) && readerLooksLikeEquipmentName(lef)){
+    code = cur;
+    name = lef;
+  }else if(readerLooksLikeEquipmentCode(lef) && readerLooksLikeEquipmentName(cur)){
+    code = lef;
+    name = cur;
+  }else if(readerLooksLikeEquipmentCode(cur) && !readerLooksLikeEquipmentName(cur)){
+    code = cur;
+    name = lef || fallbackCode || cur;
+  }else{
+    code = readerLooksLikeEquipmentCode(lef) ? lef : (readerLooksLikeEquipmentCode(cur) ? cur : fallbackCode || '');
+    name = readerLooksLikeEquipmentName(cur) ? cur : (readerLooksLikeEquipmentName(lef) ? lef : cur || lef || fallbackCode || '');
+  }
+  return { code: readerClean(code), name: readerClean(name) };
+}
+function readerBuildEquipmentHeader(nameCell, codeCell, altNameCell, altCodeCell, fallbackLabel){
+  const namePrimary = readerClean(nameCell);
+  const codePrimary = readerClean(codeCell);
+  const nameAlt = readerClean(altNameCell);
+  const codeAlt = readerClean(altCodeCell);
+  let code = '';
+  let name = '';
+  if(readerLooksLikeEquipmentName(namePrimary)) name = namePrimary;
+  else if(readerLooksLikeEquipmentName(nameAlt)) name = nameAlt;
+  else if(readerLooksLikeEquipmentName(codePrimary)) name = codePrimary;
+  else if(readerLooksLikeEquipmentName(codeAlt)) name = codeAlt;
+
+  if(readerLooksLikeEquipmentCode(codePrimary)) code = codePrimary;
+  else if(readerLooksLikeEquipmentCode(codeAlt)) code = codeAlt;
+  else if(readerLooksLikeEquipmentCode(namePrimary)) code = namePrimary;
+  else if(readerLooksLikeEquipmentCode(nameAlt)) code = nameAlt;
+
+  if(!name && code) name = code;
+  if(!code && name && readerLooksLikeEquipmentCode(name)) code = name;
+  if(!name) name = fallbackLabel || code || '';
+  return { code: readerClean(code), name: readerClean(name) };
+}
+function readerIsIgnoredWorkText(text){
+  const t = readerNorm(text);
+  return !t || /^(equipment to be worked on|equipment to isolate|equipment to be isolated|plant no|reviewed|comments?|notes?|reason for isolation|completion)$/i.test(text)
+    || /key safe zoned isolation/i.test(t)
+    || /any work to be carried out/i.test(t)
+    || /which is not covered/i.test(t)
+    || /separate compartment/i.test(t);
+}
+function readerExtractWorkItemInfo(row, fallbackName){
+  const cells = [];
+  if(Array.isArray(row)){
+    for(let i=0; i<6; i++) cells.push(readerClean(row[i]));
+  }else if(row && typeof row === 'object'){
+    for(let i=0; i<6; i++) cells.push(readerClean(row[i] || row[String(i)]));
+  }
+  const useful = cells.filter(function(cell){ return cell && !readerIsIgnoredWorkText(cell); });
+  const preferredCode = useful.find(function(cell){ return readerLooksLikeEquipmentCode(cell) && !/^\d+$/.test(cell); }) || '';
+  const numericCode = useful.find(function(cell){ return readerLooksLikeEquipmentCode(cell); }) || '';
+  const code = preferredCode || numericCode || '';
+  const nameParts = useful.filter(function(cell){
+    if(cell === code) return false;
+    if(/^\d+$/.test(cell)) return false;
+    return readerLooksLikeEquipmentName(cell) || !readerLooksLikeEquipmentCode(cell);
+  });
+  let name = readerClean(nameParts.join(' '));
+  if(!name){
+    const fallback = readerClean(fallbackName);
+    if(fallback && !readerIsIgnoredWorkText(fallback) && fallback !== code) name = fallback;
+  }
+  if(!name) name = code || '';
+  return { code: readerClean(code), name: readerClean(name) };
+}
 function readerGrid(ws){
   return XLSX.utils.sheet_to_json(ws,{header:1,defval:'',raw:false}).map(function(row){
     return (row || []).map(function(c){ return readerClean(c); });
@@ -1865,38 +1903,45 @@ function readerParseXlsxWorkbook(wb, filename){
     if(!sheetXml) return;
     const rows = readerXlsxSheetRows(sheetXml, sharedStrings);
     if(!rows.length) return;
-    const title = readerClean(rows[3]?.[2]?.text || rows[2]?.[2]?.text || name) || name;
-    const reviewedAt = readerNormalizeDate(rows[2]?.[2]?.text || rows[1]?.[2]?.text || rows[1]?.[1]?.text || '');
-    const reviewedByMatch = readerClean(rows[2]?.[1]?.text || rows[1]?.[1]?.text || '').match(/Reviewed\s+(.+)/i);
+    const title = readerClean(readerResolveXmlCellText(rows, 3, 2) || readerResolveXmlCellText(rows, 2, 2) || name) || name;
+    const reviewedAt = readerNormalizeDate(readerResolveXmlCellText(rows, 2, 2) || readerResolveXmlCellText(rows, 1, 2) || readerResolveXmlCellText(rows, 1, 1) || '');
+    const reviewedByMatch = readerClean(readerResolveXmlCellText(rows, 2, 1) || readerResolveXmlCellText(rows, 1, 1) || '').match(/Reviewed\s+(.+)/i);
     const reviewedBy = reviewedByMatch ? readerClean(reviewedByMatch[1]) : null;
     const equipment = [];
     for(let c=3; c<=48; c++){
-      const header = rows[4]?.[c];
-      if(!header || !readerClean(header.text)) continue;
-      if(header.text.toLowerCase() === 'plant no') continue;
-      let nameText = header.text;
-      const m = nameText.match(/^=?\s*(?:'[^']+'\!)?([A-Z]{1,3})(\d+)\s*$/i);
-      if(m){
-        const rr = Number(m[2]);
-        const refText = rows[rr]?.[2]?.text || '';
-        if(refText) nameText = refText;
-      }
-      equipment.push({col:c, code:'', name:nameText});
+      const pair = readerBuildEquipmentHeader(
+        readerResolveXmlCellText(rows, 4, c),
+        readerResolveXmlCellText(rows, 5, c),
+        readerResolveXmlCellText(rows, 4, c - 1),
+        readerResolveXmlCellText(rows, 5, c - 1),
+        ''
+      );
+      if(!pair.code && !pair.name) continue;
+      if(/^(plant no|equipment to isolate|equipment to be worked on|equipment to be isolated)$/i.test(pair.name) || /^(plant no|equipment to isolate|equipment to be worked on|equipment to be isolated)$/i.test(pair.code)) continue;
+      equipment.push({col:c, code:pair.code || '', name:pair.name || pair.code || ''});
     }
     const workItems = [];
     for(let r=5; r<rows.length; r++){
       const row = rows[r] || {};
-      const workName = readerClean(row[2]?.text || '');
-      if(!workName) continue;
+      const workName = readerClean(readerResolveXmlCellText(rows, r, 2) || '');
+      const workInfo = readerExtractWorkItemInfo({
+        0: readerResolveXmlCellText(rows, r, 0),
+        1: readerResolveXmlCellText(rows, r, 1),
+        2: readerResolveXmlCellText(rows, r, 2),
+        3: readerResolveXmlCellText(rows, r, 3),
+        4: readerResolveXmlCellText(rows, r, 4),
+        5: readerResolveXmlCellText(rows, r, 5)
+      }, workName);
+      if(!workInfo.code && !workInfo.name) continue;
       if(/reason for isolation|completion|reviewed|comments/i.test(workName)) continue;
       const required = [];
       equipment.forEach(function(eq){
         const cell = row[eq.col];
-        if(cell && redStyleIds.has(cell.style)) required.push({code:'', name:eq.name});
+        if(cell && redStyleIds.has(cell.style)) required.push({code:eq.code || '', name:eq.name});
       });
       workItems.push({
-        work_item_ref: workName,
-        work_item_name: workName,
+        work_item_ref: workInfo.code || workInfo.name,
+        work_item_name: workInfo.name || workInfo.code,
         required: required,
         notes: ''
       });
@@ -1938,6 +1983,17 @@ function readerResolveCellText(ws, grid, r, c){
     return readerClean(val);
   }
   return raw;
+}
+function readerResolveXmlCellText(rows, r, c, depth){
+  const level = depth || 0;
+  if(level > 6) return '';
+  const raw = readerClean(rows?.[r]?.[c]?.text || '');
+  if(!raw) return '';
+  const m = raw.match(/^\s*=?\s*(?:'[^']+'\!)?([A-Z]{1,3})(\d+)\s*$/i);
+  if(!m) return raw;
+  const rr = parseInt(m[2], 10);
+  const cc = XLSX.utils.decode_col(m[1].toUpperCase());
+  return readerResolveXmlCellText(rows, rr, cc, level + 1) || raw;
 }
 function readerFindFormulaHeaderRow(ws, grid){
   const b = readerBounds(ws);
@@ -2132,9 +2188,15 @@ function readerParseWorkbook(wb, filename){
       const workCol = Math.min(readerFindDominantTextCol(grid, dataStart, Math.min(grid.length, dataStart + 30), Math.min(lastCol, 5)), lastCol);
       const equipment = [];
       for(let c=workCol + 1; c<=lastCol; c++){
-        const name = readerResolveCellText(ws, grid, formulaHeaderRow, c);
-        if(!name) continue;
-        equipment.push({col:c, code:'', name:name});
+        const pair = readerBuildEquipmentHeader(
+          readerResolveCellText(ws, grid, formulaHeaderRow, c),
+          readerResolveCellText(ws, grid, formulaHeaderRow + 1, c),
+          readerResolveCellText(ws, grid, formulaHeaderRow, c - 1),
+          readerResolveCellText(ws, grid, formulaHeaderRow + 1, c - 1),
+          ''
+        );
+        if(!pair.code && !pair.name) continue;
+        equipment.push({col:c, code: pair.code || '', name: pair.name || ('Column ' + XLSX.utils.encode_col(c))});
       }
       const workItems = [];
       const notesColStart = equipment.length ? equipment[equipment.length - 1].col + 1 : lastCol + 1;
@@ -2143,18 +2205,20 @@ function readerParseWorkbook(wb, filename){
         const rowText = readerRowText(row);
         if(!rowText) continue;
         if(/reason for isolation|completion|reviewed|comments/i.test(rowText)) continue;
-        const workName = readerClean(row[workCol] || row[workCol - 1] || row[workCol + 1] || '');
-        if(!workName) continue;
+        const workInfo = readerExtractWorkItemInfo(row, row[workCol] || '');
+        const workCode = workInfo.code;
+        const workName = workInfo.name;
+        if(!workCode && !workName) continue;
         const notes = row.slice(notesColStart).map(readerClean).filter(Boolean).join(' · ');
         const required = [];
         equipment.forEach(function(eq){
           if(readerCellIsRed(ws, r, eq.col)){
-            required.push({ code:'', name:eq.name || '' });
+            required.push({ code:eq.code || '', name:eq.name || '' });
           }
         });
         workItems.push({
-          work_item_ref: workName,
-          work_item_name: workName,
+          work_item_ref: workCode || workName,
+          work_item_name: workName || workCode,
           required: required,
           notes: notes,
           warnings: required.length ? [] : ['No red isolation boxes found on this row.']
@@ -2181,11 +2245,16 @@ function readerParseWorkbook(wb, filename){
     const lastCol = b.e.c;
     const equipment = [];
     for(let c=3; c<=lastCol; c++){
-      const name = readerClean((grid[namesRow] || [])[c]);
-      const code = readerClean((grid[codesRow] || [])[c]);
-      if(!name && !code) continue;
-      if(/equipment to isolate|equipment to be worked on|plant no/i.test(name || code)) continue;
-      equipment.push({col:c, code: code || '', name: name || code || ('Column ' + XLSX.utils.encode_col(c))});
+      const pair = readerBuildEquipmentHeader(
+        readerResolveCellText(ws, grid, namesRow, c),
+        readerResolveCellText(ws, grid, codesRow, c),
+        readerResolveCellText(ws, grid, namesRow, c - 1),
+        readerResolveCellText(ws, grid, codesRow, c - 1),
+        'Column ' + XLSX.utils.encode_col(c)
+      );
+      if(!pair.code && !pair.name) continue;
+      if(/equipment to isolate|equipment to be worked on|plant no/i.test(pair.name || pair.code)) continue;
+      equipment.push({col:c, code: pair.code || '', name: pair.name || ('Column ' + XLSX.utils.encode_col(c))});
     }
     const workItems = [];
     const equipmentEndCol = equipment.length ? equipment[equipment.length - 1].col : lastCol;
@@ -2194,8 +2263,9 @@ function readerParseWorkbook(wb, filename){
       const rowText = readerRowText(row);
       if(!rowText) continue;
       if(/reason for isolation|completion|reviewed|comments/i.test(rowText)) continue;
-      const workCode = readerClean(row[1] || row[0] || '');
-      const workName = readerClean(row[2] || row[1] || row[0] || '');
+      const workInfo = readerExtractWorkItemInfo(row, row[workHeaderRow] || '');
+      const workCode = workInfo.code;
+      const workName = workInfo.name;
       if(!workCode && !workName) continue;
       const notes = row.slice(equipmentEndCol + 1).map(readerClean).filter(Boolean).join(' · ');
       const required = [];

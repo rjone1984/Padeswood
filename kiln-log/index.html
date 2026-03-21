@@ -819,15 +819,25 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
     gap:4px;
     align-items:center;
     justify-content:flex-start;
+    width:100%;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    padding-bottom:2px;
+    touch-action:pan-x;
   }
   .topbar-right::-webkit-scrollbar { display:none }
-  /* Hide admin/nav buttons on mobile — use overflow menu instead */
-  #manageListsBtn,
-  #btn-weekly-overview, #btn-ai-reporting, #btn-whiteboard { display:none !important }
-  /* Hide print on mobile */
-  button[onclick="showPrintModal()"] { display:none !important }
-  /* Show overflow menu */
-  #mobileMenuWrap { display:block !important }
+  #weekDate {
+    width:90px;
+    min-width:90px;
+    max-width:90px;
+    flex:0 0 90px;
+    padding:2px 5px;
+    font-size:8.5px;
+    height:30px;
+    line-height:1;
+  }
+  #mobileMenuWrap { display:none !important }
   /* Always show essential action buttons on mobile */
   button[onclick="goToToday()"],
   button[onclick="saveAll()"],

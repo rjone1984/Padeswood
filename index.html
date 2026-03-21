@@ -265,8 +265,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
           <div>
             <label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:5px">Email Address</label>
             <div style="display:flex;gap:0;border:1px solid var(--bd2);border-radius:var(--rxs);overflow:hidden;background:var(--sf2)" id="regEmailWrap">
-              <input type="text" id="regEmailUser" placeholder="username" style="border:none;border-radius:0;flex:1;min-width:0;background:transparent;height:36px;padding:0 10px;color:var(--tx);font-family:var(--ff-body);font-size:12px;outline:none" oninput="syncRegEmail()">
-              <select id="regDomain" onchange="syncRegEmail();if(this.value==='other'){document.getElementById('regEmailUser').placeholder='full@address.com';document.getElementById('regEmailUser').type='email';}else{document.getElementById('regEmailUser').placeholder='username';document.getElementById('regEmailUser').type='text';}" style="height:36px;padding:0 8px 0 4px;background:var(--sf3);border:none;border-left:1px solid var(--bd2);color:var(--tx2);font-family:var(--ff-mono);font-size:10px;cursor:pointer;outline:none;flex-shrink:0;max-width:190px">
+              <input type="text" id="regEmailUser" placeholder="username or full email" style="border:none;border-radius:0;flex:1;min-width:0;background:transparent;height:36px;padding:0 10px;color:var(--tx);font-family:var(--ff-body);font-size:12px;outline:none" oninput="syncRegEmail()">
+              <select id="regDomain" onchange="syncRegEmail();if(this.value==='other'){document.getElementById('regEmailUser').placeholder='full@address.com';document.getElementById('regEmailUser').type='email';}else{document.getElementById('regEmailUser').placeholder='username or full email';document.getElementById('regEmailUser').type='text';}" style="height:36px;padding:0 8px 0 4px;background:var(--sf3);border:none;border-left:1px solid var(--bd2);color:var(--tx2);font-family:var(--ff-mono);font-size:10px;cursor:pointer;outline:none;flex-shrink:0;max-width:190px">
+                <option value="other">Full email</option>
                 <option value="@heidelbergmaterials.com">@heidelbergmaterials.com</option>
               </select>
             </div>
@@ -274,7 +275,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
           </div>
           <div>
             <label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:5px">Password</label>
-            <input type="password" id="regPass" placeholder="Min. 8 characters" style="width:100%;height:36px;padding:0 10px;background:var(--sf2);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--tx);font-family:var(--ff-body);font-size:12px;outline:none;box-sizing:border-box">
+            <input type="password" id="regPass" placeholder="Password" style="width:100%;height:36px;padding:0 10px;background:var(--sf2);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--tx);font-family:var(--ff-body);font-size:12px;outline:none;box-sizing:border-box">
           </div>
           <div>
             <label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:5px">Confirm Password</label>
@@ -617,7 +618,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     <div style="display:flex;flex-direction:column;gap:12px">
       <div>
         <label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">New Password</label>
-        <input type="password" id="forcePwNew" class="login-input" placeholder="Min 8 characters" autocomplete="new-password" onkeydown="if(event.key==='Enter')document.getElementById('forcePwConfirm').focus()">
+        <input type="password" id="forcePwNew" class="login-input" placeholder="New password" autocomplete="new-password" onkeydown="if(event.key==='Enter')document.getElementById('forcePwConfirm').focus()">
       </div>
       <div>
         <label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Confirm New Password</label>
@@ -647,7 +648,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       </div>
       <div>
         <label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">New Password</label>
-        <input type="password" id="cpwNew" class="login-input" placeholder="Min 8 characters" autocomplete="new-password">
+        <input type="password" id="cpwNew" class="login-input" placeholder="New password" autocomplete="new-password">
       </div>
       <div>
         <label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Confirm New Password</label>
@@ -705,17 +706,18 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 
 /* ── MOBILE ──────────────────────────────────────────────────────── */
 @media(max-width:640px){
-  #mainHeader{padding:0 10px;height:52px;flex-wrap:nowrap;overflow:hidden;}
-  .header-titles{min-width:0;flex:1;}
+  #mainHeader{padding:8px 10px;height:auto;min-height:52px;flex-wrap:wrap;align-items:flex-start;gap:6px;overflow:visible;}
+  .header-titles{min-width:0;flex:1 1 auto;}
   .header-name{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .header-sub{display:none;}
   .header-actions,.header-right{
+    flex:1 1 100%;width:100%;
     flex-wrap:nowrap;overflow-x:auto;flex-shrink:0;
     scrollbar-width:none;-webkit-overflow-scrolling:touch;
-    gap:4px;
+    gap:4px;justify-content:flex-start;padding-bottom:2px;
   }
   .header-actions::-webkit-scrollbar,.header-right::-webkit-scrollbar{display:none;}
-  .header-user{display:none;}
+  .header-user{display:inline-flex;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .icon-btn{width:30px;height:30px;flex-shrink:0;}
   #mainContent{padding:28px 14px 48px;}
   .platform-hero h1{font-size:20px;}
@@ -1033,9 +1035,17 @@ function maybePromptBiometricSetup(user) {
   if (getBiometricEnrollment() && getBiometricEnrollment().userId === user.id) return;
   const overlay = document.getElementById('bioSetupOverlay');
   if (overlay.style.display === 'flex') return;
-  setTimeout(function() {
-    if (document.getElementById('mainWrapper').style.display === 'block') openBioSetupModal();
-  }, 600);
+  const mainWrapper = document.getElementById('mainWrapper');
+  const isVisible = function(el) {
+    if (!el) return false;
+    const style = window.getComputedStyle ? window.getComputedStyle(el) : null;
+    return !!style && style.display !== 'none' && style.visibility !== 'hidden';
+  };
+  requestAnimationFrame(function() {
+    setTimeout(function() {
+      if (isVisible(mainWrapper)) openBioSetupModal();
+    }, 350);
+  });
 }
 
 async function enableBiometricLogin() {
@@ -1232,7 +1242,8 @@ function showRegister() {
   document.getElementById('regEmail').value = '';
   document.getElementById('regDomain').value = '@heidelbergmaterials.com';
   document.getElementById('regEmailUser').type = 'text';
-  document.getElementById('regEmailUser').placeholder = 'username';
+  document.getElementById('regEmailUser').placeholder = 'username or full email';
+  syncRegEmail();
 }
 function hideRegister() {
   document.getElementById('registerPanel').style.display = 'none';
@@ -1240,27 +1251,29 @@ function hideRegister() {
 function syncRegEmail() {
   const user = document.getElementById('regEmailUser').value.trim();
   const dom  = document.getElementById('regDomain').value;
-  document.getElementById('regEmail').value = dom === 'other' ? user : user + dom;
+  const email = user.includes('@') ? user : (dom === 'other' ? user : user + dom);
+  document.getElementById('regEmail').value = email.toLowerCase();
 }
 async function doRegister() {
   const name  = document.getElementById('regName').value.trim();
-  const email = document.getElementById('regEmail').value.trim().toLowerCase();
   const pass  = document.getElementById('regPass').value;
   const pass2 = document.getElementById('regPassConfirm').value;
   const btn   = document.getElementById('regBtn');
+  syncRegEmail();
+  const normalizedEmail = document.getElementById('regEmail').value.trim().toLowerCase();
   if (!name)  { showRegMsg('err', 'Please enter your full name.'); return; }
-  if (!email) { showRegMsg('err', 'Please enter your email address.'); return; }
-  if (!email.endsWith('@heidelbergmaterials.com')) { showRegMsg('err', 'Only @heidelbergmaterials.com addresses are permitted.'); return; }
+  if (!normalizedEmail) { showRegMsg('err', 'Please enter your email address.'); return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) { showRegMsg('err', 'Please enter a valid email address.'); return; }
+  if (!normalizedEmail.endsWith('@heidelbergmaterials.com')) { showRegMsg('err', 'Only @heidelbergmaterials.com addresses are permitted.'); return; }
   if (!pass || !pass2) { showRegMsg('err', 'Please enter and confirm your password.'); return; }
-  if (pass.length < 8) { showRegMsg('err', 'Password must be at least 8 characters.'); return; }
   if (pass !== pass2) { showRegMsg('err', 'Passwords do not match.'); return; }
   btn.disabled = true; btn.textContent = 'Sending…';
   try {
     // Check not already requested
-    const {data:existing} = await sb.from('pw_access_requests').select('id').eq('email',email).eq('status','pending');
+    const {data:existing} = await sb.from('pw_access_requests').select('id').eq('email',normalizedEmail).eq('status','pending');
     if (existing && existing.length) { showRegMsg('err', 'A request for this email is already pending approval.'); btn.disabled=false; btn.textContent='Request Access'; return; }
     const {error} = await sb.from('pw_access_requests').insert({
-      email, full_name: name, role: 'viewer', isolation_role: 'none',
+      email: normalizedEmail, full_name: name, role: 'viewer', isolation_role: 'none',
       kiln_role: 'read_only', status: 'pending', requested_at: new Date().toISOString()
     });
     if (error) throw error;
@@ -1534,7 +1547,6 @@ async function submitPlatformForceReset() {
   msg = document.getElementById('forcePwMsg');
   msg.style.display = 'none';
   if (!newPw || !conf) { showForcePwMsg('err','Please fill in both fields.'); return; }
-  if (newPw.length < 8) { showForcePwMsg('err','Password must be at least 8 characters.'); return; }
   if (newPw !== conf)   { showForcePwMsg('err','Passwords do not match.'); return; }
   btn.disabled = true; btn.textContent = 'Saving…';
 
@@ -1662,7 +1674,6 @@ async function doChangePw() {
   const btn      = document.getElementById('cpwBtn');
   document.getElementById('cpwMsg').style.display = 'none';
   if (!current || !newPw || !confirm2) { showCpwMsg('err','Please fill in all fields.'); return; }
-  if (newPw.length < 8)               { showCpwMsg('err','New password must be at least 8 characters.'); return; }
   if (newPw !== confirm2)             { showCpwMsg('err','New passwords do not match.'); return; }
   const { data: sessionData } = await sb.auth.getSession();
   const userEmail = sessionData && sessionData.session && sessionData.session.user && sessionData.session.user.email;
@@ -2119,9 +2130,8 @@ async function forcePlatformPwReset(profileId, displayName) {
   renderAllUsers(); showPlatformToast((displayName||'User')+' must reset password on next login ✓');
 }
 async function resetKilnPassword(username, authUserId, email) {
-  const newPw = prompt('Set new password for '+username+':\n(Min 8 characters)');
+  const newPw = prompt('Set new password for '+username+':');
   if (!newPw) return;
-  if (newPw.length < 8) { alert('Password must be at least 8 characters.'); return; }
   if (!authUserId) { alert('No linked auth account for this user.\nThey need to log in to the shift log app first to create the link.'); return; }
   try {
     const {error} = await sb.functions.invoke('pw-admin-user',{body:{action:'setPassword',userId:authUserId,password:newPw}});

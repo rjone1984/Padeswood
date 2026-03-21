@@ -521,21 +521,37 @@
   }
   @media (max-width: 640px) {
     .tracker-shell {
-      padding: 0 12px;
+      padding: 8px 12px 10px;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 6px;
+    }
+    .tracker-shell-left {
+      width: 100%;
+      min-width: 0;
+    }
+    .tracker-shell-copy {
+      min-width: 0;
+      flex: 1 1 auto;
     }
     .tracker-shell-sub {
       display: none;
     }
     .tracker-shell-actions {
+      width: 100%;
+      justify-content: flex-start;
       gap: 5px;
       overflow-x: auto;
       scrollbar-width: none;
+      padding-bottom: 2px;
     }
     .tracker-shell-actions::-webkit-scrollbar {
       display: none;
     }
     .tracker-shell-user {
-      display: none !important;
+      display: inline-flex !important;
+      max-width: 100%;
+      flex: 0 0 auto;
     }
     .tracker-shell-footer {
       flex-direction: column;
@@ -1064,6 +1080,9 @@ function syncTrackerThemeButton(){
 
 let stCurrentUser = null;
 let stCurrentProfile = null;
+const ST_LEGACY_USER = 'operator';
+const ST_LEGACY_PASS = 'Control';
+const ST_LEGACY_KEY = 'st_legacy_login_v1';
 
 async function stPersistSharedTheme(user, light){
   if(!stSb || !user || !user.id) return;
@@ -1085,6 +1104,36 @@ async function stLoadSharedTheme(user){
     if(data && data.value) return data.value === 'light';
   }catch(e){}
   return null;
+}
+
+function stIsLegacyLogin(user, pass) {
+  return String(user || '').trim().toLowerCase() === ST_LEGACY_USER && String(pass || '') === ST_LEGACY_PASS;
+}
+
+function stSaveLegacyLogin() {
+  try {
+    localStorage.setItem(ST_LEGACY_KEY, JSON.stringify({ user: ST_LEGACY_USER, ts: Date.now() }));
+  } catch (e) {}
+}
+
+function stLoadLegacyLogin() {
+  try {
+    const raw = localStorage.getItem(ST_LEGACY_KEY);
+    if (!raw) return null;
+    const data = JSON.parse(raw);
+    if (!data || data.user !== ST_LEGACY_USER) return null;
+    return {
+      id: 'legacy:' + ST_LEGACY_USER,
+      email: ST_LEGACY_USER,
+      user_metadata: { full_name: 'Legacy Operator' }
+    };
+  } catch (e) {
+    return null;
+  }
+}
+
+function stClearLegacyLogin() {
+  try { localStorage.removeItem(ST_LEGACY_KEY); } catch (e) {}
 }
 
 async function toggleTrackerTheme(){
@@ -1274,8 +1323,8 @@ async function initShiftTrackerSupabaseAuth() {
   if (panelLabel) panelLabel.textContent = 'HeidelbergMaterials Sign In';
   const cleanUser = els.userInput.cloneNode(true);
   const cleanPass = els.passInput.cloneNode(true);
-  els.userInput.type = 'email';
-  els.userInput.placeholder = 'Email address';
+  els.userInput.type = 'text';
+  els.userInput.placeholder = 'Email address or username';
   els.userInput.setAttribute('autocomplete', 'username');
   els.userInput.setAttribute('autocapitalize', 'none');
   els.userInput.setAttribute('autocorrect', 'off');
@@ -1286,8 +1335,8 @@ async function initShiftTrackerSupabaseAuth() {
   const cleanBtn = els.loginBtn.cloneNode(true);
   els.loginBtn.parentNode.replaceChild(cleanBtn, els.loginBtn);
   els = stGetEls();
-  els.userInput.type = 'email';
-  els.userInput.placeholder = 'Email address';
+  els.userInput.type = 'text';
+  els.userInput.placeholder = 'Email address or username';
   els.userInput.setAttribute('autocomplete', 'username');
   els.userInput.setAttribute('autocapitalize', 'none');
   els.userInput.setAttribute('autocorrect', 'off');
@@ -1295,6 +1344,20 @@ async function initShiftTrackerSupabaseAuth() {
   els.passInput.placeholder = 'Password';
 
   async function hydrateFromSession() {
+    const legacyUser = stLoadLegacyLogin();
+    if (legacyUser) {
+      stCurrentUser = legacyUser;
+      stCurrentProfile = {
+        role: 'viewer',
+        approved: true,
+        disabled: false,
+        shift_tracker_access: true,
+        full_name: 'Legacy Operator'
+      };
+      stApplyHeaderProfile(legacyUser, stCurrentProfile);
+      stRevealApp();
+      return true;
+    }
     const { data } = await sb.auth.getSession();
     const user = data && data.session && data.session.user;
     if (!user) {
@@ -1324,7 +1387,26 @@ async function initShiftTrackerSupabaseAuth() {
     const email = els.userInput.value.trim();
     const password = els.passInput.value;
     if (!email || !password) {
-      stShowError('Please enter your email and password.');
+      stShowError('Please enter your login and password.');
+      return;
+    }
+    if (stIsLegacyLogin(email, password)) {
+      stShowError('');
+      stSaveLegacyLogin();
+      stCurrentUser = {
+        id: 'legacy:' + ST_LEGACY_USER,
+        email: ST_LEGACY_USER,
+        user_metadata: { full_name: 'Legacy Operator' }
+      };
+      stCurrentProfile = {
+        role: 'viewer',
+        approved: true,
+        disabled: false,
+        shift_tracker_access: true,
+        full_name: 'Legacy Operator'
+      };
+      stApplyHeaderProfile(stCurrentUser, stCurrentProfile);
+      stRevealApp();
       return;
     }
     stShowError('');
@@ -1375,13 +1457,14 @@ async function initShiftTrackerSupabaseAuth() {
   if (logoutBtn) {
     logoutBtn.addEventListener('click', async function() {
       try {
-        await sb.auth.signOut();
+        if (!stLoadLegacyLogin()) await sb.auth.signOut();
       } catch (e) {}
       try {
         Object.keys(localStorage).forEach(function(key) {
           if (key.startsWith('sb-') || key.startsWith('supabase')) localStorage.removeItem(key);
         });
       } catch (e) {}
+      stClearLegacyLogin();
       stCurrentUser = null;
       stCurrentProfile = null;
       sessionStorage.removeItem('auth');

@@ -377,13 +377,13 @@ th.sortable.sort-asc .sort-icon .arr-down,th.sortable.sort-desc .sort-icon .arr-
 
 /* ── MOBILE ──────────────────────────────────────────────────────── */
 @media(max-width:640px){
-  #mainHeader{padding:0 12px;height:auto;min-height:52px;flex-wrap:nowrap;gap:8px;}
-  .header-titles{min-width:0;flex:1;}
+  #mainHeader{padding:8px 12px;height:auto;min-height:52px;flex-wrap:wrap;align-items:flex-start;gap:6px;overflow:visible;}
+  .header-titles{min-width:0;flex:1 1 auto;}
   .header-name{font-size:13px;}
   .header-sub{display:none;}
-  .header-right{gap:5px;flex-wrap:nowrap;overflow-x:auto;flex-shrink:0;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+  .header-right{flex:1 1 100%;width:100%;gap:5px;flex-wrap:nowrap;overflow-x:auto;flex-shrink:0;scrollbar-width:none;-webkit-overflow-scrolling:touch;justify-content:flex-start;padding-bottom:2px;}
   .header-right::-webkit-scrollbar{display:none;}
-  .header-user{display:none;}
+  .header-user{display:inline-flex;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .icon-btn{width:30px;height:30px;}
   #mainContent,.tab-body{padding-left:12px;padding-right:12px;}
   .table-wrap{font-size:12px;}
