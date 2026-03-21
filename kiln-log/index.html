@@ -80,7 +80,7 @@ function setEntryStatus(sk,i,val){
   if(val){
     const now=new Date();
     const ts=now.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})+' '+now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-    entry.statusBy=lockedName||currentUser||'';
+    entry.statusBy=lockedName||currentUserLogon||currentUser||'';
     entry.statusAt=ts;
   } else {
     entry.statusBy=''; entry.statusAt='';
@@ -1026,14 +1026,12 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
       </div>
     </div>
     <div class="topbar-right">
-      <!-- Date picker + Today -->
       <input type="date" id="weekDate" title="Set week start (Monday)">
       <button class="btn btn-ghost" onclick="goToToday()" title="Jump to today">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><circle cx="12" cy="16" r="2" fill="currentColor" stroke="none"/></svg>
         Today
       </button>
 
-      <!-- Navigation shortcuts (shown after login) -->
       <button class="btn btn-ghost" onclick="switchDay('Overview')" id="btn-weekly-overview" title="Weekly Overview" style="display:none">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
         <span class="btn-label">Weekly Overview</span>
@@ -1056,7 +1054,6 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
         <span class="btn-label">Manage Lists</span>
       </button>
 
-      <!-- Mobile overflow menu -->
       <div id="mobileMenuWrap" style="display:none;position:relative">
         <button class="btn btn-ghost btn-icon" id="mobileMenuBtn" onclick="toggleMobileMenu()" aria-label="More options">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1" fill="currentColor"/><circle cx="12" cy="12" r="1" fill="currentColor"/><circle cx="12" cy="19" r="1" fill="currentColor"/></svg>
@@ -1086,7 +1083,6 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
         </div>
       </div>
 
-      <!-- Print / Save / Clear -->
       <button class="btn btn-ghost" id="printBtn" onclick="showPrintModal()" style="display:none">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
         Print / PDF
@@ -1102,12 +1098,10 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
         Clear Day
       </button>
 
-      <!-- Search -->
       <button class="btn-icon" onclick="openSearchModal()" id="searchTopbarBtn" title="Search logs" style="display:none">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       </button>
 
-      <!-- User / theme / logout -->
       <button class="btn-icon" onclick="toggleTheme()" id="themeBtn" title="Toggle light/dark mode">
         <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
       </button>
@@ -1232,6 +1226,11 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
 
 </div>
 
+<footer style="position:relative;z-index:1;border-top:1px solid var(--bd);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;flex-shrink:0;font-family:var(--ff-mono);font-size:10px;color:var(--tx3);letter-spacing:.5px">
+  <span>Padeswood Works · Shift Log · HeidelbergMaterials</span>
+  <span style="display:flex;align-items:center;gap:6px;font-family:var(--ff-mono);font-size:10px;color:var(--tx3)"><span style="width:7px;height:7px;border-radius:50%;background:var(--grn);box-shadow:0 0 5px var(--grn)"></span><span id="kblLicStatus">Licence active</span></span>
+</footer>
+
 <!-- SEARCH MODAL -->
 <div class="overlay" id="searchModal">
   <div class="modal" style="width:680px;max-height:88vh;display:flex;flex-direction:column;padding:0">
@@ -1308,6 +1307,9 @@ async function checkLicence(){
       showLicenceBlock(msg, 'Licence expired on ' + exp + '. Once payment is received, access will resume automatically.');
       return false;
     }
+    const exp = new Date(lic.expires_at).toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'});
+    const licEl = document.getElementById('kblLicStatus');
+    if(licEl) licEl.textContent = 'Licence active · expires ' + exp;
     clearTimeout(showTimer);
     overlay.style.display = 'none';
     document.getElementById('splash').style.display = 'flex';
@@ -1377,6 +1379,7 @@ let lockedName = null;
 let readOnly   = false;
 
 let currentUser = null;
+let currentUserLogon = null;
 let isAdmin = false;
 let isShiftManager = false;
 let isCementAnalyst = false;
@@ -1484,14 +1487,16 @@ async function doLogin(){
     document.getElementById('splashErr').textContent = 'Account not found. Please contact your administrator.';
     _sbSession = null;
     localStorage.removeItem('kbl_session');
+    localStorage.removeItem('kbl_refresh');
     return;
   }
   const match = userRows[0];
 
-  if(match.is_locked && !match.is_admin){
-    document.getElementById('splashErr').textContent = 'This account has been locked. Please contact your administrator.';
+  if(match.shift_log_access === false && !match.is_admin){
+    document.getElementById('splashErr').textContent = 'You do not have access to Shift Log. Please contact your administrator.';
     _sbSession = null;
     localStorage.removeItem('kbl_session');
+    localStorage.removeItem('kbl_refresh');
     return;
   }
 
@@ -1500,6 +1505,7 @@ async function doLogin(){
 
 async function _applyUserSession(match){
   currentUser     = match.username;
+  currentUserLogon = match.email || match.username || null;
   isAdmin         = match.is_admin || false;
   isShiftManager  = match.is_shift_manager || false;
   isCementAnalyst = match.is_cement_analyst || false;
@@ -1507,6 +1513,16 @@ async function _applyUserSession(match){
   isDayStaff      = match.is_day_staff || false;
   lockedName      = match.locked_name || null;
   readOnly        = match.is_readonly || false;
+  const hasShiftLogAccess = match.shift_log_access !== false || isAdmin;
+  if(!hasShiftLogAccess){
+    document.getElementById('splashErr').textContent = 'You do not have access to Shift Log. Please contact your administrator.';
+    document.getElementById('splash').style.display = 'flex';
+    document.getElementById('app').style.display = 'none';
+    _sbSession = null;
+    localStorage.removeItem('kbl_session');
+    localStorage.removeItem('kbl_refresh');
+    return;
+  }
 
   // Cache users list
   await sbLoadUsers();
@@ -1514,7 +1530,7 @@ async function _applyUserSession(match){
 
   document.getElementById('splash').style.display='none';
   document.getElementById('app').style.display='block';
-  document.getElementById('userLabel').textContent = currentUser;
+  document.getElementById('userLabel').textContent = currentUserLogon || currentUser;
   UM_SELF_ID = match.auth_user_id || null;
   document.getElementById('manageListsBtn').style.display = isAdmin ? '' : 'none';
   const _cdBtn = document.getElementById('clearDayBtn'); if(_cdBtn) _cdBtn.style.display = isAdmin ? '' : 'none';
@@ -1565,6 +1581,8 @@ function doLogout(){
   lockedName = null;
   readOnly   = false;
   currentUser = null;
+  currentUserLogon = null;
+  currentUserLogon = null;
   isAdmin = false;
   isShiftManager = false;
   isCementAnalyst = false;
@@ -1681,7 +1699,6 @@ async function initApp(){
     managers  = _allLists.managers  || [...DEFAULT_MANAGERS];
     trainees  = _allLists.trainees  || [];
   } else {
-    // Supabase unavailable — use defaults as fallback
     equipment = [...DEFAULT_EQUIP];
     burners   = [...DEFAULT_BURNERS];
     analysts  = [...DEFAULT_ANALYSTS];
@@ -1697,7 +1714,7 @@ async function initApp(){
   if(savedWk){ weekStart=parseLocalDate(savedWk); document.getElementById('weekDate').value=savedWk; }
   else { setWeekToNow(); }
 
-    const iso = weekStart ? toISO(weekStart) : null;
+  const iso = weekStart ? toISO(weekStart) : null;
   if(iso){
     showSyncDot('syncing');
     const sbData = await sbLoadWeek(iso);
@@ -2651,7 +2668,7 @@ function renderRows(sk,entries){
         if(v){
           var now=new Date();
           var ts=now.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})+' '+now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-          entry.statusBy=lockedName||currentUser||'';
+          entry.statusBy=lockedName||currentUserLogon||currentUser||'';
           entry.statusAt=ts;
         } else {
           entry.statusBy=''; entry.statusAt='';
@@ -3378,7 +3395,7 @@ async function loadFeedbackIssues(){
 async function resolveFeedbackIssue(idx){
   const iss = window._fbIssues && window._fbIssues[idx];
   if(!iss) return;
-  const resolverName = lockedName || currentUser || '';
+  const resolverName = lockedName || currentUserLogon || currentUser || '';
   const now = new Date();
   const ts = now.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})+' '+now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
 
@@ -3640,7 +3657,7 @@ async function loadResolvedIssues(){
 async function reopenFeedbackIssue(idx){
   const iss = window._fbResolved && window._fbResolved[idx];
   if(!iss){ console.error('reopenFeedbackIssue: no record at idx', idx); return; }
-  const reopenerName = lockedName || currentUser || '';
+  const reopenerName = lockedName || currentUserLogon || currentUser || '';
   const now = new Date();
   const ts = now.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})+' '+now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
 
@@ -3904,7 +3921,7 @@ function wbSave(tid){
   if(actual) _wbData[tid].actual = actual.value.trim();
   if(status){ _wbData[tid].status = status.value; wbUpdate(tid); }
   if(note)   _wbData[tid].note   = note.value.trim();
-  _wbData[tid].editedBy = lockedName || currentUser;
+  _wbData[tid].editedBy = lockedName || currentUserLogon || currentUser;
   _wbData[tid].editedAt = new Date().toISOString();
   saveWhiteboardData();
   showToast('Saved ✓');
@@ -3950,7 +3967,7 @@ function wbSaveNotes(){
   if(!ta) return;
   if(!_wbData['__notes__']) _wbData['__notes__'] = {};
   _wbData['__notes__'].text     = ta.value;
-  _wbData['__notes__'].editedBy = lockedName || currentUser;
+  _wbData['__notes__'].editedBy = lockedName || currentUserLogon || currentUser;
   _wbData['__notes__'].editedAt = new Date().toISOString();
   saveWhiteboardData();
   const auditEl = document.getElementById('wb-notes-audit');
@@ -4800,7 +4817,7 @@ let _usersCache = []; // loaded on login
 
 async function sbLoadUsers(){
   try {
-    const rows = await sbFetch('/rest/v1/kiln_users?select=username,locked_name,is_admin,is_readonly,is_burner,is_shift_manager,is_cement_analyst,is_day_staff,is_locked,email,must_reset_password&order=username');
+    const rows = await sbFetch('/rest/v1/kiln_users?select=username,locked_name,is_admin,is_readonly,is_burner,is_shift_manager,is_cement_analyst,is_day_staff,is_locked,shift_log_access,email,must_reset_password&order=username');
     if(rows && rows.length){
       _usersCache = rows.map(r=>({
         user: r.username,
@@ -4811,6 +4828,7 @@ async function sbLoadUsers(){
         isBurner: r.is_burner || false,
         dayStaff: r.is_day_staff || false,
         locked: r.is_locked || false,
+        shiftLogAccess: r.shift_log_access !== false,
         shiftManager: r.is_shift_manager || false,
         cementAnalyst: r.is_cement_analyst || false,
         email: r.email || null,
@@ -4842,6 +4860,7 @@ async function sbSaveUser(user){
         is_cement_analyst: user.cementAnalyst || false,
         is_day_staff: user.dayStaff || false,
         is_locked: user.locked || false,
+        shift_log_access: user.shiftLogAccess !== false,
         email: user.email || null,
         must_reset_password: user.mustResetPassword || false,
         updated_at: new Date().toISOString()

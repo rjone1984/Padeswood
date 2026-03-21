@@ -10,6 +10,7 @@
 <title>Padeswood Works — Isolation Matrix</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Figtree:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 /* =====================================================================
    PADESWOOD WORKS — ISOLATION MATRIX — Design System v4
@@ -211,29 +212,28 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .stat-card.s-review .stat-num{color:var(--pur);}
 .stat-sub{font-size:11px;color:var(--tx3);margin-top:4px;}
 
-/* ── MATRIX CARDS ────────────────────────────────────────────────── */
-.matrix-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;}
+/* ── MATRIX LIST ─────────────────────────────────────────────────── */
+.matrix-grid{display:flex;flex-direction:column;gap:10px;max-width:980px;width:100%;margin:0 auto;}
 .matrix-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);
-  padding:18px;cursor:pointer;transition:border-color .22s,box-shadow .22s,transform .14s;
+  padding:12px 14px;cursor:pointer;transition:border-color .18s,box-shadow .14s,transform .14s;
   position:relative;overflow:hidden;}
 .matrix-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
   background:linear-gradient(90deg,var(--ac),var(--ac3));opacity:0;transition:opacity .22s;}
-.matrix-card:hover{border-color:var(--acd3);box-shadow:0 4px 22px rgba(26,122,53,.18);transform:translateY(-2px);}
+.matrix-card:hover{border-color:var(--acd3);box-shadow:0 4px 18px rgba(26,122,53,.14);transform:translateY(-1px);}
 .matrix-card:hover::before{opacity:1;}
-.mc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;gap:8px;}
-.mc-icon{width:38px;height:38px;border-radius:8px;background:var(--acd1);border:1px solid var(--acd3);
-  display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
 .mc-status-pill{font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;
   padding:3px 8px;border-radius:3px;font-weight:600;}
 .s-draft-pill{background:var(--sf3);color:var(--tx3);border:1px solid var(--bd);}
 .s-active-pill{background:var(--grnd);color:var(--grn);border:1px solid var(--grnb);}
 .s-review-pill{background:var(--purd);color:var(--pur);border:1px solid var(--purb);}
 .s-archived-pill{background:var(--redd);color:var(--red);border:1px solid var(--redb);}
-.mc-title{font-family:var(--ff-head);font-weight:700;font-size:14px;color:var(--tx);
-  letter-spacing:-.2px;margin-bottom:4px;line-height:1.35;}
-.mc-equip{font-size:12px;color:var(--tx2);}
-.mc-meta{display:flex;align-items:center;gap:10px;margin-top:12px;padding-top:12px;
-  border-top:1px solid var(--bd);flex-wrap:wrap;}
+.matrix-row-main{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+.matrix-row-copy{min-width:0;flex:1;}
+.matrix-title{font-family:var(--ff-head);font-weight:700;font-size:13.5px;color:var(--tx);
+  letter-spacing:-.2px;line-height:1.35;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.matrix-sub{font-size:10.5px;color:var(--tx2);margin-top:3px;line-height:1.5;display:flex;gap:10px;flex-wrap:wrap;}
+.matrix-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end;flex-shrink:0;}
+.matrix-footer{display:flex;align-items:center;gap:10px;margin-top:10px;padding-top:10px;border-top:1px solid var(--bd);flex-wrap:wrap;}
 .mc-meta-item{font-family:var(--ff-mono);font-size:10px;color:var(--tx3);
   display:flex;align-items:center;gap:4px;}
 .mc-pts-badge{background:var(--acd1);border:1px solid var(--acd3);color:var(--ac3);
@@ -352,10 +352,43 @@ tbody tr:hover{background:var(--sf2);}
 .field-input:focus,.field-select:focus,.field-textarea:focus{border-color:var(--ac3);box-shadow:0 0 0 3px var(--acd1);}
 .field-textarea{resize:vertical;min-height:80px;}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.check-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;}
+.check-card{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--sf2);border:1px solid var(--bd2);border-radius:var(--rsm);}
+.check-card input{width:16px;height:16px;accent-color:var(--ac3);flex-shrink:0}
+.check-card span{font-size:12px;color:var(--tx);font-family:var(--ff-body);line-height:1.35}
 .modal-footer{padding:14px 24px;border-top:1px solid var(--bd);
   display:flex;justify-content:flex-end;gap:10px;position:sticky;bottom:0;background:var(--sf);}
 .form-err{font-size:12px;color:var(--red);background:var(--redd);border:1px solid var(--redb);
   border-radius:var(--rsm);padding:8px 12px;display:none;}
+.matrix-reader-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px;}
+.matrix-reader-summary{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:14px;}
+.matrix-reader-card{background:var(--sf2);border:1px solid var(--bd);border-radius:var(--rsm);padding:10px 12px;}
+.matrix-reader-card-l{font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);margin-bottom:4px;}
+.matrix-reader-card-v{font-size:13px;font-weight:600;color:var(--tx);}
+.matrix-reader-list{display:flex;flex-direction:column;gap:12px;max-height:58vh;overflow:auto;padding-right:2px;}
+.matrix-sheet{border:1px solid var(--bd);border-radius:var(--rsm);background:var(--sf2);padding:12px;}
+.matrix-sheet-title{font-family:var(--ff-head);font-weight:700;font-size:14px;color:var(--tx);}
+.matrix-sheet-sub{font-family:var(--ff-mono);font-size:10px;color:var(--tx3);margin-top:3px;}
+.matrix-sheet-warn{font-size:11px;color:var(--amb);margin-top:8px;line-height:1.45;}
+.matrix-preview{overflow-x:auto;border:1px solid var(--bd);border-radius:var(--rsm);background:var(--sf);margin-top:10px;}
+.matrix-preview table{width:100%;border-collapse:collapse;font-size:11px;}
+.matrix-preview th{background:var(--sf3);padding:7px 10px;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd);text-align:left;white-space:nowrap;}
+.matrix-preview td{padding:7px 10px;border-bottom:1px solid var(--bd);vertical-align:top;}
+.matrix-preview tbody tr:last-child td{border-bottom:none;}
+.matrix-preview tbody tr:hover td{background:var(--sf2);}
+.matrix-reader-tools{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
+.matrix-reader-print{display:none;}
+@media print{
+  body *{visibility:hidden !important;}
+  #matrixReaderPrint, #matrixReaderPrint *{visibility:visible !important;}
+  #matrixReaderPrint{display:block !important;position:fixed;left:0;top:0;right:0;bottom:0;overflow:visible;background:#fff;color:#000;padding:20px;font-family:Arial, sans-serif;}
+  #matrixReaderPrint table{width:100%;border-collapse:collapse;font-size:11px;}
+  #matrixReaderPrint th,#matrixReaderPrint td{border:1px solid #999;padding:6px 8px;vertical-align:top;}
+  #matrixReaderPrint th{background:#eee;}
+}
+.footer-left{font-family:var(--ff-mono);font-size:10px;color:var(--tx3);letter-spacing:.5px;}
+.footer-lic{display:flex;align-items:center;gap:6px;font-family:var(--ff-mono);font-size:10px;color:var(--tx3);}
+.lic-dot{width:7px;height:7px;border-radius:50%;background:var(--grn);box-shadow:0 0 5px var(--grn);}
 
 /* ── AI PANEL ────────────────────────────────────────────────────── */
 #isoAiOverlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:800;display:none;}
@@ -498,13 +531,16 @@ tbody tr:hover{background:var(--sf2);}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
       Matrices <span class="tab-count" id="matrixCount">0</span>
     </button>
+    <button class="tab-btn" data-tab="audit" onclick="switchTab('audit')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/></svg>
+      Audit <span class="tab-count" id="auditCount">0</span>
+    </button>
 
 
   </nav>
 
   <main id="mainContent">
 
-    <!-- ── MATRICES TAB ─────────────────────────────────────────── -->
     <div id="panel-matrices" class="tab-panel active">
       <div class="list-toolbar">
         <div class="search-wrap">
@@ -515,22 +551,39 @@ tbody tr:hover{background:var(--sf2);}
           <option value="">All statuses</option>
           <option value="draft">Draft</option>
           <option value="active">Active</option>
-          
-          <option value="archived">Archived</option>
+          <option value="due-soon">Due Soon</option>
+          <option value="overdue">Overdue</option>
         </select>
         <select class="filter-select" id="matrixAreaFilter" onchange="renderMatrices()">
           <option value="">All areas</option>
         </select>
+        <select class="filter-select" id="matrixSort" onchange="renderMatrices()">
+          <option value="status">Sort: Status</option>
+          <option value="name">Sort: Name</option>
+          <option value="ref">Sort: Reference</option>
+          <option value="area">Sort: Area</option>
+          <option value="reviewed_at">Sort: Review Date</option>
+          <option value="created_at">Sort: Date Added</option>
+        </select>
+        <button class="icon-btn" id="matrixSortDir" onclick="toggleMatrixSortDir()" title="Toggle sort direction" style="width:36px;height:36px">
+          <svg id="matrixSortDirIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="14" height="14"><path d="M7 14l5-5 5 5"/></svg>
+        </button>
+        <button class="btn btn-ghost" id="btnReadWorkbook" onclick="openMatrixReader()" style="display:none">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 3H20v18H6.5A2.5 2.5 0 0 1 4 18.5v-13A2.5 2.5 0 0 1 6.5 3z"/></svg>
+          Read Workbook
+        </button>
         <button class="btn btn-iso" id="btnAddMatrix" onclick="openMatrixModal()" style="display:none">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           New Matrix
+        </button>
+        <button class="btn btn-danger" id="btnBulkDeleteMatrices" onclick="bulkDeleteSelectedMatrices()" style="display:none">
+          Delete Selected <span id="matrixSelectionCount" style="margin-left:6px">0</span>
         </button>
       </div>
       <div class="dash-grid" id="matrixStats"></div>
       <div class="matrix-grid" id="matrixGrid"></div>
     </div>
 
-    <!-- ── EQUIPMENT TAB ────────────────────────────────────────── -->
     <div id="panel-equipment" class="tab-panel">
       <div class="list-toolbar">
         <div class="search-wrap">
@@ -561,7 +614,40 @@ tbody tr:hover{background:var(--sf2);}
               <th></th>
             </tr>
           </thead>
-          <tbody id="equipBody"></tbody>
+        <tbody id="equipBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="panel-audit" class="tab-panel">
+      <div class="list-toolbar">
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="search" class="search-input" id="auditSearch" placeholder="Search by ref, user, action…" oninput="filterAudit()">
+        </div>
+        <select class="filter-select" id="auditActionFilter" onchange="filterAudit()">
+          <option value="">All actions</option>
+          <option value="create">Created</option>
+          <option value="update">Updated</option>
+          <option value="review">Reviewed</option>
+          <option value="import">Imported</option>
+          <option value="delete">Deleted</option>
+        </select>
+        <select class="filter-select" id="auditUserFilter" onchange="filterAudit()">
+          <option value="">All users</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>Timestamp</th>
+            <th>Action</th>
+            <th>Reference</th>
+            <th>Title</th>
+            <th>User</th>
+            <th>Detail</th>
+          </tr></thead>
+          <tbody id="auditBody"><tr><td colspan="6"><div class="empty-state"><p>Loading…</p></div></td></tr></tbody>
         </table>
       </div>
     </div>
@@ -586,8 +672,7 @@ tbody tr:hover{background:var(--sf2);}
     <div id="detailDesc"></div>
     <div id="detailNotesEl"></div>
     <div class="points-header">
-      <h3>Isolation Points</h3>
-      <div id="detailAddPoint"></div>
+      <h3>Isolation Equipment</h3>
     </div>
     <div class="points-list" id="pointsList"></div>
     <div class="detail-close-bar">
@@ -625,7 +710,6 @@ tbody tr:hover{background:var(--sf2);}
           <select class="field-select" id="mxStatus">
             <option value="active">Active</option>
             <option value="draft">Draft</option>
-            <option value="archived">Archived</option>
           </select>
         </div>
       </div>
@@ -646,6 +730,7 @@ tbody tr:hover{background:var(--sf2);}
       <div class="form-err" id="mxErr"></div>
     </div>
     <div class="modal-footer">
+      <button class="btn btn-danger" id="mxDeleteBtn" onclick="deleteCurrentMatrix()" style="margin-right:auto;display:none">Delete Matrix</button>
       <button class="btn btn-ghost" onclick="closeMatrixModal()">Cancel</button>
       <button class="btn btn-iso" onclick="saveMatrix()">Save Matrix</button>
     </div>
@@ -655,50 +740,56 @@ tbody tr:hover{background:var(--sf2);}
 <div class="modal-overlay" id="pointModal">
   <div class="modal">
     <div class="modal-header">
-      <div class="modal-title" id="pointModalTitle">Add Isolation Point</div>
+      <div class="modal-title" id="pointModalTitle">Add Isolation Equipment</div>
       <button class="modal-close" onclick="closePointModal()">×</button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="ptId">
       <input type="hidden" id="ptMatrixId">
-      <div class="field-row">
-        <div class="field-group">
-          <div class="field-label">Isolation Type *</div>
-          <select class="field-select" id="ptType">
-            <option value="electrical">Electrical</option>
-            <option value="mechanical">Mechanical</option>
-            <option value="pneumatic">Pneumatic</option>
-            <option value="hydraulic">Hydraulic</option>
-            <option value="process">Process</option>
-            <option value="other">Other</option>
-          </select>
-        </div>
-        <div class="field-group">
-          <div class="field-label">Reference / Tag</div>
-          <input type="text" class="field-input" id="ptRef" placeholder="e.g. CB-101, V-23">
-        </div>
+      <div class="field-group">
+        <div class="field-label">Equipment Code *</div>
+        <input type="text" class="field-input" id="ptRef" placeholder="e.g. CF5-BF05">
       </div>
       <div class="field-group">
-        <div class="field-label">Description *</div>
-        <input type="text" class="field-input" id="ptDesc" placeholder="e.g. Isolate main incomer at panel MCC-A">
-      </div>
-      <div class="field-group">
-        <div class="field-label">Location</div>
-        <input type="text" class="field-input" id="ptLocation" placeholder="e.g. Motor Control Centre Room, Panel A">
-      </div>
-      <div class="field-group">
-        <div class="field-label">Isolation Method</div>
-        <input type="text" class="field-input" id="ptMethod" placeholder="e.g. Lock off + danger tag + test dead">
-      </div>
-      <div class="field-group">
-        <div class="field-label">Notes</div>
-        <textarea class="field-textarea" id="ptNotes" placeholder="Any additional notes…" style="min-height:60px"></textarea>
+        <div class="field-label">Equipment Name *</div>
+        <input type="text" class="field-input" id="ptDesc" placeholder="e.g. Clinker Hopper Bag Filter">
       </div>
       <div class="form-err" id="ptErr"></div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closePointModal()">Cancel</button>
       <button class="btn btn-iso" onclick="savePoint()">Save Point</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── WORK ITEM MODAL ────────────────────────────────────────────── -->
+<div class="modal-overlay" id="entryModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="entryModalTitle">Add Work Item</div>
+      <button class="modal-close" onclick="closeEntryModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="entId">
+      <input type="hidden" id="entMatrixId">
+      <div class="field-group">
+        <div class="field-label">Work Item Code *</div>
+        <input type="text" class="field-input" id="entRef" placeholder="e.g. CF5-BF05">
+      </div>
+      <div class="field-group">
+        <div class="field-label">Work Item / Equipment Name *</div>
+        <input type="text" class="field-input" id="entName" placeholder="e.g. Clinker Hopper Bag Filter internal">
+      </div>
+      <div class="field-group">
+        <div class="field-label">Required Isolation Equipment</div>
+        <div id="entPointList" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px"></div>
+      </div>
+      <div class="form-err" id="entErr"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeEntryModal()">Cancel</button>
+      <button class="btn btn-iso" onclick="saveEntry()">Save Work Item</button>
     </div>
   </div>
 </div>
@@ -770,7 +861,36 @@ tbody tr:hover{background:var(--sf2);}
   </div>
 </div>
 
-
+<!-- ── MATRIX READER MODAL ─────────────────────────────────────── -->
+<div class="modal-overlay" id="matrixReaderModal">
+  <div class="modal" style="max-width:1040px">
+    <div class="modal-header">
+      <div class="modal-title" id="matrixReaderTitle">Read Isolation Workbook</div>
+      <button class="modal-close" onclick="closeMatrixReader()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="import-drop" id="matrixReaderDrop" style="border:2px dashed var(--bd2);border-radius:var(--r);padding:24px 18px;text-align:center;background:var(--sf2);transition:border-color .18s,background .18s">
+        <label style="display:block;cursor:pointer">
+          <input type="file" id="matrixReaderFile" accept=".xls,.xlsx" multiple webkitdirectory onchange="handleMatrixWorkbookFiles(this.files)" style="display:none">
+          <div style="font-family:var(--ff-head);font-weight:700;font-size:14px;color:var(--tx)">Drop workbook files or a folder here</div>
+          <div style="font-size:12px;color:var(--tx2);margin-top:6px">This only reads the sheets and builds a printable summary. Nothing is saved.</div>
+          <div id="matrixReaderFileName" style="font-family:var(--ff-mono);font-size:11px;color:var(--tx2);margin-top:8px;word-break:break-all">No files selected</div>
+        </label>
+      </div>
+      <div id="matrixReaderStatus" class="import-state" style="display:none"></div>
+      <div id="matrixReaderSummary" class="matrix-reader-summary"></div>
+      <div id="matrixReaderList" class="matrix-reader-list"></div>
+      <div id="matrixReaderPrint" class="matrix-reader-print"></div>
+    </div>
+    <div class="modal-footer">
+      <div class="matrix-reader-tools">
+        <button class="btn btn-iso" onclick="importSelectedSheets()">Import Selected</button>
+        <button class="btn btn-ghost" onclick="window.print()">Print</button>
+        <button class="btn btn-ghost" onclick="closeMatrixReader()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- ── AI PANEL ───────────────────────────────────────────────────── -->
 <div id="isoAiOverlay"></div>
@@ -783,6 +903,10 @@ tbody tr:hover{background:var(--sf2);}
       AI Assistant — Isolation
     </div>
     <div style="display:flex;align-items:center;gap:8px">
+      <label style="display:inline-flex;align-items:center;gap:7px;font-family:var(--ff-mono);font-size:10px;color:var(--tx2);padding:5px 8px;border:1px solid var(--bd);border-radius:999px;background:var(--sf2);cursor:pointer">
+        <input type="checkbox" id="aiMatrixMode" checked onchange="setAiMatrixMode(this.checked)" style="accent-color:var(--ac3)">
+        Matrix mode
+      </label>
       <button id="aiClearBtn" onclick="clearAiHistory()" title="Clear conversation" style="display:none;width:28px;height:28px;border-radius:6px;border:1px solid var(--bd);background:transparent;color:var(--tx3);cursor:pointer;align-items:center;justify-content:center">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
       </button>
@@ -808,6 +932,11 @@ tbody tr:hover{background:var(--sf2);}
   </div>
 </div>
 
+<footer style="position:relative;z-index:1;border-top:1px solid var(--bd);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;flex-shrink:0;font-family:var(--ff-mono);font-size:10px;color:var(--tx3);letter-spacing:.5px">
+  <span class="footer-left">Padeswood Works · Isolation Matrix · HeidelbergMaterials</span>
+  <span class="footer-lic"><span class="lic-dot"></span><span id="isoLicStatus">Licence active</span></span>
+</footer>
+
 <div id="toast"></div>
 
 <script>
@@ -826,17 +955,228 @@ const SB_LIC_KEY        = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 let sb, currentUser = null, currentProfile = null;
 let _matrices = [], _points = {}, _equipment = [], _areas = [];
 let _groqKey = null, _aiHistory = [];
+let _aiMatrixMode = true;
 let _openMatrixId = null;
 let _entries = {}; // cached pw_isolation_entries per matrix id
+let _matrixSearchIndex = {}; // searchable text per matrix id
+let _isoAudit = [];
+let _readerState = {fileNames:[], sheets:[], selected:{}};
+let _matrixSelection = new Set();
+let _matrixSort = { col: 'status', dir: 1 };
 
 /* ── HELPERS ─────────────────────────────────────────────────────── */
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function fmtDate(d){ if(!d) return '—'; try{ return new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); }catch(e){ return '—'; } }
 function showToast(msg,dur=2800){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),dur); }
+function smartTitleCase(text){
+  const raw = String(text || '').trim();
+  if(!raw) return '—';
+  return raw
+    .split(/(\s+|\/|-|_)/)
+    .map(function(part, idx){
+      if(!part || /^\s+$/.test(part) || part === '/' || part === '-' || part === '_') return part;
+      if(/^[A-Z0-9&().,]+$/.test(part) || /^[0-9]+$/.test(part)) return part.toUpperCase();
+      const lower = part.toLowerCase();
+      const small = ['and','or','of','the','to','for','in','on','at','by','with'];
+      if(idx > 0 && small.includes(lower)) return lower;
+      if(/^[a-z]/.test(lower)) return lower.charAt(0).toUpperCase() + lower.slice(1);
+      return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase();
+    })
+    .join('')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+function normalizeAreaKey(text){
+  return String(text || '').trim().replace(/\s+/g, ' ').toLowerCase();
+}
+function getBrandLogoSrc(){
+  const logos = [
+    document.querySelector('.header-logo img'),
+    document.querySelector('.splash-logo img'),
+    document.querySelector('.lic-logo img')
+  ];
+  for(const img of logos){
+    if(img && img.src) return img.src;
+  }
+  return '';
+}
+function openPrintWindow(html){
+  const w = window.open('', '_blank', 'width=1100,height=750');
+  if(!w){
+    showToast('Please allow popups to print matrices');
+    return null;
+  }
+  w.document.write(html);
+  w.document.close();
+  return w;
+}
 function isoRole(){ if(!currentProfile) return 'none'; return currentProfile.isolation_role || currentProfile.role || 'viewer'; }
 function hasRole(...roles){ if(!currentProfile) return false; const r = isoRole(); if(r==='admin') return true; return roles.includes(r); }
-function canEdit(){ return hasRole('editor','admin'); }
-function canReview(){ return hasRole('reviewer','editor','admin'); }
+function canAdmin(){ return hasRole('admin'); }
+function canEdit(){ return hasRole('editor','reviewer','admin'); }
+function canReview(){ return hasRole('reviewer','admin'); }
+function canReviewDate(){ return hasRole('reviewer','admin'); }
+function canBulkDelete(){ return canAdmin(); }
+const MATRIX_STATUS_ORDER = {overdue:0,'due-soon':1,active:2,draft:3};
+function calcMatrixStatus(m){
+  const raw = (m && m.status ? String(m.status).toLowerCase() : 'draft');
+  if(raw === 'draft' || raw === 'archived') return 'draft';
+  const rd = m && m.reviewed_at ? new Date(m.reviewed_at) : null;
+  if(!rd || isNaN(rd.getTime())) return raw === 'active' ? 'active' : 'draft';
+  const ageDays = (Date.now() - rd.getTime()) / 86400000;
+  if(ageDays >= 365) return 'overdue';
+  if(ageDays >= 335) return 'due-soon';
+  return 'active';
+}
+function matrixStatusLabel(s){
+  return {overdue:'Overdue','due-soon':'Due Soon',active:'Active',draft:'Draft'}[s] || 'Draft';
+}
+function matrixStatusClass(s){
+  return {overdue:'s-archived-pill','due-soon':'s-draft-pill',active:'s-active-pill',draft:'s-draft-pill'}[s] || 's-draft-pill';
+}
+function matrixSortValue(m, col){
+  if(col === 'status'){
+    const order = MATRIX_STATUS_ORDER[calcMatrixStatus(m)] ?? 99;
+    return order;
+  }
+  if(col === 'reviewed_at'){
+    return m && m.reviewed_at ? new Date(m.reviewed_at).getTime() : 0;
+  }
+  if(col === 'created_at'){
+    return m && m.created_at ? new Date(m.created_at).getTime() : 0;
+  }
+  if(col === 'area') return String(m.area || '').toLowerCase();
+  if(col === 'ref') return String(m.matrix_ref || '').toLowerCase();
+  return String(m.plant_name || '').toLowerCase();
+}
+function toggleMatrixSortDir(){
+  _matrixSort.dir = _matrixSort.dir === 1 ? -1 : 1;
+  renderMatrices();
+}
+function buildIsolationPrintDoc(matrix, points, entries){
+  const now = new Date().toLocaleString('en-GB', {
+    day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'
+  });
+  const logoSrc = getBrandLogoSrc();
+  const st = calcMatrixStatus(matrix);
+  const statusLabel = matrixStatusLabel(st);
+  const statusClass = st === 'overdue' ? 'status-overdue' : st === 'due-soon' ? 'status-due-soon' : st === 'active' ? 'status-active' : 'status-draft';
+  const pointMap = {};
+  (points || []).forEach(function(p){
+    const code = (p.plant_number || '').trim();
+    const name = (p.description || '').trim();
+    const item = { code: code, name: name };
+    if(code) pointMap[readerNorm(code).toUpperCase()] = item;
+    if(name) pointMap[readerNorm(name).toUpperCase()] = item;
+  });
+  const entryRows = (entries || []).map(function(e){
+    const req = (e.isolation_points || []).map(function(v){
+      const key = readerNorm(v).toUpperCase();
+      const match = pointMap[key];
+      if(match && (match.code || match.name)){
+        return '<span class="iso-tag">'+esc((match.code ? match.code + ' - ' : '') + (match.name || v))+'</span>';
+      }
+      return '<span class="iso-tag">'+esc(v || '—')+'</span>';
+    }).join('');
+    return '<tr>'
+      + '<td class="mono">'+esc(e.work_item_ref || '—')+'</td>'
+      + '<td>'+esc(smartTitleCase(e.work_item_name || '—'))+'</td>'
+      + '<td>'+(req || '<span class="muted">None captured</span>')+'</td>'
+      + '<td>'+esc(e.notes || '—')+'</td>'
+      + '</tr>';
+  }).join('');
+  const reviewedInfo = [matrix.reviewed_by ? 'Reviewed by ' + esc(matrix.reviewed_by) : '', matrix.reviewed_at ? 'Reviewed ' + esc(fmtDate(matrix.reviewed_at)) : ''].filter(Boolean).join(' · ');
+  return `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Isolation Matrix - ${esc(matrix.matrix_ref || smartTitleCase(matrix.plant_name || 'Matrix'))}</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Arial,sans-serif;background:#fff;color:#111;padding:20px;font-size:10.5px;line-height:1.45}
+  .header{display:flex;align-items:center;gap:16px;padding-bottom:12px;border-bottom:3px solid #1a7a35;margin-bottom:14px}
+  .header img{height:56px;width:auto;object-fit:contain}
+  .co-name{font-size:18px;font-weight:700;color:#111;line-height:1.1}
+  .co-sub{font-size:10px;color:#666;letter-spacing:.5px;text-transform:uppercase;margin-top:2px}
+  .header-right{margin-left:auto;text-align:right}
+  .header-right .ref{font-size:14px;font-weight:700;color:#1a7a35;font-family:monospace}
+  .header-right .date{font-size:10px;color:#666;margin-top:2px}
+  .title{font-size:15px;font-weight:700;color:#111;margin-bottom:10px}
+  .meta-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px 14px;margin-bottom:14px;padding:10px 12px;background:#f5faf6;border:1px solid #c3e6cb;border-radius:4px}
+  .meta-item .label{font-size:9px;text-transform:uppercase;letter-spacing:.4px;color:#666;font-weight:600;margin-bottom:2px}
+  .meta-item .value{font-size:11px;font-weight:500;color:#111;word-break:break-word}
+  .status-pill{display:inline-block;border-radius:999px;padding:2px 8px;font-size:9px;font-weight:700;letter-spacing:.4px;text-transform:uppercase}
+  .status-overdue{background:#f8d7da;color:#721c24}
+  .status-due-soon{background:#fff3cd;color:#856404}
+  .status-active{background:#d4edda;color:#155724}
+  .status-draft{background:#e9ecef;color:#495057}
+  .section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#1a7a35;border-bottom:2px solid #1a7a35;padding-bottom:4px;margin:14px 0 8px}
+  table{width:100%;border-collapse:collapse;font-size:10px}
+  th{background:#1a7a35;color:#fff;padding:5px 7px;text-align:left;font-size:9px;font-weight:600;letter-spacing:.3px;text-transform:uppercase;vertical-align:top}
+  td{padding:5px 7px;border-bottom:1px solid #e8e8e8;vertical-align:top}
+  tr:nth-child(even) td{background:#f8faf8}
+  .mono{font-family:monospace;font-size:9.5px;white-space:nowrap}
+  .muted{color:#777;font-style:italic}
+  .iso-tag{display:inline-block;margin:0 6px 6px 0;padding:2px 6px;border-radius:3px;background:#eef6ef;border:1px solid #cfe6d3;font-size:9px;line-height:1.35}
+  .footer{margin-top:14px;padding-top:8px;border-top:1px solid #ddd;display:flex;justify-content:space-between;gap:12px;font-size:9px;color:#999}
+  .foot-left{max-width:70%}
+  @media print{@page{size:A4 landscape;margin:10mm} button{display:none!important}}
+</style>
+</head>
+<body>
+  <div class="header">
+    ${logoSrc ? `<img src="${logoSrc}" alt="Padeswood Works logo">` : ''}
+    <div>
+      <div class="co-name">Padeswood Works</div>
+      <div class="co-sub">HeidelbergMaterials · Isolation Matrix</div>
+    </div>
+    <div class="header-right">
+      <div class="ref">${esc(matrix.matrix_ref || '—')}</div>
+      <div class="date">Printed: ${esc(now)}</div>
+      <div style="margin-top:4px"><span class="status-pill ${statusClass}">${esc(statusLabel)}</span></div>
+    </div>
+  </div>
+  <div class="title">${esc(smartTitleCase(matrix.plant_name || 'Isolation Matrix'))}</div>
+  <div class="meta-grid">
+    <div class="meta-item"><div class="label">Plant Reference</div><div class="value">${esc(matrix.plant_ref || '—')}</div></div>
+    <div class="meta-item"><div class="label">Area / Zone</div><div class="value">${esc(smartTitleCase(matrix.area || '—'))}</div></div>
+    <div class="meta-item"><div class="label">Reviewed By</div><div class="value">${esc(matrix.reviewed_by || '—')}</div></div>
+    <div class="meta-item"><div class="label">Review Date</div><div class="value">${esc(fmtDate(matrix.reviewed_at))}</div></div>
+    <div class="meta-item"><div class="label">Matrix Status</div><div class="value">${esc(statusLabel)}</div></div>
+    <div class="meta-item"><div class="label">Counts</div><div class="value">${esc(String((entries || []).length))} work items</div></div>
+  </div>
+  ${matrix.description ? `<div style="margin-bottom:8px;padding:10px 12px;background:#f8faf8;border:1px solid #e1e8e1;border-radius:4px;color:#333">${esc(matrix.description)}</div>` : ''}
+  ${reviewedInfo ? `<div style="margin-bottom:8px;font-size:10px;color:#666">${reviewedInfo}</div>` : ''}
+  <div class="section-title">Work Items (${(entries || []).length})</div>
+  <table>
+    <thead><tr><th style="width:18%">Work Item Code</th><th style="width:24%">Work Item</th><th>Required Isolation Equipment</th><th style="width:24%">Notes</th></tr></thead>
+    <tbody>
+      ${entryRows || '<tr><td colspan="4" class="muted">No work items recorded.</td></tr>'}
+    </tbody>
+  </table>
+  <div class="footer">
+    <div class="foot-left">Padeswood Works · Isolation Matrix · Confidential site document for operational use</div>
+    <div>Printed ${esc(now)}</div>
+  </div>
+  <script>window.onload=function(){window.print();}<\/script>
+</body>
+</html>`;
+}
+async function printMatrix(id){
+  const m = _matrices.find(function(x){ return x.id === id; });
+  if(!m){ showToast('Matrix not found'); return; }
+  try{
+    const [points, entries] = await Promise.all([
+      loadPointsForMatrix(id),
+      loadEntriesForMatrix(id)
+    ]);
+    const html = buildIsolationPrintDoc(m, points || [], entries || []);
+    openPrintWindow(html);
+  }catch(e){
+    console.error('printMatrix error:', e);
+    showToast('Print failed: ' + (e && e.message ? e.message : 'Unknown error'));
+  }
+}
 
 const STATUS_LABELS = {draft:'Draft',active:'Active',review:'Under Review',archived:'Archived'};
 const ISO_TYPES = {electrical:'Electrical',mechanical:'Mechanical',pneumatic:'Pneumatic',hydraulic:'Hydraulic',process:'Process',other:'Other'};
@@ -848,7 +1188,12 @@ async function checkLicence(){
       {method:'GET',mode:'cors',headers:{'apikey':SB_LIC_KEY,'Authorization':'Bearer '+SB_LIC_KEY,'Content-Type':'application/json'}});
     if(res.ok){
       const rows = await res.json();
-      if(rows&&rows.length&&rows[0].paid&&new Date(rows[0].expires_at)>=new Date()){ hideLicenceOverlay(); return; }
+      if(rows&&rows.length&&rows[0].paid&&new Date(rows[0].expires_at)>=new Date()){
+        const exp = new Date(rows[0].expires_at).toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'});
+        const licEl = document.getElementById('isoLicStatus');
+        if(licEl) licEl.textContent = 'Licence active · expires ' + exp;
+        hideLicenceOverlay(); return;
+      }
       if(rows&&rows[0]&&new Date(rows[0].expires_at)<new Date()){
         showLicErr('Licence expired on '+new Date(rows[0].expires_at).toLocaleDateString('en-GB')+'. Please contact your administrator.'); return;
       }
@@ -972,7 +1317,6 @@ async function loadProfileAndLaunch(){
       return;
     }
     currentProfile = data || {email:currentUser.email, full_name:currentUser.email, role:'viewer'};
-    if (currentProfile && currentProfile.shift_tracker_access === false) currentProfile.shift_tracker_access = true;
     launchApp();
   } catch(e) {
     console.warn('Isolation profile load failed:', e.message);
@@ -988,21 +1332,7 @@ async function doLogout(){
 async function launchApp(){
   document.getElementById('splash').style.display='none';
   const app=document.getElementById('appWrapper'); app.style.display='flex';
-  const rawName=currentProfile.full_name||'';
-  const emailPrefix=(currentProfile.email||'').split('@')[0]||'—';
-  if(isoRole()==='admin'){
-  }
-  document.getElementById('headerEmail').textContent=rawName||emailPrefix;
-  // Try kiln_users.locked_name as fallback if full_name missing
-  if(!rawName){
-    sb.auth.getSession().then(function(r){
-      const uid=r.data&&r.data.session&&r.data.session.user&&r.data.session.user.id;
-      if(!uid) return;
-      sb.from('kiln_users').select('locked_name').eq('auth_user_id',uid).maybeSingle().then(function(res){
-        if(res.data&&res.data.locked_name) document.getElementById('headerEmail').textContent=res.data.locked_name;
-      });
-    });
-  }
+  document.getElementById('headerEmail').textContent=currentProfile.email||currentProfile.full_name||'—';
   const role=isoRole();
   if(role==='none'){
     showAccessDenied('You do not have access to Isolation Matrix. Contact your administrator.');
@@ -1011,6 +1341,9 @@ async function launchApp(){
   const rb=document.getElementById('headerRole');
   rb.textContent=role.charAt(0).toUpperCase()+role.slice(1);
   rb.className='role-badge role-'+role;
+  if(canAdmin()){
+    document.getElementById('btnReadWorkbook').style.display='flex';
+  }
   if(canEdit()){
     document.getElementById('btnAddMatrix').style.display='flex';
     document.getElementById('btnAddEquip').style.display='flex';
@@ -1023,19 +1356,52 @@ async function launchApp(){
 function switchTab(tab){
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+tab));
+  if(tab==='audit') loadAudit();
 }
 
 /* ── DATA ────────────────────────────────────────────────────────── */
 async function loadAllData(){
-  await Promise.all([loadMatrices(),loadEquipment()]);
+  await Promise.all([loadMatrices(),loadEquipment(),loadAudit()]);
 }
 async function loadMatrices(){
   const {data,error}=await sb.from('pw_isolation_matrices')
     .select('*').order('plant_name').order('area');
   if(error){ console.error('loadMatrices:',error); showToast('Failed to load matrices'); return; }
   _matrices=data||[];
+  _matrixSelection.clear();
+  await loadMatrixSearchIndex();
   document.getElementById('matrixCount').textContent=_matrices.length;
   renderMatrices(); renderMatrixStats(); buildAreasFromData();
+  updateMatrixBulkControls();
+}
+
+async function loadMatrixSearchIndex(){
+  _matrixSearchIndex = {};
+  if(!_matrices.length) return;
+  const ids = _matrices.map(function(m){ return m.id; }).filter(Boolean);
+  const [pointsRes, entriesRes] = await Promise.all([
+    sb.from('pw_isolation_points').select('matrix_id,plant_number,description').in('matrix_id', ids),
+    sb.from('pw_isolation_entries').select('matrix_id,work_item_ref,work_item_name,isolation_points').in('matrix_id', ids)
+  ]);
+  const points = pointsRes.data || [];
+  const entries = entriesRes.data || [];
+  ids.forEach(function(id){
+    _matrixSearchIndex[id] = [];
+  });
+  points.forEach(function(p){
+    if(!p || !p.matrix_id) return;
+    _matrixSearchIndex[p.matrix_id] = _matrixSearchIndex[p.matrix_id] || [];
+    _matrixSearchIndex[p.matrix_id].push(p.plant_number || '', p.description || '');
+  });
+  entries.forEach(function(e){
+    if(!e || !e.matrix_id) return;
+    _matrixSearchIndex[e.matrix_id] = _matrixSearchIndex[e.matrix_id] || [];
+    _matrixSearchIndex[e.matrix_id].push(e.work_item_ref || '', e.work_item_name || '');
+    if(Array.isArray(e.isolation_points)) _matrixSearchIndex[e.matrix_id].push(e.isolation_points.join(' '));
+  });
+  Object.keys(_matrixSearchIndex).forEach(function(id){
+    _matrixSearchIndex[id] = _matrixSearchIndex[id].join(' ').toLowerCase();
+  });
 }
 
 async function loadEquipment(){
@@ -1044,19 +1410,442 @@ async function loadEquipment(){
   renderEquipment(); populateEquipDropdown(); populateCatFilter();
 }
 
+/* ── MATRIX READER ─────────────────────────────────────────────── */
+function openMatrixReader(){
+  if(!canAdmin()){
+    showToast('Read Workbook is admin-only');
+    return;
+  }
+  _readerState = {fileNames:[], sheets:[], selected:{}};
+  document.getElementById('matrixReaderTitle').textContent = 'Read Isolation Workbook';
+  document.getElementById('matrixReaderFile').value = '';
+  document.getElementById('matrixReaderFileName').textContent = 'No files selected';
+  document.getElementById('matrixReaderStatus').style.display = 'none';
+  document.getElementById('matrixReaderSummary').innerHTML = '';
+  document.getElementById('matrixReaderList').innerHTML = '';
+  document.getElementById('matrixReaderPrint').innerHTML = '';
+  document.getElementById('matrixReaderModal').classList.add('open');
+}
+function closeMatrixReader(){
+  document.getElementById('matrixReaderModal').classList.remove('open');
+}
+function readerNorm(s){ return String(s||'').toLowerCase().replace(/\s+/g,' ').trim(); }
+function readerClean(s){ return String(s||'').replace(/\s+/g,' ').trim(); }
+function readerGrid(ws){
+  return XLSX.utils.sheet_to_json(ws,{header:1,defval:'',raw:false}).map(function(row){
+    return (row || []).map(function(c){ return readerClean(c); });
+  });
+}
+function readerBounds(ws){
+  return ws && ws['!ref'] ? XLSX.utils.decode_range(ws['!ref']) : {s:{r:0,c:0}, e:{r:0,c:0}};
+}
+function readerGetCell(ws, r, c){
+  return ws ? (ws[XLSX.utils.encode_cell({r:r,c:c})] || null) : null;
+}
+function readerCellFill(cell){
+  if(!cell) return null;
+  const candidates = [cell.fill, cell.s && cell.s.fill, cell.s];
+  for(const src of candidates){
+    if(!src) continue;
+    if(src.patternType === 'solid' && src.fgColor) return src.fgColor;
+    if(src.fill && src.fill.patternType === 'solid' && src.fill.fgColor) return src.fill.fgColor;
+    if(src.fgColor && src.patternType === 'solid') return src.fgColor;
+  }
+  return null;
+}
+function readerCellIsRed(ws, r, c){
+  const cell = readerGetCell(ws, r, c);
+  const fg = readerCellFill(cell);
+  if(!fg) return false;
+  if(fg.type === 'rgb' && typeof fg.rgb === 'string'){
+    const rgb = fg.rgb.toUpperCase();
+    return rgb.endsWith('FF0000') || rgb === 'FFFF0000';
+  }
+  if(fg.type === 'indexed' && Number(fg.indexed) === 10) return true;
+  if(typeof fg.rgb === 'string'){
+    const rgb = fg.rgb.toUpperCase();
+    return rgb.endsWith('FF0000') || rgb === 'FFFF0000';
+  }
+  return false;
+}
+function readerCountRedFills(ws){
+  const b = readerBounds(ws);
+  let count = 0;
+  for(let r=b.s.r; r<=b.e.r; r++){
+    for(let c=b.s.c; c<=b.e.c; c++){
+      if(readerCellIsRed(ws, r, c)) count++;
+    }
+  }
+  return count;
+}
+function readerRowText(row){
+  return (row || []).map(function(c){ return readerClean(c); }).filter(Boolean).join(' ');
+}
+function readerFindRow(grid, predicate, limit){
+  const end = Math.min(grid.length, limit || grid.length);
+  for(let r=0; r<end; r++){
+    if(predicate(readerRowText(grid[r]), grid[r] || [], r)) return r;
+  }
+  return -1;
+}
+function readerBestTitle(grid, fallback){
+  const ignore = ['REVIEWED','EQUIPMENT TO ISOLATE','EQUIPMENT TO BE WORKED ON','EQUIPMENT TO BE ISOLATED','PLANT NO'];
+  let best = '';
+  for(let r=0; r<Math.min(grid.length, 6); r++){
+    for(let c=0; c<Math.min((grid[r]||[]).length, 8); c++){
+      const v = readerClean(grid[r][c]);
+      if(!v) continue;
+      if(ignore.includes(v.toUpperCase())) continue;
+      if(v.length > best.length) best = v;
+    }
+  }
+  return best || fallback;
+}
+function readerNormalizeDate(value){
+  const t = readerClean(value);
+  if(!t) return null;
+  const iso = t.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if(iso) return `${iso[1]}-${iso[2]}-${iso[3]}`;
+  const m = t.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})$/);
+  if(!m) return null;
+  const day = parseInt(m[1], 10);
+  const month = parseInt(m[2], 10);
+  let year = parseInt(m[3], 10);
+  if(year < 100) year += year >= 70 ? 1900 : 2000;
+  if(!day || !month || month > 12 || day > 31) return null;
+  return new Date(Date.UTC(year, month - 1, day)).toISOString().slice(0, 10);
+}
+function readerGuessType(text){
+  const t = readerNorm(text);
+  if(/electr|mcb|mcc|panel|motor|drive|starter|contactor/.test(t)) return 'electrical';
+  if(/pneu|airslide|compressor|pressure|air /.test(t)) return 'pneumatic';
+  if(/hydra|oil|ram/.test(t)) return 'hydraulic';
+  if(/pump|valve|conveyor|feeder|screen|silo|elevator|worm|belt|gate|fan|filter/.test(t)) return 'mechanical';
+  if(/zone|isolation|process|product|material/.test(t)) return 'process';
+  return 'other';
+}
+function readerGuessMatrixRefBase(title, sheetName, filename){
+  const raw = [title, sheetName, filename].filter(Boolean).join(' ').toUpperCase();
+  const tokens = raw.replace(/[^A-Z0-9]+/g,' ').split(' ').filter(Boolean).filter(function(t){
+    return !['PADESWOOD','WORKS','ISOLATION','MATRIX','PLANT','AREA','SHEET','XLS','XLSX'].includes(t);
+  });
+  return (tokens.join('').slice(0,12) || 'IMP');
+}
+function readerBuildMatrixRef(base){
+  const key = (base || 'IMP').toUpperCase();
+  const used = new Set((_matrices || []).map(function(m){ return readerNorm(m.matrix_ref || '').toUpperCase(); }).filter(Boolean));
+  let n = 1;
+  let candidate = key + '-' + String(n).padStart(2, '0');
+  while(used.has(candidate.toUpperCase())){
+    n++;
+    candidate = key + '-' + String(n).padStart(2, '0');
+  }
+  return candidate;
+}
+function readerSheetLooksLikeMatrix(grid, ws){
+  const text = grid.slice(0, 8).map(readerRowText).join(' ').toUpperCase();
+  return /EQUIPMENT TO ISOLATE|EQUIPMENT TO BE WORKED ON|EQUIPMENT TO BE ISOLATED/.test(text) || readerCountRedFills(ws) > 0;
+}
+function readerParseWorkbook(wb, filename){
+  const sheets = [];
+  wb.SheetNames.forEach(function(name){
+    const ws = wb.Sheets[name];
+    const grid = readerGrid(ws);
+    if(!grid.length) return;
+    if(!readerSheetLooksLikeMatrix(grid, ws)) return;
+
+    const title = readerBestTitle(grid, name);
+    const reviewedAt = readerNormalizeDate((grid[0] || [])[2] || (grid[0] || [])[1] || '');
+    const reviewedByMatch = readerRowText(grid[0]).match(/Reviewed\s+([0-9]{1,2}[\/-][0-9]{1,2}[\/-][0-9]{2,4})\s*-\s*(.+)$/i);
+    const reviewedBy = reviewedByMatch ? readerClean(reviewedByMatch[2]) : null;
+    const workHeaderRow = readerFindRow(grid, function(text){ return /equipment to be worked on|equipment to be isolated/i.test(text); }, 12);
+    const namesRow = workHeaderRow >= 2 ? workHeaderRow - 2 : 2;
+    const codesRow = workHeaderRow >= 1 ? workHeaderRow - 1 : 3;
+    const dataStart = workHeaderRow >= 0 ? workHeaderRow : 5;
+    const b = readerBounds(ws);
+    const lastCol = b.e.c;
+    const equipment = [];
+    for(let c=3; c<=lastCol; c++){
+      const name = readerClean((grid[namesRow] || [])[c]);
+      const code = readerClean((grid[codesRow] || [])[c]);
+      if(!name && !code) continue;
+      if(/equipment to isolate|equipment to be worked on|plant no/i.test(name || code)) continue;
+      equipment.push({col:c, code: code || '', name: name || code || ('Column ' + XLSX.utils.encode_col(c))});
+    }
+    const workItems = [];
+    const equipmentEndCol = equipment.length ? equipment[equipment.length - 1].col : lastCol;
+    for(let r=dataStart; r<grid.length; r++){
+      const row = grid[r] || [];
+      const rowText = readerRowText(row);
+      if(!rowText) continue;
+      if(/reason for isolation|completion|reviewed|comments/i.test(rowText)) continue;
+      const workCode = readerClean(row[1] || row[0] || '');
+      const workName = readerClean(row[2] || row[1] || row[0] || '');
+      if(!workCode && !workName) continue;
+      const notes = row.slice(equipmentEndCol + 1).map(readerClean).filter(Boolean).join(' · ');
+      const required = [];
+      equipment.forEach(function(eq){
+        if(readerCellIsRed(ws, r, eq.col)){
+          required.push({
+            code: eq.code || '',
+            name: eq.name || ''
+          });
+        }
+      });
+      if(!required.length) continue;
+      workItems.push({
+        work_item_ref: workCode || workName,
+        work_item_name: workName || workCode,
+        required: required,
+        notes: notes
+      });
+    }
+    sheets.push({
+      filename: filename,
+      sheetName: name,
+      title: title,
+      reviewedBy: reviewedBy,
+      reviewedAt: reviewedAt,
+      equipment: equipment,
+      workItems: workItems,
+      redCount: readerCountRedFills(ws),
+      warnings: workItems.length ? [] : ['No red isolation boxes were found on the work-item rows.']
+    });
+  });
+  return sheets;
+}
+async function handleMatrixWorkbookFiles(fileList){
+  const files = Array.from(fileList || []).filter(function(f){ return /\.(xls|xlsx)$/i.test(f.name); });
+  const status = document.getElementById('matrixReaderStatus');
+  const fileName = document.getElementById('matrixReaderFileName');
+  if(!files.length){
+    fileName.textContent = 'No files selected';
+    status.style.display = 'block';
+    status.textContent = 'No Excel workbook found.';
+    return;
+  }
+  _readerState.fileNames = files.map(function(f){ return f.name; });
+  fileName.textContent = files.length === 1 ? files[0].name : files.length + ' files selected';
+  status.style.display = 'block';
+  status.textContent = 'Reading ' + files.length + ' workbook' + (files.length===1?'':'s') + '…';
+  const sheets = [];
+  for(const file of files){
+    try{
+      const buf = await file.arrayBuffer();
+      const wb = XLSX.read(new Uint8Array(buf), {type:'array', raw:false, cellDates:true, cellText:true, cellStyles:true});
+      const parsed = readerParseWorkbook(wb, file.name);
+      parsed.forEach(function(s){ sheets.push(s); });
+    }catch(e){
+      sheets.push({
+        filename: file.name,
+        sheetName: file.name,
+        title: file.name,
+        reviewedBy: null,
+        reviewedAt: null,
+        equipment: [],
+        workItems: [],
+        redCount: 0,
+        warnings: [e.message],
+        error: e.message
+      });
+    }
+  }
+  _readerState.sheets = sheets;
+  _readerState.selected = {};
+  sheets.forEach(function(s, idx){ _readerState.selected[idx] = !s.error; });
+  renderMatrixReader();
+}
+function renderMatrixReader(){
+  const sheets = _readerState.sheets || [];
+  const summary = document.getElementById('matrixReaderSummary');
+  const list = document.getElementById('matrixReaderList');
+  const printArea = document.getElementById('matrixReaderPrint');
+  const selectedCount = sheets.reduce(function(n, s, idx){ return n + (s.error ? 0 : (_readerState.selected[idx] !== false ? 1 : 0)); }, 0);
+  const okSheets = sheets.filter(function(s){ return !s.error; });
+  const selectedSheets = sheets.filter(function(s, idx){ return s && !s.error && _readerState.selected[idx] !== false; });
+  summary.innerHTML = [
+    {l:'Sheets', v: okSheets.length},
+    {l:'Files failed', v: sheets.filter(function(s){ return s.error; }).length},
+    {l:'Selected', v: selectedCount},
+    {l:'Work items', v: okSheets.reduce(function(n, s){ return n + (s.workItems ? s.workItems.length : 0); }, 0)},
+    {l:'Red cells', v: okSheets.reduce(function(n, s){ return n + (s.redCount || 0); }, 0)}
+  ].map(function(card){
+    return '<div class="matrix-reader-card"><div class="matrix-reader-card-l">'+card.l+'</div><div class="matrix-reader-card-v">'+esc(String(card.v))+'</div></div>';
+  }).join('');
+
+  if(!sheets.length){
+    list.innerHTML = '<div class="empty-state">No sheets read yet.</div>';
+    printArea.innerHTML = '';
+    return;
+  }
+
+  list.innerHTML = sheets.map(function(s, idx){
+    if(s.error){
+      return '<div class="matrix-sheet" style="border-color:var(--redb);background:var(--redd)">'
+        + '<div class="matrix-sheet-title" style="color:var(--red)">'+esc(s.sheetName || s.filename || 'Failed file')+'</div>'
+        + '<div class="matrix-sheet-sub">'+esc(s.filename || 'Unknown file')+' · parse failed</div>'
+        + '<div class="matrix-sheet-warn">'+esc(s.error)+'</div>'
+        + '</div>';
+    }
+    const requiredRows = (s.workItems || []).slice(0, 8).map(function(w){
+      return '<tr>'
+        + '<td class="mono">'+esc(w.work_item_ref || '')+'</td>'
+        + '<td>'+esc(smartTitleCase(w.work_item_name || ''))+'</td>'
+        + '<td>'+esc((w.required || []).map(function(p){ return (p.code ? p.code + ' - ' : '') + smartTitleCase(p.name || ''); }).join(', '))+'</td>'
+        + '<td>'+esc(w.notes || '')+'</td>'
+        + '</tr>';
+    }).join('');
+    const checked = _readerState.selected[idx] !== false;
+    return '<div class="matrix-sheet">'
+      + '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">'
+      + '<div>'
+      + '<div class="matrix-sheet-title">'+esc(smartTitleCase(s.title || s.sheetName || 'Untitled'))+'</div>'
+      + '<div class="matrix-sheet-sub">'+esc(s.filename || 'Unknown file')+' · '+esc(s.sheetName)+' · '+esc(String(s.workItems.length))+' work items · '+esc(String(s.redCount))+' red cells</div>'
+      + (s.reviewedBy || s.reviewedAt ? '<div class="matrix-sheet-sub">'+[s.reviewedBy ? 'Reviewed by ' + esc(s.reviewedBy) : '', s.reviewedAt ? 'Reviewed ' + esc(s.reviewedAt) : ''].filter(Boolean).join(' · ')+'</div>' : '')
+      + '</div>'
+      + '<label style="display:flex;align-items:center;gap:8px;font-family:var(--ff-mono);font-size:10px;color:var(--tx2);white-space:nowrap">'
+      + '<input type="checkbox" data-reader-idx="'+idx+'" '+(checked?'checked':'')+' onchange="toggleMatrixReaderSelection(this)">'
+      + 'Include'
+      + '</label>'
+      + '</div>'
+      + (s.warnings && s.warnings.length ? '<div class="matrix-sheet-warn">'+s.warnings.map(function(w){ return '- ' + esc(w); }).join('<br>')+'</div>' : '')
+      + '<div class="matrix-preview">'
+      + '<table><thead><tr><th>Work Item Code</th><th>Work Item</th><th>Required Isolations</th><th>Notes</th></tr></thead><tbody>'
+      + (requiredRows || '<tr><td colspan="4" style="color:var(--tx3);text-align:center">No work items extracted</td></tr>')
+      + '</tbody></table></div>'
+      + '</div>';
+  }).join('');
+
+  const printable = selectedSheets.map(function(s){
+    const rows = (s.workItems || []).map(function(w){
+      return '<tr><td>'+esc(w.work_item_ref || '')+'</td><td>'+esc(smartTitleCase(w.work_item_name || ''))+'</td><td>'+esc((w.required || []).map(function(p){ return (p.code ? p.code + ' - ' : '') + smartTitleCase(p.name || ''); }).join(', '))+'</td><td>'+esc(w.notes || '')+'</td></tr>';
+    }).join('');
+    return '<section style="margin-bottom:18px">'
+      + '<h2 style="font-size:18px;margin:0 0 6px">'+esc(smartTitleCase(s.title || s.sheetName || 'Untitled'))+'</h2>'
+      + '<div style="font-family:monospace;font-size:10px;margin-bottom:8px">'+esc(s.filename || '')+' · '+esc(s.sheetName)+' · Reviewed '+esc(s.reviewedAt || '—')+'</div>'
+      + '<table><thead><tr><th>Work Item Code</th><th>Work Item</th><th>Required Isolations</th><th>Notes</th></tr></thead><tbody>'
+      + (rows || '<tr><td colspan="4">No work items extracted</td></tr>')
+      + '</tbody></table></section>';
+  }).join('');
+  printArea.innerHTML = printable;
+}
+function toggleMatrixReaderSelection(cb){
+  const idx = parseInt(cb.dataset.readerIdx, 10);
+  _readerState.selected[idx] = cb.checked;
+  renderMatrixReader();
+}
+async function importSelectedSheets(){
+  if(!canAdmin()){
+    showToast('Import is admin-only');
+    return;
+  }
+  const sheets = (_readerState.sheets || []).filter(function(s, idx){ return s && !s.error && _readerState.selected[idx] !== false; });
+  if(!sheets.length){
+    showToast('No sheets selected for import');
+    return;
+  }
+  const status = document.getElementById('matrixReaderStatus');
+  status.style.display = 'block';
+  status.textContent = 'Importing selected sheets…';
+  const imported = [];
+  let failed = 0;
+  let firstError = '';
+  const usedRefs = new Set((_matrices || []).map(function(m){ return readerNorm(m.matrix_ref || '').toUpperCase(); }).filter(Boolean));
+  for(const s of sheets){
+    try{
+      const base = readerGuessMatrixRefBase(s.title || s.sheetName, s.sheetName, s.filename);
+      let matrixRef = readerBuildMatrixRef(base);
+      while(usedRefs.has(matrixRef.toUpperCase())){
+        const mm = matrixRef.match(/^(.*?)-(\d+)$/);
+        if(!mm) break;
+        matrixRef = mm[1] + '-' + String(parseInt(mm[2], 10) + 1).padStart(2, '0');
+      }
+      usedRefs.add(matrixRef.toUpperCase());
+      const matrixPayload = {
+        plant_name: smartTitleCase(s.title || s.sheetName || 'Imported matrix'),
+        plant_ref: (s.title || s.sheetName || '').match(/[A-Z0-9]+/i)?.[0]?.toUpperCase() || '',
+        area: smartTitleCase(s.sheetName) || null,
+        status: 'active',
+        reviewed_by: s.reviewedBy || null,
+        reviewed_at: s.reviewedAt || null,
+        matrix_ref: matrixRef,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+      const {data: matrixRow, error: matrixErr} = await sb.from('pw_isolation_matrices').insert(matrixPayload).select('id').single();
+      if(matrixErr) throw matrixErr;
+      const matrixId = matrixRow.id;
+      const pointByRef = {};
+      if((s.equipment || []).length){
+        const pointPayload = s.equipment.map(function(eq, idx){
+          const ref = eq.code || (eq.name || ('P' + (idx + 1))).trim();
+          pointByRef[readerNorm(ref).toUpperCase()] = ref;
+          return {
+            matrix_id: matrixId,
+            plant_number: eq.code || eq.name || ('Point ' + (idx + 1)),
+            description: eq.name || eq.code || ('Point ' + (idx + 1)),
+            sort_order: idx
+          };
+        });
+        const {error: pointErr} = await sb.from('pw_isolation_points').insert(pointPayload);
+        if(pointErr) throw pointErr;
+      }
+      if((s.workItems || []).length){
+        const entryPayload = s.workItems.map(function(w, idx){
+          return {
+            matrix_id: matrixId,
+            work_item_ref: w.work_item_ref || w.work_item_name || ('Item ' + (idx + 1)),
+            work_item_name: smartTitleCase(w.work_item_name || w.work_item_ref || ('Item ' + (idx + 1))),
+            sort_order: idx,
+            isolation_points: (w.required || []).map(function(p){
+              return p.code || p.name || '';
+            }).filter(Boolean)
+          };
+        });
+        const {error: entryErr} = await sb.from('pw_isolation_entries').insert(entryPayload);
+        if(entryErr) throw entryErr;
+      }
+      await logIsolationAction('import', 'pw_isolation_matrices', matrixId, matrixPayload.matrix_ref || '', matrixPayload.plant_name || '', 'Imported ' + (s.sheetName || 'sheet') + ' from ' + (s.filename || 'workbook') + ' · ' + (s.equipment || []).length + ' equipment · ' + (s.workItems || []).length + ' work items');
+      imported.push(s.title || s.sheetName || 'Imported matrix');
+    }catch(e){
+      failed++;
+      if(!firstError) firstError = e && e.message ? e.message : String(e || 'Unknown import error');
+      console.error('Workbook import failed for sheet', s.sheetName, e);
+    }
+  }
+  await loadMatrices();
+  renderMatrixReader();
+  status.textContent = 'Import complete: ' + imported.length + ' imported' + (failed ? ' · ' + failed + ' failed' + (firstError ? ' · ' + firstError : '') : '');
+  showToast(imported.length + ' matrix' + (imported.length===1?'':'es') + ' imported ✓' + (failed ? ' · ' + failed + ' failed' : ''));
+  if(!failed) closeMatrixReader();
+}
+
 function buildAreasFromData(){
-  const areas=[...new Set(_matrices.map(m=>m.area||'').filter(Boolean))].sort();
+  const areaMap=new Map();
+  _matrices.forEach(function(m){
+    const area = String(m.area || '').trim();
+    if(!area) return;
+    const key = normalizeAreaKey(area);
+    if(!areaMap.has(key)) areaMap.set(key, area);
+  });
+  const areas=[...areaMap.values()].sort(function(a,b){
+    return smartTitleCase(a).localeCompare(smartTitleCase(b));
+  });
   const af=document.getElementById('matrixAreaFilter');
   if(af){
-    const cur=af.value;
-    af.innerHTML='<option value="">All areas</option>'+areas.map(a=>`<option ${a===cur?'selected':''} value="${esc(a)}">${esc(a)}</option>`).join('');
+    const cur=normalizeAreaKey(af.value);
+    af.innerHTML='<option value="">All areas</option>'+areas.map(a=>{
+      const key = normalizeAreaKey(a);
+      return `<option ${key===cur?'selected':''} value="${esc(key)}">${esc(smartTitleCase(a))}</option>`;
+    }).join('');
+    af.value = cur || '';
   }
   populateAreaDatalist(areas);
 }
 
 function populateAreaDatalist(areas){
   const dl=document.getElementById('areaList');
-  if(dl) dl.innerHTML=areas.map(a=>`<option value="${esc(a)}">`).join('');
+  if(dl) dl.innerHTML=areas.map(a=>`<option value="${esc(smartTitleCase(a))}">`).join('');
 }
 
 async function loadPointsForMatrix(id){
@@ -1073,28 +1862,182 @@ async function loadEntriesForMatrix(id){
   return _entries[id];
 }
 
+async function loadAudit(){
+  const {data,error}=await sb.from('pw_audit_trail')
+    .select('*')
+    .in('table_name',['pw_isolation_matrices','pw_isolation_points','pw_isolation_entries'])
+    .order('changed_at',{ascending:false})
+    .limit(500);
+  if(error){ console.error('loadAudit:',error); return; }
+  _isoAudit=data||[];
+  const c=document.getElementById('auditCount');
+  if(c) c.textContent=_isoAudit.length;
+  renderAudit();
+}
+
+function renderAudit(rows){
+  rows=rows||_isoAudit;
+  const users=[...new Set((_isoAudit||[]).map(r=>r.changed_by).filter(Boolean))].sort();
+  const uf=document.getElementById('auditUserFilter');
+  if(uf){
+    const uv=uf.value;
+    uf.innerHTML='<option value="">All users</option>'+users.map(function(u){ return '<option value="'+esc(u)+'"'+(u===uv?' selected':'')+'>'+esc(u)+'</option>'; }).join('');
+  }
+  const body=document.getElementById('auditBody');
+  if(!body) return;
+  if(!rows.length){
+    body.innerHTML='<tr><td colspan="6"><div class="empty-state"><p>No audit entries found.</p></div></td></tr>';
+    return;
+  }
+  body.innerHTML=rows.map(function(r){
+    const nv=r.new_data||{};
+    const ts=r.changed_at ? new Date(r.changed_at).toLocaleString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
+    const action = (r.action||'update').toString();
+    return '<tr>'
+      + '<td style="font-family:var(--ff-mono);font-size:11px;white-space:nowrap;color:var(--tx2)">'+esc(ts)+'<\/td>'
+      + '<td><span style="display:inline-flex;align-items:center;padding:2px 7px;border-radius:999px;font-size:9px;letter-spacing:1px;text-transform:uppercase;background:var(--sf3);border:1px solid var(--bd);color:var(--tx2)">'+esc(action)+'<\/span><\/td>'
+      + '<td class="td-ref">'+esc(nv.ref||r.record_id||'—')+'<\/td>'
+      + '<td><div class="td-title">'+esc(nv.title||'—')+'<\/div><\/td>'
+      + '<td style="font-size:12px;color:var(--tx2)">'+esc(r.changed_by||'—')+'<\/td>'
+      + '<td style="font-size:11px;color:var(--tx3)">'+esc(nv.detail||'—')+'<\/td>'
+      + '<\/tr>';
+  }).join('');
+}
+
+function filterAudit(){
+  const q=(document.getElementById('auditSearch').value||'').toLowerCase();
+  const ac=document.getElementById('auditActionFilter').value;
+  const uc=document.getElementById('auditUserFilter').value;
+  renderAudit((_isoAudit||[]).filter(function(r){
+    const nv=r.new_data||{};
+    const text=[r.action,r.changed_by,nv.ref,nv.title,nv.detail,r.record_id].join(' ').toLowerCase();
+    const matchQ=!q||text.includes(q);
+    const matchA=!ac||r.action===ac;
+    const matchU=!uc||r.changed_by===uc;
+    return matchQ&&matchA&&matchU;
+  }));
+}
+
+async function logIsolationAction(action, tableName, recordId, ref, title, detail){
+  if(!recordId) return;
+  try{
+    const user = currentProfile?.full_name || currentProfile?.email || 'Unknown';
+    const {error} = await sb.from('pw_audit_trail').insert({
+      table_name: tableName,
+      record_id: recordId,
+      action: action,
+      changed_by: user,
+      new_data: {
+        ref: ref || null,
+        title: title || null,
+        detail: detail || null
+      }
+    });
+    if(error) console.warn('Audit log failed:', error.message);
+    else if(document.getElementById('panel-audit')?.classList.contains('active')) loadAudit();
+  }catch(e){ console.warn('Audit log exception:', e.message); }
+}
+
 function renderMatrixStats(){
   const total=_matrices.length;
-  const active=_matrices.filter(m=>m.status==='active').length;
-  const draft=_matrices.filter(m=>m.status==='draft'||!m.status).length;
-  const archived=_matrices.filter(m=>m.status==='archived').length;
+  const overdue=_matrices.filter(m=>calcMatrixStatus(m)==='overdue').length;
+  const dueSoon=_matrices.filter(m=>calcMatrixStatus(m)==='due-soon').length;
+  const active=_matrices.filter(m=>calcMatrixStatus(m)==='active').length;
+  const draft=_matrices.filter(m=>calcMatrixStatus(m)==='draft').length;
   document.getElementById('matrixStats').innerHTML=`
     <div class="stat-card s-total"><div class="stat-label">Total Matrices</div><div class="stat-num">${total}</div><div class="stat-sub">All procedures</div></div>
-    <div class="stat-card s-active"><div class="stat-label">Active</div><div class="stat-num">${active}</div><div class="stat-sub">Approved &amp; in use</div></div>
-    <div class="stat-card s-draft"><div class="stat-label">Draft</div><div class="stat-num">${draft}</div><div class="stat-sub">Awaiting approval</div></div>
-    <div class="stat-card s-review"><div class="stat-label">Archived</div><div class="stat-num">${archived}</div><div class="stat-sub">No longer active</div></div>`;
+    <div class="stat-card s-active"><div class="stat-label">Active</div><div class="stat-num">${active}</div><div class="stat-sub">In date</div></div>
+    <div class="stat-card s-draft"><div class="stat-label">Due Soon</div><div class="stat-num">${dueSoon}</div><div class="stat-sub">Within 30 days</div></div>
+    <div class="stat-card s-review"><div class="stat-label">Overdue</div><div class="stat-num">${overdue}</div><div class="stat-sub">Past review date</div></div>`;
+}
+
+function sortMatrixRows(rows){
+  const col = _matrixSort.col || 'status';
+  const dir = _matrixSort.dir === -1 ? -1 : 1;
+  return (rows || []).slice().sort(function(a,b){
+    const av = matrixSortValue(a, col);
+    const bv = matrixSortValue(b, col);
+    if(typeof av === 'number' && typeof bv === 'number' && av !== bv) return (av - bv) * dir;
+    const cmp = String(av).localeCompare(String(bv));
+    if(cmp !== 0) return cmp * dir;
+    const fallbackA = String(a.plant_name || a.matrix_ref || '');
+    const fallbackB = String(b.plant_name || b.matrix_ref || '');
+    return fallbackA.localeCompare(fallbackB) * dir;
+  });
+}
+
+function toggleMatrixSelection(id, checked){
+  if(!id) return;
+  if(checked) _matrixSelection.add(id);
+  else _matrixSelection.delete(id);
+  updateMatrixBulkControls();
+}
+
+function updateMatrixBulkControls(){
+  const btn=document.getElementById('btnBulkDeleteMatrices');
+  const cnt=document.getElementById('matrixSelectionCount');
+  if(cnt) cnt.textContent=String(_matrixSelection.size);
+  if(btn) btn.style.display = canBulkDelete() && _matrixSelection.size ? 'inline-flex' : 'none';
+}
+
+function clearMatrixSelection(){
+  _matrixSelection.clear();
+  updateMatrixBulkControls();
+  renderMatrices();
+}
+
+async function bulkDeleteSelectedMatrices(){
+  if(!canBulkDelete()) { showToast('Bulk delete is admin-only'); return; }
+  const ids=[..._matrixSelection];
+  if(!ids.length){ showToast('No matrices selected'); return; }
+  const names=ids.slice(0,5).map(function(id){
+    const m=_matrices.find(function(x){ return x.id===id; });
+    return m ? (m.plant_name || m.matrix_ref || id) : id;
+  });
+  const more=ids.length>5 ? ' and '+(ids.length-5)+' more' : '';
+  if(!confirm('Delete '+ids.length+' matrices? This cannot be undone.\n\n'+names.join('\n')+more)) return;
+  const status=document.getElementById('matrixReaderStatus');
+  if(status){ status.style.display='block'; status.textContent='Deleting '+ids.length+' matrices…'; }
+  let failed=0;
+  for(const id of ids){
+    try{
+      const ok = await deleteMatrixRecord(id, {silent:true, refresh:false});
+      if(!ok) failed++;
+    }catch(e){ failed++; }
+  }
+  _matrixSelection.clear();
+  await loadMatrices();
+  if(status){ status.textContent='Bulk delete complete' + (failed ? ' · '+failed+' failed' : ''); }
+  showToast('Deleted '+(ids.length-failed)+' matrices' + (failed ? ' · '+failed+' failed' : ''));
 }
 
 function renderMatrices(){
   const q=(document.getElementById('matrixSearch').value||'').toLowerCase();
   const sf=document.getElementById('matrixStatusFilter').value;
   const af=document.getElementById('matrixAreaFilter').value;
+  const sc=document.getElementById('matrixSort');
+  if(sc && sc.value) _matrixSort.col = sc.value;
+  if(sc && _matrixSort.col) sc.value = _matrixSort.col;
+  const sd=document.getElementById('matrixSortDirIcon');
+  if(sd) sd.style.transform = _matrixSort.dir === -1 ? 'rotate(180deg)' : 'rotate(0deg)';
   let list=_matrices.filter(m=>{
-    if(sf&&(m.status||'draft')!==sf) return false;
-    if(af&&(m.area||'')!==af) return false;
-    if(q&&![m.plant_name,m.plant_ref,m.area,m.matrix_ref,m.description].some(f=>(f||'').toLowerCase().includes(q))) return false;
+    const status=calcMatrixStatus(m);
+    if(sf&&status!==sf) return false;
+    if(af&&normalizeAreaKey(m.area||'')!==af) return false;
+    if(q){
+      const text = [
+        m.plant_name || '',
+        m.plant_ref || '',
+        m.area || '',
+        m.matrix_ref || '',
+        m.description || '',
+        _matrixSearchIndex[m.id] || ''
+      ].join(' ').toLowerCase();
+      if(!text.includes(q)) return false;
+    }
     return true;
   });
+  list = sortMatrixRows(list);
   const grid=document.getElementById('matrixGrid');
   if(!list.length){
     grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1">
@@ -1104,51 +2047,67 @@ function renderMatrices(){
     </div>`;
     return;
   }
-  const STATUS_CLS={active:'s-active-pill',draft:'s-draft-pill',archived:'s-archived-pill'};
-  const STATUS_LBL={active:'Active',draft:'Draft',archived:'Archived'};
+  const STATUS_CLS={overdue:'s-archived-pill','due-soon':'s-draft-pill',active:'s-active-pill',draft:'s-draft-pill'};
+  const STATUS_LBL={overdue:'Overdue','due-soon':'Due Soon',active:'Active',draft:'Draft'};
   grid.innerHTML=list.map(m=>{
-    const st=m.status||'draft';
+    const st=calcMatrixStatus(m);
     const ptCount=(_points[m.id]||[]).length;
-    return `<div class="matrix-card" onclick="openDetail('${m.id}')">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:10px">
-        <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center">
-          <span class="mc-status-pill ${STATUS_CLS[st]||'s-draft-pill'}">${STATUS_LBL[st]||st}</span>
-          ${m.matrix_ref?`<span style="font-family:var(--ff-mono);font-size:9px;color:var(--tx3);background:var(--sf2);padding:2px 7px;border-radius:4px;border:1px solid var(--bd)">${esc(m.matrix_ref)}</span>`:''}
+    const selected=_matrixSelection.has(m.id);
+    return `<div class="matrix-card" onclick="openDetail('${m.id}')" style="${selected?'outline:2px solid var(--ac3);outline-offset:1px':''}">
+      <div class="matrix-row-main">
+        <div class="matrix-row-copy">
+          <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+            <span class="mc-status-pill ${STATUS_CLS[st]||'s-draft-pill'}">${STATUS_LBL[st]||st}</span>
+            ${m.matrix_ref?`<span style="font-family:var(--ff-mono);font-size:9px;color:var(--tx3);background:var(--sf2);padding:2px 7px;border-radius:4px;border:1px solid var(--bd)">${esc(m.matrix_ref)}</span>`:''}
+            ${canBulkDelete()?`<label style="display:inline-flex;align-items:center;gap:5px;margin-left:auto;font-family:var(--ff-mono);font-size:9px;color:var(--tx2)" onclick="event.stopPropagation()"><input type="checkbox" ${selected?'checked':''} onchange="toggleMatrixSelection('${m.id}',this.checked)">Select</label>`:''}
+          </div>
+          <div class="matrix-title">${esc(smartTitleCase(m.plant_name||'—'))}</div>
+          <div class="matrix-sub">
+            ${m.plant_ref?`<span style="font-family:var(--ff-mono)">Ref: ${esc(m.plant_ref)}</span>`:''}
+            ${m.area?`<span>📍 ${esc(smartTitleCase(m.area))}</span>`:''}
+          </div>
         </div>
-        ${canEdit()?`<button class="icon-btn" style="flex-shrink:0" onclick="event.stopPropagation();openMatrixModal('${m.id}')" title="Edit">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        </button>`:''}
+        <div class="matrix-meta">
+          ${canEdit()?`<button class="icon-btn" style="flex-shrink:0" onclick="event.stopPropagation();openMatrixModal('${m.id}')" title="Edit">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>`:''}
+        </div>
       </div>
-      <div class="matrix-card-title">${esc(m.plant_name||'—')}</div>
-      <div style="font-size:11px;color:var(--tx2);margin-top:3px;display:flex;gap:10px;flex-wrap:wrap">
-        ${m.plant_ref?`<span style="font-family:var(--ff-mono)">Ref: ${esc(m.plant_ref)}</span>`:''}
-        ${m.area?`<span>📍 ${esc(m.area)}</span>`:''}
-      </div>
-      ${m.description?`<div style="font-size:11px;color:var(--tx2);margin-top:8px;line-height:1.5">${esc(m.description).substring(0,90)}${m.description.length>90?'…':''}</div>`:''}
-      <div style="display:flex;gap:12px;margin-top:12px;font-family:var(--ff-mono);font-size:10px;color:var(--tx3)">
-        ${ptCount?`<span>${ptCount} isolation pt${ptCount!==1?'s':''}</span>`:'<span>No points loaded</span>'}
-        ${m.reviewed_by?`<span>Reviewed: ${esc(m.reviewed_by)}</span>`:''}
-        ${m.reviewed_at?`<span>${fmtDate(m.reviewed_at)}</span>`:''}
-      </div>
+      ${(m.description||m.reviewed_by||m.reviewed_at)?`<div class="matrix-footer">
+        ${m.description?`<div style="font-size:11px;color:var(--tx2);line-height:1.5;flex:1;min-width:0">${esc(m.description).substring(0,120)}${m.description.length>120?'…':''}</div>`:''}
+        <div style="display:flex;gap:10px;flex-wrap:wrap;font-family:var(--ff-mono);font-size:10px;color:var(--tx3);margin-left:auto">
+          ${m.reviewed_by?`<span>Reviewed: ${esc(m.reviewed_by)}</span>`:''}
+          ${m.reviewed_at?`<span>${fmtDate(m.reviewed_at)}</span>`:''}
+        </div>
+      </div>`:''}
     </div>`;
   }).join('');
+  updateMatrixBulkControls();
 }
 
 async function openDetail(id){
   _openMatrixId=id;
   const m=_matrices.find(x=>x.id===id); if(!m) return;
-  const st=m.status||'draft';
-  const STATUS_CLS={active:'s-active-pill',draft:'s-draft-pill',archived:'s-archived-pill'};
-  const STATUS_LBL={active:'Active',draft:'Draft',archived:'Archived'};
+  const st=calcMatrixStatus(m);
+  const STATUS_CLS={overdue:'s-archived-pill','due-soon':'s-draft-pill',active:'s-active-pill',draft:'s-draft-pill'};
+  const STATUS_LBL={overdue:'Overdue','due-soon':'Due Soon',active:'Active',draft:'Draft'};
   document.getElementById('detailStatusRow').innerHTML=
     `<span class="mc-status-pill ${STATUS_CLS[st]||'s-draft-pill'}">${STATUS_LBL[st]||st}</span>`+
     (m.matrix_ref?`<span style="font-family:var(--ff-mono);font-size:9px;color:var(--tx3);background:var(--sf2);padding:2px 7px;border-radius:4px;border:1px solid var(--bd);margin-left:6px">${esc(m.matrix_ref)}</span>`:'');
-  document.getElementById('detailTitle').textContent=m.plant_name||'—';
+  document.getElementById('detailTitle').textContent=smartTitleCase(m.plant_name||'—');
   document.getElementById('detailEquip').textContent=
-    [m.plant_ref?`Ref: ${m.plant_ref}`:'', m.area?`Area: ${m.area}`:''].filter(Boolean).join('  ·  ');
-  document.getElementById('detailActions').innerHTML=canEdit()?`
-    <button class="btn btn-ghost" style="font-size:12px" onclick="openMatrixModal('${id}')">Edit Matrix</button>
-    <button class="btn btn-iso" style="font-size:12px" onclick="openPointModal('${id}')">+ Add Point</button>`:'';
+    [m.plant_ref?`Ref: ${m.plant_ref}`:'', m.area?`Area: ${smartTitleCase(m.area)}`:''].filter(Boolean).join('  ·  ');
+  const detailActions = [
+    `<button class="btn btn-ghost" style="font-size:12px" onclick="printMatrix('${id}')">Print Matrix</button>`
+  ];
+  if(canEdit()){
+    detailActions.push(
+      `<button class="btn btn-ghost" style="font-size:12px" onclick="openMatrixModal('${id}')">Edit Matrix</button>`,
+      `<button class="btn btn-iso" style="font-size:12px" onclick="openPointModal('${id}')">+ Add Equipment</button>`,
+      `<button class="btn btn-iso" style="font-size:12px" onclick="openEntryModal('${id}')">+ Add Work Item</button>`
+    );
+  }
+  document.getElementById('detailActions').innerHTML = detailActions.join('');
   const metaItems=[];
   if(m.reviewed_by) metaItems.push(`<span class="detail-meta-item">Reviewed by: ${esc(m.reviewed_by)}</span>`);
   if(m.reviewed_at) metaItems.push(`<span class="detail-meta-item">Date: ${fmtDate(m.reviewed_at)}</span>`);
@@ -1165,27 +2124,31 @@ async function openDetail(id){
     loadEntriesForMatrix(id)
   ]);
 
-  // Render isolation points summary
+  const pointMap = {};
+  points.forEach(function(p){
+    const code = (p.plant_number || '').trim();
+    if(!code) return;
+    const key = readerNorm(code).toUpperCase();
+    pointMap[key] = { code: code, name: p.description || '' };
+    const nameKey = readerNorm(p.description || '').toUpperCase();
+    if(nameKey && !pointMap[nameKey]) pointMap[nameKey] = { code: code, name: p.description || '' };
+  });
+
+  // Render isolation equipment summary
   const ptHtml = points.length
     ? `<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">
         <thead><tr style="background:var(--sf3)">
-          <th style="padding:7px 12px;text-align:left;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Plant No.</th>
-          <th style="padding:7px 12px;text-align:left;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Description</th>
-          <th style="padding:7px 12px;text-align:center;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Local Isol</th>
-          <th style="padding:7px 12px;text-align:center;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Lockable</th>
-          <th style="padding:7px 12px;text-align:center;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">View Win.</th>
-          <th style="padding:7px 12px;text-align:left;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Label</th>
+          <th style="padding:7px 12px;text-align:left;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Code</th>
+          <th style="padding:7px 12px;text-align:left;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Equipment Name</th>
+          <th style="padding:7px 12px;text-align:right;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Actions</th>
         </tr></thead>
         <tbody>${points.map((p,i)=>`<tr style="${i%2===1?'background:var(--sf2)':''}">
           <td style="padding:7px 12px;font-family:var(--ff-mono);font-size:10px;color:var(--ac3)">${esc(p.plant_number)}</td>
-          <td style="padding:7px 12px;color:var(--tx)">${esc(p.description)}</td>
-          <td style="padding:7px 12px;text-align:center">${p.local_isolation?'<span style="color:var(--grn)">●</span>':'<span style="color:var(--bd2)">○</span>'}</td>
-          <td style="padding:7px 12px;text-align:center">${p.lockable?'<span style="color:var(--grn)">●</span>':'<span style="color:var(--bd2)">○</span>'}</td>
-          <td style="padding:7px 12px;text-align:center">${p.view_window?'<span style="color:var(--grn)">●</span>':'<span style="color:var(--bd2)">○</span>'}</td>
-          <td style="padding:7px 12px;font-size:11px;color:var(--tx2)">${esc(p.label||'')}</td>
+          <td style="padding:7px 12px;color:var(--tx)">${esc(smartTitleCase(p.description))}</td>
+          <td style="padding:7px 12px;text-align:right">${canEdit()?`<button class="icon-btn" onclick="openPointModal('${id}','${p.id}')">Edit</button>`:''}</td>
         </tr>`).join('')}</tbody>
       </table></div>`
-    : `<div class="empty-state" style="padding:20px"><p style="font-size:12px">No isolation points.</p></div>`;
+    : `<div class="empty-state" style="padding:20px"><p style="font-size:12px">No isolation equipment.</p></div>`;
 
   document.getElementById('pointsList').innerHTML = ptHtml;
 
@@ -1197,16 +2160,16 @@ async function openDetail(id){
           <thead><tr style="background:var(--sf3)">
             <th style="padding:7px 12px;text-align:left;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Ref</th>
             <th style="padding:7px 12px;text-align:left;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Equipment / Work Item</th>
-            <th style="padding:7px 12px;text-align:center;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Isolation Points Required</th>
+            <th style="padding:7px 12px;text-align:left;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Isolation Equipment Required</th>
+            <th style="padding:7px 12px;text-align:right;font-family:var(--ff-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);border-bottom:1px solid var(--bd)">Actions</th>
           </tr></thead>
           <tbody>${entries.map((e,i)=>`<tr style="${i%2===1?'background:var(--sf2)':''}">
             <td style="padding:7px 12px;font-family:var(--ff-mono);font-size:10px;color:var(--ac3)">${esc(e.work_item_ref)}</td>
-            <td style="padding:7px 12px;color:var(--tx)">${esc(e.work_item_name)}</td>
-            <td style="padding:7px 12px;text-align:center">
-              ${(e.isolation_points||[]).length
-                ? `<span style="font-family:var(--ff-mono);font-size:10px">${e.isolation_points.join(', ')}</span>`
-                : '<span style="color:var(--tx3);font-size:11px">None</span>'}
+            <td style="padding:7px 12px;color:var(--tx)">${esc(smartTitleCase(e.work_item_name))}</td>
+            <td style="padding:7px 12px;color:var(--tx2);font-size:11px;line-height:1.5">
+              ${renderIsolationEquipmentList(e.isolation_points || [], pointMap)}
             </td>
+            <td style="padding:7px 12px;text-align:right">${canEdit()?`<button class="icon-btn" onclick="openEntryModal('${id}','${e.id}')">Edit</button>`:''}</td>
           </tr>`).join('')}</tbody>
         </table></div>
       </div>`
@@ -1214,13 +2177,13 @@ async function openDetail(id){
   document.getElementById('detailNotesEl').innerHTML = entHtml;
 
   // Show the detail panel
-  const detail=document.getElementById('detail');
+  const detail=document.getElementById('detailOverlay');
   if(detail){ detail.classList.add('open'); }
 }
 
 function closeDetail(){
   _openMatrixId=null;
-  const detail=document.getElementById('detail');
+  const detail=document.getElementById('detailOverlay');
   if(detail) detail.classList.remove('open');
 }
 
@@ -1228,11 +2191,17 @@ function openMatrixModal(id){
   document.getElementById('matrixModalTitle').textContent=id?'Edit Matrix':'New Isolation Matrix';
   document.getElementById('mxId').value=id||'';
   document.getElementById('mxErr').style.display='none';
+  const delBtn=document.getElementById('mxDeleteBtn');
+  if(delBtn) delBtn.style.display = (id && canAdmin()) ? 'inline-flex' : 'none';
+  const reviewedByEl=document.getElementById('mxReviewedBy');
+  const reviewedAtEl=document.getElementById('mxReviewedAt');
+  if(reviewedByEl) reviewedByEl.disabled = !canAdmin();
+  if(reviewedAtEl) reviewedAtEl.disabled = !canReviewDate();
   if(id){
     const m=_matrices.find(x=>x.id===id); if(!m) return;
     document.getElementById('mxPlantName').value=m.plant_name||'';
     document.getElementById('mxPlantRef').value=m.plant_ref||'';
-    document.getElementById('mxArea').value=m.area||'';
+    document.getElementById('mxArea').value=smartTitleCase(m.area||'');
     document.getElementById('mxStatus').value=m.status||'active';
     document.getElementById('mxReviewedBy').value=m.reviewed_by||'';
     document.getElementById('mxReviewedAt').value=m.reviewed_at||'';
@@ -1242,6 +2211,7 @@ function openMatrixModal(id){
     document.getElementById('mxStatus').value='active';
   }
   document.getElementById('matrixModal').classList.add('open');
+  setTimeout(()=>document.getElementById('mxPlantName').focus(),80);
 }
 
 function closeMatrixModal(){
@@ -1254,17 +2224,24 @@ async function saveMatrix(){
   const err=document.getElementById('mxErr');
   err.style.display='none';
   if(!plantName){ err.textContent='Plant Name is required.'; err.style.display='block'; return; }
+  const old=id ? _matrices.find(function(m){ return m.id===id; }) : null;
   const payload={
     plant_name:  plantName,
     plant_ref:   document.getElementById('mxPlantRef').value.trim()||'',
-    area:        document.getElementById('mxArea').value.trim()||null,
+    area:        smartTitleCase(document.getElementById('mxArea').value.trim())||null,
     status:      document.getElementById('mxStatus').value||'active',
     reviewed_by: document.getElementById('mxReviewedBy').value.trim()||null,
     reviewed_at: document.getElementById('mxReviewedAt').value||null,
-    description: document.getElementById('mxDesc').value.trim()||null,
     updated_at:  new Date().toISOString()
   };
+  if(old && !canAdmin()){
+    payload.reviewed_by = old.reviewed_by || payload.reviewed_by;
+  }
+  if(old && !canReviewDate()){
+    payload.reviewed_at = old.reviewed_at || payload.reviewed_at;
+  }
   let error;
+  let savedId = id;
   if(id){
     ({error}=await sb.from('pw_isolation_matrices').update(payload).eq('id',id));
   } else {
@@ -1273,25 +2250,48 @@ async function saveMatrix(){
     const existing=_matrices.filter(m=>(m.matrix_ref||'').startsWith(plantRef+'-'));
     const nextNum=existing.length+1;
     payload.matrix_ref=plantRef+'-'+String(nextNum).padStart(2,'0');
-    ({error}=await sb.from('pw_isolation_matrices').insert(payload));
+    const res=await sb.from('pw_isolation_matrices').insert(payload).select('id').single();
+    error=res.error;
+    if(res.data && res.data.id) savedId = res.data.id;
   }
   if(error){ err.textContent=error.message; err.style.display='block'; return; }
   delete _points[id]; delete _entries[id];
   await loadMatrices();
   closeMatrixModal();
   if(_openMatrixId===id) await openDetail(id);
+  const changes=[];
+  if(old){
+    ['plant_name','plant_ref','area','status','reviewed_by','reviewed_at'].forEach(function(k){
+      if(String(old[k]||'') !== String(payload[k]||'')) changes.push(k);
+    });
+  }
+  await logIsolationAction(old ? (changes.includes('reviewed_at') && changes.length===1 ? 'review' : 'update') : 'create', 'pw_isolation_matrices', savedId, payload.plant_ref || '', payload.plant_name || '', changes.length ? 'Changed: ' + changes.join(', ') : (old ? 'Updated matrix' : 'Created matrix'));
   showToast(id?'Matrix updated ✓':'Matrix created ✓');
 }
 
-async function deleteMatrix(){
+async function deleteCurrentMatrix(){
   const id=document.getElementById('mxId').value; if(!id) return;
-  if(!confirm('Delete this matrix and all its isolation points and work items?')) return;
+  if(!canAdmin()) { showToast('Delete is admin-only'); return; }
+  if(!confirm('Delete this matrix and all its isolation equipment and work items?')) return;
+  const ok = await deleteMatrixRecord(id, {silent:false, refresh:true, closeModal:true, closeDetailView:true});
+  if(ok) showToast('Matrix deleted');
+}
+
+async function deleteMatrixRecord(id, opts){
+  opts = opts || {};
+  const m=_matrices.find(x=>x.id===id);
   const {error}=await sb.from('pw_isolation_matrices').delete().eq('id',id);
-  if(error){ showToast('Delete failed: '+error.message); return; }
+  if(error){
+    if(!opts.silent) showToast('Delete failed: '+error.message);
+    return false;
+  }
   delete _points[id]; delete _entries[id];
-  closeMatrixModal(); closeDetail();
-  await loadMatrices();
-  showToast('Matrix deleted');
+  _matrixSelection.delete(id);
+  if(opts.closeModal) closeMatrixModal();
+  if(opts.closeDetailView) closeDetail();
+  await logIsolationAction('delete', 'pw_isolation_matrices', id, m?.plant_ref || '', m?.plant_name || '', 'Deleted matrix');
+  if(opts.refresh) await loadMatrices();
+  return true;
 }
 
 function renderEquipment(){
@@ -1317,7 +2317,7 @@ function renderEquipment(){
     <td style="font-size:12.5px;color:var(--tx2)">${esc(r.location||'—')}</td>
     <td><span class="pill-status ${statusClass[r.status]||statusClass.active}">${r.status||'active'}</span></td>
     <td style="font-family:var(--ff-mono);font-size:11px;color:var(--tx3)">${fmtDate(r.last_inspection)}</td>
-    <td style="white-space:nowrap">${canEdit()?`<button onclick="event.stopPropagation();openEquipModal('${r.id}')" style="padding:3px 9px;font-size:10px;border-radius:var(--rxs);border:1px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;font-family:var(--ff-mono);margin-right:4px">Edit</button><button data-delid="${r.id}" onclick="event.stopPropagation();deleteEquipById(this)" style="padding:3px 9px;font-size:10px;border-radius:var(--rxs);border:1px solid var(--redb);background:transparent;color:var(--red);cursor:pointer;font-family:var(--ff-mono)">Del</button>`:''}
+    <td style="white-space:nowrap">${canEdit()?`<button onclick="event.stopPropagation();openEquipModal('${r.id}')" style="padding:3px 9px;font-size:10px;border-radius:var(--rxs);border:1px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;font-family:var(--ff-mono);margin-right:4px">Edit</button>`:''}${canAdmin()?`<button data-delid="${r.id}" onclick="event.stopPropagation();deleteEquipById(this)" style="padding:3px 9px;font-size:10px;border-radius:var(--rxs);border:1px solid var(--redb);background:transparent;color:var(--red);cursor:pointer;font-family:var(--ff-mono)">Del</button>`:''}
     </td>
   </tr>`).join('');
 }
@@ -1328,7 +2328,8 @@ function renderEquipment(){
 /* ── POPULATE DROPDOWNS ──────────────────────────────────────────── */
 function populateEquipDropdown(){
   const opts='<option value="">— Select equipment —</option>'+_equipment.map(e=>`<option value="${e.id}">${esc(e.name)}${e.asset_tag?' ('+esc(e.asset_tag)+')':''}</option>`).join('');
-  document.getElementById('mxEquip').innerHTML=opts;
+  const el=document.getElementById('mxEquip');
+  if(el) el.innerHTML=opts;
 }
 function populateCatFilter(){
   const cats=[...new Set(_equipment.map(r=>r.category).filter(Boolean))].sort();
@@ -1344,42 +2345,76 @@ function openMatrixModal(id){
   document.getElementById('matrixModalTitle').textContent=id?'Edit Matrix':'New Isolation Matrix';
   document.getElementById('mxId').value=id||'';
   document.getElementById('mxErr').style.display='none';
+  const delBtn=document.getElementById('mxDeleteBtn');
+  if(delBtn) delBtn.style.display = (id && canAdmin()) ? 'inline-flex' : 'none';
+  const reviewedByEl=document.getElementById('mxReviewedBy');
+  const reviewedAtEl=document.getElementById('mxReviewedAt');
+  if(reviewedByEl) reviewedByEl.disabled = !canAdmin();
+  if(reviewedAtEl) reviewedAtEl.disabled = !canReviewDate();
   if(id){
     const m=_matrices.find(x=>x.id===id);
-    if(m){ document.getElementById('mxEquip').value=m.equipment_id||''; document.getElementById('mxTitle').value=m.title||''; document.getElementById('mxArea').value=m.area||''; document.getElementById('mxStatus').value=m.status||'draft'; document.getElementById('mxDesc').value=m.description||''; document.getElementById('mxNotes').value=m.notes||''; }
+    if(m){
+      document.getElementById('mxPlantName').value=m.plant_name||'';
+      document.getElementById('mxPlantRef').value=m.plant_ref||'';
+    document.getElementById('mxArea').value=smartTitleCase(m.area||'');
+      document.getElementById('mxStatus').value=m.status||'active';
+      document.getElementById('mxReviewedBy').value=m.reviewed_by||'';
+      document.getElementById('mxReviewedAt').value=m.reviewed_at||'';
+      document.getElementById('mxDesc').value=m.description||'';
+    }
   } else {
-    ['mxTitle','mxDesc','mxNotes'].forEach(i=>document.getElementById(i).value='');
-    document.getElementById('mxEquip').value=''; document.getElementById('mxArea').value=''; document.getElementById('mxStatus').value='draft';
+    ['mxPlantName','mxPlantRef','mxArea','mxReviewedBy','mxReviewedAt','mxDesc'].forEach(i=>document.getElementById(i).value='');
+    document.getElementById('mxStatus').value='active';
   }
   document.getElementById('matrixModal').classList.add('open');
-  setTimeout(()=>document.getElementById('mxTitle').focus(),80);
+  setTimeout(()=>document.getElementById('mxPlantName').focus(),80);
 }
 function closeMatrixModal(){ document.getElementById('matrixModal').classList.remove('open'); }
 async function saveMatrix(){
   const id=document.getElementById('mxId').value;
-  const title=document.getElementById('mxTitle').value.trim();
+  const plantName=document.getElementById('mxPlantName').value.trim();
   const err=document.getElementById('mxErr');
-  if(!title){ err.textContent='Title is required.'; err.style.display='block'; return; }
-  const payload={title,equipment_id:document.getElementById('mxEquip').value||null,area:document.getElementById('mxArea').value.trim()||null,status:document.getElementById('mxStatus').value||'draft',description:document.getElementById('mxDesc').value.trim()||null,notes:document.getElementById('mxNotes').value.trim()||null,updated_at:new Date().toISOString()};
+  if(!plantName){ err.textContent='Plant Name is required.'; err.style.display='block'; return; }
+  const payload={
+    plant_name: plantName,
+    plant_ref: document.getElementById('mxPlantRef').value.trim()||'',
+    area: smartTitleCase(document.getElementById('mxArea').value.trim())||null,
+    status: document.getElementById('mxStatus').value||'active',
+    reviewed_by: document.getElementById('mxReviewedBy').value.trim()||null,
+    reviewed_at: document.getElementById('mxReviewedAt').value||null,
+    updated_at:new Date().toISOString()
+  };
   let error;
-  if(id){ ({error}=await sb.from('pw_isolation_matrices').update(payload).eq('id',id)); }
-  else   { ({error}=await sb.from('pw_isolation_matrices').insert({...payload,created_at:new Date().toISOString()})); }
+  if(id){
+    ({error}=await sb.from('pw_isolation_matrices').update(payload).eq('id',id));
+  }
+  else {
+    const plantRef=(payload.plant_ref||'MAN').toUpperCase();
+    const existing=_matrices.filter(m=>(m.matrix_ref||'').startsWith(plantRef+'-'));
+    const nextNum=existing.length+1;
+    payload.matrix_ref=plantRef+'-'+String(nextNum).padStart(2,'0');
+    ({error}=await sb.from('pw_isolation_matrices').insert({...payload,created_at:new Date().toISOString()}));
+  }
   if(error){ err.textContent=error.message; err.style.display='block'; return; }
-  await loadMatrices(); closeMatrixModal(); showToast(id?'Matrix updated ✓':'Matrix created ✓');
+  await loadMatrices(); closeMatrixModal();
+  if(_openMatrixId===id) await openDetail(id);
+  showToast(id?'Matrix updated ✓':'Matrix created ✓');
 }
 
 /* ── POINT MODAL ─────────────────────────────────────────────────── */
 function openPointModal(matrixId,pointId){
-  document.getElementById('pointModalTitle').textContent=pointId?'Edit Isolation Point':'Add Isolation Point';
+  document.getElementById('pointModalTitle').textContent=pointId?'Edit Isolation Equipment':'Add Isolation Equipment';
   document.getElementById('ptMatrixId').value=matrixId;
   document.getElementById('ptId').value=pointId||'';
   document.getElementById('ptErr').style.display='none';
   if(pointId){
     const pts=_points[matrixId]||[]; const pt=pts.find(p=>p.id===pointId);
-    if(pt){ document.getElementById('ptType').value=pt.isolation_type||'electrical'; document.getElementById('ptRef').value=pt.reference||''; document.getElementById('ptDesc').value=pt.description||''; document.getElementById('ptLocation').value=pt.location||''; document.getElementById('ptMethod').value=pt.method||''; document.getElementById('ptNotes').value=pt.notes||''; }
+    if(pt){
+      document.getElementById('ptRef').value=pt.plant_number||'';
+      document.getElementById('ptDesc').value=pt.description||'';
+    }
   } else {
-    ['ptRef','ptDesc','ptLocation','ptMethod','ptNotes'].forEach(i=>document.getElementById(i).value='');
-    document.getElementById('ptType').value='electrical';
+    ['ptRef','ptDesc'].forEach(i=>document.getElementById(i).value='');
   }
   document.getElementById('pointModal').classList.add('open');
   setTimeout(()=>document.getElementById('ptDesc').focus(),80);
@@ -1388,18 +2423,96 @@ function closePointModal(){ document.getElementById('pointModal').classList.remo
 async function savePoint(){
   const matrixId=document.getElementById('ptMatrixId').value;
   const id=document.getElementById('ptId').value;
-  const desc=document.getElementById('ptDesc').value.trim();
+  const code=document.getElementById('ptRef').value.trim();
+  const name=document.getElementById('ptDesc').value.trim();
   const err=document.getElementById('ptErr');
-  if(!desc){ err.textContent='Description is required.'; err.style.display='block'; return; }
+  if(!code || !name){ err.textContent='Equipment code and name are required.'; err.style.display='block'; return; }
   const pts=_points[matrixId]||[];
-  const payload={matrix_id:matrixId,isolation_type:document.getElementById('ptType').value,reference:document.getElementById('ptRef').value.trim()||null,description:desc,location:document.getElementById('ptLocation').value.trim()||null,method:document.getElementById('ptMethod').value.trim()||null,notes:document.getElementById('ptNotes').value.trim()||null,sort_order:id?pts.find(p=>p.id===id)?.sort_order:(pts.length+1)};
+  const payload={
+    matrix_id:matrixId,
+    plant_number:code,
+    description:name,
+    sort_order:id?pts.find(p=>p.id===id)?.sort_order:(pts.length+1)
+  };
   let error;
   if(id){ ({error}=await sb.from('pw_isolation_points').update(payload).eq('id',id)); }
   else   { ({error}=await sb.from('pw_isolation_points').insert(payload)); }
   if(error){ err.textContent=error.message; err.style.display='block'; return; }
   delete _points[matrixId]; // invalidate cache
-  closePointModal(); showToast(id?'Point updated ✓':'Point added ✓');
+  closePointModal(); showToast(id?'Equipment updated ✓':'Equipment added ✓');
   if(_openMatrixId===matrixId) await openDetail(matrixId); // refresh detail
+  await logIsolationAction(id ? 'update' : 'create', 'pw_isolation_points', id || (matrixId + ':' + code), code, name, id ? 'Updated isolation equipment' : 'Created isolation equipment');
+}
+
+function renderIsolationEquipmentList(selected, pointMap){
+  const items = Array.isArray(selected) ? selected : [];
+  if(!items.length) return '<span style="color:var(--tx3);font-size:11px">None</span>';
+  return items.map(function(raw){
+    const key = readerNorm(raw || '').toUpperCase();
+    const match = pointMap[key];
+    if(match){
+      return '<div style="margin-bottom:4px"><span style="font-family:var(--ff-mono);color:var(--ac3)">'+esc(match.code)+'</span> <span>'+esc(match.name || '')+'</span></div>';
+    }
+    return '<div style="margin-bottom:4px"><span style="font-family:var(--ff-mono);color:var(--ac3)">'+esc(raw)+'</span></div>';
+  }).join('');
+}
+
+function renderEntryPointSelector(matrixId, selected){
+  const pts=_points[matrixId]||[];
+  const chosen=new Set((Array.isArray(selected)?selected:[]).map(v=>readerNorm(v||'').toUpperCase()));
+  if(!pts.length) return '<div class="empty-state" style="padding:12px"><p style="font-size:12px">Add isolation equipment first.</p></div>';
+  return pts.map(function(p){
+    const code=(p.plant_number||'').trim();
+    const name=(p.description||'').trim();
+    const key=readerNorm(code).toUpperCase();
+    return '<label class="check-card" style="justify-content:flex-start;align-items:flex-start;gap:10px;padding:10px 12px">'
+      + '<input type="checkbox" data-ent-point="'+esc(code)+'" '+(chosen.has(key)?'checked':'')+'>'
+      + '<span style="display:flex;flex-direction:column;gap:2px;min-width:0">'
+      + '<span style="font-family:var(--ff-mono);font-size:11px;color:var(--ac3)">'+esc(code)+'</span>'
+      + '<span style="font-size:12px;color:var(--tx)">'+esc(name)+'</span>'
+      + '</span>'
+      + '</label>';
+  }).join('');
+}
+
+function openEntryModal(matrixId, entryId){
+  document.getElementById('entryModalTitle').textContent=entryId?'Edit Work Item':'Add Work Item';
+  document.getElementById('entMatrixId').value=matrixId;
+  document.getElementById('entId').value=entryId||'';
+  document.getElementById('entErr').style.display='none';
+  const entries=_entries[matrixId]||[];
+  const entry=entryId ? entries.find(e=>e.id===entryId) : null;
+  document.getElementById('entRef').value=entry?.work_item_ref||'';
+  document.getElementById('entName').value=entry?.work_item_name||'';
+  const selected=entry?.isolation_points||[];
+  document.getElementById('entPointList').innerHTML=renderEntryPointSelector(matrixId, selected);
+  document.getElementById('entryModal').classList.add('open');
+  setTimeout(()=>document.getElementById('entRef').focus(),80);
+}
+function closeEntryModal(){ document.getElementById('entryModal').classList.remove('open'); }
+async function saveEntry(){
+  const matrixId=document.getElementById('entMatrixId').value;
+  const id=document.getElementById('entId').value;
+  const ref=document.getElementById('entRef').value.trim();
+  const name=document.getElementById('entName').value.trim();
+  const err=document.getElementById('entErr');
+  if(!ref || !name){ err.textContent='Work item code and name are required.'; err.style.display='block'; return; }
+  const selected=[...document.querySelectorAll('#entPointList [data-ent-point]:checked')].map(function(cb){ return cb.getAttribute('data-ent-point'); }).filter(Boolean);
+  const payload={
+    matrix_id:matrixId,
+    work_item_ref:ref,
+    work_item_name:name,
+    isolation_points:selected,
+    sort_order:id?(_entries[matrixId]||[]).find(e=>e.id===id)?.sort_order:((_entries[matrixId]||[]).length+1)
+  };
+  let error;
+  if(id){ ({error}=await sb.from('pw_isolation_entries').update(payload).eq('id',id)); }
+  else   { ({error}=await sb.from('pw_isolation_entries').insert(payload)); }
+  if(error){ err.textContent=error.message; err.style.display='block'; return; }
+  delete _entries[matrixId];
+  closeEntryModal(); showToast(id?'Work item updated ✓':'Work item added ✓');
+  if(_openMatrixId===matrixId) await openDetail(matrixId);
+  await logIsolationAction(id ? 'update' : 'create', 'pw_isolation_entries', id || (matrixId + ':' + ref), ref, name, (selected.length ? 'Required isolations: ' + selected.length : 'No isolations selected'));
 }
 
 /* ── EQUIPMENT MODAL ─────────────────────────────────────────────── */
@@ -1444,15 +2557,12 @@ async function saveEquip(){
   await loadEquipment(); closeEquipModal(); showToast(id?'Equipment updated ✓':'Equipment added ✓');
 }
 
-async function deleteMatrix(id){
+async function deleteMatrixById(id){
+  if(!canAdmin()) { showToast('Delete is admin-only'); return; }
   const m=_matrices.find(x=>x.id===id);
-  if(!confirm('Delete matrix "'+(m?m.title:id)+'" and all its isolation points? This cannot be undone.')) return;
-  // Delete points first (cascade should handle it but be explicit)
-  await sb.from('pw_isolation_points').delete().eq('matrix_id',id).catch(()=>{});
-  const {error}=await sb.from('pw_isolation_matrices').delete().eq('id',id);
-  if(error){ showToast('Delete failed: '+error.message); return; }
-  document.getElementById('matrixDetail').style.display='none';
-  await loadMatrices(); showToast('Matrix deleted ✓');
+  if(!confirm('Delete matrix "'+(m?(m.plant_name||m.matrix_ref||id):id)+'" and all its isolation equipment and work items? This cannot be undone.')) return;
+  const ok = await deleteMatrixRecord(id, {silent:false, refresh:true, closeDetailView:true});
+  if(ok) showToast('Matrix deleted ✓');
 }
 
 function deleteEquipById(btn){
@@ -1462,10 +2572,12 @@ function deleteEquipById(btn){
   deleteEquip(id, name);
 }
 async function deleteEquip(id, name){
+  if(!canAdmin()) { showToast('Delete is admin-only'); return; }
   if(!confirm('Delete equipment "'+name+'"? This cannot be undone.')) return;
   const {error}=await sb.from('pw_equipment').delete().eq('id',id);
   if(error){ showToast('Delete failed: '+error.message); return; }
   await loadEquipment(); showToast('Equipment deleted ✓');
+  await logIsolationAction('delete', 'pw_equipment', id, name, name, 'Deleted equipment');
 }
 
 /* ── AREA MODAL ──────────────────────────────────────────────────── */
@@ -1508,6 +2620,8 @@ async function loadGroqKey(){
 function openAiPanel(){
   document.getElementById('isoAiOverlay').style.display='block';
   document.getElementById('isoAiPanel').style.transform='translateX(0)';
+  const mm = document.getElementById('aiMatrixMode');
+  if(mm) mm.checked = _aiMatrixMode;
   renderAiHistory(); document.getElementById('aiPrompt').focus();
 }
 function closeAiPanel(){
@@ -1516,6 +2630,9 @@ function closeAiPanel(){
 }
 function useAiSuggestion(text){ document.getElementById('aiPrompt').value=text; sendAiMessage(); }
 function clearAiHistory(){ _aiHistory=[]; renderAiHistory(); }
+function setAiMatrixMode(on){
+  _aiMatrixMode = !!on;
+}
 function renderAiHistory(){
   const hist=document.getElementById('aiHistory'); const clr=document.getElementById('aiClearBtn');
   if(!_aiHistory.length){
@@ -1529,20 +2646,155 @@ function renderAiHistory(){
   }).join('');
   hist.scrollTop=hist.scrollHeight; if(clr) clr.style.display='flex';
 }
-async function buildAiContext(){
-  try{
-    const lines=['PADESWOOD WORKS — ISOLATION MATRIX DATA','='.repeat(50)];
-    lines.push(`\nWORK AREAS (${_areas.length}): ${_areas.join(', ')}`);
-    lines.push(`\nEQUIPMENT (${_equipment.length}):`);
-    _equipment.forEach(e=>lines.push(`  [${e.asset_tag||'—'}] ${e.name} | Cat: ${e.category||'—'} | Area: ${e.location||'—'} | Status: ${e.status||'active'}`));
-    lines.push(`\nISOLATION MATRIX (${_matrices.length}):`);
-    for(const m of _matrices){
-      const equip=_equipment.find(e=>e.id===m.equipment_id);
-      const area=m.area||null;
-      const pts=await loadPointsForMatrix(m.id);
-      lines.push(`  Matrix: ${m.title} | Status: ${m.status||'draft'} | Equipment: ${equip?equip.name:'—'} | Area: ${m.area||'—'}`);
-      pts.forEach((pt,i)=>lines.push(`    Point ${i+1}: [${pt.isolation_type||'other'}] ${pt.description}${pt.reference?' Ref:'+pt.reference:''}${pt.method?' Method:'+pt.method:''}`));
+function matrixAiSearchText(m){
+  const pt = (_points[m.id] || []).map(function(p){
+    return [p.plant_number || '', p.description || ''].join(' ');
+  }).join(' ');
+  const en = (_entries[m.id] || []).map(function(e){
+    return [e.work_item_ref || '', e.work_item_name || '', Array.isArray(e.isolation_points) ? e.isolation_points.join(' ') : ''].join(' ');
+  }).join(' ');
+  return [
+    m.plant_name || '',
+    m.plant_ref || '',
+    m.area || '',
+    m.matrix_ref || '',
+    m.description || '',
+    pt,
+    en,
+    _matrixSearchIndex[m.id] || ''
+  ].join(' ').toLowerCase();
+}
+function matrixAiQuestionTerms(question){
+  return String(question || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .split(/\s+/)
+    .filter(Boolean);
+}
+function matrixAiMatchScore(text, q, qTerms){
+  let score = 0;
+  qTerms.forEach(function(term){
+    if(!term) return;
+    if(text.includes(term)) score += 1;
+  });
+  if(q && text.includes(q)) score += 3;
+  return score;
+}
+function matrixAiFormatDirectAnswer(matrix, entry, points){
+  const pointMap = {};
+  (points || []).forEach(function(p){
+    const code = String(p.plant_number || '').trim();
+    const name = String(p.description || '').trim();
+    const item = { code: code, name: name };
+    if(code) pointMap[readerNorm(code).toUpperCase()] = item;
+    if(name) pointMap[readerNorm(name).toUpperCase()] = item;
+  });
+  const required = Array.isArray(entry.isolation_points) ? entry.isolation_points : [];
+  const requiredLines = required.map(function(item){
+    const key = readerNorm(item).toUpperCase();
+    const match = pointMap[key];
+    if(match){
+      return `- ${match.code || item} - ${smartTitleCase(match.name || item)}`;
     }
+    return `- ${item}`;
+  });
+  return [
+    `Matrix: ${smartTitleCase(matrix.plant_name || matrix.matrix_ref || 'Untitled')}`,
+    `Work Item: ${entry.work_item_ref || '—'} - ${smartTitleCase(entry.work_item_name || '—')}`,
+    `Required Isolation Equipment:`,
+    ...(requiredLines.length ? requiredLines : ['- None captured']),
+    entry.notes ? `Notes: ${entry.notes}` : null
+  ].filter(Boolean).join('\n');
+}
+async function matrixAiDirectLookup(question){
+  const q = String(question || '').trim();
+  const qTerms = matrixAiQuestionTerms(q);
+  if(!qTerms.length) return null;
+  const ranked = _matrices.map(function(m){
+    const text = matrixAiSearchText(m);
+    return { m, score: matrixAiMatchScore(text, q.toLowerCase(), qTerms) };
+  }).filter(function(item){
+    return item.score > 0;
+  }).sort(function(a,b){
+    return b.score - a.score || String(a.m.plant_name || a.m.matrix_ref || '').localeCompare(String(b.m.plant_name || b.m.matrix_ref || ''));
+  }).slice(0, 8);
+  for(const item of ranked){
+    const m = item.m;
+    const [pts, entries] = await Promise.all([
+      loadPointsForMatrix(m.id),
+      loadEntriesForMatrix(m.id)
+    ]);
+    const best = entries.map(function(e){
+      const entryText = [
+        e.work_item_ref || '',
+        e.work_item_name || '',
+        Array.isArray(e.isolation_points) ? e.isolation_points.join(' ') : '',
+        e.notes || ''
+      ].join(' ').toLowerCase();
+      return {
+        entry: e,
+        score: matrixAiMatchScore(entryText, q.toLowerCase(), qTerms)
+      };
+    }).filter(function(item){
+      return item.score > 0;
+    }).sort(function(a,b){
+      return b.score - a.score || String(a.entry.work_item_ref || a.entry.work_item_name || '').localeCompare(String(b.entry.work_item_ref || b.entry.work_item_name || ''));
+    })[0];
+    if(best){
+      return matrixAiFormatDirectAnswer(m, best.entry, pts || []);
+    }
+  }
+  return null;
+}
+async function buildAiContext(question){
+  try{
+    const q = String(question || '').trim().toLowerCase();
+    const qTerms = matrixAiQuestionTerms(q);
+    const ranked = _matrices.map(function(m){
+      const text = matrixAiSearchText(m);
+      const score = matrixAiMatchScore(text, q, qTerms);
+      return {m, score, text};
+    }).filter(function(item){
+      return !q || item.score > 0;
+    }).sort(function(a,b){
+      return b.score - a.score || String(a.m.plant_name || a.m.matrix_ref || '').localeCompare(String(b.m.plant_name || b.m.matrix_ref || ''));
+    });
+    const focus = ranked.length ? ranked.slice(0, 8).map(function(item){ return item.m; }) : _matrices.slice(0, 8);
+    const lines=['PADESWOOD WORKS — ISOLATION MATRIX DATA','='.repeat(50)];
+    if(q) lines.push(`\nUSER QUESTION: ${question}`);
+    lines.push(`\nWORK AREAS (${_areas.length}): ${_areas.map(smartTitleCase).join(', ')}`);
+    lines.push(`\nRELEVANT MATRICES (${focus.length}/${_matrices.length}):`);
+    for(const m of focus){
+      const pts=await loadPointsForMatrix(m.id);
+      const entries=await loadEntriesForMatrix(m.id);
+      lines.push(`  Matrix: ${smartTitleCase(m.plant_name || m.matrix_ref || 'Untitled')} | Ref: ${m.matrix_ref || '—'} | Status: ${m.status || 'draft'} | Area: ${smartTitleCase(m.area || '—')}`);
+      if(m.description) lines.push(`    Scope: ${m.description}`);
+      if(pts.length){
+        lines.push(`    Isolation equipment (${pts.length}):`);
+        pts.forEach(function(pt){
+          lines.push(`      - ${pt.plant_number || '—'} : ${smartTitleCase(pt.description || '—')}`);
+        });
+      }
+      if(entries.length){
+        lines.push(`    Work items (${entries.length}):`);
+        entries.forEach(function(e){
+          const req = Array.isArray(e.isolation_points) ? e.isolation_points : [];
+          const reqText = req.map(function(code){
+            const match = pts.find(function(pt){
+              return String(pt.plant_number || '').trim().toLowerCase() === String(code || '').trim().toLowerCase()
+                || String(pt.description || '').trim().toLowerCase() === String(code || '').trim().toLowerCase();
+            });
+            return match ? `${match.plant_number || code} - ${smartTitleCase(match.description || code)}` : code;
+          }).filter(Boolean).join(', ');
+          lines.push(`      - ${e.work_item_ref || '—'} : ${smartTitleCase(e.work_item_name || '—')}`);
+          lines.push(`        Requires: ${reqText || 'None captured'}`);
+          if(e.notes) lines.push(`        Notes: ${e.notes}`);
+        });
+      } else {
+        lines.push('    Work items: none captured');
+      }
+    }
+    if(!focus.length) lines.push('No matrices matched the question, so the full dataset was used.');
     return lines.join('\n');
   }catch(e){ return 'Error loading data: '+e.message; }
 }
@@ -1557,10 +2809,23 @@ async function sendAiMessage(){
   hist.innerHTML+=`<div style="display:flex" id="aiThinking"><div class="ai-thinking"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div><span style="margin-left:6px;font-size:12px;color:var(--tx3);font-family:var(--ff-mono)">Analysing…</span></div></div>`;
   hist.scrollTop=hist.scrollHeight;
   try{
-    const context=await buildAiContext();
-    const systemPrompt='You are an expert AI assistant for Padeswood Works (HeidelbergMaterials cement plant, Wales). You help with isolation matrix, equipment isolation procedures, and work area information. Answer concisely based only on the provided data.';
-    const dataMsg={role:'user',content:'Here is the isolation matrix data:\n\n'+context+'\n\nOnly answer from this data.'};
-    const dataAck={role:'assistant',content:'Understood. I will only answer from the isolation matrix data provided.'};
+    const direct = _aiMatrixMode ? await matrixAiDirectLookup(q) : null;
+    if(direct){
+      document.getElementById('aiThinking')?.remove();
+      _aiHistory.push({role:'assistant',content:direct});
+      renderAiHistory();
+      sendBtn.disabled=false;
+      return;
+    }
+    const context=await buildAiContext(q);
+    const matrixMode = _aiMatrixMode;
+    const systemPrompt = matrixMode
+      ? 'You are an expert AI assistant for Padeswood Works (HeidelbergMaterials cement plant, Wales). You help with isolation matrices. When the user asks about a matrix or work item, answer in a compact matrix-answer format with only these headings: Matrix, Work Item, Required Isolation Equipment, Notes. Always include equipment codes and names. Do not guess. If the data is missing, say so clearly.'
+      : 'You are an expert AI assistant for Padeswood Works (HeidelbergMaterials cement plant, Wales). You help with isolation matrix, equipment isolation procedures, and work area information. If the data contains a work item, always answer with the required isolation equipment list and mention the equipment codes and names. If the answer is not in the data, say so clearly. Answer concisely and avoid guessing.';
+    const dataMsg={role:'user',content:'Here is the isolation matrix data:\n\n'+context+'\n\nOnly answer from this data. When a work item has required isolations, list them explicitly.'};
+    const dataAck={role:'assistant',content:matrixMode
+      ? 'Understood. I will answer in the compact matrix-answer format and include codes, names, and notes when available.'
+      : 'Understood. I will only answer from the isolation matrix data provided.'};
     const messages=[{role:'system',content:systemPrompt},dataMsg,dataAck,..._aiHistory];
     const res=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+_groqKey},body:JSON.stringify({model:'llama-3.3-70b-versatile',max_tokens:1500,messages})});
     const data=await res.json();
@@ -1577,7 +2842,7 @@ async function sendAiMessage(){
 /* ── KEYBOARD / EVENTS ───────────────────────────────────────────── */
 document.addEventListener('keydown',function(e){
   if(e.key==='Escape'){
-    ['matrixModal','pointModal','equipModal'].forEach(id=>document.getElementById(id).classList.remove('open'));
+    ['matrixModal','pointModal','equipModal','matrixReaderModal'].forEach(id=>document.getElementById(id).classList.remove('open'));
   }
   if(e.key==='Enter'&&document.getElementById('splash').style.display==='flex') doLogin();
 });

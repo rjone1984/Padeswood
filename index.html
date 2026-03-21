@@ -245,9 +245,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
           <button onclick="showRegister()" style="background:none;border:none;color:var(--ac3);font-size:11px;font-family:var(--ff-mono);cursor:pointer;text-decoration:underline;padding:0">Request Access</button>
         </div>
         <div id="forgotPanel" style="display:none;margin-top:12px;padding:12px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm)">
-          <p style="font-size:12px;color:var(--tx2);margin:0 0 10px;line-height:1.5">Enter your email address and an admin will reset your password.</p>
+          <p style="font-size:12px;color:var(--tx2);margin:0 0 10px;line-height:1.5">Enter your username and an admin will reset your password. If you use a full email login, enter that instead.</p>
           <div style="display:flex;gap:8px;align-items:stretch">
-            <input type="email" id="forgotEmail" class="login-input" placeholder="your@email.com" style="flex:1;margin:0" onkeydown="if(event.key==='Enter')submitResetRequest()">
+            <input type="text" id="forgotEmail" class="login-input" placeholder="username" style="flex:1;margin:0" onkeydown="if(event.key==='Enter')submitResetRequest()">
             <button onclick="submitResetRequest()" class="login-btn" style="width:auto;padding:0 14px;margin:0;white-space:nowrap;flex-shrink:0">Send</button>
           </div>
           <div id="forgotMsg" style="margin-top:8px;font-size:11px;font-family:var(--ff-mono);min-height:16px"></div>
@@ -275,6 +275,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
           <div>
             <label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:5px">Password</label>
             <input type="password" id="regPass" placeholder="Min. 8 characters" style="width:100%;height:36px;padding:0 10px;background:var(--sf2);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--tx);font-family:var(--ff-body);font-size:12px;outline:none;box-sizing:border-box">
+          </div>
+          <div>
+            <label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:5px">Confirm Password</label>
+            <input type="password" id="regPassConfirm" placeholder="Repeat password" style="width:100%;height:36px;padding:0 10px;background:var(--sf2);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--tx);font-family:var(--ff-body);font-size:12px;outline:none;box-sizing:border-box">
           </div>
           <button id="regBtn" onclick="doRegister()" style="height:36px;background:linear-gradient(135deg,var(--ac),var(--ac3));color:#fff;border:none;border-radius:var(--rsm);font-family:var(--ff-head);font-weight:600;font-size:13px;cursor:pointer">Request Access</button>
           <div id="regMsg" style="display:none;font-size:11px;font-family:var(--ff-mono);padding:8px 10px;border-radius:var(--rxs)"></div>
@@ -311,7 +315,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
         <span id="resetReqBadge" style="display:none;position:absolute;top:2px;right:2px;background:var(--red);color:#fff;font-size:9px;font-weight:700;border-radius:10px;padding:1px 5px;min-width:16px;text-align:center;line-height:16px"></span>
       </button>
-      <!-- NEW: Change Password button (visible to all logged-in users) -->
       <button class="icon-btn" id="changePwBtn" onclick="openChangePwModal()" title="Change Password" style="display:none">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
       </button>
@@ -408,8 +411,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
           </div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px">
-          <div><label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Docs / Platform</label>
+          <div><label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Documents</label>
             <select id="inviteRole" style="width:100%;height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
+              <option value="none">No Access</option>
               <option value="viewer">Viewer</option>
               <option value="editor">Editor</option>
               <option value="reviewer">Reviewer</option>
@@ -871,18 +875,25 @@ function toggleForgot() {
   if (!visible) {
     const u = document.getElementById('loginEmailUser').value.trim();
     const domain = document.getElementById('loginDomain').value;
-    if (u && domain !== 'other') document.getElementById('forgotEmail').value = u + domain;
+    if (u && domain !== 'other') {
+      document.getElementById('forgotEmail').value = u;
+    } else if (u) {
+      document.getElementById('forgotEmail').value = document.getElementById('loginEmail').value.trim();
+    }
     setTimeout(() => document.getElementById('forgotEmail').focus(), 50);
   }
   document.getElementById('forgotMsg').textContent = '';
 }
 
 async function submitResetRequest() {
-  const email = document.getElementById('forgotEmail').value.trim().toLowerCase();
+  const raw = document.getElementById('forgotEmail').value.trim().toLowerCase();
   const msg = document.getElementById('forgotMsg');
   msg.style.color = 'var(--tx3)';
   msg.textContent = '';
-  if (!email || !email.includes('@')) { msg.style.color='var(--red)'; msg.textContent='Please enter a valid email.'; return; }
+  if (!raw) { msg.style.color='var(--red)'; msg.textContent='Please enter your username.'; return; }
+  const domain = document.getElementById('loginDomain').value || '@heidelbergmaterials.com';
+  const email = raw.includes('@') ? raw : (domain === 'other' ? '' : raw + domain);
+  if (!email || !email.includes('@')) { msg.style.color='var(--red)'; msg.textContent='Please enter your full email address for this account.'; return; }
   msg.textContent = 'Submitting…';
   try {
     // Check if a pending request already exists
@@ -1074,7 +1085,7 @@ async function showAppSelector(user) {
       return false;
     }
     // Show full name, fall back to email prefix
-    const displayName = (data && data.full_name) ? data.full_name : (user.email ? user.email.split('@')[0] : '—');
+    const displayName = (user && user.email) ? user.email : ((data && data.full_name) ? data.full_name : '—');
     document.getElementById('headerEmail').textContent = displayName;
     if (data && data.role === 'admin') {
       document.getElementById('adminPanelBtn').style.display = 'flex';
@@ -1083,11 +1094,9 @@ async function showAppSelector(user) {
       loadPendingBadge();
     }
     document.getElementById('aiReportBtn').style.display = 'flex';
-    // Check kiln_users for must_reset + locked_name fallback
     try {
       const {data: ku} = await sb.from('kiln_users').select('must_reset_password,username,locked_name').eq('auth_user_id', user.id).maybeSingle();
       if (ku) {
-        // If pw_profiles has no full_name, use locked_name from kiln_users
         if ((!data || !data.full_name) && ku.locked_name) {
           document.getElementById('headerEmail').textContent = ku.locked_name;
         }
@@ -1103,7 +1112,7 @@ async function showAppSelector(user) {
       }
     } catch(e2) {}
   } catch(e) {
-    const fallback = user.email ? user.email.split('@')[0] : '—';
+    const fallback = user.email || '—';
     document.getElementById('headerEmail').textContent = fallback;
     document.getElementById('aiReportBtn').style.display = 'flex';
     return false;
@@ -1129,6 +1138,7 @@ function showRegister() {
   document.getElementById('regName').value = '';
   document.getElementById('regEmailUser').value = '';
   document.getElementById('regPass').value = '';
+  document.getElementById('regPassConfirm').value = '';
   document.getElementById('regEmail').value = '';
   document.getElementById('regDomain').value = '@heidelbergmaterials.com';
   document.getElementById('regEmailUser').type = 'text';
@@ -1145,10 +1155,15 @@ function syncRegEmail() {
 async function doRegister() {
   const name  = document.getElementById('regName').value.trim();
   const email = document.getElementById('regEmail').value.trim().toLowerCase();
+  const pass  = document.getElementById('regPass').value;
+  const pass2 = document.getElementById('regPassConfirm').value;
   const btn   = document.getElementById('regBtn');
   if (!name)  { showRegMsg('err', 'Please enter your full name.'); return; }
   if (!email) { showRegMsg('err', 'Please enter your email address.'); return; }
   if (!email.endsWith('@heidelbergmaterials.com')) { showRegMsg('err', 'Only @heidelbergmaterials.com addresses are permitted.'); return; }
+  if (!pass || !pass2) { showRegMsg('err', 'Please enter and confirm your password.'); return; }
+  if (pass.length < 8) { showRegMsg('err', 'Password must be at least 8 characters.'); return; }
+  if (pass !== pass2) { showRegMsg('err', 'Passwords do not match.'); return; }
   btn.disabled = true; btn.textContent = 'Sending…';
   try {
     // Check not already requested
@@ -1195,51 +1210,13 @@ async function loadPendingBadge() {
 /* ── APPROVE USER ────────────────────────────────────────────────── */
 
 function activateRequestFromBtn(btn) {
-  activateAccessRequest(
+  openAccessRequestPwModal(
     btn.dataset.reqId, btn.dataset.reqEmail, btn.dataset.reqName,
     btn.dataset.reqRole, btn.dataset.reqIso, btn.dataset.reqKiln
   );
 }
 async function activateAccessRequest(reqId, email, fullName, role, isoRole, kilnRole) {
-  const pw = prompt('Set a password for ' + fullName + ' (' + email + '):\n\nThis will create their account immediately.');
-  if (!pw) return;
-  if (pw.length < 6) { showPlatformToast('Password must be at least 6 characters'); return; }
-  try {
-    // Create auth user via Supabase Auth Admin API is not available client-side
-    // Instead create pw_profiles entry (approved=true) and kiln_users entry - user logs in via email+password
-    // Must use signUp to create the auth.users entry
-    const {data: authData, error: authErr} = await sb.auth.signUp({
-      email, password: pw,
-      options: { data: { full_name: fullName }, emailRedirectTo: null }
-    });
-    if (authErr) throw new Error(authErr.message);
-    const userId = authData.user ? authData.user.id : null;
-    if (!userId) throw new Error('Failed to create auth user');
-    // Create pw_profiles
-    const req = _accessRequestsCache.find(function(x){ return x.id === reqId; }) || null;
-    const trackerAllowed = req ? req.shift_tracker_access !== false : true;
-    await sb.from('pw_profiles').upsert({
-      id: userId, email, full_name: fullName,
-      role: role || 'viewer', isolation_role: isoRole || 'none', shift_tracker_access: trackerAllowed, approved: true
-    });
-    // Create kiln_users if kiln role set
-    if (kilnRole && kilnRole !== 'none') {
-      const flags = {
-        is_admin: kilnRole==='admin', is_shift_manager: kilnRole==='shift_manager',
-        is_cement_analyst: kilnRole==='cement_analyst', is_day_staff: kilnRole==='day_staff',
-        is_burner: kilnRole==='burner', is_readonly: kilnRole==='read_only'
-      };
-      const username = email.split('@')[0].replace(/[^a-z0-9_]/gi,'').toLowerCase();
-      await sb.from('kiln_users').upsert({
-        ...flags, auth_user_id: userId, username, locked_name: fullName, email,
-        must_reset_password: true
-      });
-    }
-    // Mark request done
-    await sb.from('pw_access_requests').update({status:'approved'}).eq('id',reqId);
-    showPlatformToast(fullName + ' activated ✓ — they can now log in');
-    await loadAllUsers();
-  } catch(e) { showPlatformToast('Failed: ' + e.message); }
+  openAccessRequestPwModal(reqId, email, fullName, role, isoRole, kilnRole);
 }
 
 function denyRequestFromBtn(btn){ denyAccessRequest(btn.dataset.reqId); }
@@ -1387,11 +1364,13 @@ const SB_KEY_PLATFORM = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
 
 let _forcePwUsername = null;
 let _adminSetPwTarget = null; // { authUserId, kilnUsername, displayName } when admin is setting
+let _accessRequestTarget = null; // { reqId, email, fullName, role, isoRole, kilnRole } when creating a new account
 let _pendingResetReqId = null;  // set when opened from reset request queue
 
 function openForcePwResetModal(username) {
   // Self-reset mode (user must change their own password)
   _adminSetPwTarget = null;
+  _accessRequestTarget = null;
   _forcePwUsername = username || null;
   document.getElementById('forcePwTitle').textContent = 'Password Reset Required';
   document.getElementById('forcePwSub').textContent = 'Your administrator has requested a password change';
@@ -1407,12 +1386,28 @@ function openForcePwResetModal(username) {
 function openAdminSetPwModal(authUserId, kilnUsername, displayName, fromResetReqId) {
   // Admin set-password mode
   _adminSetPwTarget = { authUserId, kilnUsername, displayName };
+  _accessRequestTarget = null;
   _forcePwUsername = null;
   if (!fromResetReqId) _pendingResetReqId = null; // clear unless explicitly set by handleResetReq
   document.getElementById('forcePwTitle').textContent = 'Set Password';
   document.getElementById('forcePwSub').textContent = 'Setting password for ' + displayName;
   document.getElementById('forcePwNotice').textContent = 'Enter a new password for this user. They can change it themselves after logging in.';
   document.getElementById('forcePwBtn').textContent = 'Set Password';
+  document.getElementById('forcePwNew').value = '';
+  document.getElementById('forcePwConfirm').value = '';
+  document.getElementById('forcePwMsg').style.display = 'none';
+  document.getElementById('forcePwOverlay').style.display = 'flex';
+  setTimeout(function() { document.getElementById('forcePwNew').focus(); }, 80);
+}
+
+function openAccessRequestPwModal(reqId, email, fullName, role, isoRole, kilnRole) {
+  _accessRequestTarget = { reqId, email, fullName, role, isoRole, kilnRole };
+  _adminSetPwTarget = null;
+  _forcePwUsername = null;
+  document.getElementById('forcePwTitle').textContent = 'Create Account';
+  document.getElementById('forcePwSub').textContent = 'Create a password for ' + fullName + ' (' + email + ')';
+  document.getElementById('forcePwNotice').textContent = 'Enter a new password twice to create this account immediately.';
+  document.getElementById('forcePwBtn').textContent = 'Create Account';
   document.getElementById('forcePwNew').value = '';
   document.getElementById('forcePwConfirm').value = '';
   document.getElementById('forcePwMsg').style.display = 'none';
@@ -1430,6 +1425,54 @@ async function submitPlatformForceReset() {
   if (newPw.length < 8) { showForcePwMsg('err','Password must be at least 8 characters.'); return; }
   if (newPw !== conf)   { showForcePwMsg('err','Passwords do not match.'); return; }
   btn.disabled = true; btn.textContent = 'Saving…';
+
+  if (_accessRequestTarget) {
+    const target = _accessRequestTarget;
+    try {
+      const {data: authData, error: authErr} = await sb.auth.signUp({
+        email: target.email,
+        password: newPw,
+        options: { data: { full_name: target.fullName }, emailRedirectTo: null }
+      });
+      if (authErr) throw new Error(authErr.message);
+      const userId = authData.user ? authData.user.id : null;
+      if (!userId) throw new Error('Failed to create auth user');
+      const req = _accessRequestsCache.find(function(x){ return x.id === target.reqId; }) || null;
+      const trackerAllowed = req ? req.shift_tracker_access !== false : true;
+      await sb.from('pw_profiles').upsert({
+        id: userId, email: target.email, full_name: target.fullName,
+        role: target.role || 'viewer', isolation_role: target.isoRole || 'none',
+        shift_tracker_access: trackerAllowed, approved: true
+      });
+      if (target.kilnRole && target.kilnRole !== 'none') {
+        const flags = {
+          is_admin: target.kilnRole==='admin', is_shift_manager: target.kilnRole==='shift_manager',
+          is_cement_analyst: target.kilnRole==='cement_analyst', is_day_staff: target.kilnRole==='day_staff',
+          is_burner: target.kilnRole==='burner', is_readonly: target.kilnRole==='read_only'
+        };
+        const username = target.email.split('@')[0].replace(/[^a-z0-9_]/gi,'').toLowerCase();
+        await sb.from('kiln_users').upsert({
+          ...flags, auth_user_id: userId, username, locked_name: target.fullName, email: target.email,
+          must_reset_password: true
+        });
+      }
+      await sb.from('pw_access_requests').update({status:'approved'}).eq('id', target.reqId);
+      showForcePwMsg('ok', target.fullName + ' activated ✓ — they can now log in');
+      showPlatformToast(target.fullName + ' activated ✓ — they can now log in');
+      btn.disabled = false; btn.textContent = 'Create Account';
+      _accessRequestTarget = null;
+      setTimeout(function() {
+        document.getElementById('forcePwOverlay').style.display = 'none';
+        renderAllUsers();
+        loadPendingBadge();
+      }, 1800);
+      return;
+    } catch(e) {
+      btn.disabled = false; btn.textContent = 'Create Account';
+      showForcePwMsg('err', e.message || 'Failed to create account.');
+      return;
+    }
+  }
 
   if (_adminSetPwTarget) {
     // Admin setting someone else's password via edge function
@@ -1694,7 +1737,8 @@ function renderUserCard(m, DS, LS, RS, rc) {
   const docsRole = p?(p.role||'viewer'):null;
   const isoRole  = p?(p.isolation_role||'none'):null;
   const trackerAccess = p ? (p.shift_tracker_access !== false) : null;
-  const kilnRole = !ku?null:ku.is_admin?'admin':ku.is_shift_manager?'shift_manager':ku.is_cement_analyst?'cement_analyst':ku.is_day_staff?'day_staff':ku.is_burner?'burner':'read_only';
+  const kilnAccess = ku ? (ku.shift_log_access !== false) : null;
+  const kilnRole = !ku ? null : (kilnAccess === false ? 'none' : ku.is_admin ? 'admin' : ku.is_shift_manager ? 'shift_manager' : ku.is_cement_analyst ? 'cement_analyst' : ku.is_day_staff ? 'day_staff' : ku.is_burner ? 'burner' : 'read_only');
   const col = docsRole?(rc[docsRole]||'var(--tx3)'):'var(--tx3)';
   let h = '<div style="background:var(--sf2);border:1px solid var(--bd);border-radius:var(--r);padding:14px 16px;margin-bottom:6px">';
   h += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:13px">'
@@ -1705,12 +1749,12 @@ function renderUserCard(m, DS, LS, RS, rc) {
     +(ku&&ku.must_reset_password?'<span style="font-size:9px;font-family:var(--ff-mono);color:var(--amb);border:1px solid var(--ambb);background:var(--ambd);padding:2px 6px;border-radius:4px;flex-shrink:0;white-space:nowrap">PW RESET</span>':'')
     +(ku&&ku.is_locked?'<span style="font-size:9px;font-family:var(--ff-mono);color:var(--red);border:1px solid var(--redb);background:var(--redd);padding:2px 6px;border-radius:4px;flex-shrink:0">LOCKED</span>':'')
     +'</div>';
-  h += '<div style="'+RS+'"><span style="'+LS+'">Docs</span>';
+  h += '<div style="'+RS+'"><span style="'+LS+'">Documents</span>';
   if(p){
     if(docsRole==='admin' || isProtectedKiln){h+='<div style="height:30px;padding:0 8px;font-size:11px;font-family:var(--ff-mono);background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--ac3);display:flex;align-items:center;flex:1">Admin (protected)</div>';}
-    else{h+='<select onchange="updateDocsRole(\''+esc(p.id)+'\',this.value)"'+(isSelf?' disabled':'')+' style="'+DS+'"><option value="viewer"'+(docsRole==='viewer'?' selected':'')+'>Viewer</option><option value="editor"'+(docsRole==='editor'?' selected':'')+'>Editor</option><option value="reviewer"'+(docsRole==='reviewer'?' selected':'')+'>Reviewer</option><option value="admin"'+(docsRole==='admin'?' selected':'')+'>Admin</option></select>';}
+    else{h+='<select onchange="updateDocsRole(\''+esc(p.id)+'\',this.value)"'+(isSelf?' disabled':'')+' style="'+DS+'"><option value="none"'+(docsRole==='none'?' selected':'')+'>No Access</option><option value="viewer"'+(docsRole==='viewer'?' selected':'')+'>Viewer</option><option value="editor"'+(docsRole==='editor'?' selected':'')+'>Editor</option><option value="reviewer"'+(docsRole==='reviewer'?' selected':'')+'>Reviewer</option><option value="admin"'+(docsRole==='admin'?' selected':'')+'>Admin</option></select>';}
   } else{h+='<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">No platform account</span>';}
-  h+='</div><div style="'+RS+'"><span style="'+LS+'">Isolation</span>';
+  h+='</div><div style="'+RS+'"><span style="'+LS+'">Isolation Matrix</span>';
   if(p){
     if(isProtectedKiln){h+='<div style="height:30px;padding:0 8px;font-size:11px;font-family:var(--ff-mono);background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--ac3);display:flex;align-items:center;flex:1">Admin (protected)</div>';}
     else{h+='<select onchange="updateIsoRole(\''+esc(p.id)+'\',this.value)"'+(isSelf?' disabled':'')+' style="'+DS+'"><option value="none"'+(isoRole==='none'?' selected':'')+'>No Access</option><option value="viewer"'+(isoRole==='viewer'?' selected':'')+'>Viewer</option><option value="editor"'+(isoRole==='editor'?' selected':'')+'>Editor</option><option value="reviewer"'+(isoRole==='reviewer'?' selected':'')+'>Reviewer</option><option value="admin"'+(isoRole==='admin'?' selected':'')+'>Admin</option></select>';}
@@ -1720,7 +1764,7 @@ function renderUserCard(m, DS, LS, RS, rc) {
     if(isProtectedKiln){
       h+='<div style="height:30px;padding:0 8px;font-size:11px;font-family:var(--ff-mono);background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--ac3);display:flex;align-items:center;flex:1">Admin (protected)</div>';
     } else {
-      h+='<select onchange="updateKilnRole(\''+esc(ku.username)+'\',this.value)" style="'+DS+'"><option value="burner"'+(kilnRole==='burner'?' selected':'')+'>Burner</option><option value="shift_manager"'+(kilnRole==='shift_manager'?' selected':'')+'>Shift Manager</option><option value="cement_analyst"'+(kilnRole==='cement_analyst'?' selected':'')+'>Cement Analyst</option><option value="day_staff"'+(kilnRole==='day_staff'?' selected':'')+'>Day Staff</option><option value="read_only"'+(kilnRole==='read_only'?' selected':'')+'>Read Only</option><option value="admin"'+(kilnRole==='admin'?' selected':'')+'>Admin</option></select>';
+      h+='<select onchange="updateKilnRole(\''+esc(ku.username)+'\',this.value)" style="'+DS+'"><option value="none"'+(kilnRole==='none'?' selected':'')+'>No Access</option><option value="burner"'+(kilnRole==='burner'?' selected':'')+'>Burner</option><option value="shift_manager"'+(kilnRole==='shift_manager'?' selected':'')+'>Shift Manager</option><option value="cement_analyst"'+(kilnRole==='cement_analyst'?' selected':'')+'>Cement Analyst</option><option value="day_staff"'+(kilnRole==='day_staff'?' selected':'')+'>Day Staff</option><option value="read_only"'+(kilnRole==='read_only'?' selected':'')+'>Read Only</option><option value="admin"'+(kilnRole==='admin'?' selected':'')+'>Admin</option></select>';
     }
   } else{h+='<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">No shift log account</span>';}
   h+='</div><div style="'+RS+'"><span style="'+LS+'">Shift Tracker</span>';
@@ -1756,18 +1800,27 @@ function renderUserCard(m, DS, LS, RS, rc) {
 
 async function updateKilnRole(username, role) {
   const flags = {
-    is_admin:         role === 'admin',
-    is_shift_manager: role === 'shift_manager',
-    is_cement_analyst:role === 'cement_analyst',
-    is_day_staff:     role === 'day_staff',
-    is_burner:        role === 'burner',
-    is_readonly:      role === 'read_only',
+    is_admin:          role === 'admin',
+    is_shift_manager:  role === 'shift_manager',
+    is_cement_analyst: role === 'cement_analyst',
+    is_day_staff:      role === 'day_staff',
+    is_burner:         role === 'burner',
+    is_readonly:       role === 'read_only',
+    shift_log_access:  role !== 'none',
   };
+  if (role === 'none') {
+    flags.is_admin = false;
+    flags.is_shift_manager = false;
+    flags.is_cement_analyst = false;
+    flags.is_day_staff = false;
+    flags.is_burner = false;
+    flags.is_readonly = false;
+  }
   const {error} = await sb.from('kiln_users').update(flags).eq('username', username);
   if (error) { showPlatformToast('Failed: '+error.message); return; }
   const u = _kilnUsersCache.find(x=>x.username===username);
   if (u) Object.assign(u, flags);
-  renderAllUsers(); showPlatformToast('Shift Log role updated ✓');
+  renderAllUsers(); showPlatformToast(role==='none' ? 'Shift Log access updated ✓' : 'Shift Log role updated ✓');
 }
 
 async function updateDocsRole(profileId, role) {

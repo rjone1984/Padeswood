@@ -595,7 +595,7 @@
   <div id="app"></div>
   <footer class="tracker-shell-footer">
     <span>Padeswood Works · Shift Tracker · HeidelbergMaterials</span>
-    <span class="tracker-shell-status">Connected</span>
+    <span class="tracker-shell-status" id="stLicStatus">Licence active</span>
   </footer>
 </div>
 
@@ -1049,6 +1049,9 @@ if(document.readyState==='loading'){
 const ST_SUPABASE_URL = 'https://xnkwrkoxvgptobnmekgv.supabase.co';
 const ST_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhua3dya294dmdwdG9ibm1la2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NjAxNTQsImV4cCI6MjA4ODIzNjE1NH0.PrmnJ4eGepac41bQuNPG7TcBaunrfTWdjLtkGLr_2LY';
 let stSb = null;
+const ST_LICENCE_KEY = 'KBL-HEIDELBERG-PADESWOOD-2026';
+const ST_LIC_URL = 'https://dviicnomxeibbuafbozp.supabase.co';
+const ST_LIC_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2aWljbm9teGVpYmJ1YWZib3pwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4ODM0MzcsImV4cCI6MjA4ODQ1OTQzN30.c1T3WXC225tdBbq_1R__9bhGFIZdSxim9dgxfvmkRjU';
 
 function stGetEls() {
   return {
@@ -1073,6 +1076,32 @@ function stShowError(text) {
     els.passInput.value = '';
     els.passInput.focus();
   }
+}
+
+async function stRefreshLicenceFooter() {
+  const el = document.getElementById('stLicStatus');
+  if (!el) return;
+  try {
+    const res = await fetch(
+      ST_LIC_URL + '/rest/v1/kiln_licences?licence_key=eq.' + encodeURIComponent(ST_LICENCE_KEY) + '&select=paid,expires_at',
+      {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+          'apikey': ST_LIC_KEY,
+          'Authorization': 'Bearer ' + ST_LIC_KEY,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+    if (!res.ok) return;
+    const rows = await res.json();
+    const lic = rows && rows[0];
+    if (lic && lic.paid && lic.expires_at && new Date(lic.expires_at) >= new Date()) {
+      const exp = new Date(lic.expires_at).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+      el.textContent = 'Licence active · expires ' + exp;
+    }
+  } catch (e) {}
 }
 
 function stRevealApp() {
@@ -1270,6 +1299,7 @@ async function initShiftTrackerSupabaseAuth() {
     });
   }
 
+  stRefreshLicenceFooter();
   await hydrateFromSession();
 }
 

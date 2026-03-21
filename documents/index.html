@@ -314,7 +314,6 @@ th.sortable.sort-asc .sort-icon .arr-down,th.sortable.sort-desc .sort-icon .arr-
   .field-row,.field-row.field-row-3,.field-row.field-row-compact,.field-row.field-row-tight-3{grid-template-columns:1fr;}
 }
 
- 
 .admin-header{padding:18px 22px;border-bottom:1px solid var(--bd);
   display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
 .admin-title{font-family:var(--ff-head);font-weight:700;font-size:16px;color:var(--tx);
@@ -359,8 +358,9 @@ th.sortable.sort-asc .sort-icon .arr-down,th.sortable.sort-desc .sort-icon .arr-
 #mainFooter{position:relative;z-index:1;border-top:1px solid var(--bd);
   padding:12px 20px;display:flex;align-items:center;justify-content:space-between;
   flex-wrap:wrap;gap:8px;flex-shrink:0;}
-.footer-text{font-family:var(--ff-mono);font-size:10px;color:var(--tx3);letter-spacing:.5px;}
-.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--grn);box-shadow:0 0 5px var(--grn);}
+.footer-left{font-family:var(--ff-mono);font-size:10px;color:var(--tx3);letter-spacing:.5px;}
+.footer-lic{display:flex;align-items:center;gap:6px;font-family:var(--ff-mono);font-size:10px;color:var(--tx3);}
+.lic-dot{width:7px;height:7px;border-radius:50%;background:var(--grn);box-shadow:0 0 5px var(--grn);}
 #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(12px);
   background:var(--sf3);color:var(--tx);border:1px solid var(--bd3);
   border-radius:var(--rsm);padding:9px 18px;font-size:12.5px;box-shadow:var(--e2);
@@ -683,10 +683,8 @@ th.sortable.sort-asc .sort-icon .arr-down,th.sortable.sort-desc .sort-icon .arr-
   </main>
 
   <footer id="mainFooter">
-    <span class="footer-text">Padeswood Works · Documents · HeidelbergMaterials</span>
-    <span style="display:flex;align-items:center;gap:6px;font-family:var(--ff-mono);font-size:10px;color:var(--tx3)">
-      <span class="sync-dot"></span><span>Connected</span>
-    </span>
+    <span class="footer-left">Padeswood Works · Documents · HeidelbergMaterials</span>
+    <span class="footer-lic"><span class="lic-dot"></span><span id="docLicStatus">Licence active</span></span>
   </footer>
 </div>
 
@@ -697,7 +695,6 @@ th.sortable.sort-asc .sort-icon .arr-down,th.sortable.sort-desc .sort-icon .arr-
     <div class="modal-body" id="raModalBody">
       <input type="hidden" id="raId">
 
-      <!-- ── Document ── -->
       <div class="modal-section-label">Document</div>
       <div class="field-row field-row-tight-3">
         <div class="field-group"><label class="field-label">Reference Number *</label><input type="text" class="field-input" id="raRef" placeholder="e.g. OP341-001"></div>
@@ -723,7 +720,6 @@ th.sortable.sort-asc .sort-icon .arr-down,th.sortable.sort-desc .sort-icon .arr-
         <div class="field-group"><label class="field-label">Expiry Date</label><input type="date" class="field-input" id="raNextReview"></div>
       </div>
 
-      <!-- ── Activity Details ── -->
       <div class="modal-section-label" style="margin-top:10px">Activity Details</div>
       <div class="field-row field-row-compact">
         <div class="field-group"><label class="field-label">Number of People Required</label><input type="number" class="field-input" id="raNumPeople" placeholder="e.g. 3" min="1"></div>
@@ -731,7 +727,6 @@ th.sortable.sort-asc .sort-icon .arr-down,th.sortable.sort-desc .sort-icon .arr-
       </div>
       <div class="field-group"><label class="field-label">Specialist Tools / Equipment / Documentation Required</label><input type="text" class="field-input" id="raSpecialist" placeholder="e.g. DISAB Vacuum Tanker"></div>
 
-      <!-- At Risk Groups key -->
       <div style="margin-top:6px;font-size:11px;font-family:var(--ff-mono);color:var(--tx3);background:var(--sf3);border:1px solid var(--bd);border-radius:var(--rsm);padding:7px 12px;line-height:2">
         <span style="font-weight:700;color:var(--tx2);letter-spacing:.5px;text-transform:uppercase;font-size:10px">At Risk Groups Reference</span><br>
         <span class="risk-group-key"><b>1</b> Employees</span>
@@ -741,7 +736,6 @@ th.sortable.sort-asc .sort-icon .arr-down,th.sortable.sort-desc .sort-icon .arr-
         <span class="risk-group-key"><b>5</b> Apprentices / Trainees</span>
       </div>
 
-      <!-- ── Hazard Rows ── -->
       <div class="modal-section-label" style="margin-top:10px;display:flex;align-items:center;justify-content:space-between">
         <span>Hazard Rows</span>
         <button type="button" onclick="addRAHazardRow()" style="height:26px;padding:0 12px;font-size:11px;font-family:var(--ff-mono);background:transparent;border:1px dashed var(--bd2);border-radius:var(--rsm);color:var(--ac3);cursor:pointer">+ Add Row</button>
@@ -855,6 +849,9 @@ async function checkLicence(){
     if(res.ok){
       const rows = await res.json();
       if(rows&&rows.length&&rows[0].paid&&new Date(rows[0].expires_at)>=new Date()){
+        const exp = new Date(rows[0].expires_at).toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'});
+        const licEl = document.getElementById('docLicStatus');
+        if(licEl) licEl.textContent = 'Licence active · expires ' + exp;
         hideLicenceOverlay(); return;
       }
       const lic = rows&&rows[0];
@@ -950,6 +947,10 @@ async function loadProfileAndLaunch(){
     showAccessDenied(data.disabled ? 'Your account has been disabled. Contact an administrator.' : 'Your account is pending approval.');
     return;
   }
+  if(data && data.role === 'none'){
+    showAccessDenied('You do not have access to Documents. Contact an administrator.');
+    return;
+  }
   currentProfile = data || {email:currentUser.email, full_name:currentUser.email, role:'viewer'};
   launchApp();
 }
@@ -964,20 +965,7 @@ function launchApp(){
   document.getElementById('splash').style.display='none';
   const app = document.getElementById('appWrapper');
   app.style.display='flex';
-  // Use full_name, fall back to email prefix; kiln locked_name loaded below
-  const rawName = currentProfile.full_name || '';
-  const emailPrefix = (currentProfile.email||'').split('@')[0] || '—';
-  document.getElementById('headerEmail').textContent = rawName || emailPrefix;
-  // Also try kiln_users.locked_name if full_name is missing
-  if (!rawName) {
-    sb.auth.getSession().then(function(r){
-      const uid = r.data&&r.data.session&&r.data.session.user&&r.data.session.user.id;
-      if(!uid) return;
-      sb.from('kiln_users').select('locked_name').eq('auth_user_id',uid).maybeSingle().then(function(res){
-        if(res.data&&res.data.locked_name) document.getElementById('headerEmail').textContent = res.data.locked_name;
-      });
-    });
-  }
+  document.getElementById('headerEmail').textContent = currentProfile.email || currentProfile.full_name || '—';
   const role = currentProfile.role||'viewer';
   const rb = document.getElementById('headerRole');
   rb.textContent = role.charAt(0).toUpperCase()+role.slice(1);
@@ -1183,7 +1171,6 @@ function sortRARows(rows){
     }
     if(col==='hazard_count'){ return dir*(Number(av)-Number(bv)); }
     if(col==='review_date'||col==='next_review_date'||col==='created_at'){ return dir*(new Date(av)-new Date(bv)); }
-    // owner/assessor fallback
     if(col==='owner') { av=a.owner||a.assessor||''; bv=b.owner||b.assessor||''; }
     if(col==='location') { av=a.location||a.area||''; bv=b.location||b.area||''; }
     return dir*String(av).localeCompare(String(bv),undefined,{sensitivity:'base'});
