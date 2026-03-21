@@ -196,24 +196,26 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .btn-danger:hover{background:var(--redd);}
 
 /* ── STATS GRID ──────────────────────────────────────────────────── */
-.dash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:28px;}
+.dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:28px;}
 .stat-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);
   padding:16px 18px;position:relative;overflow:hidden;}
 .stat-card::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px;}
 .stat-card.s-total::before{background:var(--ac3);}
 .stat-card.s-active::before{background:var(--grn);}
-.stat-card.s-draft::before{background:var(--amb);}
-.stat-card.s-review::before{background:var(--pur);}
+.stat-card.s-draft::before{background:var(--pur);}
+.stat-card.s-due-soon::before{background:var(--amb);}
+.stat-card.s-overdue::before{background:var(--red);}
 .stat-label{font-family:var(--ff-mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:8px;}
 .stat-num{font-family:var(--ff-head);font-weight:800;font-size:28px;line-height:1;letter-spacing:-1px;}
 .stat-card.s-total .stat-num{color:var(--ac3);}
 .stat-card.s-active .stat-num{color:var(--grn);}
-.stat-card.s-draft .stat-num{color:var(--amb);}
-.stat-card.s-review .stat-num{color:var(--pur);}
+.stat-card.s-draft .stat-num{color:var(--pur);}
+.stat-card.s-due-soon .stat-num{color:var(--amb);}
+.stat-card.s-overdue .stat-num{color:var(--red);}
 .stat-sub{font-size:11px;color:var(--tx3);margin-top:4px;}
 
 /* ── MATRIX LIST ─────────────────────────────────────────────────── */
-.matrix-grid{display:flex;flex-direction:column;gap:10px;max-width:980px;width:100%;margin:0 auto;}
+.matrix-grid{display:flex;flex-direction:column;gap:10px;max-width:980px;width:100%;margin:0;}
 .matrix-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);
   padding:12px 14px;cursor:pointer;transition:border-color .18s,box-shadow .14s,transform .14s;
   position:relative;overflow:hidden;}
@@ -1940,15 +1942,16 @@ async function logIsolationAction(action, tableName, recordId, ref, title, detai
 
 function renderMatrixStats(){
   const total=_matrices.length;
-  const overdue=_matrices.filter(m=>calcMatrixStatus(m)==='overdue').length;
-  const dueSoon=_matrices.filter(m=>calcMatrixStatus(m)==='due-soon').length;
   const active=_matrices.filter(m=>calcMatrixStatus(m)==='active').length;
   const draft=_matrices.filter(m=>calcMatrixStatus(m)==='draft').length;
+  const dueSoon=_matrices.filter(m=>calcMatrixStatus(m)==='due-soon').length;
+  const overdue=_matrices.filter(m=>calcMatrixStatus(m)==='overdue').length;
   document.getElementById('matrixStats').innerHTML=`
     <div class="stat-card s-total"><div class="stat-label">Total Matrices</div><div class="stat-num">${total}</div><div class="stat-sub">All procedures</div></div>
+    <div class="stat-card s-draft"><div class="stat-label">Draft</div><div class="stat-num">${draft}</div><div class="stat-sub">Not yet active</div></div>
     <div class="stat-card s-active"><div class="stat-label">Active</div><div class="stat-num">${active}</div><div class="stat-sub">In date</div></div>
-    <div class="stat-card s-draft"><div class="stat-label">Due Soon</div><div class="stat-num">${dueSoon}</div><div class="stat-sub">Within 30 days</div></div>
-    <div class="stat-card s-review"><div class="stat-label">Overdue</div><div class="stat-num">${overdue}</div><div class="stat-sub">Past review date</div></div>`;
+    <div class="stat-card s-due-soon"><div class="stat-label">Due Soon</div><div class="stat-num">${dueSoon}</div><div class="stat-sub">Within 30 days</div></div>
+    <div class="stat-card s-overdue"><div class="stat-label">Overdue</div><div class="stat-num">${overdue}</div><div class="stat-sub">Past review date</div></div>`;
 }
 
 function sortMatrixRows(rows){
