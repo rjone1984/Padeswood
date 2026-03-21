@@ -793,6 +793,16 @@ function canUseBiometricUnlock() {
   return !!(window.isSecureContext && window.PublicKeyCredential && navigator.credentials && navigator.credentials.create && navigator.credentials.get);
 }
 
+async function canUseBiometricUnlockAsync() {
+  if (!canUseBiometricUnlock()) return false;
+  try {
+    if (window.PublicKeyCredential && typeof PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable === 'function') {
+      return await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+    }
+  } catch (e) {}
+  return true;
+}
+
 function bufferToBase64Url(buffer) {
   const bytes = new Uint8Array(buffer);
   let binary = '';
@@ -832,13 +842,22 @@ function clearBiometricEnrollment() {
   refreshBiometricLoginButton();
 }
 
-function refreshBiometricLoginButton() {
+async function refreshBiometricLoginButton() {
   const btn = document.getElementById('bioLoginBtn');
   const hint = document.getElementById('bioLoginHint');
   const enrolled = !!getBiometricEnrollment();
-  const visible = canUseBiometricUnlock() && enrolled;
-  if (btn) btn.style.display = visible ? 'block' : 'none';
-  if (hint) hint.style.display = visible ? 'block' : 'none';
+  const supported = await canUseBiometricUnlockAsync();
+  const visible = supported;
+  if (btn) {
+    btn.style.display = visible ? 'block' : 'none';
+    btn.textContent = enrolled ? 'Use Biometric Login' : 'Enable Biometric Unlock';
+  }
+  if (hint) {
+    hint.style.display = visible ? 'block' : 'none';
+    hint.textContent = enrolled
+      ? 'Biometric unlock is set up on this device.'
+      : 'Touch ID / Face ID is available on this device. Sign in once to set it up.';
+  }
 }
 
 function openBioSetupModal() {
@@ -1031,20 +1050,16 @@ async function doLogin() {
 }
 
 function maybePromptBiometricSetup(user) {
-  if (!canUseBiometricUnlock()) return;
-  if (getBiometricEnrollment() && getBiometricEnrollment().userId === user.id) return;
-  const overlay = document.getElementById('bioSetupOverlay');
-  if (overlay.style.display === 'flex') return;
-  const mainWrapper = document.getElementById('mainWrapper');
-  const isVisible = function(el) {
-    if (!el) return false;
-    const style = window.getComputedStyle ? window.getComputedStyle(el) : null;
-    return !!style && style.display !== 'none' && style.visibility !== 'hidden';
-  };
-  requestAnimationFrame(function() {
-    setTimeout(function() {
-      if (isVisible(mainWrapper)) openBioSetupModal();
-    }, 350);
+  canUseBiometricUnlockAsync().then(function(supported) {
+    if (!supported) return;
+    if (getBiometricEnrollment() && getBiometricEnrollment().userId === user.id) return;
+    const overlay = document.getElementById('bioSetupOverlay');
+    if (overlay.style.display === 'flex') return;
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        openBioSetupModal();
+      });
+    });
   });
 }
 
@@ -1052,7 +1067,7 @@ async function enableBiometricLogin() {
   const btn = document.getElementById('bioSetupBtn');
   const userCheck = await sb.auth.getSession();
   const session = userCheck && userCheck.data && userCheck.data.session;
-  if (!canUseBiometricUnlock()) {
+  if (!(await canUseBiometricUnlockAsync())) {
     showBioSetupMessage('err', 'This browser or device does not support biometric unlock.');
     return;
   }
@@ -1110,7 +1125,7 @@ async function doBiometricLogin() {
   const enrollment = getBiometricEnrollment();
   err.style.display = 'none';
   if (!enrollment) return;
-  if (!canUseBiometricUnlock()) {
+  if (!(await canUseBiometricUnlockAsync())) {
     err.textContent = 'This browser or device does not support biometric unlock.';
     err.style.display = 'block';
     return;
@@ -1322,7 +1337,9 @@ async function activateAccessRequest(reqId, email, fullName, role, isoRole, kiln
   openAccessRequestPwModal(reqId, email, fullName, role, isoRole, kilnRole);
 }
 
-function denyRequestFromBtn(btn){ denyAccessRequest(btn.dataset.reqId); }
+function denyRequestFromBtn(btn){
+  denyAccessRequest(btn.dataset.reqId);
+}
 async function denyAccessRequest(reqId) {
   if (!confirm('Deny and remove this access request?')) return;
   await sb.from('pw_access_requests').update({status:'denied'}).eq('id',reqId);

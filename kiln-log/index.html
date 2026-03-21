@@ -4159,16 +4159,33 @@ function closeSearchOnOutside(e){}
 
 
 // mutations
+function canEditBurnerField(sk, val){
+  if(readOnly) return false;
+  if(isAdmin) return true;
+  if(!isBurner) return false;
+  const current = state && state[currentDay] && state[currentDay][sk] ? state[currentDay][sk].burner : '';
+  // Burners can only edit the shift they own, and only move/remove their own name.
+  if(current && lockedName && current !== lockedName) return false;
+  if(!val) return !current || current === lockedName;
+  return !lockedName || val === lockedName;
+}
 function setShift(sk,field,val){
-  if(field==='burner' && !val && state[currentDay][sk].burner){
-    if(lockedName && state[currentDay][sk].burner === lockedName){
-        } else if(!lockedName){
-        } else {
-      showToast('Burner name cannot be removed once set');
-      renderDay(currentDay); return;
+  if(field==='burner'){
+    if(!canEditBurnerField(sk,val)){
+      showToast('You can only edit your own shift');
+      renderDay(currentDay);
+      return;
     }
+    if(!val && state[currentDay][sk].burner && lockedName && state[currentDay][sk].burner !== lockedName){
+      showToast('Burner name cannot be removed once set');
+      renderDay(currentDay);
+      return;
+    }
+  } else if(!canEditShift(sk)){
+    showToast('You can only edit your own shift');
+    renderDay(currentDay);
+    return;
   }
-  if(field!=='burner' && !canEditShift(sk)){showToast('You can only edit your own shift');renderDay(currentDay);return;}
   state[currentDay][sk][field]=val;
   if(field==='burner'){
     const role=getRole(val);
