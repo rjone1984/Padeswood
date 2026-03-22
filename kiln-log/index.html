@@ -13,33 +13,22 @@
 <title>Padeswood Works</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Figtree:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-/* =====================================================================
-   KILN BURNERS LOG — DESIGN SYSTEM v4
-   Direction: Precision Industrial
-   Dark  : Deep charcoal with teal-cyan accent
-   Light : Cool white with charcoal & teal
-   Fonts : Outfit (headings) · Figtree (body) · Fira Code (mono)
-===================================================================== */
 
-/* ── TOKENS ──────────────────────────────────────────────────────── */
 :root {
   --ff-head: 'Outfit', sans-serif;
   --ff-body: 'Figtree', sans-serif;
   --ff-mono: 'Fira Code', monospace;
 
-  /* Surfaces */
   --bg:   #111418;
   --sf:   #16191f;
   --sf2:  #1c2028;
   --sf3:  #222830;
   --sf4:  #282f3a;
 
-  /* Borders */
   --bd:   #252c38;
   --bd2:  #2f3a4a;
   --bd3:  #3d4e62;
 
-  /* Green accent (brand) */
   --ac:   #1a7a35;
   --ac2:  #22a847;
   --ac3:  #2ecc5c;
@@ -48,23 +37,19 @@
   --acd3: rgba(26,122,53,0.28);
   --acgl: rgba(46,204,92,0.38);
 
-  /* Text */
   --tx:   #dde4ee;
   --tx2:  #6b7a96;
   --tx3:  #323d50;
 
-  /* Semantic */
   --red:  #f0524f;  --redd: rgba(240,82,79,.10);  --redb: rgba(240,82,79,.28);
   --grn:  #21c27a;  --grnd: rgba(33,194,122,.10); --grnb: rgba(33,194,122,.28);
   --amb:  #f5a623;  --ambd: rgba(245,166,35,.10); --ambb: rgba(245,166,35,.28);
   --pur:  #9b74e8;  --purd: rgba(155,116,232,.10);--purb: rgba(155,116,232,.28);
 
-  /* Geometry */
   --r:   10px;
   --rsm:  7px;
   --rxs:  5px;
 
-  /* Elevation */
   --e1: 0 1px 3px rgba(0,0,0,.55), 0 1px 2px rgba(0,0,0,.4);
   --e2: 0 4px 18px rgba(0,0,0,.6);
   --e3: 0 20px 56px rgba(0,0,0,.72);
@@ -85,7 +70,6 @@ function setEntryStatus(sk,i,val){
   } else {
     entry.statusBy=''; entry.statusAt='';
   }
-  // Save immediately to both localStorage and Supabase
   localStorage.setItem('kbl_v5', JSON.stringify(state));
   if(weekStart){ localStorage.setItem('kbl_week_'+toISO(weekStart), JSON.stringify(state)); }
   showSyncDot('syncing');
@@ -94,7 +78,6 @@ function setEntryStatus(sk,i,val){
 }
 
 
-/* ── LIGHT MODE ──────────────────────────────────────────────────── */
 .light-mode {
   --bg:   #f0f3f8;
   --sf:   #ffffff;
@@ -129,7 +112,6 @@ function setEntryStatus(sk,i,val){
   --inp: #edf0f8;
 }
 
-/* ── RESET ───────────────────────────────────────────────────────── */
 *,*::before,*::after { box-sizing:border-box; margin:0; padding:0 }
 html { scroll-behavior:smooth }
 body {
@@ -140,7 +122,6 @@ body {
   transition: background .28s, color .28s;
 }
 
-/* Subtle dot-grid texture */
 body::before {
   content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
   background-image: radial-gradient(circle, rgba(14,165,160,.06) 1px, transparent 1px);
@@ -155,7 +136,6 @@ body::before {
 ::-webkit-scrollbar-thumb { background:var(--bd2); border-radius:3px }
 ::-webkit-scrollbar-thumb:hover { background:var(--bd3) }
 
-/* ── SPLASH ──────────────────────────────────────────────────────── */
 #splash {
   position:fixed; inset:0; background:var(--bg);
   z-index:9999; display:flex; align-items:center; justify-content:center;
@@ -226,10 +206,8 @@ body::before {
 .splash-line { height:1px; background:var(--bd); margin:18px 0 }
 .splash-version { text-align:center; font-size:9px; color:var(--tx3); font-family:var(--ff-mono); letter-spacing:.5px }
 
-/* ── APP ─────────────────────────────────────────────────────────── */
 #app { display:none; position:relative; z-index:1 }
 
-/* ── TOPBAR ──────────────────────────────────────────────────────── */
 .topbar {
   background: rgba(17,20,24,0.92);
   border-bottom:1px solid var(--bd);
@@ -267,7 +245,6 @@ body::before {
 }
 .user-chip svg { width:11px; height:11px; opacity:.7 }
 
-/* ── BUTTONS ─────────────────────────────────────────────────────── */
 .btn {
   display:inline-flex; align-items:center; gap:6px;
   padding:6px 13px; border-radius:var(--rsm);
@@ -294,7 +271,6 @@ body::before {
 .btn-icon svg { width:15px; height:15px }
 .btn-icon:hover { background:var(--sf2); color:var(--tx); border-color:var(--bd2) }
 
-/* ── DAY NAV ─────────────────────────────────────────────────────── */
 .dual-nav {
   background:var(--sf);
   border-bottom:1px solid var(--bd);
@@ -358,7 +334,6 @@ body::before {
 
 .nav-spacer { flex:1; min-width:10px }
 
-/* ── MAIN ────────────────────────────────────────────────────────── */
 .main { padding:22px; max-width:1440px; margin:0 auto }
 
 .page-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:18px }
@@ -366,7 +341,6 @@ body::before {
 .page-date   { font-family:var(--ff-mono); font-size:10px; color:var(--tx2); margin-top:4px; letter-spacing:.3px }
 .page-status { display:flex; align-items:center; gap:8px; margin-top:7px }
 
-/* ── SEARCH ──────────────────────────────────────────────────────── */
 .search-wrap { position:relative; margin-bottom:18px }
 .search-wrap > svg { position:absolute; left:13px; top:50%; transform:translateY(-50%); width:14px; height:14px; color:var(--tx3); pointer-events:none }
 .search-input {
@@ -383,7 +357,6 @@ body::before {
   border-radius:var(--rsm); margin-top:6px; overflow:hidden;
   display:none; box-shadow:var(--e3);
 }
-/* reports */
 .reports-wrap { max-width:800px; margin:0 auto; padding:24px 0 40px; }
 .reports-header { margin-bottom:24px; }
 .reports-title { font-family:var(--ff-head); font-size:20px; font-weight:700; color:var(--tx); margin-bottom:4px; }
@@ -452,7 +425,6 @@ body::before {
 }
 .search-no-results { padding:18px; color:var(--tx3); font-size:12px; font-family:var(--ff-mono); text-align:center }
 
-/* ── SHIFTS GRID ─────────────────────────────────────────────────── */
 .shifts-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px }
 
 .shift-panel {
@@ -508,7 +480,6 @@ body::before {
 .role-burner  { background:var(--acd1); color:var(--ac);  border:1px solid var(--acd3) }
 .role-trainee { background:var(--ambd); color:var(--amb); border:1px solid var(--ambb) }
 
-/* ── FORM CONTROLS ───────────────────────────────────────────────── */
 select, input[type="text"], input[type="date"], textarea {
   width:100%; background:var(--inp); border:1px solid var(--bd);
   border-radius:var(--rxs); color:var(--tx);
@@ -528,7 +499,6 @@ select option { background:var(--sf3); color:var(--tx) }
 textarea { resize:vertical; line-height:1.55 }
 ::placeholder { color:var(--tx3) }
 
-/* ── LOG SECTIONS (inside shift panel) ──────────────────────────── */
 .log-section {
   background:var(--sf); border:1px solid var(--bd);
   border-radius:var(--r); overflow:hidden; margin-bottom:14px; box-shadow:var(--e1);
@@ -546,7 +516,6 @@ textarea { resize:vertical; line-height:1.55 }
 }
 .log-section-title svg { width:11px; height:11px; color:var(--ac); flex-shrink:0 }
 
-/* ── TABLE ───────────────────────────────────────────────────────── */
 .tbl-wrap { overflow-x:auto }
 table.log { width:100%; border-collapse:collapse }
 table.log thead th {
@@ -598,7 +567,6 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
 .add-row-btn:hover { background:var(--sf2); color:var(--ac) }
 .add-row-btn svg { width:12px; height:12px }
 
-/* ── NOTES ───────────────────────────────────────────────────────── */
 .notes-section {
   background:var(--sf); border:1px solid var(--bd);
   border-radius:var(--r); overflow:hidden; margin-bottom:14px; box-shadow:var(--e1);
@@ -613,7 +581,6 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
 }
 .notes-body textarea:focus { border-color:var(--ac); box-shadow:0 0 0 3px var(--acd1) }
 
-/* ── PILLS ───────────────────────────────────────────────────────── */
 .pill {
   display:inline-flex; align-items:center; gap:4px;
   padding:2px 9px; border-radius:20px;
@@ -625,7 +592,6 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
 .pill-empty { background:rgba(50,61,80,.15); color:var(--tx3); border:1px solid rgba(50,61,80,.25) }
 .light-mode .pill-empty { background:rgba(154,170,191,.10); border-color:rgba(154,170,191,.2) }
 
-/* ── OVERVIEW ────────────────────────────────────────────────────── */
 .stat-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:18px }
 .stat-card {
   background:var(--sf); border:1px solid var(--bd);
@@ -667,7 +633,6 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
 }
 .section-div::before,.section-div::after { content:''; flex:1; height:1px; background:var(--bd) }
 
-/* ── MODALS ──────────────────────────────────────────────────────── */
 .overlay {
   position:fixed; inset:0; background:rgba(0,0,0,.60);
   z-index:500; display:none; align-items:center; justify-content:center;
@@ -726,7 +691,6 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
 .add-eq-row,.add-person-row { display:flex; gap:8px; margin-top:5px }
 .add-eq-row input,.add-person-row input { flex:1 }
 
-/* ── TOAST ───────────────────────────────────────────────────────── */
 #toast {
   position:fixed; bottom:20px; right:20px;
   background:var(--sf2); border:1px solid var(--bd2);
@@ -753,7 +717,6 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
 }
 @keyframes toastIn { from{transform:translateY(12px) scale(.95);opacity:0} to{transform:translateY(0) scale(1);opacity:1} }
 
-/* ── WEEK DATE ───────────────────────────────────────────────────── */
 #weekDate {
   background:var(--sf2); border:1px solid var(--bd); color:var(--tx);
   font-family:var(--ff-mono); font-size:11px; padding:5px 10px;
@@ -763,12 +726,10 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
 }
 #weekDate::-webkit-calendar-picker-indicator { cursor:pointer; filter:invert(0.6); }
 #weekDate::-webkit-inner-spin-button { display:none; }
-/* Ensure full tap area opens picker on mobile */
 #weekDate { -webkit-appearance:none; appearance:none; }
 #weekDate:focus { border-color:var(--ac); outline:none; box-shadow:0 0 0 3px var(--acd1) }
 #weekDate:disabled { opacity:.45; cursor:default }
 
-/* ── READ-ONLY MODE ──────────────────────────────────────────────── */
 .read-only-mode .write-only { display:none !important }
 .read-only-mode select:not(.overlay select):not(#printScope):not(#printNote):not(.search-input):not(#myPwCurrent):not(#myPwNew):not(#myPwConfirm),
 .read-only-mode input[type="text"]:not(.overlay input):not(#printNote):not(.search-input):not(#myPwCurrent):not(#myPwNew):not(#myPwConfirm),
@@ -791,7 +752,6 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
 .read-only-mode .field-cell:hover { background:var(--sf) }
 .read-only-mode .shift-panel:hover { border-color:var(--bd); box-shadow:var(--e1) }
 
-/* ── RESPONSIVE ──────────────────────────────────────────────────── */
 @media(max-width:860px){
   .shifts-grid { grid-template-columns:1fr }
   .main   { padding:10px }
@@ -800,7 +760,6 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
   .stat-grid  { grid-template-columns:repeat(2,1fr) }
   .week-cards { grid-template-columns:repeat(4,1fr) }
 
-  /* Topbar — two rows on mobile */
   .topbar {
     height:auto;
     flex-direction:column;
@@ -838,7 +797,6 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
     line-height:1;
   }
   #mobileMenuWrap { display:none !important }
-  /* Always show essential action buttons on mobile */
   button[onclick="goToToday()"],
   button[onclick="saveAll()"],
   button[onclick="doLogout()"],
@@ -848,14 +806,11 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
   .topbar-sub { display:none }
   .page-header { top:90px; }
 
-  /* Make buttons slightly smaller on mobile */
   .btn { padding:5px 9px; font-size:10px; }
   .btn-icon { width:28px; height:28px; }
 
-  /* Splash screen on mobile */
   .splash-card { padding:28px 20px; margin:16px; }
 
-  /* Day tabs scroll on mobile */
   .day-tabs { overflow-x:auto; -webkit-overflow-scrolling:touch; flex-wrap:nowrap; }
   .day-tab  { flex-shrink:0; }
 }
@@ -865,7 +820,6 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
   .topbar-title { font-size:13px }
 }
 
-/* ── PRINT ───────────────────────────────────────────────────────── */
 .read-only-mode .search-wrap,
 .read-only-mode .search-wrap button {
   display: block !important;
@@ -916,7 +870,6 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
   @page { margin:1.4cm }
 }
 
-/* ── Cement Analyst form styles ──────────────────────────────── */
 .ca-section { border:1px solid var(--bd); border-radius:var(--r); overflow:hidden; margin-bottom:0; }
 .ca-sec-head { padding:8px 14px; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; border-left:3px solid var(--ac); background:var(--sf); color:var(--tx2); }
 .ca-section > div:last-child { padding:12px 14px; }
@@ -928,7 +881,6 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
 .ca-row { display:flex; gap:8px; align-items:flex-start; }
 
 
-/* ── Topbar button label collapse at medium widths ─────────────────── */
 @media(max-width:1100px){
   #manageListsBtn .btn-label { display:none }
   #manageListsBtn { padding:6px 8px }
@@ -939,7 +891,6 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
   #btn-weekly-overview, #btn-ai-reporting { padding:6px 8px }
 }
 
-/* ── SPLASH LOADING BAR ──────────────────────────────────────────── */
 .splash-loader {
   position:fixed; bottom:0; left:0; right:0; height:3px;
   background:var(--bd); z-index:10000; overflow:hidden;
@@ -1239,7 +1190,6 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
   <span style="display:flex;align-items:center;gap:6px;font-family:var(--ff-mono);font-size:10px;color:var(--tx3)"><span style="width:7px;height:7px;border-radius:50%;background:var(--grn);box-shadow:0 0 5px var(--grn)"></span><span id="kblLicStatus">Licence active</span></span>
 </footer>
 
-<!-- SEARCH MODAL -->
 <div class="overlay" id="searchModal">
   <div class="modal" style="width:680px;max-height:88vh;display:flex;flex-direction:column;padding:0">
     <div style="padding:14px 16px;border-bottom:1px solid var(--bd);display:flex;flex-direction:column;gap:10px">
@@ -1265,13 +1215,10 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
   </div>
 </div>
 
-<!-- Forgot Password Modal -->
 <script>
-// config
 const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
 const JS_DAY = {1:0,2:1,3:2,4:3,5:4,6:5,0:6};
 
-// licence
 const LICENCE_KEY   = 'KBL-HEIDELBERG-PADESWOOD-2026';
 const SB_LIC_URL    = 'https://dviicnomxeibbuafbozp.supabase.co';
 const SB_LIC_KEY    = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2aWljbm9teGVpYmJ1YWZib3pwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4ODM0MzcsImV4cCI6MjA4ODQ1OTQzN30.c1T3WXC225tdBbq_1R__9bhGFIZdSxim9dgxfvmkRjU';
@@ -1279,7 +1226,6 @@ const SB_LIC_KEY    = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFz
 async function checkLicence(){
   const overlay = document.getElementById('licenceOverlay');
   const msg = document.getElementById('licenceMsg');
-  // Only fade in the overlay if the check takes longer than 400ms
   const showTimer = setTimeout(function(){
     overlay.style.opacity = '1';
   }, 400);
@@ -1325,7 +1271,6 @@ async function checkLicence(){
     return true;
   } catch(e){
     console.warn('Licence check failed:', e.message);
-    // Fail open on genuine network error so outages don't lock out users
     clearTimeout(showTimer);
     overlay.style.display = 'none';
     document.getElementById('splash').style.display = 'flex';
@@ -1338,7 +1283,6 @@ function animateSplashLoader(){
   const bar = document.getElementById('splashLoaderBar');
   const splash = document.getElementById('splash');
   if(!bar) return;
-  // Hide login card until bar is halfway, then fade it in
   const card = splash ? splash.querySelector('.splash-inner') : null;
   if(card){ card.style.opacity = '0'; card.style.transition = 'opacity 0.5s ease'; }
   bar.style.transition = 'none';
@@ -1348,11 +1292,9 @@ function animateSplashLoader(){
     requestAnimationFrame(function(){
       bar.style.transition = 'width 2.4s cubic-bezier(0.4,0,0.2,1)';
       bar.style.width = '100%';
-      // Reveal login card at ~halfway point (1.2s)
       setTimeout(function(){
         if(card){ card.style.opacity = '1'; }
       }, 1200);
-      // Fade bar out after it completes
       setTimeout(function(){
         bar.style.transition = 'opacity 0.5s ease';
         bar.style.opacity = '0';
@@ -1369,7 +1311,6 @@ function showLicenceBlock(msg, text){
   if(payBtn) payBtn.style.display = '';
 }
 
-// time-of-day theme — dark between 18:00 and 07:00, light otherwise
 (function(){
   const saved = localStorage.getItem('kbl_theme');
   const apply = () => {
@@ -1401,7 +1342,6 @@ let currentManageTab = 'equipment';
 let _sbSession = null;
 let _sbRefreshToken = null;
 
-// state
 const mkShift = () => ({burner:'',analyst:'',shiftManager:'',shift:'',notes:'',entries:[{equipment:'',issue:'',status:'',statusBy:'',statusAt:''},{equipment:'',issue:'',status:'',statusBy:'',statusAt:''},{equipment:'',issue:'',status:'',statusAt:'',statusBy:''},{equipment:'',issue:'',status:'',statusBy:'',statusAt:''},{equipment:'',issue:'',status:'',statusBy:'',statusAt:''}]});
 const mkDay   = () => ({notes:'',shift1:mkShift(),shift2:mkShift()});
 
@@ -1410,9 +1350,7 @@ const mkSmDay   = () => ({ shift1: mkSmShift(), shift2: mkSmShift() });
 let state   = {};
 let smState = {};
 let caState = {};
-// All lists stored here — built-in and custom treated the same
 let _allLists = {}; // {list_name: [items]}
-// Keep shorthands for backward compat with existing code
 let equipment = [], burners = [], analysts = [], managers = [], trainees = [];
 
 const DEFAULT_BURNERS  = [];
@@ -1421,7 +1359,6 @@ const DEFAULT_MANAGERS = [];
 const DEFAULT_EQUIP    = [];
 const SHIFTS = ['A','B','C','D','E'];
 
-// login
 let _loginAttempts = 0;
 let _loginLockUntil = 0;
 
@@ -1457,7 +1394,6 @@ async function doLogin(){
   }
   document.getElementById('splashErr').textContent = '';
 
-  // Sign in via Supabase Auth
   const authRes = await fetch(SB_URL + '/auth/v1/token?grant_type=password', {
     method: 'POST',
     headers: {
@@ -1477,13 +1413,11 @@ async function doLogin(){
 
   _loginAttempts = 0; _loginLockUntil = 0;
 
-  // Store session token
   _sbSession = authData.access_token;
   _sbRefreshToken = authData.refresh_token;
   localStorage.setItem('kbl_session', authData.access_token);
   localStorage.setItem('kbl_refresh', authData.refresh_token);
 
-  // Load user record from kiln_users using auth_user_id
   const uid = authData.user.id;
   const userRes = await fetch(SB_URL + '/rest/v1/kiln_users?auth_user_id=eq.' + uid + '&select=*&limit=1', {
     headers: {
@@ -1534,7 +1468,6 @@ async function _applyUserSession(match){
     return;
   }
 
-  // Cache users list
   await sbLoadUsers();
   _pwCache = {};
 
@@ -1564,11 +1497,9 @@ async function _applyUserSession(match){
   initApp().then(function(){ });
 }
 function doLogout(){
-  // Cancel any pending saves FIRST
   clearTimeout(_sbSaveTimer);
   _sbSaveTimer = null;
 
-  // Sign out of Supabase Auth
   if(_sbSession){
     fetch(SB_URL + '/auth/v1/logout', {
       method: 'POST',
@@ -1586,7 +1517,6 @@ function doLogout(){
     if(k.startsWith('sb-') || k.startsWith('supabase')) localStorage.removeItem(k);
   });
 
-  // Reset state
   state = {}; smState = {}; caState = {};
   lockedName = null;
   readOnly   = false;
@@ -1608,7 +1538,6 @@ function doLogout(){
   ['kbl_pw5','kbl_users'].forEach(k => { try{ localStorage.removeItem(k); }catch(e){} });
   document.body.classList.remove('read-only-mode');
   const _wdLogout=document.getElementById('weekDate'); if(_wdLogout)_wdLogout.disabled=false;
-  // Redirect to platform login instead of showing kiln splash
   window.location.href = '../index.html';
   const _mwo2 = document.getElementById('mobileWeeklyOverview'); if(_mwo2) _mwo2.style.display='none';
   const _mar2 = document.getElementById('mobileAiReporting'); if(_mar2) _mar2.style.display='none';
@@ -1642,13 +1571,11 @@ function updateMobileMenu(){
   if(wrap) wrap.dataset.hasItems = anyVisible ? '1' : '0';
 }
 
-// close mobile menu when clicking outside
 document.addEventListener('click', e => {
   const wrap = document.getElementById('mobileMenuWrap');
   if(wrap && !wrap.contains(e.target)) closeMobileMenu();
 });
 
-// theme
 async function sbSaveTheme(isDark){
   const theme = isDark ? 'dark' : 'light';
   const themeKey = currentUserThemeId ? ('theme_uid_' + currentUserThemeId) : (currentUser ? ('theme_uid_' + currentUser) : null);
@@ -1701,7 +1628,6 @@ async function sbLoadUserTheme(){
       return;
     }
   } catch(e){}
-  // No saved preference — keep current time-of-day theme
   lightMode = document.body.classList.contains('light-mode');
   updateThemeIcon();
 }
@@ -1721,16 +1647,13 @@ function toggleTheme(){
   updateThemeIcon();
 }
 
-// init app
 async function initApp(){
   loadGroqKey();
 
     const sbLists = await sbLoadLists();
   await loadWhiteboardData();
   if(sbLists && Object.keys(sbLists).length){
-    // Supabase is the source of truth — load everything from it
     _allLists = sbLists;
-    // Sync shorthands for backward compat
     equipment = _allLists.equipment || [...DEFAULT_EQUIP];
     burners   = _allLists.burners   || [...DEFAULT_BURNERS];
     analysts  = _allLists.analysts  || [...DEFAULT_ANALYSTS];
@@ -1747,7 +1670,6 @@ async function initApp(){
   }
   sortAll();
 
-  // Set week start
   const savedWk=localStorage.getItem('kbl_wk5');
   if(savedWk){ weekStart=parseLocalDate(savedWk); document.getElementById('weekDate').value=savedWk; }
   else { setWeekToNow(); }
@@ -1782,7 +1704,6 @@ async function initApp(){
 }
 
 async function goToToday(){
-  // Navigate to today's date and then to the correct log section for this user's role
   _gotoTodayAndSwitch();
 }
 async function _gotoTodayAndSwitch(silent, forceBuild){
@@ -1815,12 +1736,10 @@ async function _gotoTodayAndSwitch(silent, forceBuild){
   currentSmDay=today;
   currentCaDay=today;
   syncWeekDateInput(today);
-  // Highlight today on ALL nav rows and scroll each into view
   ['dayNav','smNav','caNav'].forEach(function(navId){
     const activeTab = document.getElementById(navId+'-'+today);
     document.querySelectorAll('#'+navId+' .day-tab').forEach(t=>t.classList.toggle('active', t===activeTab));
     if(activeTab){
-      // Scroll the tab into view within its scrollable nav container
       const nav = document.getElementById(navId);
       if(nav) nav.scrollLeft = activeTab.offsetLeft - nav.offsetWidth/2 + activeTab.offsetWidth/2;
     }
@@ -1879,7 +1798,6 @@ function sortAll(){
   managers.sort((a,b)=>a.localeCompare(b));
 }
 
-// week / date
 document.getElementById('weekDate').addEventListener('change', async function(){
   if(weekStart){ localStorage.setItem('kbl_week_'+toISO(weekStart), JSON.stringify(state)); }
   const pickedDate = parseLocalDate(this.value);
@@ -1933,7 +1851,6 @@ function isToday(day){
   return d.toDateString()===new Date().toDateString();
 }
 
-// tabs
 function buildTabs(){
   function buildNav(navId, clickFn, activeDay){
     const nav=document.getElementById(navId); nav.innerHTML='';
@@ -1950,21 +1867,17 @@ function buildTabs(){
   buildNav('dayNav', switchDay, currentDay);
   buildNav('smNav', switchSmDay, currentSmDay);
   buildNav('caNav', switchCaDay, currentCaDay);
-  // Show/hide nav rows based on role
   document.querySelector('.dual-nav-row').style.display       = (isAdmin || isBurner || isShiftManager || readOnly || isDayStaff) ? '' : 'none';
   document.querySelector('.dual-nav-row-sm').style.display    = (isAdmin || isShiftManager || readOnly) ? '' : 'none';
   document.querySelector('.dual-nav-row-ca').style.display    = (isAdmin || isCementAnalyst || isShiftManager || readOnly || isDayStaff) ? '' : 'none';
-  // Show/hide topbar overview & AI buttons after login
   const ovBtn=document.getElementById('btn-weekly-overview');
   const aiBtn=document.getElementById('btn-ai-reporting');
   if(ovBtn) ovBtn.style.display='';
   if(aiBtn) aiBtn.style.display='';
-  // Explicitly force mobile overflow items for overview & AI — always visible for all roles that can see them
   const _mwo = document.getElementById('mobileWeeklyOverview');
   const _mar = document.getElementById('mobileAiReporting');
   if(_mwo) _mwo.style.display = 'flex';
   if(_mar) _mar.style.display = 'flex';
-  // Sync rest of mobile overflow menu
   updateMobileMenu();
 }
 function updateDots(){}
@@ -1995,13 +1908,11 @@ function switchCaDay(day){
   renderCaDay(day);
 }
 
-// render day
 
 function animateContent(){
   const mc = document.getElementById('mainContent');
   if(!mc) return;
   mc.classList.remove('page-enter');
-  // Force reflow so the animation restarts cleanly
   void mc.offsetWidth;
   mc.classList.add('page-enter');
 }
@@ -2102,7 +2013,6 @@ const mkCaDay = () => ({ shift1: mkCaShift(), shift2: mkCaShift() });
 function renderCaDay(day){
   animateContent();
   if(!caState[day]) caState[day]=mkCaDay();
-  // Migrate old simple format {shift1:{notes:''}} to new rich format
   ['shift1','shift2'].forEach(function(sk){
     const s=caState[day][sk];
     if(!s || typeof s.hse === 'undefined'){
@@ -2114,14 +2024,12 @@ function renderCaDay(day){
 
 
 
-  // Build each shift panel
   function buildShiftPanel(sk, si){
     const sd = d[sk];
     const canEdit = canEditCaShift(sk, day);
     const e = canEdit;
     const caShiftClaimed = !isAdmin && isCementAnalyst && lockedName &&
       sd && sd.name && sd.name !== lockedName;
-    // ── helpers (use `e` from buildShiftPanel scope) ──
     function inp(val, onch, placeholder, type){
       const el = document.createElement(type||'input');
       el.className = 'ca-inp';
@@ -2173,7 +2081,6 @@ function renderCaDay(day){
     panel.className='shift-panel';
     panel.style.cssText='display:flex;flex-direction:column;gap:0;';
 
-    // ── Header ──────────────────────────────────────────────────────
     const hd = document.createElement('div');
     hd.className='shift-panel-head';
     hd.innerHTML='<div class="shift-panel-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'+shiftLabel+'</div>';
@@ -2183,10 +2090,8 @@ function renderCaDay(day){
     body.style.cssText='display:flex;flex-direction:column;gap:12px;padding:16px;';
     panel.appendChild(body);
 
-    // ── Personnel ───────────────────────────────────────────────────
     const persGrid = document.createElement('div');
     persGrid.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:8px;';
-    // ── Analyst Name: select from analysts list (CA can only select themselves) ──
     const analystWrap = document.createElement('div');
     analystWrap.appendChild(label('Analyst Name'));
     const analystSel = document.createElement('select');
@@ -2195,9 +2100,7 @@ function renderCaDay(day){
     analystBlank.value = ''; analystBlank.textContent = '— Select —';
     analystSel.appendChild(analystBlank);
     const analystNames = analysts;
-    // Admin always gets full dropdown — check this first
     if(isAdmin){
-      // Admin: full unrestricted dropdown
       analystNames.forEach(function(n){
         const op = document.createElement('option');
         op.value = n; op.textContent = n;
@@ -2206,7 +2109,6 @@ function renderCaDay(day){
       });
       analystSel.addEventListener('change', function(){ sd.name = this.value; autoSave(); });
     } else if(!e || (sd.name && lockedName && sd.name !== lockedName)){
-      // Read-only or shift belongs to another analyst
       const claimedBy = sd.name && lockedName && sd.name !== lockedName;
       analystSel.disabled = true;
       analystSel.style.opacity = '0.7';
@@ -2215,9 +2117,7 @@ function renderCaDay(day){
       op.value = sd.name||''; op.textContent = sd.name||'—'; op.selected = true;
       analystSel.appendChild(op);
     } else {
-      // CA user: can only select or remove their own name — never auto-write on load
       const ownName = lockedName ? analystNames.find(function(n){ return n === lockedName; }) : null;
-      // "Remove my name" option shown only when their name is already set on this shift
       if(ownName && sd.name === ownName){
         const removeOp = document.createElement('option');
         removeOp.value = '';
@@ -2229,7 +2129,6 @@ function renderCaDay(day){
         const op = document.createElement('option');
         op.value = n; op.textContent = n;
         if(sd.name === n) op.selected = true;
-        // Disable all names except own
         if(ownName && n !== ownName) op.disabled = true;
         analystSel.appendChild(op);
       });
@@ -2242,7 +2141,6 @@ function renderCaDay(day){
     analystWrap.appendChild(analystSel);
     persGrid.appendChild(analystWrap);
 
-    // ── Shift Ref: A–E dropdown ───────────────────────────────────────────────
     const refWrap = document.createElement('div');
     refWrap.appendChild(label('Shift Ref'));
     const refSel = document.createElement('select');
@@ -2257,7 +2155,6 @@ function renderCaDay(day){
       refSel.appendChild(op);
     });
     refSel.value = sd.shiftRef || '';
-    // Only CA or admin can change the shift ref — day staff are read-only here
     if(!isCementAnalyst && !isAdmin){
       refSel.disabled = true;
       refSel.style.opacity = '0.6';
@@ -2268,7 +2165,6 @@ function renderCaDay(day){
     refWrap.appendChild(refSel);
     persGrid.appendChild(refWrap);
 
-    // ── Shift Manager: select from managers list ──────────────────────────────
     const smWrap = document.createElement('div');
     smWrap.appendChild(label('Shift Manager'));
     const smSel = document.createElement('select');
@@ -2288,7 +2184,6 @@ function renderCaDay(day){
     smWrap.appendChild(smSel);
     persGrid.appendChild(smWrap);
 
-    // ── Kiln Burner: select from burners list ────────────────────────────────
     const kbWrap = document.createElement('div');
     kbWrap.appendChild(label('Kiln Burner'));
     const kbSel = document.createElement('select');
@@ -2309,7 +2204,6 @@ function renderCaDay(day){
     persGrid.appendChild(kbWrap);
     body.appendChild(persGrid);
 
-    // ── HSE ─────────────────────────────────────────────────────────
     const hseContent = document.createElement('div');
     hseContent.style.cssText='display:flex;flex-direction:column;gap:6px;';
     const hseHead = document.createElement('div');
@@ -2330,7 +2224,6 @@ function renderCaDay(day){
       });
       hseContent.appendChild(r);
     });
-    // Add row button for HSE (CA only)
     if(e){
       const hseAddBtn=document.createElement('button'); hseAddBtn.className='add-row-btn';
       hseAddBtn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add HSE entry';
@@ -2342,7 +2235,6 @@ function renderCaDay(day){
     }
     body.appendChild(sec('Health, Safety & Environment','#dc2626',hseContent));
 
-    // ── Clinker Operation & Quality Control ─────────────────────────
     const sampContent = document.createElement('div');
     sampContent.style.cssText='display:flex;flex-direction:column;gap:4px;';
     const sampHead = document.createElement('div');
@@ -2370,7 +2262,6 @@ function renderCaDay(day){
       row2e.appendChild(taRep);
       sampContent.appendChild(row2e);
     });
-    // Blendscan
     const blendRow=document.createElement('div'); blendRow.style.cssText='display:grid;grid-template-columns:1.2fr 1fr 3fr;gap:6px;margin-top:6px;align-items:center;';
     const blbl=document.createElement('div'); blbl.style.cssText='font-size:12px;padding:6px 2px;color:var(--tx2);font-weight:500;'; blbl.textContent='Blendscan Supervisor log-in';
     blendRow.appendChild(blbl);
@@ -2385,7 +2276,6 @@ function renderCaDay(day){
     sampContent.appendChild(blendRow);
     body.appendChild(sec('Clinker Operation & Quality Control','#b45309',sampContent));
 
-    // ── Cement Grinding Quality ──────────────────────────────────────
     const cemQContent = document.createElement('div');
     cemQContent.style.cssText='display:flex;flex-direction:column;gap:6px;';
     const cemQHead = document.createElement('div');
@@ -2404,7 +2294,6 @@ function renderCaDay(day){
     });
     body.appendChild(sec('Cement Grinding Quality','#0284c7',cemQContent));
 
-    // ── Additive Checks ──────────────────────────────────────────────
     const addContent = document.createElement('div');
     addContent.style.cssText='display:flex;flex-direction:column;gap:6px;';
     const addHead = document.createElement('div');
@@ -2422,7 +2311,6 @@ function renderCaDay(day){
       const r=document.createElement('div'); r.style.cssText='display:grid;grid-template-columns:2fr 1fr 1fr 2fr;gap:8px;align-items:center;';
       const lbl2=document.createElement('div'); lbl2.style.cssText='font-size:12px;color:var(--tx2);padding:4px 0;'; lbl2.textContent=pair[0];
       r.appendChild(lbl2);
-      // mill3, mill5, comments stored as object with m3/m5/comments keys inside addField
       if(!sd.additives[pair[1]] || typeof sd.additives[pair[1]]==='string'){
         sd.additives[pair[1]]={m3:'',m5:'',comments:''};
       }
@@ -2435,7 +2323,6 @@ function renderCaDay(day){
       });
       addContent.appendChild(r);
     });
-    // Dome chutes
     const domeRow=document.createElement('div'); domeRow.style.cssText='display:flex;align-items:center;gap:10px;margin-top:4px;';
     const domeLbl=document.createElement('div'); domeLbl.style.cssText='font-size:12px;color:var(--tx2);white-space:nowrap;'; domeLbl.textContent='Which dome chutes have been used this shift?';
     const domeInp=document.createElement('input'); domeInp.className='ca-inp'; domeInp.style.flex='1'; domeInp.type='text'; domeInp.value=sd.additives.domeChutes||'';
@@ -2445,7 +2332,6 @@ function renderCaDay(day){
     addContent.appendChild(domeRow);
     body.appendChild(sec('Additive Checks','#7c3aed',addContent));
 
-    // ── Lab Equipment ────────────────────────────────────────────────
     const labContent = document.createElement('div');
     labContent.style.cssText='display:flex;flex-direction:column;gap:4px;';
     const labHead = document.createElement('div');
@@ -2468,11 +2354,9 @@ function renderCaDay(day){
     });
     body.appendChild(sec('Lab Equipment, Housekeeping & Checklists','#059669',labContent));
 
-    // ── Checklists ───────────────────────────────────────────────────
     const checkContent = document.createElement('div');
     checkContent.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:16px;';
 
-    // Lab Cleaning Checklist
     const labClean = document.createElement('div');
     const labCleanH = document.createElement('div'); labCleanH.className='ca-label'; labCleanH.style.cssText='font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--tx2);margin-bottom:4px;'; labCleanH.textContent='Lab Cleaning Checklist';
     labClean.appendChild(labCleanH);
@@ -2490,7 +2374,6 @@ function renderCaDay(day){
       r.appendChild(ci);
       labClean.appendChild(r);
     });
-    // XRD Water (night only doesn't have it, but it's on the day sheet)
     if(!isNight){
       const xrdRow=document.createElement('div'); xrdRow.style.cssText='display:grid;grid-template-columns:1.5fr 0.7fr 1fr;gap:6px;align-items:center;margin-bottom:4px;';
       const xrdLbl=document.createElement('div'); xrdLbl.style.cssText='font-size:12px;color:var(--tx2);'; xrdLbl.textContent='XRD Filters'; xrdRow.appendChild(xrdLbl);
@@ -2505,7 +2388,6 @@ function renderCaDay(day){
     }
     checkContent.appendChild(labClean);
 
-    // Ops & Quality Checklist
     const opsCheck = document.createElement('div');
     const opsCheckH = document.createElement('div'); opsCheckH.className='ca-label'; opsCheckH.style.cssText='font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--tx2);margin-bottom:4px;'; opsCheckH.textContent='Operations & Quality Checklist';
     opsCheck.appendChild(opsCheckH);
@@ -2527,7 +2409,6 @@ function renderCaDay(day){
     checkContent.appendChild(opsCheck);
     body.appendChild(sec('Lab Cleaning & Operations Checklists','#0891b2',checkContent));
 
-    // ── Cemfuel Deliveries ───────────────────────────────────────────
     const cemfuelContent = document.createElement('div');
     cemfuelContent.style.cssText='display:flex;flex-direction:column;gap:6px;';
     const cfHead=document.createElement('div'); cfHead.style.cssText='display:grid;grid-template-columns:2fr 1fr;gap:8px;font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em;padding:0 2px;';
@@ -2544,7 +2425,6 @@ function renderCaDay(day){
     });
     body.appendChild(sec('Cemfuel Deliveries','#6366f1',cemfuelContent));
 
-    // ── Cement Grinding Log ──────────────────────────────────────────
     const grindContent = document.createElement('div');
     grindContent.style.cssText='display:flex;flex-direction:column;gap:6px;';
     const grHead=document.createElement('div'); grHead.style.cssText='display:grid;grid-template-columns:1fr 1.5fr 2fr 2fr;gap:8px;font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em;padding:0 2px;';
@@ -2560,7 +2440,6 @@ function renderCaDay(day){
       });
       grindContent.appendChild(r);
     });
-    // Add row button
     if(e){
       const addBtn=document.createElement('button'); addBtn.className='add-row-btn';
       addBtn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add row';
@@ -2572,14 +2451,12 @@ function renderCaDay(day){
     }
     body.appendChild(sec('Cement Grinding Log','#b45309',grindContent));
 
-    // Auto-grow all ca-inp textareas in this panel
     panel.addEventListener('input', function(ev){
       if(ev.target.tagName === 'TEXTAREA' && ev.target.classList.contains('ca-inp')){
         ev.target.style.height = 'auto';
         ev.target.style.height = ev.target.scrollHeight + 'px';
       }
     });
-    // Initial resize for pre-filled values
     setTimeout(function(){
       panel.querySelectorAll('textarea.ca-inp').forEach(function(ta){
         ta.style.height = 'auto';
@@ -2589,7 +2466,6 @@ function renderCaDay(day){
     return panel;
   }
 
-  // Build the two-column layout
   mc.innerHTML='';
   const header=document.createElement('div'); header.className='page-header';
   header.innerHTML='<div><div class="page-title">'+day+' <span style="font-size:13px;font-weight:500;color:#b45309;margin-left:8px">Cement Analyst Log</span></div><div class="page-date">'+dayDate(day)+' &middot; Week of '+weekRange()+'</div></div>';
@@ -2606,6 +2482,15 @@ function shiftHTML(sk,sd,label,day){
   const badge=role?`<span class="role-tag ${role==='Trainee'?'role-trainee':'role-burner'}">${role}</span>`:'';
     const isMyShift = isAdmin || (isBurner && lockedName && (!sd.burner || sd.burner===lockedName));
   const burnerLocked = !isAdmin && !!sd.burner && !!lockedName && sd.burner!==lockedName;
+  const adminBurnerOpts = [];
+  if(sd.burner){
+    adminBurnerOpts.push(`<option value="${esc(sd.burner)}" selected>${esc(sd.burner)}</option>`);
+  }
+  burners.forEach(n=>{
+    if(n !== sd.burner){
+      adminBurnerOpts.push(`<option value="${esc(n)}"${sd.burner===n?' selected':''}>${esc(n)}</option>`);
+    }
+  });
   const burnerSel = (!isBurner && !isAdmin)
     ? `<select disabled style="opacity:0.75;cursor:not-allowed"><option>${esc(sd.burner)||'&mdash;'}</option></select>`
     : (lockedName && !isAdmin)
@@ -2616,7 +2501,7 @@ function shiftHTML(sk,sd,label,day){
             ${sd.burner===lockedName ? `<option value="" style="color:var(--red)">&#10005; Remove my name</option>` : ''}
             ${[lockedName].map(n=>`<option value="${esc(n)}"${sd.burner===n?' selected':''}>${esc(n)}</option>`).join('')}
            </select>`)
-    : `<select onchange="setShift('${sk}','burner',this.value)"><option value="">&#8212; Select name &#8212;</option>${burners.map(n=>`<option value="${esc(n)}"${sd.burner===n?' selected':''}>${esc(n)}</option>`).join('')}</select>`;
+    : `<select onchange="setShift('${sk}','burner',this.value)"><option value="">&#8212; Select name &#8212;</option>${adminBurnerOpts.join('')}</select>`;
   const lockAttr = (!isMyShift||readOnly) ? 'disabled style="opacity:0.75;cursor:not-allowed"' : '';
   const addBtnStyle = (!isMyShift||readOnly) ? 'display:none' : '';
   return `<div class="shift-panel">
@@ -2679,16 +2564,13 @@ function renderRows(sk,entries){
   const tbody=document.getElementById('tbody-'+sk); if(!tbody)return;
   tbody.innerHTML='';
   const editable=canEditShift(sk);
-  // Status can be set by: the burner whose shift it is, day staff, or admin — not SM or CA
   const shiftBurner=entries.length>0 && state[currentDay] && state[currentDay][sk] ? state[currentDay][sk].burner : '';
   const canStatus = !readOnly && (isAdmin || (isBurner && (!shiftBurner || shiftBurner===lockedName)));
   entries.forEach(function(e,i){
     const tr=document.createElement('tr');
 
-    // Row number
     const tdNum=document.createElement('td'); tdNum.className='td-num'; tdNum.textContent=i+1; tr.appendChild(tdNum);
 
-    // Equipment select
     const tdEquip=document.createElement('td'); tdEquip.className='td-equip';
     const eqSel=document.createElement('select');
     const eqBlank=document.createElement('option'); eqBlank.value=''; eqBlank.textContent='— Equipment —'; eqSel.appendChild(eqBlank);
@@ -2697,7 +2579,6 @@ function renderRows(sk,entries){
     else eqSel.addEventListener('change',function(){ setEntry(sk,i,'equipment',this.value); });
     tdEquip.appendChild(eqSel); tr.appendChild(tdEquip);
 
-    // Issue textarea
     const tdIssue=document.createElement('td'); tdIssue.className='td-issue';
     const ta=document.createElement('textarea'); ta.rows=1; ta.value=e.issue||'';
     if(!editable){ ta.readOnly=true; ta.style.cssText='pointer-events:none;opacity:0.75;cursor:default;background:transparent;border-color:transparent'; ta.placeholder='Read only'; }
@@ -2708,7 +2589,6 @@ function renderRows(sk,entries){
     }
     tdIssue.appendChild(ta); tr.appendChild(tdIssue);
 
-    // Status cell — built with DOM so event listener is clean
     const tdStatus=document.createElement('td'); tdStatus.className='td-status'; tdStatus.style.cssText='min-width:130px;padding:4px 6px;vertical-align:middle;';
     const stSel=document.createElement('select');
     function applyStatusStyle(val){
@@ -2748,7 +2628,6 @@ function renderRows(sk,entries){
         var tsDiv=tdStatus.querySelector('.status-ts');
         if(tsDiv){ tsDiv.textContent=entry.statusAt?((entry.statusBy||'')+' · '+entry.statusAt):''; }
 
-        // Status saved to kiln_log — feedback tabs read directly from kiln_log
       });
     }
     tdStatus.appendChild(stSel);
@@ -2757,7 +2636,6 @@ function renderRows(sk,entries){
     tsDiv.textContent=e.statusAt?((e.statusBy||'')+' · '+e.statusAt):'';
     tdStatus.appendChild(tsDiv); tr.appendChild(tdStatus);
 
-    // Delete button
     const tdDel=document.createElement('td'); tdDel.className='td-del';
     if(editable){
       const btn=document.createElement('button'); btn.className='del-btn';
@@ -2772,7 +2650,6 @@ function renderRows(sk,entries){
   });
 }
 
-// search
 let _searchScope = 'week';
 let _searchTimer = null;
 
@@ -2831,7 +2708,6 @@ async function runSearch(){
   let weeksData = []; // [{weekKey, state}]
 
   if(_searchScope === 'week'){
-    // Use current in-memory state
     const wk = weekStart ? toISO(weekStart) : 'current';
     weeksData = [{ weekKey: wk, weekState: state }];
   } else {
@@ -2840,18 +2716,15 @@ async function runSearch(){
     try {
       let rows;
       if(mondays){
-        // Fetch specific weeks in parallel
         const fetches = mondays.map(m => sbFetch('/rest/v1/kiln_log?week_key=eq.'+m+'&select=week_key,data').catch(()=>[]));
         const results = await Promise.all(fetches);
         rows = results.flat().filter(Boolean);
       } else {
-        // All time — fetch everything
         rows = await sbFetch('/rest/v1/kiln_log?select=week_key,data&order=week_key.desc&limit=200');
       }
       weeksData = (rows||[])
         .filter(r => r.week_key && r.week_key !== '__lists__')
         .map(r => ({ weekKey: r.week_key, weekState: r.data?.state || r.data }));
-      // Also include current in-memory week if not already present
       const curKey = weekStart ? toISO(weekStart) : null;
       if(curKey && !weeksData.find(w=>w.weekKey===curKey)){
         weeksData.unshift({ weekKey: curKey, weekState: state });
@@ -2862,7 +2735,6 @@ async function runSearch(){
     }
   }
 
-  // Search through all weeks
   const results = [];
   weeksData.forEach(({ weekKey, weekState }) => {
     if(!weekState) return;
@@ -2880,7 +2752,6 @@ async function runSearch(){
     });
   });
 
-  // Deduplicate
   const seen = new Set();
   const unique = results.filter(r => { const k=r.weekKey+r.day+r.shift+r.equipment+r.issue; if(seen.has(k))return false; seen.add(k); return true; });
 
@@ -2906,7 +2777,6 @@ async function runSearch(){
 async function navigateToResult(weekKey, day){
   closeSearchModal();
   if(weekKey !== 'current' && weekKey !== (weekStart ? toISO(weekStart) : null)){
-    // Load that week
     const [y,m,d] = weekKey.split('-').map(Number);
     weekStart = new Date(y, m-1, d);
     const sbData = await sbLoadWeek(weekKey);
@@ -2918,7 +2788,6 @@ async function navigateToResult(weekKey, day){
   switchDay(day);
 }
 
-// reports
 let GROQ_KEY = null;
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
@@ -3119,7 +2988,6 @@ function deleteAiKnowledgeEntry(idx){
 }
 
 
-// ── WHITEBOARD ──────────────────────────────────────────────────────────────
 let _wbData = {}; // { targetId: { actual: '', status: 'hit'|'missed'|'inprogress'|'' } }
 
 async function loadWhiteboardData(){
@@ -3145,7 +3013,6 @@ async function saveWhiteboardData(){
   localStorage.setItem('kbl_whiteboard_data', JSON.stringify(_wbData));
 }
 
-// ── FEEDBACK STATE ────────────────────────────────────────────────────────────
 let _feedbackRange   = 'week';
 let _resolvedRange   = 'week';
 let _resolvedSearch  = '';
@@ -3175,17 +3042,14 @@ async function renderFeedback(){
   }
 
   mc.innerHTML = ''
-    // ── Page header
     +'<div style="margin-bottom:20px"><div class="page-title">Feedback</div>'
     +'<div class="page-date">Equipment issues flagged across all shifts</div></div>'
 
-    // ── Tab bar
     +'<div style="display:flex;border-bottom:1px solid var(--bd);margin-bottom:24px;gap:0">'
     +tabBtn('fb-tab-ongoing',  '🔴 Ongoing <span id="fbOngoingCount" style="font-size:11px;font-family:var(--ff-mono);font-weight:400;color:var(--tx3)"></span>',  _fbTab==='ongoing')
     +tabBtn('fb-tab-resolved', '✅ Resolved <span id="fbResolvedCount" style="font-size:11px;font-family:var(--ff-mono);font-weight:400;color:var(--tx3)"></span>', _fbTab==='resolved')
     +'</div>'
 
-    // ── Ongoing panel
     +'<div id="fb-panel-ongoing" style="display:'+ (_fbTab==='ongoing'?'block':'none') +'">'
     +'<div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;align-items:center">'
     +'<span style="font-size:10px;font-family:var(--ff-mono);color:var(--tx3);letter-spacing:1px;text-transform:uppercase;margin-right:2px">Range</span>'
@@ -3202,7 +3066,6 @@ async function renderFeedback(){
     +'</div>'
     +'</div>'
 
-    // ── Resolved panel
     +'<div id="fb-panel-resolved" style="display:'+ (_fbTab==='resolved'?'block':'none') +'">'
     +'<div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;align-items:center">'
     +'<span style="font-size:10px;font-family:var(--ff-mono);color:var(--tx3);letter-spacing:1px;text-transform:uppercase;margin-right:2px">Range</span>'
@@ -3225,7 +3088,6 @@ async function renderFeedback(){
 
 function switchFeedbackTab(tabId){
   _fbTab = tabId === 'fb-tab-ongoing' ? 'ongoing' : 'resolved';
-  // Update tab button styles
   ['fb-tab-ongoing','fb-tab-resolved'].forEach(function(id){
     const btn = document.getElementById(id);
     if(!btn) return;
@@ -3233,12 +3095,10 @@ function switchFeedbackTab(tabId){
     btn.style.borderBottom = active ? '2px solid var(--ac)' : '2px solid transparent';
     btn.style.color = active ? 'var(--tx)' : 'var(--tx3)';
   });
-  // Show/hide panels
   const onPanel  = document.getElementById('fb-panel-ongoing');
   const resPanel = document.getElementById('fb-panel-resolved');
   if(onPanel)  onPanel.style.display  = _fbTab==='ongoing'  ? 'block' : 'none';
   if(resPanel) resPanel.style.display = _fbTab==='resolved' ? 'block' : 'none';
-  // Load the newly visible tab
   if(_fbTab==='ongoing') loadFeedbackIssues();
   else loadResolvedIssues();
 }
@@ -3288,11 +3148,9 @@ async function loadFeedbackIssues(){
   if(!list) return;
   const canResolve = isAdmin || isDayStaff;
 
-  // Work out which week keys to fetch
   const cutoff = feedbackRangeCutoff();
   let weekKeys = [];
 
-  // Gather all known week keys from localStorage
   const allKeys = Object.keys(localStorage).filter(k=>k.startsWith('kbl_week_'));
   allKeys.forEach(function(k){
     const iso = k.replace('kbl_week_','');
@@ -3300,7 +3158,6 @@ async function loadFeedbackIssues(){
     if(!cutoff || d >= cutoff) weekKeys.push(iso);
   });
 
-  // Also fetch from Supabase for date range
   try {
     let url = '/rest/v1/kiln_log?select=week_key,data';
     if(cutoff){
@@ -3315,12 +3172,8 @@ async function loadFeedbackIssues(){
     }
   } catch(e){ console.warn('Feedback load error:', e); }
 
-  // Fetch all week data
   const weekDataMap = {};
 
-  // Always seed with the live in-memory state for the current week —
-  // this ensures entries marked Ongoing THIS session show up immediately
-  // even before an autosave has written to localStorage or Supabase.
   if(weekStart){
     const currentIso = toISO(weekStart);
     const currentCutoff = feedbackRangeCutoff();
@@ -3333,12 +3186,10 @@ async function loadFeedbackIssues(){
 
   await Promise.all(weekKeys.map(async function(iso){
     try {
-      // Skip if already seeded from live state
       if(weekDataMap[iso]) return;
       const cached = localStorage.getItem('kbl_week_'+iso);
       if(cached){
         const parsed = JSON.parse(cached);
-        // Handle both raw state and payload wrapper
         weekDataMap[iso] = (parsed && parsed.state) ? parsed.state : parsed;
         return;
       }
@@ -3350,7 +3201,6 @@ async function loadFeedbackIssues(){
     } catch(e){}
   }));
 
-  // Extract ongoing issues
   const issues = [];
   const cutoffTime = cutoff ? cutoff.getTime() : 0;
 
@@ -3367,7 +3217,6 @@ async function loadFeedbackIssues(){
           if(!e.equipment && !e.issue) return;
           if(e.status === 'Resolved') return; // hide resolved
           if(!e.status) return; // hide unmarked — only show explicitly flagged Ongoing
-          // Date of this shift (approximate from week key + day index)
           const shiftDate = new Date(weekDate);
           shiftDate.setDate(shiftDate.getDate() + DAYS.indexOf(day));
           if(cutoffTime && shiftDate.getTime() < cutoffTime) return;
@@ -3386,7 +3235,6 @@ async function loadFeedbackIssues(){
     });
   });
 
-  // Sort: Ongoing first, then blank, newest week first
   issues.sort(function(a,b){
     const so = function(s){ return s==='Ongoing'?0:(!s?1:2); };
     if(so(a.status)!==so(b.status)) return so(a.status)-so(b.status);
@@ -3395,7 +3243,6 @@ async function loadFeedbackIssues(){
 
   const countEl = document.getElementById('fbOngoingCount');
 
-  // Filter by search
   const q = _ongoingSearch.toLowerCase().trim();
   const filtered = q ? issues.filter(function(iss){
     return iss.equipment.toLowerCase().includes(q)
@@ -3416,7 +3263,6 @@ async function loadFeedbackIssues(){
     return;
   }
 
-  // Store for resolve (use filtered so indices match)
   window._fbIssues = filtered;
 
   list.innerHTML = filtered.map(function(iss, idx){
@@ -3465,20 +3311,15 @@ async function resolveFeedbackIssue(idx){
   const now = new Date();
   const ts = now.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})+' '+now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
 
-  // Update the entry in the week data
   try {
-    // Load fresh week data from Supabase
     const rows = await sbFetch('/rest/v1/kiln_log?week_key=eq.'+iss.iso+'&select=data&limit=1');
     if(!rows || !rows.length){ showToast('Could not load week data'); return; }
     const payload = rows[0].data;
-    // Data is stored as a payload wrapper — state lives at payload.state
     const wState = (payload && payload.state) ? payload.state : payload;
     const shiftData = wState[iss.day] && wState[iss.day][iss.sk];
     if(!shiftData || !shiftData.entries){ showToast('Shift data not found'); return; }
-    // Find matching entry by equipment+issue rather than index (more reliable)
     let entry = shiftData.entries[iss.ei];
     if(!entry || (entry.equipment !== iss.equipment && entry.issue !== iss.issue)){
-      // Fall back to searching by equipment+issue match
       entry = shiftData.entries.find(function(e){
         return e.equipment === iss.equipment && e.issue === iss.issue;
       });
@@ -3489,17 +3330,13 @@ async function resolveFeedbackIssue(idx){
     entry.statusBy = resolverName;
     entry.statusAt = ts;
 
-    // Save back to Supabase with the full payload wrapper intact
     await sbFetch('/rest/v1/kiln_log?week_key=eq.'+iss.iso, {
       method: 'PATCH',
       body: JSON.stringify({ data: payload, updated_at: new Date().toISOString() })
     });
 
-    // Update localStorage cache
     localStorage.setItem('kbl_week_'+iss.iso, JSON.stringify(payload));
 
-    // Sync live in-memory state so kiln log reflects this immediately
-    // (only applies if user is viewing the same week)
     if(weekStart && toISO(weekStart) === iss.iso){
       if(state[iss.day] && state[iss.day][iss.sk] && state[iss.day][iss.sk].entries){
         const liveEntry = state[iss.day][iss.sk].entries.find(function(e){
@@ -3509,7 +3346,6 @@ async function resolveFeedbackIssue(idx){
           liveEntry.status   = 'Resolved';
           liveEntry.statusBy = resolverName;
           liveEntry.statusAt = ts;
-          // If kiln log for this day is currently rendered, refresh the status cell live
           if(currentDay === iss.day){
             const tbody = document.getElementById('tbody-'+iss.sk);
             if(tbody){
@@ -3527,7 +3363,6 @@ async function resolveFeedbackIssue(idx){
       }
     }
 
-    // Log to kiln_feedback_log (non-fatal — RLS may restrict day_staff)
     try {
       await sbFetch('/rest/v1/kiln_feedback_log', {
         method: 'POST',
@@ -3543,13 +3378,11 @@ async function resolveFeedbackIssue(idx){
         })
       });
     } catch(fbErr) {
-      // Log write failed (likely RLS) — kiln_log update already succeeded, carry on
       console.warn('kiln_feedback_log write skipped:', fbErr.message);
     }
 
     showToast('Issue marked as resolved ✓');
 
-    // Remove card from view and refresh both sections
     const card = document.getElementById('fb-item-'+idx);
     if(card){
       card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
@@ -3569,7 +3402,6 @@ async function loadResolvedIssues(){
   if(!list) return;
   const canReopen = isAdmin || isDayStaff;
 
-  // Build week keys from localStorage + Supabase (same approach as loadFeedbackIssues)
   const cutoff = resolvedRangeCutoff();
   let weekKeys = [];
 
@@ -3592,18 +3424,15 @@ async function loadResolvedIssues(){
     }
   } catch(e){ console.warn('Resolved load error:', e); }
 
-  // Fetch week data (prefer fresh from Supabase over stale localStorage for resolved)
   const weekDataMap = {};
   await Promise.all(weekKeys.map(async function(iso){
     try {
-      // Always fetch fresh from Supabase so resolved status is current
       const rows = await sbFetch('/rest/v1/kiln_log?week_key=eq.'+iso+'&select=data&limit=1');
       if(rows && rows.length){
         const d = rows[0].data;
         weekDataMap[iso] = (d && d.state) ? d.state : d;
         return;
       }
-      // Fall back to localStorage
       const cached = localStorage.getItem('kbl_week_'+iso);
       if(cached){
         const parsed = JSON.parse(cached);
@@ -3612,7 +3441,6 @@ async function loadResolvedIssues(){
     } catch(e){}
   }));
 
-  // Extract resolved issues
   const issues = [];
   const cutoffTime = cutoff ? cutoff.getTime() : 0;
 
@@ -3631,7 +3459,6 @@ async function loadResolvedIssues(){
           const shiftDate = new Date(weekDate);
           shiftDate.setDate(shiftDate.getDate() + DAYS.indexOf(day));
           if(cutoffTime && shiftDate.getTime() < cutoffTime) return;
-          // Use statusAt as a Date for sorting (parse "12 Mar · 14:30" or ISO)
           let resolvedDate = shiftDate;
           if(e.statusAt){
             const parsed = new Date(e.statusAt);
@@ -3652,12 +3479,10 @@ async function loadResolvedIssues(){
     });
   });
 
-  // Sort newest first
   issues.sort(function(a,b){ return b.resolvedDate - a.resolvedDate; });
 
   const countEl = document.getElementById('fbResolvedCount');
 
-  // Filter by search
   const q = _resolvedSearch.toLowerCase().trim();
   const filtered = q ? issues.filter(function(iss){
     return iss.equipment.toLowerCase().includes(q)
@@ -3728,7 +3553,6 @@ async function reopenFeedbackIssue(idx){
   const ts = now.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})+' '+now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
 
   try {
-    // Load fresh data
     const rows = await sbFetch('/rest/v1/kiln_log?week_key=eq.'+encodeURIComponent(iss.iso)+'&select=data&limit=1');
     if(!rows || !rows.length){ showToast('Could not load week data'); return; }
     const payload = rows[0].data;
@@ -3736,7 +3560,6 @@ async function reopenFeedbackIssue(idx){
     const shiftData = wState[iss.day] && wState[iss.day][iss.sk];
     if(!shiftData || !shiftData.entries){ showToast('Shift data not found'); return; }
 
-    // Find the entry
     let entry = shiftData.entries[iss.ei];
     if(!entry || entry.equipment !== iss.equipment){
       entry = shiftData.entries.find(function(e){
@@ -3755,7 +3578,6 @@ async function reopenFeedbackIssue(idx){
     });
     localStorage.setItem('kbl_week_'+iss.iso, JSON.stringify(payload));
 
-    // Sync live in-memory state if same week
     if(weekStart && toISO(weekStart) === iss.iso){
       if(state[iss.day] && state[iss.day][iss.sk] && state[iss.day][iss.sk].entries){
         const liveEntry = state[iss.day][iss.sk].entries.find(function(e){
@@ -3851,7 +3673,6 @@ function renderWhiteboard(){
       const isNumeric = t.includes(':') || (d.actual !== undefined && d.actual !== '');
 
       html += '<div style="background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">'
-        // Target name
         + '<div style="flex:1;min-width:140px">'
         + '<div style="font-size:13px;font-weight:600;color:var(--tx)">' + esc(t) + '</div>'
         + (d.note ? '<div style="font-size:11px;color:var(--tx3);margin-top:2px">' + esc(d.note) + '</div>' : '')
@@ -3859,7 +3680,6 @@ function renderWhiteboard(){
             + 'Last edited by ' + esc(d.editedBy) + ' — ' + wbFormatTime(d.editedAt) + '</div>'
           : '<div id="wb-audit-'+tid+'"></div>')
         + '</div>'
-        // Actual value (if any)
         + '<div style="display:flex;align-items:center;gap:8px;flex-shrink:0">'
         + (canEdit
           ? '<input id="wb-actual-'+tid+'" value="' + esc(d.actual||'') + '" placeholder="Actual value" '
@@ -3869,13 +3689,11 @@ function renderWhiteboard(){
               : '<span style="font-size:12px;color:var(--tx3);min-width:80px;text-align:center">—</span>'))
         + '</div>'
 
-        // Note field (admin/daystaff only)
         + (canEdit
           ? '<textarea id="wb-note-'+tid+'" placeholder="Optional note" '
             + 'style="width:180px;min-width:180px;max-width:340px;padding:6px 8px;border:1px solid var(--bd);border-radius:6px;background:var(--bg);color:var(--tx);font-size:12px;resize:none;overflow:hidden;line-height:1.4;height:32px;font-family:inherit" '
             + 'oninput="wbResizeNote(this)" onchange="wbSave(\''+tid+'\')">'            + esc(d.note||'') + '</textarea>'
           : '')
-        // Delete button (admin/daystaff only)
         + (canEdit
           ? '<button onclick="wbDeleteTarget(\''+tid+'\',\''+esc(t)+'\')" title="Remove target" '
             + 'style="background:none;border:none;cursor:pointer;color:var(--tx3);padding:4px;flex-shrink:0;opacity:0.5" '
@@ -3888,7 +3706,6 @@ function renderWhiteboard(){
     html += '</div>';
   }
 
-  // Add target dialog (inline, shown/hidden)
   if(canEdit){
     html += '<div id="wbAddForm" style="display:none;margin-top:16px;background:var(--sf);border:1px solid var(--ac);border-radius:10px;padding:16px">'
       + '<div style="font-size:13px;font-weight:600;margin-bottom:12px">Add New Target</div>'
@@ -3906,7 +3723,6 @@ function renderWhiteboard(){
       + '</div></div>';
   }
 
-  // ── Additional Notes section ──
   const wbNotes = _wbData['__notes__'] || {};
   html += '<div style="margin-top:24px;background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:16px">'
     + '<div style="font-size:13px;font-weight:600;color:var(--tx);margin-bottom:10px">Additional Notes</div>'
@@ -3926,7 +3742,6 @@ function renderWhiteboard(){
 
   html += '</div>';
   mc.innerHTML = html;
-  // Auto-size any note textareas that have existing content
   mc.querySelectorAll('textarea[id^="wb-note-"]').forEach(function(ta){ wbResizeNote(ta); });
   const _wbna = document.getElementById('wbNotesArea'); if(_wbna) wbResizeNote(_wbna);
 }
@@ -3964,7 +3779,6 @@ function wbAddTarget(){
 }
 
 function wbUpdate(tid){
-  // Live colour update on status dropdown
   const sel = document.getElementById('wb-status-'+tid);
   if(!sel) return;
   const statusColors = {
@@ -3991,7 +3805,6 @@ function wbSave(tid){
   _wbData[tid].editedAt = new Date().toISOString();
   saveWhiteboardData();
   showToast('Saved ✓');
-  // Refresh the audit line in the DOM without full re-render
   const auditEl = document.getElementById('wb-audit-'+tid);
   if(auditEl){
     const now = new Date();
@@ -4061,7 +3874,6 @@ async function sendReport(){
 
   _reportHistory.push({role:'user', content:q});
 
-  // Show user message + thinking indicator
   const historyEl = document.getElementById('reportHistory');
   historyEl.innerHTML = _reportHistory.map(renderReportMessage).join('');
   historyEl.innerHTML += `<div class="reports-message" id="thinkingMsg">
@@ -4098,14 +3910,12 @@ BEHAVIOUR — CRITICAL RULES:
 - Never refer to specific individuals by name — refer to roles only (e.g. "recorded during day shift").
 - If the log data is empty or a section has nothing recorded, state that clearly rather than padding the response.`;
 
-    // Build plant knowledge base from admin-managed entries
     const knowledgeEntries = (_allLists.ai_knowledge || []);
     const knowledgeBlock = knowledgeEntries.length
       ? '\n\nPLANT KNOWLEDGE BASE (facts about this specific plant — use these when relevant):\n'
         + knowledgeEntries.map(function(e,i){ return (i+1)+'. '+e; }).join('\n')
       : '';
 
-    // Inject the actual log data as the first user message so the AI only answers from real data
     const dataMessage = {
       role: 'user',
       content: 'Here is the shift log summary and plant knowledge base you must use to answer questions. '
@@ -4136,7 +3946,6 @@ BEHAVIOUR — CRITICAL RULES:
   historyEl.scrollIntoView({behavior:'smooth', block:'end'});
   const pa = document.getElementById('reportPrompt');
   if(pa){ pa.focus(); }
-  // Show clear button now there's history
   const scopeRow = document.querySelector('.reports-scope-row');
   if(scopeRow && !document.getElementById('clearConvoBtn')){
     const clr = document.createElement('button');
@@ -4158,13 +3967,11 @@ function closeSearchOnOutside(e){}
 
 
 
-// mutations
 function canEditBurnerField(sk, val){
   if(readOnly) return false;
   if(isAdmin) return true;
   if(!isBurner) return false;
   const current = state && state[currentDay] && state[currentDay][sk] ? state[currentDay][sk].burner : '';
-  // Burners can only edit the shift they own, and only move/remove their own name.
   if(current && lockedName && current !== lockedName) return false;
   if(!val) return !current || current === lockedName;
   return !lockedName || val === lockedName;
@@ -4202,7 +4009,6 @@ function setEntry(sk,idx,field,val){
 function canEditShift(sk){
   if(readOnly) return false;
   if(isAdmin) return true;
-  // CA-only or SM-only users (no burner role) cannot touch burner log at all
   if(!isBurner) return false;
   const burner=state[currentDay][sk].burner;
   return !burner || burner===lockedName;
@@ -4217,7 +4023,6 @@ function canEditCaShift(sk, day){
   if(readOnly) return false;
   if(isAdmin) return true;
   if(!isCementAnalyst) return false;
-  // CA can edit a shift only if it's unclaimed or already theirs
   const d2 = day || currentCaDay;
   if(sk && d2 && caState[d2] && caState[d2][sk]){
     const analyst = caState[d2][sk].name;
@@ -4240,7 +4045,6 @@ function delRow(sk,idx){
   renderRows(sk,state[currentDay][sk].entries);updatePills();autoSave();
 }
 
-// ── CUSTOM LISTS ─────────────────────────────────────────────────────
 function showNewListForm(){
   document.getElementById('newListForm').style.display='flex';
   document.getElementById('newListNameInput').value='';
@@ -4301,7 +4105,6 @@ async function deleteCustomList(key){
   showToast(`"${label}" list deleted`);
 }
 
-// manage lists modal
 function openManageModal(){
   currentManageTab='equipment';
   document.querySelectorAll('#manageModalTabs .modal-tab:not([data-custom])').forEach((t,i)=>t.classList.toggle('active',i===0));
@@ -4435,7 +4238,6 @@ function addPerson(tab){
   if(list.find(e=>e.toLowerCase()===val.toLowerCase())){showToast('Already in list');return;}
   list.push(val); list.sort((a,b)=>a.localeCompare(b));
   _allLists[tab] = list;
-  // Sync shorthands
   if(tab==='burners') burners=list; else if(tab==='analysts') analysts=list;
   else if(tab==='managers') managers=list; else if(tab==='equipment') equipment=list;
   sbSaveList(tab, list);
@@ -4445,14 +4247,12 @@ function removePerson(tab,name){
   if(!confirm('Remove "'+name+'"?'))return;
   if(!_allLists[tab]) return;
   _allLists[tab] = _allLists[tab].filter(e=>e!==name);
-  // Sync shorthands
   if(tab==='burners') burners=_allLists[tab]; else if(tab==='analysts') analysts=_allLists[tab];
   else if(tab==='managers') managers=_allLists[tab]; else if(tab==='equipment') equipment=_allLists[tab];
   sbSaveList(tab, _allLists[tab]);
   renderPeopleList(tab); showToast('"'+name+'" removed');
 }
 
-// overview
 function renderOverview(){
   animateContent();
   if(typeof window._ovFilters === 'undefined'){
@@ -4487,7 +4287,6 @@ function renderOverviewBody(){
   body.innerHTML='';
 
   function secHdr(col,icon,label,topMargin){
-    // For CSS vars like var(--ac) we can't append hex alpha, use opacity wrapper instead
     const isCssVar = col.indexOf('var(') === 0;
     const bgStyle = isCssVar
       ? 'background:rgba(0,0,0,0.04)'
@@ -4509,7 +4308,6 @@ function renderOverviewBody(){
   }
   function add(html){ if(html) body.insertAdjacentHTML('beforeend',html); }
 
-  // ── Shift Managers ────────────────────────────────────────────────
   if(F.managers){
     const smRows=[];
     DAYS.forEach(function(d){
@@ -4523,7 +4321,6 @@ function renderOverviewBody(){
     add(table(['Day','Shift','Notes'],smRows));
   }
 
-  // ── Kiln Burners ──────────────────────────────────────────────────
   if(F.burners){
     const bRawRows=[];
     DAYS.forEach(function(d){
@@ -4545,16 +4342,13 @@ function renderOverviewBody(){
         });
       });
     });
-    // Sort: Ongoing first, then blank/unmarked, then Resolved
     function statusOrder(s){ return s==='Ongoing'?0:(!s?1:2); }
     const bRows=bRawRows.slice().sort(function(a,b){ return statusOrder(a._status)-statusOrder(b._status); });
     add(secHdr('var(--ac)','⚙','Kiln Burners — Equipment Issues',false));
     add(table(['Day','Shift','Equipment','Issue / Notes','Burner','Status'],bRows.map(function(r){return r._html;})));
   }
 
-  // ── Cement Analysts ───────────────────────────────────────────────
   if(F.analysts){
-    // Sampling non-compliance
     const sampRows=[];
     DAYS.forEach(function(d){
       if(!caState[d])return;
@@ -4570,7 +4364,6 @@ function renderOverviewBody(){
     add(secHdr('#b45309','🧪','Cement Analysts — Sampling Plan Non-Compliance',true));
     add(table(['Day','Shift','Sample','Reason'],sampRows));
 
-    // Blendscan — only when logged in
     const blendRows=[];
     DAYS.forEach(function(d){
       if(!caState[d])return;
@@ -4585,7 +4378,6 @@ function renderOverviewBody(){
     add(secHdr('#b45309','🧪','Cement Analysts — Blendscan Supervisor Log-in',false));
     add(table(['Day','Shift','Logged In','Time / Date'],blendRows));
 
-    // HSE
     const hseRows=[];
     DAYS.forEach(function(d){
       if(!caState[d])return;
@@ -4599,7 +4391,6 @@ function renderOverviewBody(){
     add(secHdr('#b45309','🧪','Cement Analysts — Health, Safety & Environment',false));
     add(table(['Day','Shift','Type','Details','Actions'],hseRows));
 
-    // Cement quality
     const qaRows=[];
     DAYS.forEach(function(d){
       if(!caState[d])return;
@@ -4613,7 +4404,6 @@ function renderOverviewBody(){
     add(secHdr('#b45309','🧪','Cement Analysts — Cement Quality Issues',false));
     add(table(['Day','Shift','Issues'],qaRows));
 
-    // Samples out of target
     const outRows=[];
     DAYS.forEach(function(d){
       if(!caState[d])return;
@@ -4629,7 +4419,6 @@ function renderOverviewBody(){
     add(secHdr('#b45309','🧪','Cement Analysts — Samples Out of Target',false));
     add(table(['Day','Shift','Sample','Target Details','Reported To'],outRows));
 
-    // Additive check results
     const addRows=[];
     DAYS.forEach(function(d){
       if(!caState[d])return;
@@ -4647,7 +4436,6 @@ function renderOverviewBody(){
     add(secHdr('#b45309','🧪','Cement Analysts — Additive Check Results',false));
     add(table(['Day','Shift','Results'],addRows));
 
-    // Non-functional equipment
     const equipRows=[];
     DAYS.forEach(function(d){
       if(!caState[d])return;
@@ -4669,7 +4457,6 @@ function renderOverviewBody(){
     add(secHdr('#b45309','🧪','Cement Analysts — Non-Functional Equipment',false));
     add(table(['Day','Shift','Equipment','Status','Details'],equipRows));
 
-    // Cemfuel accepted batches
     const cfRows=[];
     DAYS.forEach(function(d){
       if(!caState[d])return;
@@ -4691,7 +4478,6 @@ function renderOverviewBody(){
   }
 }
 
-// status / pills
 function updatePills(){
   ['shift1','shift2'].forEach(sk=>{
     const n=state[currentDay][sk].entries.filter(e=>e.equipment||e.issue).length;
@@ -4705,7 +4491,6 @@ function updateDayStatus(){
   el.innerHTML='';
 }
 
-// helpers
 function getRole(name){ if(!name)return ''; return trainees.includes(name)?'Trainee':'Burner'; }
 function issueCount(day){ let n=0; ['shift1','shift2'].forEach(sk=>state[day][sk].entries.forEach(e=>{if(e.equipment||e.issue)n++;})); return n; }
 function hasData(day){ return !!(state[day].shift1.burner||state[day].shift2.burner||issueCount(day)||state[day].notes||state[day].shift1.notes||state[day].shift2.notes); }
@@ -4769,18 +4554,13 @@ async function sbSaveWeek(){
   const iso = toISO(weekStart);
   const payload = buildPayload();
   try {
-    const existing = await sbFetch('/rest/v1/kiln_log?week_key=eq.'+iso+'&select=week_key');
-    if(existing && existing.length){
-      await sbFetch('/rest/v1/kiln_log?week_key=eq.'+iso, {
-        method: 'PATCH',
-        body: JSON.stringify({ data: payload, updated_at: new Date().toISOString() })
-      });
-    } else {
-      await sbFetch('/rest/v1/kiln_log', {
-        method: 'POST',
-        body: JSON.stringify({ week_key: iso, data: payload, updated_at: new Date().toISOString() })
-      });
-    }
+    await sbFetch('/rest/v1/rpc/save_kiln_week', {
+      method: 'POST',
+      body: JSON.stringify({
+        p_week_key: iso,
+        p_payload: payload
+      })
+    });
     showSyncDot('ok');
   } catch(e){
     console.warn('Supabase save failed:', e);
@@ -5012,11 +4792,9 @@ function importJSON(event){
   event.target.value = '';
 }
 
-// print
 function showPrintModal(){ document.getElementById('printModal').classList.add('open'); }
 function closePrintModal(){ document.getElementById('printModal').classList.remove('open'); }
 function doPrint(){
-  // Open the window immediately while still in the click handler to avoid popup blocker
   const win = window.open('','_blank');
   if(!win){ showToast('Please allow popups for this page to print'); return; }
   closePrintModal();
@@ -5035,7 +4813,6 @@ function doPrint(){
 }
 
 function openPrintWindow(days, note, inclBurners, inclSM, inclCA, win){
-  // Build equipment tally
   const tally = {};
   if(inclBurners){
     days.forEach(function(day){
@@ -5049,14 +4826,12 @@ function openPrintWindow(days, note, inclBurners, inclSM, inclCA, win){
   const tallyRows = Object.entries(tally).sort(function(a,b){return b[1]-a[1];})
     .map(function(p){ return '<tr><td style="padding:5px 10px;border:1px solid #ddd;font-weight:600">'+p[0]+'</td><td style="padding:5px 10px;border:1px solid #ddd;text-align:center;font-weight:700">'+p[1]+'</td></tr>'; }).join('');
 
-  // Build day pages
   var pages = days.map(function(day, di){
     var pageBreak = di > 0 ? '<div style="page-break-before:always"></div>' : '';
     var d  = state[day]   || mkDay();
     var sd = smState[day] || mkSmDay();
     var cd = caState[day] || mkCaDay();
 
-    // ── Burners section ──
     var burnerHtml = '';
     if(inclBurners){
       var shiftsGrid = ['shift1','shift2'].map(function(sk,si){
@@ -5097,7 +4872,6 @@ function openPrintWindow(days, note, inclBurners, inclSM, inclCA, win){
         +'</div>';
     }
 
-    // ── Shift Managers section ──
     var smHtml = '';
     if(inclSM){
       var smShifts = ['shift1','shift2'].map(function(sk,si){
@@ -5114,7 +4888,6 @@ function openPrintWindow(days, note, inclBurners, inclSM, inclCA, win){
         +'</div>';
     }
 
-    // ── Cement Analysts section ──
     var caHtml = '';
     if(inclCA){
       var caShifts = ['shift1','shift2'].map(function(sk,si){
@@ -5140,7 +4913,6 @@ function openPrintWindow(days, note, inclBurners, inclSM, inclCA, win){
       }
     }
 
-    // ── Day header ──
     var header = '<div style="border-bottom:2px solid #000;padding-bottom:10px;margin-bottom:14px;display:flex;justify-content:space-between">'
       +'<div><div style="font-size:18px;font-weight:900">KILN LOG</div>'
       +'<div style="font-size:12px;font-weight:700;margin-top:2px">'+day.toUpperCase()+' — '+dayDate(day)+'</div>'
@@ -5151,7 +4923,6 @@ function openPrintWindow(days, note, inclBurners, inclSM, inclCA, win){
     return pageBreak+'<div style="font-family:Arial,sans-serif;font-size:11px;color:#000;padding:0">'+header+burnerHtml+smHtml+caHtml+'</div>';
   }).join('');
 
-  // ── Equipment tally page ──
   var tallySection = '';
   if(inclBurners && tallyRows){
     tallySection = '<div style="page-break-before:always"></div>'
@@ -5171,7 +4942,6 @@ function openPrintWindow(days, note, inclBurners, inclSM, inclCA, win){
       +'</tr></tfoot></table></div>';
   }
 
-  // ── Write and print ──
   if(!win) win = window.open('', '_blank');
   if(!win){ showToast('Please allow popups for this page to print'); return; }
   var fullHtml = '<!DOCTYPE html><html><head><title>Kiln Log</title><style>@page{margin:1.5cm}body{margin:0;padding:20px;font-family:Arial,sans-serif}</style></head><body>' + pages + tallySection + '</body></html>';
@@ -5207,7 +4977,6 @@ function openPrintOverview(note, win){
     if(state[d].shift2.burner) totalShifts++;
   });
 
-  // Equipment mentions tally
   var tally={};
   DAYS.forEach(function(d){
     ['shift1','shift2'].forEach(function(sk){
@@ -5229,7 +4998,6 @@ function openPrintOverview(note, win){
         +'</tr>';
     }).join('');
 
-  // Personnel summary rows
   var personnelRows = DAYS.map(function(d){
     var s1=state[d].shift1, s2=state[d].shift2;
     var issues=issueCount(d);
@@ -5246,7 +5014,6 @@ function openPrintOverview(note, win){
       +'</tr>';
   }).join('');
 
-  // All issues rows
   var issueRows=[];
   DAYS.forEach(function(d){
     ['shift1','shift2'].forEach(function(sk,si){
@@ -5327,17 +5094,14 @@ window.addEventListener("load",()=>{
   document.getElementById("splashUser").focus();
   document.getElementById("manageModal").addEventListener("click",function(e){if(e.target===this)closeManageModal();});
   document.getElementById("printModal").addEventListener("click",function(e){if(e.target===this)closePrintModal();});
-  // usersModal event listener removed
   document.getElementById("searchModal").addEventListener("click",function(e){if(e.target===this)closeSearchModal();});
     const wd = document.getElementById('weekDate');
   if(wd) wd.addEventListener('click', function(){ try{ this.showPicker(); }catch(e){} });
   checkLicence().then(async function(ok){
     if(!ok) return;
-    // Try to restore existing session
     const savedSession = localStorage.getItem('kbl_session');
     if(savedSession){
       try {
-        // Verify session is still valid by fetching user
         const verifyRes = await fetch(SB_URL + '/auth/v1/user', {
           headers: {
             'apikey': SB_KEY,
@@ -5348,7 +5112,6 @@ window.addEventListener("load",()=>{
           const authUser = await verifyRes.json();
           _sbSession = savedSession;
           _sbRefreshToken = localStorage.getItem('kbl_refresh');
-          // Load kiln_users row
           const userRes = await fetch(SB_URL + '/rest/v1/kiln_users?auth_user_id=eq.' + authUser.id + '&select=*&limit=1', {
             headers: {
               'apikey': SB_KEY,
@@ -5362,22 +5125,18 @@ window.addEventListener("load",()=>{
           }
         }
       } catch(e){ console.warn('Session restore failed:', e); }
-      // Session invalid — clear it
       localStorage.removeItem('kbl_session');
       localStorage.removeItem('kbl_refresh');
     }
-    // No valid session — show the kiln log's own login screen
     document.getElementById('splash').style.display = 'flex';
     animateSplashLoader();
   });
 });
 
 
-/* ── UNIFIED USER MANAGEMENT ─────────────────────────────────────── */
 let _umProfiles = [], _umKilnUsers = [];
 let UM_SELF_ID = null;
 
-// Lightweight supabase-js-compatible shim using _sbSession + SB_URL/SB_KEY
 const UM_SB = {
   from: function(table) {
     const base = SB_URL + '/rest/v1/' + table;

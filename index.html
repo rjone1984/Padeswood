@@ -10,10 +10,6 @@
 <title>Padeswood Works — Platform</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Figtree:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-/* =====================================================================
-   PADESWOOD WORKS — PLATFORM
-   Flow: Licence check → Login → App Selector
-===================================================================== */
 :root {
   --ff-head:'Outfit',sans-serif; --ff-body:'Figtree',sans-serif; --ff-mono:'Fira Code',monospace;
   --bg:#111418; --sf:#16191f; --sf2:#1c2028; --sf3:#222830; --sf4:#282f3a;
@@ -59,7 +55,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 ::-webkit-scrollbar-thumb:hover{background:var(--bd3)}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ── LICENCE OVERLAY ────────────────────────────────────────────── */
 #licenceOverlay{position:fixed;inset:0;background:var(--bg);z-index:10000;
   display:flex;align-items:center;justify-content:center;}
 .lic-inner{width:360px;max-width:92vw;text-align:center;
@@ -72,7 +67,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   margin:0 auto 16px;box-shadow:var(--eac);
   font-family:var(--ff-head);font-weight:800;font-size:16px;color:#fff;letter-spacing:-1px;}
 
-/* ── LOGIN SCREEN ───────────────────────────────────────────────── */
 #loginScreen{position:fixed;inset:0;background:var(--bg);z-index:9999;
   display:none;align-items:flex-start;justify-content:center;overflow-y:auto;padding:24px 0;}
 #loginScreen::after{content:'';position:fixed;bottom:0;left:0;right:0;height:3px;
@@ -107,7 +101,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .login-err{font-size:12px;color:var(--red);background:var(--redd);border:1px solid var(--redb);
   border-radius:var(--rsm);padding:8px 12px;margin-top:12px;display:none;}
 
-/* ── HEADER ─────────────────────────────────────────────────────── */
 #mainHeader{position:relative;z-index:10;border-bottom:1px solid var(--bd);
   background:var(--sf);padding:0 28px;display:flex;align-items:center;gap:14px;height:62px;}
 .header-logo{width:36px;height:36px;flex-shrink:0;
@@ -127,7 +120,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   justify-content:center;transition:border-color .18s,color .18s,background .18s;}
 .icon-btn:hover{border-color:var(--ac);color:var(--ac3);background:var(--acd1);}
 
-/* ── MAIN CONTENT ────────────────────────────────────────────────── */
 #mainContent{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:48px 28px 64px;}
 .platform-hero{margin-bottom:40px;}
 .platform-hero h1{font-family:var(--ff-head);font-weight:800;font-size:clamp(22px,3.5vw,32px);
@@ -164,7 +156,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .coming-name{font-family:var(--ff-head);font-weight:600;font-size:13px;color:var(--tx);margin-bottom:2px;}
 .coming-label{font-family:var(--ff-mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);}
 
-/* ── FOOTER ─────────────────────────────────────────────────────── */
 .platform-footer{position:relative;z-index:1;border-top:1px solid var(--bd);
   padding:16px 28px;display:flex;align-items:center;justify-content:space-between;
   flex-wrap:wrap;gap:10px;}
@@ -175,7 +166,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 
 #mainWrapper{display:none}
 
-/* Logo img containers */
 .splash-logo img, .lic-logo img, .login-logo img, .header-logo img { display:block; }
 .splash-logo { background:none !important; box-shadow:none !important; }
 .lic-logo { background:none !important; box-shadow:none !important; }
@@ -185,7 +175,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 </head>
 <body>
 
-<!-- ── STEP 1: LICENCE OVERLAY ─────────────────────────────────── -->
 <div id="licenceOverlay">
   <div class="lic-inner">
     <div class="lic-logo"><img src="data:image/png;base64,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" style="width:40px;height:40px;object-fit:contain;display:block"></div>
@@ -202,7 +191,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   </div>
 </div>
 
-<!-- ── STEP 2: LOGIN SCREEN ────────────────────────────────────── -->
 <div id="loginScreen">
   <div class="login-inner">
     <div class="login-logo"><img src="data:image/png;base64,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" style="width:40px;height:40px;object-fit:contain;display:block"></div>
@@ -247,7 +235,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
           <div id="forgotMsg" style="margin-top:8px;font-size:11px;font-family:var(--ff-mono);min-height:16px"></div>
         </div>
       </div>
-      <!-- Registration panel -->
       <div id="registerPanel" style="display:none;margin-top:16px;padding:16px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm)">
         <div style="font-size:13px;font-weight:600;font-family:var(--ff-head);color:var(--tx);margin-bottom:4px">Request Access</div>
         <p style="font-size:11px;color:var(--tx3);margin:0 0 14px;line-height:1.6;font-family:var(--ff-mono)">Your account will be reviewed by an admin before you can log in.</p>
@@ -286,7 +273,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   </div>
 </div>
 
-<!-- ── STEP 3: APP SELECTOR ────────────────────────────────────── -->
 <div id="mainWrapper">
 
   <header id="mainHeader">
@@ -377,10 +363,8 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 
 </div>
 
-<!-- ── USER MANAGEMENT PANEL ────────────────────────────────────── -->
 <div id="adminOverlay" onclick="closeAdminPanel()" style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:800;display:none"></div>
 <div id="adminPanel" style="position:fixed;top:0;right:0;bottom:0;width:560px;max-width:96vw;background:var(--sf);border-left:1px solid var(--bd);z-index:801;transform:translateX(100%);transition:transform .28s ease;display:flex;flex-direction:column;overflow:hidden">
-  <!-- Panel header -->
   <div style="padding:18px 22px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
     <div style="display:flex;align-items:center;gap:10px;font-family:var(--ff-head);font-weight:700;font-size:16px;color:var(--tx)">
       <div style="width:30px;height:30px;border-radius:7px;background:var(--acd2);display:flex;align-items:center;justify-content:center">
@@ -390,10 +374,8 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     </div>
     <button onclick="closeAdminPanel()" style="width:28px;height:28px;border-radius:6px;border:1px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center">×</button>
   </div>
-  <!-- Single unified scrollable body -->
   <div style="flex:1;overflow-y:auto;padding:20px 22px;display:flex;flex-direction:column;gap:20px">
 
-    <!-- Add New User section -->
     <div>
       <div style="font-family:var(--ff-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--tx3);margin-bottom:12px;display:flex;align-items:center;gap:10px">Add New User<span style="flex:1;height:1px;background:var(--bd)"></span></div>
       <div style="display:flex;flex-direction:column;gap:10px">
@@ -452,7 +434,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       </div>
     </div>
 
-    <!-- Unified user list -->
     <div>
       <div style="font-family:var(--ff-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--tx3);margin-bottom:12px;display:flex;align-items:center;gap:10px">
         All Users <span id="userCount" style="font-weight:400"></span>
@@ -466,7 +447,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   </div>
 </div>
 
-<!-- ── AI REPORTING PANEL ────────────────────────────────────────── -->
 <div id="aiOverlay" onclick="closeAiPanel()" style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:800;display:none"></div>
 <div id="aiPanel" style="position:fixed;top:0;right:0;bottom:0;width:580px;max-width:96vw;background:var(--sf);border-left:1px solid var(--bd);z-index:801;transform:translateX(100%);transition:transform .28s ease;display:flex;flex-direction:column;overflow:hidden">
   <div style="padding:18px 22px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
@@ -503,7 +483,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   </div>
 </div>
 
-<!-- ── USER ROLE EDITOR ─────────────────────────────────────────── -->
 <div id="roleEditOverlay" onclick="closeRoleEditor()" style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:805;display:none"></div>
 <div id="roleEditPanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.98);width:640px;max-width:94vw;background:var(--sf);border:1px solid var(--bd);border-radius:14px;z-index:806;display:none;flex-direction:column;overflow:hidden;box-shadow:var(--e3)">
   <div style="padding:18px 22px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0">
@@ -593,7 +572,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   </div>
 </div>
 
-<!-- ── CHANGE PASSWORD MODAL ─────────────────────────────────────── -->
 <div id="forcePwOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:2000;align-items:center;justify-content:center">
   <div style="width:380px;max-width:94vw;background:var(--sf);border:1px solid var(--ambb);border-radius:14px;padding:28px;box-shadow:var(--e3);position:relative;overflow:hidden">
     <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--amb),transparent)"></div>
@@ -655,7 +633,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-/* ── User management rows ─────────────────────────────────────────── */
 .user-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--sf3);border:1px solid var(--bd);border-radius:var(--rsm)}
 .user-avatar{width:34px;height:34px;border-radius:50%;border:1px solid;display:flex;align-items:center;justify-content:center;font-family:var(--ff-head);font-weight:700;font-size:12px;flex-shrink:0}
 .user-info{flex:1;min-width:0}
@@ -664,7 +641,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .user-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}
 .role-select{height:28px;padding:0 8px;font-size:11px;font-family:var(--ff-mono);background:var(--sf);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--tx);cursor:pointer}
 .btn-danger{height:28px;padding:0 10px;font-size:11px;font-family:var(--ff-mono);background:var(--redd);border:1px solid var(--redb);border-radius:var(--rxs);color:var(--red);cursor:pointer}
-/* ── AI panel ─────────────────────────────────────────────────────── */
 .ai-scope-btn{padding:4px 12px;font-size:11px;font-family:var(--ff-mono);background:var(--sf3);border:1px solid var(--bd);border-radius:var(--rxs);color:var(--tx2);cursor:pointer;transition:all .15s}
 .ai-scope-btn.active{background:var(--acd2);border-color:var(--ac);color:var(--ac3)}
 .ai-bubble-user{background:var(--acd2);border:1px solid var(--acd3);border-radius:10px 10px 2px 10px;padding:10px 14px;font-size:13px;color:var(--tx);align-self:flex-end;max-width:85%}
@@ -675,7 +651,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .ai-dot:nth-child(2){animation-delay:.2s}
 .ai-dot:nth-child(3){animation-delay:.4s}
 
-/* ── MOBILE ──────────────────────────────────────────────────────── */
 @media(max-width:640px){
   #mainHeader{padding:8px 10px;height:auto;min-height:52px;flex-wrap:wrap;align-items:flex-start;gap:6px;overflow:visible;}
   .header-titles{min-width:0;flex:1 1 auto;}
@@ -700,10 +675,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 }
 </style>
 <script>
-/* ================================================================
-   PADESWOOD WORKS — PLATFORM
-   Flow: 1. Licence check  2. Login  3. App selector
-================================================================ */
 const SUPABASE_URL      = 'https://xnkwrkoxvgptobnmekgv.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhua3dya294dmdwdG9ibm1la2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NjAxNTQsImV4cCI6MjA4ODIzNjE1NH0.PrmnJ4eGepac41bQuNPG7TcBaunrfTWdjLtkGLr_2LY';
 const LICENCE_KEY = 'KBL-HEIDELBERG-PADESWOOD-2026';
@@ -712,7 +683,6 @@ const SB_LIC_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 
 let sb;
 
-/* ── STEP 1: LICENCE CHECK ───────────────────────────────────────── */
 async function checkLicence() {
   try {
     const res = await fetch(
@@ -733,7 +703,6 @@ async function checkLicence() {
       }
       showLicenceError('Licence not active. Please contact your administrator.'); return;
     }
-    // HTTP error — fail open
     hideLicenceOverlay();
   } catch(e) {
     console.warn('Licence check failed, failing open:', e.message);
@@ -758,7 +727,6 @@ function hideLicenceOverlay() {
   }, 320);
 }
 
-/* ── STEP 2: CHECK SESSION / SHOW LOGIN ──────────────────────────── */
 function checkExistingSession() {
   const safetyTimer = setTimeout(function() {
     if (document.getElementById('loginScreen').style.display !== 'flex'
@@ -778,7 +746,6 @@ function checkExistingSession() {
       }).then(function(res) {
         clearTimeout(safetyTimer);
         if (res.ok) {
-          // Keep kbl_session fresh so kiln-log can use it without re-login
           localStorage.setItem('kbl_session', session.access_token);
           if (session.refresh_token) localStorage.setItem('kbl_refresh', session.refresh_token);
           showAppSelector(session.user);
@@ -868,7 +835,6 @@ async function submitResetRequest() {
   if (!email || !email.includes('@')) { msg.style.color='var(--red)'; msg.textContent='Please enter your full email address for this account.'; return; }
   msg.textContent = 'Submitting…';
   try {
-    // Check if a pending request already exists
     const {data:existing} = await sb.from('pw_reset_requests').select('id').eq('email', email).eq('status','pending').maybeSingle();
     if (existing) { msg.style.color='var(--amb)'; msg.textContent='A request is already pending for this address.'; return; }
     const {error} = await sb.from('pw_reset_requests').insert({email, status:'pending', requested_at: new Date().toISOString()});
@@ -899,7 +865,6 @@ async function doLogin() {
   const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
   btn.disabled = false; btn.textContent = 'Sign In';
   if (error) { err.textContent = error.message; err.style.display = 'block'; return; }
-  // Bridge session to kiln-log (which reads kbl_session directly)
   if (data.session) {
     localStorage.setItem('kbl_session', data.session.access_token);
     localStorage.setItem('kbl_refresh', data.session.refresh_token);
@@ -908,7 +873,6 @@ async function doLogin() {
   await showAppSelector(data.user);
 }
 
-/* ── STEP 3: APP SELECTOR ────────────────────────────────────────── */
 async function showAppSelector(user) {
   document.getElementById('headerUser').style.display = 'flex';
   document.getElementById('logoutBtn').style.display = 'flex';
@@ -917,7 +881,6 @@ async function showAppSelector(user) {
   try {
     const {data} = await sb.from('pw_profiles').select('*').eq('id', user.id).single();
     _platformProfile = data;
-    // Block unapproved users
     if (data && (data.approved === false || data.disabled === true)) {
       await sb.auth.signOut();
       Object.keys(localStorage).forEach(function(k) {
@@ -943,7 +906,6 @@ async function showAppSelector(user) {
       err.style.display = 'block';
       return false;
     }
-    // Show full name, fall back to email prefix
     const displayName = (user && user.email) ? user.email : ((data && data.full_name) ? data.full_name : '—');
     document.getElementById('headerEmail').textContent = displayName;
     if (data && data.role === 'admin') {
@@ -964,7 +926,6 @@ async function showAppSelector(user) {
           return false; // handled
         }
       }
-      // Also check pw_profiles must_reset_password column
       if (data && data.must_reset_password) {
         setTimeout(function() { openForcePwResetModal(null); }, 600);
         return false;
@@ -978,7 +939,6 @@ async function showAppSelector(user) {
   }
   await loadUserTheme();
   document.getElementById('mainWrapper').style.display = 'block';
-  // Check each app is reachable
   checkAppStatus();
   return true;
 }
@@ -991,7 +951,6 @@ async function doLogout() {
   window.location.reload();
 }
 
-/* ── SELF-REGISTRATION ───────────────────────────────────────────── */
 function showRegister() {
   document.getElementById('registerPanel').style.display = 'block';
   document.getElementById('forgotPanel').style.display = 'none';
@@ -1030,7 +989,6 @@ async function doRegister() {
   if (pass !== pass2) { showRegMsg('err', 'Passwords do not match.'); return; }
   btn.disabled = true; btn.textContent = 'Sending…';
   try {
-    // Check not already requested
     const {data:existing} = await sb.from('pw_access_requests').select('id').eq('email',normalizedEmail).eq('status','pending');
     if (existing && existing.length) { showRegMsg('err', 'A request for this email is already pending approval.'); btn.disabled=false; btn.textContent='Request Access'; return; }
     const {error} = await sb.from('pw_access_requests').insert({
@@ -1056,7 +1014,6 @@ function showRegMsg(type, text) {
   msg.style.border     = '1px solid ' + (type === 'ok' ? 'var(--grnb)' : 'var(--redb)');
 }
 
-/* ── PENDING BADGE ───────────────────────────────────────────────── */
 async function loadPendingBadge() {
   try {
     const profRes = await sb.from('pw_profiles').select('id', { count: 'exact', head: true }).eq('approved', false);
@@ -1071,7 +1028,6 @@ async function loadPendingBadge() {
   } catch(e) { console.warn('pendingBadge:', e); }
 }
 
-/* ── APPROVE USER ────────────────────────────────────────────────── */
 
 function activateRequestFromBtn(btn) {
   openAccessRequestPwModal(
@@ -1116,12 +1072,10 @@ async function toggleDisableUser(userId, currentlyDisabled) {
   showPlatformToast(currentlyDisabled ? 'User enabled ✓' : 'User disabled ✓');
 }
 
-/* ── KEYBOARD ────────────────────────────────────────────────────── */
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Enter' && document.getElementById('loginScreen').style.display === 'flex') doLogin();
 });
 
-/* ── THEME ───────────────────────────────────────────────────────── */
 function readStoredThemePref() {
   const shared = localStorage.getItem('pw_theme');
   if (shared === 'light' || shared === 'dark') return shared;
@@ -1155,7 +1109,6 @@ function applyTheme(light) {
 function toggleTheme() {
   const light = !document.body.classList.contains('light-mode');
   applyTheme(light);
-  // Persist to kiln_config so all apps share it
   sb && sb.auth.getSession().then(function(r) {
     const uid = r.data && r.data.session && r.data.session.user && r.data.session.user.id;
     if (!uid) return;
@@ -1188,7 +1141,6 @@ async function loadUserTheme() {
   applyTheme(new Date().getHours() >= 7 && new Date().getHours() < 18);
 })();
 
-/* ── INIT ──────────────────────────────────────────────── */
 
 window.addEventListener('load', function() {
   sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -1238,9 +1190,6 @@ async function handleEmailConfirmation() {
   }
 }
 
-/* ================================================================
-   PLATFORM ADDITIONS — User Mgmt + AI Reporting
-================================================================ */
 let _usersCache = [];
 let _kilnUsersCache = [];
 let _aiHistory = [];
@@ -1256,7 +1205,6 @@ let _accessRequestTarget = null; // { reqId, email, fullName, role, isoRole, kil
 let _pendingResetReqId = null;  // set when opened from reset request queue
 
 function openForcePwResetModal(username) {
-  // Self-reset mode (user must change their own password)
   _adminSetPwTarget = null;
   _accessRequestTarget = null;
   _forcePwUsername = username || null;
@@ -1272,7 +1220,6 @@ function openForcePwResetModal(username) {
 }
 
 function openAdminSetPwModal(authUserId, kilnUsername, displayName, fromResetReqId) {
-  // Admin set-password mode
   _adminSetPwTarget = { authUserId, kilnUsername, displayName };
   _accessRequestTarget = null;
   _forcePwUsername = null;
@@ -1362,7 +1309,6 @@ async function submitPlatformForceReset() {
   }
 
   if (_adminSetPwTarget) {
-    // Admin setting someone else's password via edge function
     if (!_adminSetPwTarget.authUserId) {
       showForcePwMsg('err', 'No linked auth account — activate this user first.');
       btn.disabled = false; btn.textContent = 'Set Password'; return;
@@ -1377,7 +1323,6 @@ async function submitPlatformForceReset() {
       }
       showForcePwMsg('ok', 'Password set for ' + _adminSetPwTarget.displayName + ' ✓');
       btn.disabled = false; btn.textContent = 'Set Password';
-      // If opened from the reset request queue, mark the request as done
       if (_pendingResetReqId) {
         await sb.from('pw_reset_requests').update({status:'done'}).eq('id',_pendingResetReqId).catch(function(){});
         _pendingResetReqId = null;
@@ -1392,13 +1337,11 @@ async function submitPlatformForceReset() {
     return;
   }
 
-  // Self-reset mode
   const { error } = await sb.auth.updateUser({ password: newPw });
   if (error) { btn.disabled = false; btn.textContent = 'Set New Password & Continue'; showForcePwMsg('err', error.message); return; }
   if (_forcePwUsername) {
     await sb.from('kiln_users').update({ must_reset_password: false }).eq('username', _forcePwUsername).catch(function(){});
   }
-  // Also clear must_reset_password on pw_profiles if set
   try {
     const { data: sess } = await sb.auth.getSession();
     if (sess && sess.session) {
@@ -1418,7 +1361,6 @@ function showForcePwMsg(type, text) {
   msg.style.border     = '1px solid ' + (type === 'ok' ? 'var(--grnb)' : 'var(--redb)');
 }
 
-/* ── CHANGE PASSWORD ─────────────────────────────────────────────── */
 function openChangePwModal() {
   document.getElementById('changePwOverlay').style.display = 'flex';
   setTimeout(function() { document.getElementById('cpwCurrent').focus(); }, 80);
@@ -1442,7 +1384,6 @@ async function doChangePw() {
   const userEmail = sessionData && sessionData.session && sessionData.session.user && sessionData.session.user.email;
   if (!userEmail) { showCpwMsg('err','Could not determine current user.'); return; }
   btn.disabled = true; btn.textContent = 'Updating…';
-  // Re-authenticate to verify current password
   const { error: signInErr } = await sb.auth.signInWithPassword({ email: userEmail, password: current });
   if (signInErr) { btn.disabled = false; btn.textContent = 'Update Password'; showCpwMsg('err','Current password is incorrect.'); return; }
   const { error: updateErr } = await sb.auth.updateUser({ password: newPw });
@@ -1459,12 +1400,10 @@ function showCpwMsg(type, text) {
   msg.style.color      = type === 'ok' ? 'var(--grn)'  : 'var(--red)';
   msg.style.border     = '1px solid ' + (type === 'ok' ? 'var(--grnb)' : 'var(--redb)');
 }
-// Close modal on overlay click
 document.getElementById('changePwOverlay').addEventListener('click', function(e) {
   if (e.target === this) closeChangePwModal();
 });
 
-/* ── UNIFIED USER MANAGEMENT ─────────────────────────────────────── */
 function openAdminPanel() {
   document.getElementById('adminOverlay').style.display = 'block';
   document.getElementById('adminPanel').style.transform = 'translateX(0)';
@@ -1475,7 +1414,6 @@ function closeAdminPanel() {
   document.getElementById('adminPanel').style.transform = 'translateX(100%)';
 }
 
-// Loads both pw_profiles and kiln_users, joins on auth_user_id, auto-syncs stale emails
 let _accessRequestsCache = [];
 function _umShowErr(list, msg) {
   list.innerHTML = '<div style="color:var(--red);font-size:12px;padding:12px 0;line-height:1.8">'
@@ -1490,14 +1428,12 @@ async function loadAllUsers() {
   list.innerHTML = '<div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);padding:12px 0">Loading users…</div>';
   loadPendingBadge();
   try {
-    // Ensure supabase client is ready and session is valid
     if (!sb) { _umShowErr(list, 'Not initialised — please refresh the page.'); return; }
     const { data: sessData, error: sessErr } = await sb.auth.getSession();
     if (sessErr || !sessData || !sessData.session) {
       _umShowErr(list, 'Session expired — please log out and back in.'); return;
     }
 
-    // Fetch with a 10-second timeout
     function withTimeout(promise, ms) {
       return Promise.race([promise, new Promise(function(_, rej) {
         setTimeout(function() { rej(new Error('Request timed out after ' + ms/1000 + 's')); }, ms);
@@ -1515,13 +1451,11 @@ async function loadAllUsers() {
     _usersCache = profRes.data || [];
     _kilnUsersCache = (kilnRes.error ? [] : kilnRes.data) || [];
 
-    // pw_access_requests may not exist yet — fail gracefully
     try {
       const reqRes = await sb.from('pw_access_requests').select('*').eq('status','pending').order('requested_at');
       _accessRequestsCache = reqRes.data || [];
     } catch(e) { _accessRequestsCache = []; }
 
-    // Auto-sync stale emails in kiln_users where auth_user_id matches a pw_profiles row
     const emailFixes = [];
     _kilnUsersCache.forEach(function(ku) {
       if (!ku.auth_user_id) return;
@@ -1556,7 +1490,6 @@ function renderAllUsers() {
   const RS = 'display:flex;align-items:center;gap:8px;margin-bottom:7px';
   const rc = {admin:'var(--ac3)',reviewer:'var(--pur)',editor:'var(--amb)',viewer:'var(--tx3)',none:'var(--tx3)'};
 
-  // Users appear in EVERY group they qualify for (multi-group)
   const ROLE_GROUPS = [
     { label:'Admins',           key:'admin',          color:'var(--ac3)', test: function(m){ const ku=m.kiln; const p=m.prof; return (ku&&ku.is_admin)||(p&&p.role==='admin'); } },
     { label:'Shift Managers',   key:'shift_manager',  color:'#7c3aed',    test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_shift_manager); } },
@@ -1570,7 +1503,6 @@ function renderAllUsers() {
   const _platCollapsed = window._platCollapsed = window._platCollapsed || {};
   let html = '';
 
-  // ── Pending access requests section ──
   if (_accessRequestsCache && _accessRequestsCache.length) {
     html += '<div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--bd)">';
     html += '<div style="font-family:var(--ff-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--amb);margin-bottom:8px;display:flex;align-items:center;gap:8px">Access Requests <span style="background:var(--ambd);border:1px solid var(--ambb);color:var(--amb);border-radius:10px;padding:1px 7px;font-size:10px">'+_accessRequestsCache.length+'</span></div>';
@@ -1867,7 +1799,6 @@ async function forceKilnPwReset(username) {
   renderAllUsers(); showPlatformToast(username+' will be prompted to reset password ✓');
 }
 
-// Called by "Set PW" button in user cards
 function setKilnPassword(username) {
   const ku = _kilnUsersCache.find(x=>x.username===username);
   const pu = ku && ku.auth_user_id ? _usersCache.find(x=>x.id===ku.auth_user_id) : null;
@@ -1876,18 +1807,14 @@ function setKilnPassword(username) {
   openAdminSetPwModal(authId, username, displayName);
 }
 
-// Force a platform user to reset password on next login
 async function forcePlatformPwReset(profileId, displayName) {
-  // Set must_reset_password on pw_profiles (add column if needed) + kiln_users
   const {error} = await sb.from('pw_profiles').update({must_reset_password:true}).eq('id',profileId);
   if (error && error.message && error.message.includes('column')) {
-    // Column doesn't exist yet — just flag via kiln if possible
     const ku = _kilnUsersCache.find(x=>x.auth_user_id===profileId);
     if (ku) { await sb.from('kiln_users').update({must_reset_password:true}).eq('username',ku.username); }
   } else if (error) { showPlatformToast('Failed: '+error.message); return; }
   const pu = _usersCache.find(x=>x.id===profileId);
   if (pu) pu.must_reset_password = true;
-  // Also set on kiln_users if linked
   const ku = _kilnUsersCache.find(x=>x.auth_user_id===profileId);
   if (ku) { await sb.from('kiln_users').update({must_reset_password:true}).eq('username',ku.username); ku.must_reset_password = true; }
   renderAllUsers(); showPlatformToast((displayName||'User')+' must reset password on next login ✓');
@@ -1916,10 +1843,8 @@ async function inviteUser() {
   if (!name)  { showInviteMsg('err','Please enter the user\'s full name.'); return; }
   btn.disabled = true; btn.textContent = 'Adding…';
   try {
-    // Check not already in pw_profiles
     const {data:existing} = await sb.from('pw_profiles').select('id').eq('email',email);
     if (existing && existing.length) { showInviteMsg('err','A user with this email already exists.'); btn.disabled=false; btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add User'; return; }
-    // Insert into pw_access_requests — admin will set password and activate
     const {error} = await sb.from('pw_access_requests').insert({
       email, full_name: name, role, isolation_role: isoRoleVal,
       kiln_role: kilnRoleVal, shift_tracker_access: trackerAccessVal,
@@ -1950,7 +1875,6 @@ function showInviteMsg(type, text) {
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 
-/* ── AI REPORTING ────────────────────────────────────────────────── */
 function openAiPanel() {
   document.getElementById('aiOverlay').style.display = 'block';
   document.getElementById('aiPanel').style.transform = 'translateX(0)';
@@ -2184,7 +2108,6 @@ async function sendAiReport() {
   renderAiHistory();
 }
 
-/* ── TOAST ───────────────────────────────────────────────────────── */
 function showPlatformToast(msg) {
   let t = document.getElementById('platformToast');
   if (!t) { t=document.createElement('div'); t.id='platformToast'; t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:10px 18px;font-size:13px;color:var(--tx);z-index:9999;box-shadow:var(--e2);transition:opacity .3s'; document.body.appendChild(t); }
@@ -2192,7 +2115,6 @@ function showPlatformToast(msg) {
   clearTimeout(t._timer); t._timer = setTimeout(function(){t.style.opacity='0';}, 2800);
 }
 
-/* ── PASSWORD RESET REQUESTS (admin) ─────────────────────────────── */
 async function loadResetReqBadge() {
   try {
     const {data} = await sb.from('pw_reset_requests').select('id').eq('status','pending');
@@ -2239,7 +2161,6 @@ async function renderResetRequests() {
 }
 
 async function handleResetReq(id, email) {
-  // Find the user's auth ID, then open the proper set-password modal
   try {
     const {data:profile} = await sb.from('pw_profiles').select('id,full_name').eq('email', email).maybeSingle();
     if (!profile) { showPlatformToast('No account found for ' + email); return; }
@@ -2257,7 +2178,6 @@ async function deleteResetReq(id) {
 }
 </script>
 
-<!-- Reset Requests Modal -->
 <div id="resetReqOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;align-items:center;justify-content:center" onclick="if(event.target===this)closeResetReqModal()">
   <div style="width:520px;max-width:94vw;max-height:80vh;background:var(--sf);border:1px solid var(--bd);border-radius:14px;display:flex;flex-direction:column;overflow:hidden">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--bd)">

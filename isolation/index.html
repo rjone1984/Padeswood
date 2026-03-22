@@ -11,12 +11,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Figtree:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-/* =====================================================================
-   PADESWOOD WORKS — ISOLATION MATRIX — Design System v4
-   Tables: pw_profiles, pw_equipment (shared with docs),
-           pw_isolation_matrices, pw_isolation_points
-   Supabase project: xnkwrkoxvgptobnmekgv
-===================================================================== */
 :root {
   --ff-head:'Outfit',sans-serif; --ff-body:'Figtree',sans-serif; --ff-mono:'Fira Code',monospace;
   --bg:#111418; --sf:#16191f; --sf2:#1c2028; --sf3:#222830; --sf4:#282f3a;
@@ -63,7 +57,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 ::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:3px}
 ::-webkit-scrollbar-thumb:hover{background:var(--bd3)}
 
-/* ── LICENCE OVERLAY ─────────────────────────────────────────────── */
 #licenceOverlay{position:fixed;inset:0;background:var(--bg);z-index:10000;
   display:flex;align-items:center;justify-content:center;}
 .lic-inner{width:360px;max-width:92vw;text-align:center;background:var(--sf);
@@ -76,7 +69,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   margin:0 auto 16px;box-shadow:var(--eac);font-size:22px;}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ── SPLASH / AUTH ───────────────────────────────────────────────── */
 #splash{position:fixed;inset:0;background:var(--bg);z-index:9999;
   display:none;align-items:center;justify-content:center;}
 #splash::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;
@@ -121,7 +113,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   transition:border-color .18s,background .18s,color .18s;min-width:160px;}
 .access-denied-btn:hover{border-color:var(--bd3);background:var(--sf3);}
 
-/* ── HEADER ──────────────────────────────────────────────────────── */
 #mainHeader{position:sticky;top:0;z-index:100;border-bottom:1px solid var(--bd);
   background:var(--sf);padding:0 20px;display:flex;align-items:center;gap:12px;
   height:56px;flex-shrink:0;}
@@ -151,7 +142,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   justify-content:center;font-size:13px;transition:border-color .18s,color .18s,background .18s;}
 .icon-btn:hover{border-color:var(--ac3);color:var(--ac3);background:var(--acd1);}
 
-/* ── TABS ────────────────────────────────────────────────────────── */
 #tabBar{position:sticky;top:56px;z-index:90;background:var(--sf2);
   border-bottom:1px solid var(--bd);display:flex;align-items:center;
   padding:0 20px;gap:2px;overflow-x:auto;flex-shrink:0;}
@@ -165,13 +155,11 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .tab-count{font-family:var(--ff-mono);font-size:9px;color:var(--tx3);
   background:var(--sf3);border:1px solid var(--bd);padding:1px 5px;border-radius:3px;}
 
-/* ── MAIN ────────────────────────────────────────────────────────── */
 #mainContent{flex:1;position:relative;z-index:1;padding:24px 20px 48px;
   max-width:1200px;margin:0 auto;width:100%;}
 .tab-panel{display:none}
 .tab-panel.active{display:block}
 
-/* ── TOOLBAR / BUTTONS ───────────────────────────────────────────── */
 .list-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
 .search-wrap{flex:1;min-width:200px;position:relative;}
 .search-wrap svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);
@@ -255,7 +243,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   color:var(--ac3);
 }
 
-/* ── STATS GRID ──────────────────────────────────────────────────── */
 .dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:28px;}
 .stat-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);
   padding:16px 18px;position:relative;overflow:hidden;}
@@ -274,7 +261,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .stat-card.s-overdue .stat-num{color:var(--red);}
 .stat-sub{font-size:11px;color:var(--tx3);margin-top:4px;}
 
-/* ── MATRIX LIST ─────────────────────────────────────────────────── */
 .matrix-grid{
   display:flex;
   flex-direction:column;
@@ -312,7 +298,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .empty-state svg{opacity:.25;margin-bottom:14px;display:block;margin-left:auto;margin-right:auto;}
 .empty-state p{color:var(--tx2);margin-bottom:16px;}
 
-/* ── MATRIX DETAIL PANEL ─────────────────────────────────────────── */
 #detailOverlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:300;
   display:none;align-items:flex-start;justify-content:center;padding:20px;
   overflow-y:auto;backdrop-filter:blur(3px);}
@@ -354,7 +339,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   border-radius:var(--rsm);padding:10px 14px;font-size:12.5px;color:var(--amb);}
 .detail-desc{margin:16px 24px 0;font-size:13px;color:var(--tx2);line-height:1.65;}
 
-/* ── ISOLATION POINTS TABLE ──────────────────────────────────────── */
 .points-header{padding:16px 24px 10px;display:flex;align-items:center;justify-content:space-between;}
 .points-header h3{font-family:var(--ff-head);font-weight:700;font-size:13px;color:var(--tx);
   text-transform:uppercase;letter-spacing:.8px;}
@@ -384,7 +368,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .detail-close-bar{padding:14px 24px;border-top:1px solid var(--bd);
   display:flex;justify-content:flex-end;gap:8px;background:var(--sf);}
 
-/* ── EQUIPMENT TABLE ─────────────────────────────────────────────── */
 .table-wrap{overflow-x:auto;border-radius:var(--r);border:1px solid var(--bd);}
 table{width:100%;border-collapse:collapse;}
 thead{background:var(--sf2);}
@@ -408,7 +391,6 @@ tbody tr:hover{background:var(--sf2);}
 .pill-status{font-family:var(--ff-mono);font-size:9px;letter-spacing:.8px;text-transform:uppercase;
   padding:2px 7px;border-radius:3px;font-weight:600;}
 
-/* ── WORK AREAS ──────────────────────────────────────────────────── */
 .areas-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;}
 .area-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);
   padding:16px 18px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
@@ -419,7 +401,6 @@ tbody tr:hover{background:var(--sf2);}
 .area-count-badge{font-family:var(--ff-mono);font-size:9px;padding:2px 7px;border-radius:3px;
   border:1px solid var(--bd);color:var(--tx3);}
 
-/* ── MODAL ───────────────────────────────────────────────────────── */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;
   display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px);}
 .modal-overlay.open{display:flex;}
@@ -519,7 +500,6 @@ tbody tr:hover{background:var(--sf2);}
 .footer-lic{display:flex;align-items:center;gap:6px;font-family:var(--ff-mono);font-size:10px;color:var(--tx3);}
 .lic-dot{width:7px;height:7px;border-radius:50%;background:var(--grn);box-shadow:0 0 5px var(--grn);}
 
-/* ── AI PANEL ────────────────────────────────────────────────────── */
 #isoAiOverlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:800;display:none;}
 #isoAiPanel{position:fixed;top:0;right:0;bottom:0;width:540px;max-width:96vw;
   background:var(--sf);border-left:1px solid var(--bd);z-index:801;
@@ -538,7 +518,6 @@ tbody tr:hover{background:var(--sf2);}
   color:var(--tx2);cursor:pointer;white-space:nowrap}
 .ai-suggestion:hover{border-color:var(--ac3);color:var(--ac3)}
 
-/* ── TOAST ───────────────────────────────────────────────────────── */
 #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(12px);
   background:var(--sf3);color:var(--tx);border:1px solid var(--bd3);
   border-radius:var(--rsm);padding:9px 18px;font-size:12.5px;box-shadow:var(--e2);
@@ -546,7 +525,6 @@ tbody tr:hover{background:var(--sf2);}
   font-family:var(--ff-mono);letter-spacing:.3px;white-space:nowrap;}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-/* ── MOBILE ──────────────────────────────────────────────────────── */
 @media(max-width:640px){
   #mainHeader{padding:8px 12px;height:auto;min-height:52px;flex-wrap:wrap;align-items:flex-start;gap:6px;overflow:visible;}
   .header-titles{min-width:0;flex:1 1 auto;}
@@ -561,7 +539,6 @@ tbody tr:hover{background:var(--sf2);}
   .areas-grid{grid-template-columns:1fr;}
 }
 
-/* Logo img containers */
 .splash-logo img, .lic-logo img, .login-logo img, .header-logo img { display:block; }
 .splash-logo { background:none !important; box-shadow:none !important; }
 .lic-logo { background:none !important; box-shadow:none !important; }
@@ -571,7 +548,6 @@ tbody tr:hover{background:var(--sf2);}
 </head>
 <body>
 
-<!-- ── LICENCE OVERLAY ─────────────────────────────────────────── -->
 <div id="licenceOverlay">
   <div class="lic-inner">
     <div class="lic-logo"><img src="data:image/png;base64,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" style="width:40px;height:40px;object-fit:contain;display:block"></div>
@@ -588,7 +564,6 @@ tbody tr:hover{background:var(--sf2);}
   </div>
 </div>
 
-<!-- ── AUTH SPLASH ─────────────────────────────────────────────── -->
 <div id="splash">
   <div class="splash-inner">
     <div class="splash-logo"><img src="data:image/png;base64,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" style="width:44px;height:44px;object-fit:contain;display:block"></div>
@@ -627,7 +602,6 @@ tbody tr:hover{background:var(--sf2);}
   </div>
 </div>
 
-<!-- ── MAIN APP ─────────────────────────────────────────────────── -->
 <div id="appWrapper" style="display:none;flex-direction:column;min-height:100vh">
 
   <header id="mainHeader">
@@ -791,7 +765,6 @@ tbody tr:hover{background:var(--sf2);}
   </main>
 </div>
 
-<!-- ── MATRIX DETAIL OVERLAY ──────────────────────────────────────── -->
 <div id="detailOverlay" onclick="if(event.target===this)closeDetail()">
   <div id="detailBox">
     <div class="detail-head">
@@ -823,7 +796,6 @@ tbody tr:hover{background:var(--sf2);}
   </div>
 </div>
 
-<!-- ── MATRIX MODAL ───────────────────────────────────────────────── -->
 <div class="modal-overlay" id="matrixModal">
   <div class="modal">
     <div class="modal-header">
@@ -878,7 +850,6 @@ tbody tr:hover{background:var(--sf2);}
     </div>
   </div>
 </div>
-<!-- ── ISOLATION POINT MODAL ──────────────────────────────────────── -->
 <div class="modal-overlay" id="pointModal">
   <div class="modal">
     <div class="modal-header">
@@ -905,7 +876,6 @@ tbody tr:hover{background:var(--sf2);}
   </div>
 </div>
 
-<!-- ── WORK ITEM MODAL ────────────────────────────────────────────── -->
 <div class="modal-overlay" id="entryModal">
   <div class="modal">
     <div class="modal-header">
@@ -936,7 +906,6 @@ tbody tr:hover{background:var(--sf2);}
   </div>
 </div>
 
-<!-- ── EQUIPMENT MODAL ────────────────────────────────────────────── -->
 <div class="modal-overlay" id="equipModal">
   <div class="modal">
     <div class="modal-header">
@@ -1003,7 +972,6 @@ tbody tr:hover{background:var(--sf2);}
   </div>
 </div>
 
-<!-- ── AI PANEL ───────────────────────────────────────────────────── -->
 <div id="isoAiOverlay"></div>
 <div id="isoAiPanel">
   <div style="padding:18px 22px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
@@ -1047,12 +1015,6 @@ tbody tr:hover{background:var(--sf2);}
 <div id="toast"></div>
 
 <script>
-/* ================================================================
-   PADESWOOD WORKS — ISOLATION MATRIX
-   Supabase: xnkwrkoxvgptobnmekgv
-   Tables: pw_profiles, pw_equipment (shared),
-           pw_isolation_matrices, pw_isolation_points
-================================================================ */
 const SUPABASE_URL      = 'https://xnkwrkoxvgptobnmekgv.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhua3dya294dmdwdG9ibm1la2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NjAxNTQsImV4cCI6MjA4ODIzNjE1NH0.PrmnJ4eGepac41bQuNPG7TcBaunrfTWdjLtkGLr_2LY';
 const LICENCE_KEY       = 'KBL-HEIDELBERG-PADESWOOD-2026';
@@ -1073,7 +1035,6 @@ let _matrixVisibleIds = [];
 let _detailSearch = '';
 let _detailCache = null;
 
-/* ── HELPERS ─────────────────────────────────────────────────────── */
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function fmtDate(d){ if(!d) return '—'; try{ return new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); }catch(e){ return '—'; } }
 function showToast(msg,dur=2800){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),dur); }
@@ -1393,7 +1354,6 @@ async function printMatrix(id){
 const STATUS_LABELS = {draft:'Draft',active:'Active',review:'Under Review',archived:'Archived'};
 const ISO_TYPES = {electrical:'Electrical',mechanical:'Mechanical',pneumatic:'Pneumatic',hydraulic:'Hydraulic',process:'Process',other:'Other'};
 
-/* ── LICENCE ─────────────────────────────────────────────────────── */
 async function checkLicence(){
   try {
     const res = await fetch(SB_LIC_URL+'/rest/v1/kiln_licences?licence_key=eq.'+encodeURIComponent(LICENCE_KEY)+'&select=paid,expires_at',
@@ -1424,7 +1384,6 @@ function showLicErr(text){
   document.getElementById('licRetryBtn').style.display='block';
 }
 
-/* ── AUTH ────────────────────────────────────────────────────────── */
 function showAuthScreen(){
   if(sb){
     sb.auth.getSession().then(r=>{
@@ -1523,7 +1482,6 @@ async function loadProfileAndLaunch(){
     if (authErr) authErr.style.display = 'none';
     const {data, error} = await sb.from('pw_profiles').select('*').eq('id',currentUser.id).single();
     if(error) throw error;
-    // Block disabled or unapproved accounts
     if(data && (data.disabled === true || data.approved === false)){
       showAccessDenied(data.disabled ? 'Your account has been disabled. Contact an administrator.' : 'Your account is pending approval.');
       return;
@@ -1540,7 +1498,6 @@ async function doLogout(){
   window.location.href='../index.html';
 }
 
-/* ── LAUNCH ──────────────────────────────────────────────────────── */
 async function launchApp(){
   document.getElementById('splash').style.display='none';
   const app=document.getElementById('appWrapper');
@@ -1563,14 +1520,12 @@ async function launchApp(){
   loadGroqKey(); loadAllData();
 }
 
-/* ── TABS ────────────────────────────────────────────────────────── */
 function switchTab(tab){
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+tab));
   if(tab==='audit') loadAudit();
 }
 
-/* ── DATA ────────────────────────────────────────────────────────── */
 async function loadAllData(){
   await Promise.all([loadMatrices(),loadEquipment(),loadAudit()]);
 }
@@ -1962,7 +1917,6 @@ async function openDetail(id){
   const searchInput = document.getElementById('detailSearch');
   if(searchInput) searchInput.value = '';
 
-  // Show the detail panel
   const detail=document.getElementById('detailOverlay');
   if(detail){ detail.classList.add('open'); }
 }
@@ -2042,7 +1996,6 @@ async function saveMatrix(){
   if(id){
     ({error}=await sb.from('pw_isolation_matrices').update(payload).eq('id',id));
   } else {
-    // Generate matrix_ref for new manual entries
     const plantRef=(payload.plant_ref||'MAN').toUpperCase();
     const existing=_matrices.filter(m=>(m.matrix_ref||'').startsWith(plantRef+'-'));
     const nextNum=existing.length+1;
@@ -2119,10 +2072,8 @@ function renderEquipment(){
   </tr>`).join('');
 }
 
-/* ── RENDER AREAS ────────────────────────────────────────────────── */
 
 
-/* ── POPULATE DROPDOWNS ──────────────────────────────────────────── */
 function populateEquipDropdown(){
   const opts='<option value="">— Select equipment —</option>'+_equipment.map(e=>`<option value="${e.id}">${esc(e.name)}${e.asset_tag?' ('+esc(e.asset_tag)+')':''}</option>`).join('');
   const el=document.getElementById('mxEquip');
@@ -2137,7 +2088,6 @@ function populateCatFilter(){
 }
 
 
-/* ── MATRIX MODAL ────────────────────────────────────────────────── */
 function openMatrixModal(id){
   document.getElementById('matrixModalTitle').textContent=id?'Edit Matrix':'New Isolation Matrix';
   document.getElementById('mxId').value=id||'';
@@ -2198,7 +2148,6 @@ async function saveMatrix(){
   showToast(id?'Matrix updated ✓':'Matrix created ✓');
 }
 
-/* ── POINT MODAL ─────────────────────────────────────────────────── */
 function openPointModal(matrixId,pointId){
   document.getElementById('pointModalTitle').textContent=pointId?'Edit Isolation Equipment':'Add Isolation Equipment';
   document.getElementById('ptMatrixId').value=matrixId;
@@ -2312,7 +2261,6 @@ async function saveEntry(){
   await logIsolationAction(id ? 'update' : 'create', 'pw_isolation_entries', id || (matrixId + ':' + ref), ref, name, (selected.length ? 'Required isolations: ' + selected.length : 'No isolations selected'));
 }
 
-/* ── EQUIPMENT MODAL ─────────────────────────────────────────────── */
 function openEquipModal(id){
   document.getElementById('equipModalTitle').textContent=id?'Edit Equipment':'Add Equipment';
   document.getElementById('eqId').value=id||'';
@@ -2344,7 +2292,6 @@ async function saveEquip(){
   const name=document.getElementById('eqName').value.trim();
   const err=document.getElementById('eqErr');
   if(!tag||!name){ err.textContent='Asset tag and name are required.'; err.style.display='block'; return; }
-  // Use selected area name as location — keeps compatible with docs app which also uses pw_equipment
   const locationVal=document.getElementById('eqArea').value.trim()||document.getElementById('eqLocation').value.trim()||null;
   const payload={asset_tag:tag,name,manufacturer:document.getElementById('eqMfr').value.trim()||null,model:document.getElementById('eqModel').value.trim()||null,serial:document.getElementById('eqSerial').value.trim()||null,location:locationVal,category:document.getElementById('eqCat').value.trim()||null,status:document.getElementById('eqStatus').value||'active',updated_at:new Date().toISOString()};
   let error;
@@ -2377,10 +2324,8 @@ async function deleteEquip(id, name){
   await logIsolationAction('delete', 'pw_equipment', id, name, name, 'Deleted equipment');
 }
 
-/* ── AREA MODAL ──────────────────────────────────────────────────── */
 
 
-/* ── THEME ───────────────────────────────────────────────────────── */
 function readStoredThemePref(){
   const shared = localStorage.getItem('pw_theme');
   if(shared === 'light' || shared === 'dark') return shared;
@@ -2421,7 +2366,6 @@ async function loadUserTheme(){
 }
 (function(){ const s=readStoredThemePref(); if(s){applyTheme(s==='light');return;} applyTheme(new Date().getHours()>=7&&new Date().getHours()<18); })();
 
-/* ── GROQ / AI ───────────────────────────────────────────────────── */
 async function loadGroqKey(){
   try{
     const {data:sess}=await sb.auth.getSession();
@@ -2666,7 +2610,6 @@ async function sendAiMessage(){
   sendBtn.disabled=false;
 }
 
-/* ── KEYBOARD / EVENTS ───────────────────────────────────────────── */
 document.addEventListener('keydown',function(e){
   if(e.key==='Escape'){
     ['matrixModal','pointModal','equipModal'].forEach(id=>document.getElementById(id).classList.remove('open'));
@@ -2677,7 +2620,6 @@ document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('isoAiOverlay').addEventListener('click',closeAiPanel);
 });
 
-/* ── INIT ────────────────────────────────────────────────────────── */
 window.addEventListener('load', async function(){
   sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 

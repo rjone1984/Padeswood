@@ -77,7 +77,6 @@
   }
   body * { transition: background-color 0.3s, border-color 0.3s, color 0.3s; }
 
-  /* ── Splash ── */
   #splash {
     position: fixed; inset: 0; z-index: 1000;
     display: flex; flex-direction: column;
@@ -254,7 +253,6 @@
   @keyframes splashFade { from { opacity:0; transform:translateY(8px) } to { opacity:1; transform:none } }
   @keyframes dotPulse { 0%,100%{background:var(--border);transform:scale(1)} 50%{background:var(--accent2);transform:scale(1.3)} }
 
-  /* ── App ── */
   #app-wrap {
     max-width: none;
     margin: 0;
@@ -647,7 +645,6 @@
 </div>
 
 <script>
-// ── Cycle ─────────────────────────────────────────────────────────────────────
 function _0xb1c2(){
   const c=[];
   for(let b=0;b<6;b++) c.push("D","D","N","N","O","O","O","O");
@@ -723,7 +720,6 @@ function _0xb5c6(year,month){
   return out;
 }
 
-// ── Storage ───────────────────────────────────────────────────────────────────
 function _0xc7d8(){ try{return JSON.parse(localStorage.getItem("swaps")||"{}");}catch{return{};} }
 function _0xd9e0(){ try{return JSON.parse(localStorage.getItem("notes")||"{}");}catch{return{};} }
 function _0xe1f2(shiftId,dateKey,note){
@@ -777,7 +773,6 @@ function syncSplashLogo(){
 }
 syncSplashLogo();
 
-// ── Active shift detection ────────────────────────────────────────────────────
 function _0xd1e2(){
   const hour=new Date().getHours();
   const target=(hour>=6&&hour<18)?"D":"N";
@@ -788,7 +783,6 @@ function _0xd1e2(){
 const MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
 const TABS=["Today","Calendar","Summary","Search"];
 
-// ── State ─────────────────────────────────────────────────────────────────────
 const _def=_0xd1e2();
 let S={
   year:TODAY.getFullYear(), month:TODAY.getMonth(),
@@ -799,7 +793,6 @@ let S={
 };
 const set=patch=>{S={...S,...patch};_0xd5e6f();};
 
-// ── DOM helper ────────────────────────────────────────────────────────────────
 function h(tag,props,...kids){
   const e=document.createElement(tag);
   for(const[k,v] of Object.entries(props||{})){
@@ -822,7 +815,6 @@ function _0xe3f4(m,id,color,isFocus){
   );
 }
 
-// ── Pages ─────────────────────────────────────────────────────────────────────
 function _0xf5a6(active){
   const offset=S.viewOffset,viewDate=_0xc3d4(TODAY,offset),isToday=offset===0;
   const tSt=status(active,viewDate),tM=meta(tSt);
@@ -1023,7 +1015,6 @@ function _0xd3e4(){
   return wrap;
 }
 
-// ── Draw ──────────────────────────────────────────────────────────────────────
 function _0xd5e6f(){
   const{focus,tab,banner,dark}=S;
   const active=SHIFTS.find(s=>s.id===focus);
