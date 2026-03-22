@@ -669,6 +669,30 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   .platform-hero h1{font-size:20px;}
   .apps-grid{grid-template-columns:1fr;gap:12px;}
   .card{padding:20px 16px;}
+  #aiPanel{
+    left:0 !important;
+    right:0 !important;
+    width:100vw !important;
+    max-width:none !important;
+    border-left:none !important;
+    border-top:1px solid var(--bd);
+    box-shadow:none;
+  }
+  #aiPanel > div{padding-left:14px !important;padding-right:14px !important;}
+  #aiHistory{padding:12px 14px !important;}
+  #aiScopeRow{
+    flex-wrap:nowrap !important;
+    overflow-x:auto !important;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    padding-bottom:2px !important;
+  }
+  #aiScopeRow::-webkit-scrollbar{display:none;}
+  #aiScopeRow > *{flex:0 0 auto;}
+  #aiPanel textarea{
+    font-size:16px !important;
+    line-height:1.4;
+  }
 }
 @media(max-width:400px){
   .header-logo{width:28px;height:28px;font-size:11px;}

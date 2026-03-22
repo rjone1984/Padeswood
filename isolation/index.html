@@ -529,14 +529,45 @@ tbody tr:hover{background:var(--sf2);}
   #mainHeader{padding:8px 12px;height:auto;min-height:52px;flex-wrap:wrap;align-items:flex-start;gap:6px;overflow:visible;}
   .header-titles{min-width:0;flex:1 1 auto;}
   .header-sub{display:none;}
-  .header-right{flex:1 1 100%;width:100%;gap:5px;flex-wrap:nowrap;overflow-x:auto;flex-shrink:0;scrollbar-width:none;justify-content:flex-start;padding-bottom:2px;}
+  .header-right{flex:1 1 100%;width:100%;gap:5px;flex-wrap:nowrap;overflow-x:auto;flex-shrink:0;scrollbar-width:none;-webkit-overflow-scrolling:touch;justify-content:flex-start;padding:2px 0 4px;}
   .header-right::-webkit-scrollbar{display:none;}
-  .header-user{display:inline-flex;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .header-user{display:inline-flex;flex:0 0 auto;min-width:max-content;max-width:none;overflow:visible;white-space:nowrap;}
   .icon-btn{width:30px;height:30px;}
   #mainContent{padding-left:12px;padding-right:12px;}
   .matrix-grid{grid-template-columns:1fr;}
   .field-row{grid-template-columns:1fr;}
   .areas-grid{grid-template-columns:1fr;}
+  .list-toolbar{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px;align-items:stretch;}
+  .list-toolbar::-webkit-scrollbar{display:none;}
+  .list-toolbar > *{flex:0 0 auto;}
+  .search-wrap{min-width:240px;}
+  .search-wrap,.filter-select,.btn,.matrix-toolbar-actions,.matrix-select-pill{flex-shrink:0;}
+  .matrix-toolbar-actions{display:flex;flex-wrap:nowrap;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px;}
+  .matrix-toolbar-actions::-webkit-scrollbar{display:none;}
+  #isoAiPanel{
+    left:0 !important;
+    right:0 !important;
+    width:100vw !important;
+    max-width:none !important;
+    border-left:none !important;
+    border-top:1px solid var(--bd);
+    box-shadow:none;
+  }
+  #isoAiPanel > div{padding-left:14px !important;padding-right:14px !important;}
+  #aiSuggestions{
+    flex-wrap:nowrap !important;
+    overflow-x:auto !important;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    padding-bottom:2px !important;
+  }
+  #aiSuggestions::-webkit-scrollbar{display:none;}
+  #aiSuggestions > *{flex:0 0 auto;}
+  #aiHistory{padding:12px 14px !important;}
+  #isoAiPanel textarea{
+    font-size:16px !important;
+    line-height:1.4;
+  }
 }
 
 .splash-logo img, .lic-logo img, .login-logo img, .header-logo img { display:block; }
