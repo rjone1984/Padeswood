@@ -1008,7 +1008,6 @@ async function launchApp(){
   rb.textContent = role.charAt(0).toUpperCase()+role.slice(1);
   rb.className = 'role-badge role-'+role;
   document.getElementById('docAiBtn').style.display = 'flex';
-  loadDocGroqKey();
   await loadUserTheme();
   app.style.display='flex';
   if(hasRole('editor','reviewer','admin')){
@@ -1739,13 +1738,7 @@ window.addEventListener('load',function(){
   checkLicence();
 });
 
-let _docGroqKey = null;
 let _docAiHistory = [];
-
-async function loadDocGroqKey() {
-  _docGroqKey = null;
-  console.warn('AI service disabled in browser build.');
-}
 const AI_PROXY_URL = 'https://xnkwrkoxvgptobnmekgv.supabase.co/functions/v1/hyper-task';
 async function callDocAiProxy(question, summary) {
   const sessionResult = await sb.auth.getSession();

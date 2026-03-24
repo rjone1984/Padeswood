@@ -952,7 +952,6 @@ async function showAppSelector(user) {
   document.getElementById('headerUser').style.display = 'flex';
   document.getElementById('logoutBtn').style.display = 'flex';
   document.getElementById('changePwBtn').style.display = 'flex';
-  loadPlatformGroqKey();
   try {
     const {data} = await sb.from('pw_profiles').select('*').eq('id', user.id).single();
     _platformProfile = data;
@@ -1279,7 +1278,6 @@ let _usersCache = [];
 let _kilnUsersCache = [];
 let _aiHistory = [];
 let _aiScope = 'week';
-let _platformGroqKey = null;
 let _platformProfile = null;
 const SB_URL_PLATFORM = 'https://xnkwrkoxvgptobnmekgv.supabase.co';
 const SB_KEY_PLATFORM = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhua3dya294dmdwdG9ibm1la2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NjAxNTQsImV4cCI6MjA4ODIzNjE1NH0.PrmnJ4eGepac41bQuNPG7TcBaunrfTWdjLtkGLr_2LY';
@@ -1969,10 +1967,6 @@ function openAiPanel() {
 function closeAiPanel() {
   document.getElementById('aiOverlay').style.display = 'none';
   document.getElementById('aiPanel').style.transform = 'translateX(100%)';
-}
-async function loadPlatformGroqKey() {
-  _platformGroqKey = null;
-  console.warn('AI service disabled in browser build.');
 }
 const AI_PROXY_URL = 'https://xnkwrkoxvgptobnmekgv.supabase.co/functions/v1/hyper-task';
 async function callAiProxy(question, summary) {

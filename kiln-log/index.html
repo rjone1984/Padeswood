@@ -1441,11 +1441,9 @@ let weekStart  = null;
 let currentManageTab = 'equipment';
 let sb = null;
 let _sbSession = null;
-let _sbRefreshToken = null;
 
 function setSharedSession(session){
   _sbSession = session && session.access_token ? session.access_token : null;
-  _sbRefreshToken = session && session.refresh_token ? session.refresh_token : null;
 }
 
 function ensureSharedClient(){
@@ -1463,7 +1461,6 @@ function ensureSharedClient(){
       return;
     }
     _sbSession = null;
-    _sbRefreshToken = null;
   });
   return sb;
 }
@@ -1652,7 +1649,6 @@ function doLogout(){
   isShiftManager = false;
   isCementAnalyst = false;
   isBurner = false;
-  GROQ_KEY = null;
   _reportHistory = [];
   _loginAttempts = 0;
   const h = new Date().getHours();
@@ -1772,9 +1768,7 @@ function toggleTheme(){
 }
 
 async function initApp(){
-  loadGroqKey();
-
-    const sbLists = await sbLoadLists();
+  const sbLists = await sbLoadLists();
   await loadWhiteboardData();
   if(sbLists && Object.keys(sbLists).length){
     _allLists = sbLists;
@@ -2912,13 +2906,6 @@ async function navigateToResult(weekKey, day){
   switchDay(day);
 }
 
-let GROQ_KEY = null;
-const GROQ_URL = null;
-
-async function loadGroqKey(){
-  GROQ_KEY = null;
-  console.warn('AI service disabled in browser build.');
-}
 const AI_PROXY_URL = 'https://xnkwrkoxvgptobnmekgv.supabase.co/functions/v1/hyper-task';
 async function callKilnAiProxy(question, summary) {
   if (!_sbSession) throw new Error('Please sign in again.');

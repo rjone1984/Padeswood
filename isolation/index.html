@@ -1112,7 +1112,7 @@ const SB_LIC_KEY        = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 
 let sb, currentUser = null, currentProfile = null;
 let _matrices = [], _points = {}, _equipment = [], _areas = [];
-let _groqKey = null, _aiHistory = [];
+let _aiHistory = [];
 let _openMatrixId = null;
 let _entries = {}; // cached pw_isolation_entries per matrix id
 let _matrixSearchIndex = {}; // searchable text per matrix id
@@ -1634,7 +1634,7 @@ async function launchApp(){
   await loadUserTheme();
   app.style.display='flex';
   refreshLicenceFooter();
-  loadGroqKey(); loadAllData();
+  loadAllData();
 }
 
 function switchTab(tab){
@@ -2483,10 +2483,6 @@ async function loadUserTheme(){
 }
 (function(){ const s=readStoredThemePref(); if(s){applyTheme(s==='light');return;} applyTheme(new Date().getHours()>=7&&new Date().getHours()<18); })();
 
-async function loadGroqKey(){
-  _groqKey = null;
-  console.warn('AI service disabled in browser build.');
-}
 const AI_PROXY_URL = 'https://xnkwrkoxvgptobnmekgv.supabase.co/functions/v1/hyper-task';
 async function callIsolationAiProxy(question, summary) {
   const sessionResult = await sb.auth.getSession();
