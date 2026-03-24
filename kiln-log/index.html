@@ -1475,8 +1475,6 @@ async function doLogin(){
 
   _sbSession = authData.access_token;
   _sbRefreshToken = authData.refresh_token;
-  sessionStorage.setItem('kbl_session', authData.access_token);
-  sessionStorage.setItem('kbl_refresh', authData.refresh_token);
 
   const uid = authData.user.id;
   const userRes = await fetch(SB_URL + '/rest/v1/kiln_users?auth_user_id=eq.' + uid + '&select=*&limit=1', {
@@ -1489,18 +1487,18 @@ async function doLogin(){
   if(!userRows || !userRows.length){
     document.getElementById('splashErr').textContent = 'Account not found. Please contact your administrator.';
     _sbSession = null;
-    sessionStorage.removeItem('kbl_session');
-    sessionStorage.removeItem('kbl_refresh');
-    return;
+      _sbSession = null;
+      _sbRefreshToken = null;
+      return;
   }
   const match = userRows[0];
 
   if(match.shift_log_access === false && !match.is_admin){
     document.getElementById('splashErr').textContent = 'You do not have access to Shift Log. Please contact your administrator.';
     _sbSession = null;
-    sessionStorage.removeItem('kbl_session');
-    sessionStorage.removeItem('kbl_refresh');
-    return;
+      _sbSession = null;
+      _sbRefreshToken = null;
+      return;
   }
 
   _applyUserSession(match);
@@ -1523,8 +1521,8 @@ async function _applyUserSession(match){
     document.getElementById('splash').style.display = 'flex';
     document.getElementById('app').style.display = 'none';
     _sbSession = null;
-    sessionStorage.removeItem('kbl_session');
-    sessionStorage.removeItem('kbl_refresh');
+    _sbSession = null;
+    _sbRefreshToken = null;
     return;
   }
 
@@ -1571,8 +1569,8 @@ function doLogout(){
   }
   _sbSession = null;
   _sbRefreshToken = null;
-  sessionStorage.removeItem('kbl_session');
-  sessionStorage.removeItem('kbl_refresh');
+  _sbSession = null;
+  _sbRefreshToken = null;
   Object.keys(localStorage).forEach(function(k){
     if(k.startsWith('sb-') || k.startsWith('supabase')) localStorage.removeItem(k);
   });
@@ -1595,7 +1593,7 @@ function doLogout(){
   lightMode = h >= 7 && h < 18;
   document.body.classList.toggle('light-mode', lightMode);
   localStorage.removeItem('kbl_theme');
-  ['kbl_users'].forEach(k => { try{ sessionStorage.removeItem(k); }catch(e){} });
+  _usersCache = [];
   document.body.classList.remove('read-only-mode');
   const _wdLogout=document.getElementById('weekDate'); if(_wdLogout)_wdLogout.disabled=false;
   window.location.href = '../index.html';
@@ -4274,7 +4272,12 @@ function renderEqList(){
   list.innerHTML='';
   equipment.forEach(eq=>{
     const div=document.createElement('div'); div.className='eq-item';
-    div.innerHTML=`<span class="eq-item-name">${esc(eq)}</span><button class="eq-item-del" onclick="removeEq('${esc(eq).replace(/'/g,"\\'")}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>`;
+    const name=document.createElement('span'); name.className='eq-item-name'; name.textContent=eq;
+    const btn=document.createElement('button'); btn.className='eq-item-del'; btn.type='button';
+    btn.addEventListener('click', function(){ removeEq(eq); });
+    btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+    div.appendChild(name);
+    div.appendChild(btn);
     list.appendChild(div);
   });
   if(!equipment.length) list.innerHTML='<div style="color:var(--text-dim);font-size:12px;padding:8px 0">No items. Add one below.</div>';
@@ -4304,10 +4307,22 @@ function renderPeopleList(tab){
   list.forEach(name=>{
     const isTr=isBurners&&trainees.includes(name);
     const div=document.createElement('div'); div.className='people-item';
-    div.innerHTML=`<span class="people-item-name">${esc(name)}</span>
-      ${isTr?'<span class="trainee-badge">TRAINEE</span>':''}
-      ${isBurners?`<button class="toggle-trainee-btn" onclick="toggleTrainee('${esc(name).replace(/'/g,"\\'")}',this)">${isTr?'Remove Trainee':'Set as Trainee'}</button>`:''}
-      <button class="people-item-del" onclick="removePerson('${tab}','${esc(name).replace(/'/g,"\\'")}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>`;
+    const span=document.createElement('span'); span.className='people-item-name'; span.textContent=name;
+    div.appendChild(span);
+    if(isTr){
+      const badge=document.createElement('span'); badge.className='trainee-badge'; badge.textContent='TRAINEE';
+      div.appendChild(badge);
+    }
+    if(isBurners){
+      const toggle=document.createElement('button'); toggle.className='toggle-trainee-btn'; toggle.type='button';
+      toggle.textContent=isTr?'Remove Trainee':'Set as Trainee';
+      toggle.addEventListener('click', function(){ toggleTrainee(name, toggle); });
+      div.appendChild(toggle);
+    }
+    const del=document.createElement('button'); del.className='people-item-del'; del.type='button';
+    del.addEventListener('click', function(){ removePerson(tab, name); });
+    del.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+    div.appendChild(del);
     cont.appendChild(div);
   });
   if(!list.length) cont.innerHTML='<div style="color:var(--text-dim);font-size:12px;padding:8px 0">No items yet.</div>';
@@ -4772,14 +4787,9 @@ async function sbLoadUsers(){
         email: r.email || null,
         mustResetPassword: r.must_reset_password || false
       }));
-      sessionStorage.setItem('kbl_users', JSON.stringify(_usersCache));
       return _usersCache;
     }
   } catch(e){ console.warn('Supabase users load failed:', e); }
-    try {
-    const cached = sessionStorage.getItem('kbl_users');
-    if(cached){ _usersCache = JSON.parse(cached); return _usersCache; }
-  } catch(e){}
   return [];
 }
 
@@ -5176,35 +5186,6 @@ window.addEventListener("load",()=>{
   if(wd) wd.addEventListener('click', function(){ try{ this.showPicker(); }catch(e){} });
   checkLicence().then(async function(ok){
     if(!ok) return;
-    const savedSession = sessionStorage.getItem('kbl_session');
-    if(savedSession){
-      try {
-        const verifyRes = await fetch(SB_URL + '/auth/v1/user', {
-          headers: {
-            'apikey': SB_KEY,
-            'Authorization': 'Bearer ' + savedSession
-          }
-        });
-        if(verifyRes.ok){
-          const authUser = await verifyRes.json();
-          _sbSession = savedSession;
-          _sbRefreshToken = sessionStorage.getItem('kbl_refresh');
-          const userRes = await fetch(SB_URL + '/rest/v1/kiln_users?auth_user_id=eq.' + authUser.id + '&select=*&limit=1', {
-            headers: {
-              'apikey': SB_KEY,
-              'Authorization': 'Bearer ' + _sbSession
-            }
-          });
-          const userRows = await userRes.json();
-          if(userRows && userRows.length && !userRows[0].is_locked){
-            await _applyUserSession(userRows[0]);
-            return;
-          }
-        }
-      } catch(e){ console.warn('Session restore failed:', e); }
-      sessionStorage.removeItem('kbl_session');
-      sessionStorage.removeItem('kbl_refresh');
-    }
     document.getElementById('splash').style.display = 'flex';
     animateSplashLoader();
   });

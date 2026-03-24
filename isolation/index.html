@@ -2728,10 +2728,6 @@ window.addEventListener('load', async function(){
       });
       if(!error && data && data.user){
         currentUser = data.user;
-        if(data.session){
-          sessionStorage.setItem('kbl_session', data.session.access_token);
-          sessionStorage.setItem('kbl_refresh', data.session.refresh_token);
-        }
         document.getElementById('licenceOverlay').style.display = 'none';
         loadProfileAndLaunch();
         return;
