@@ -191,8 +191,9 @@
   }
   .splash-btn:active { transform: scale(0.97); opacity: 0.88; }
   .splash-error {
+    display: none;
     font-family: var(--ff-mono); font-size: 12px; color: #f0524f;
-    text-align: center; min-height: 18px; line-height: 1.5;
+    text-align: center; line-height: 1.5;
     background: rgba(240,82,79,.10); border: 1px solid rgba(240,82,79,.28);
     border-radius: 7px; padding: 8px 12px;
   }
@@ -1220,6 +1221,7 @@ function stShowError(text) {
   const els = stGetEls();
   if (!els.errorEl) return;
   els.errorEl.textContent = text || '';
+  els.errorEl.style.display = text ? 'block' : 'none';
   if (text && els.passInput) {
     els.passInput.value = '';
     els.passInput.focus();

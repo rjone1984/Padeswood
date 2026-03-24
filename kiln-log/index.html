@@ -198,6 +198,7 @@ body::before {
 .splash-btn:hover { background:var(--ac2); transform:translateY(-1px) }
 .splash-btn:active { transform:translateY(0) }
 .splash-err {
+  display:none;
   color:var(--red); font-size:12px; text-align:center; margin-top:10px; min-height:18px;
   font-family:var(--ff-mono); line-height:1.5;
   background:var(--redd); border:1px solid var(--redb); border-radius:var(--rsm);
@@ -1520,24 +1521,29 @@ function syncKilnEmail(){
 }
 
 async function doLogin(){
+  const errEl = document.getElementById('splashErr');
   if(Date.now() < _loginLockUntil){
     const secs = Math.ceil((_loginLockUntil - Date.now()) / 1000);
-    document.getElementById('splashErr').textContent = `Too many attempts. Try again in ${secs}s.`;
+    errEl.textContent = `Too many attempts. Try again in ${secs}s.`;
+    errEl.style.display = 'block';
     return;
   }
   syncKilnEmail();
   const u = document.getElementById('splashUser').value.trim();
   const p = document.getElementById('splashPass').value.trim();
   if(!u || !p){
-    document.getElementById('splashErr').textContent = 'Please enter your email and password.';
+    errEl.textContent = 'Please enter your email and password.';
+    errEl.style.display = 'block';
     return;
   }
   const email = document.getElementById('splashEmail').value.trim().toLowerCase();
   if(!email || !email.includes('@')){
-    document.getElementById('splashErr').textContent = 'Please enter a valid email address.';
+    errEl.textContent = 'Please enter a valid email address.';
+    errEl.style.display = 'block';
     return;
   }
-  document.getElementById('splashErr').textContent = '';
+  errEl.textContent = '';
+  errEl.style.display = 'none';
 
   ensureSharedClient();
   const auth = await sb.auth.signInWithPassword({ email, password: p });
@@ -1545,7 +1551,8 @@ async function doLogin(){
   if(auth.error || !session || !session.access_token || !session.user || !session.user.id){
     _loginAttempts++;
     if(_loginAttempts >= 5){ _loginLockUntil = Date.now() + 30000; _loginAttempts = 0; }
-    document.getElementById('splashErr').textContent = 'Invalid username or password.';
+    errEl.textContent = 'Invalid username or password.';
+    errEl.style.display = 'block';
     return;
   }
 
@@ -1561,7 +1568,8 @@ async function doLogin(){
   });
   const userRows = await userRes.json();
   if(!userRows || !userRows.length){
-    document.getElementById('splashErr').textContent = 'Account not found. Please contact your administrator.';
+    errEl.textContent = 'Account not found. Please contact your administrator.';
+    errEl.style.display = 'block';
     setSharedSession(null);
     sb.auth.signOut().catch(function(){});
       return;
@@ -1569,7 +1577,8 @@ async function doLogin(){
   const match = userRows[0];
 
   if(match.shift_log_access === false && !match.is_admin){
-    document.getElementById('splashErr').textContent = 'You do not have access to Shift Log. Please contact your administrator.';
+    errEl.textContent = 'You do not have access to Shift Log. Please contact your administrator.';
+    errEl.style.display = 'block';
     setSharedSession(null);
     sb.auth.signOut().catch(function(){});
       return;
@@ -1591,7 +1600,8 @@ async function _applyUserSession(match){
   readOnly        = match.is_readonly || false;
   const hasShiftLogAccess = match.shift_log_access !== false || isAdmin;
   if(!hasShiftLogAccess){
-    document.getElementById('splashErr').textContent = 'You do not have access to Shift Log. Please contact your administrator.';
+    errEl.textContent = 'You do not have access to Shift Log. Please contact your administrator.';
+    errEl.style.display = 'block';
     document.getElementById('splash').style.display = 'flex';
     document.getElementById('app').style.display = 'none';
     setSharedSession(null);
