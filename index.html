@@ -791,8 +791,8 @@ function checkExistingSession() {
       }).then(function(res) {
         clearTimeout(safetyTimer);
         if (res.ok) {
-          localStorage.setItem('kbl_session', session.access_token);
-          if (session.refresh_token) localStorage.setItem('kbl_refresh', session.refresh_token);
+          sessionStorage.setItem('kbl_session', session.access_token);
+          if (session.refresh_token) sessionStorage.setItem('kbl_refresh', session.refresh_token);
           showAppSelector(session.user);
         } else {
           Object.keys(localStorage).forEach(function(k) {
@@ -911,8 +911,8 @@ async function doLogin() {
   btn.disabled = false; btn.textContent = 'Sign In';
   if (error) { err.textContent = error.message; err.style.display = 'block'; return; }
   if (data.session) {
-    localStorage.setItem('kbl_session', data.session.access_token);
-    localStorage.setItem('kbl_refresh', data.session.refresh_token);
+    sessionStorage.setItem('kbl_session', data.session.access_token);
+    sessionStorage.setItem('kbl_refresh', data.session.refresh_token);
   }
   document.getElementById('loginScreen').style.display = 'none';
   await showAppSelector(data.user);
@@ -929,8 +929,10 @@ async function showAppSelector(user) {
     if (data && (data.approved === false || data.disabled === true)) {
       await sb.auth.signOut();
       Object.keys(localStorage).forEach(function(k) {
-        if (k.startsWith('sb-') || k.startsWith('supabase') || k === 'kbl_session' || k === 'kbl_refresh') localStorage.removeItem(k);
+        if (k.startsWith('sb-') || k.startsWith('supabase')) localStorage.removeItem(k);
       });
+      sessionStorage.removeItem('kbl_session');
+      sessionStorage.removeItem('kbl_refresh');
       document.getElementById('mainWrapper').style.display = 'none';
       document.getElementById('headerUser').style.display = 'none';
       document.getElementById('logoutBtn').style.display = 'none';
@@ -991,8 +993,10 @@ async function showAppSelector(user) {
 async function doLogout() {
   try { await sb.auth.signOut(); } catch(e) { console.warn('signOut error:', e); }
   Object.keys(localStorage).forEach(function(k) {
-    if (k.startsWith('sb-') || k.startsWith('supabase') || k === 'kbl_session' || k === 'kbl_refresh') localStorage.removeItem(k);
+    if (k.startsWith('sb-') || k.startsWith('supabase')) localStorage.removeItem(k);
   });
+  sessionStorage.removeItem('kbl_session');
+  sessionStorage.removeItem('kbl_refresh');
   window.location.reload();
 }
 

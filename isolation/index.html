@@ -1239,13 +1239,15 @@ function getBrandLogoSrc(){
   return '';
 }
 function openPrintWindow(html){
-  const w = window.open('', '_blank', 'width=1100,height=750');
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const w = window.open(url, '_blank', 'width=1100,height=750');
   if(!w){
+    URL.revokeObjectURL(url);
     showToast('Please allow popups to print matrices');
     return null;
   }
-  w.document.write(html);
-  w.document.close();
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 60000);
   return w;
 }
 function isoRole(){ if(!currentProfile) return 'none'; return currentProfile.isolation_role || currentProfile.role || 'viewer'; }
@@ -2717,18 +2719,18 @@ document.addEventListener('DOMContentLoaded',function(){
 window.addEventListener('load', async function(){
   sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  const savedSession = localStorage.getItem('kbl_session');
+  const savedSession = sessionStorage.getItem('kbl_session');
   if(savedSession){
     try{
       const {data, error} = await sb.auth.setSession({
         access_token:  savedSession,
-        refresh_token: localStorage.getItem('kbl_refresh') || ''
+        refresh_token: sessionStorage.getItem('kbl_refresh') || ''
       });
       if(!error && data && data.user){
         currentUser = data.user;
         if(data.session){
-          localStorage.setItem('kbl_session', data.session.access_token);
-          localStorage.setItem('kbl_refresh', data.session.refresh_token);
+          sessionStorage.setItem('kbl_session', data.session.access_token);
+          sessionStorage.setItem('kbl_refresh', data.session.refresh_token);
         }
         document.getElementById('licenceOverlay').style.display = 'none';
         loadProfileAndLaunch();

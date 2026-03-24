@@ -1424,10 +1424,15 @@ function buildPrintDoc(rows, title, subtitle){
 }
 
 function openPrintWindow(html){
-  const w=window.open('','_blank','width=1100,height=750');
-  if(!w){ alert('Please allow popups for this site to use the print function.'); return; }
-  w.document.write(html);
-  w.document.close();
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const w = window.open(url, '_blank', 'width=1100,height=750');
+  if(!w){
+    URL.revokeObjectURL(url);
+    alert('Please allow popups for this site to use the print function.');
+    return;
+  }
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 60000);
 }
 
 function printRA(){

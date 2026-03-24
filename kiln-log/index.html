@@ -1475,8 +1475,8 @@ async function doLogin(){
 
   _sbSession = authData.access_token;
   _sbRefreshToken = authData.refresh_token;
-  localStorage.setItem('kbl_session', authData.access_token);
-  localStorage.setItem('kbl_refresh', authData.refresh_token);
+  sessionStorage.setItem('kbl_session', authData.access_token);
+  sessionStorage.setItem('kbl_refresh', authData.refresh_token);
 
   const uid = authData.user.id;
   const userRes = await fetch(SB_URL + '/rest/v1/kiln_users?auth_user_id=eq.' + uid + '&select=*&limit=1', {
@@ -1489,8 +1489,8 @@ async function doLogin(){
   if(!userRows || !userRows.length){
     document.getElementById('splashErr').textContent = 'Account not found. Please contact your administrator.';
     _sbSession = null;
-    localStorage.removeItem('kbl_session');
-    localStorage.removeItem('kbl_refresh');
+    sessionStorage.removeItem('kbl_session');
+    sessionStorage.removeItem('kbl_refresh');
     return;
   }
   const match = userRows[0];
@@ -1498,8 +1498,8 @@ async function doLogin(){
   if(match.shift_log_access === false && !match.is_admin){
     document.getElementById('splashErr').textContent = 'You do not have access to Shift Log. Please contact your administrator.';
     _sbSession = null;
-    localStorage.removeItem('kbl_session');
-    localStorage.removeItem('kbl_refresh');
+    sessionStorage.removeItem('kbl_session');
+    sessionStorage.removeItem('kbl_refresh');
     return;
   }
 
@@ -1523,8 +1523,8 @@ async function _applyUserSession(match){
     document.getElementById('splash').style.display = 'flex';
     document.getElementById('app').style.display = 'none';
     _sbSession = null;
-    localStorage.removeItem('kbl_session');
-    localStorage.removeItem('kbl_refresh');
+    sessionStorage.removeItem('kbl_session');
+    sessionStorage.removeItem('kbl_refresh');
     return;
   }
 
@@ -1571,8 +1571,8 @@ function doLogout(){
   }
   _sbSession = null;
   _sbRefreshToken = null;
-  localStorage.removeItem('kbl_session');
-  localStorage.removeItem('kbl_refresh');
+  sessionStorage.removeItem('kbl_session');
+  sessionStorage.removeItem('kbl_refresh');
   Object.keys(localStorage).forEach(function(k){
     if(k.startsWith('sb-') || k.startsWith('supabase')) localStorage.removeItem(k);
   });
@@ -1595,7 +1595,7 @@ function doLogout(){
   lightMode = h >= 7 && h < 18;
   document.body.classList.toggle('light-mode', lightMode);
   localStorage.removeItem('kbl_theme');
-  ['kbl_pw5','kbl_users'].forEach(k => { try{ localStorage.removeItem(k); }catch(e){} });
+  ['kbl_users'].forEach(k => { try{ sessionStorage.removeItem(k); }catch(e){} });
   document.body.classList.remove('read-only-mode');
   const _wdLogout=document.getElementById('weekDate'); if(_wdLogout)_wdLogout.disabled=false;
   window.location.href = '../index.html';
@@ -4584,7 +4584,7 @@ function issueCount(day){ let n=0; ['shift1','shift2'].forEach(sk=>state[day][sk
 function hasData(day){ return !!(state[day].shift1.burner||state[day].shift2.burner||issueCount(day)||state[day].notes||state[day].shift1.notes||state[day].shift2.notes); }
 function smHasData(day){ return !!(smState[day].shift1.notes||smState[day].shift2.notes); }
 function autoResize(ta){ if(!ta)return; ta.style.height='auto'; ta.style.height=Math.min(ta.scrollHeight,120)+'px'; }
-function esc(s){ if(!s)return ''; return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function esc(s){ if(s == null) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 
 function showToast(msg, dur=2200){
   const el = document.getElementById('toast');
@@ -4663,11 +4663,11 @@ async function sbSaveList(listName, items){
       headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
       body: JSON.stringify({ list_name: listName, items: items, updated_at: new Date().toISOString() })
     });
-        localStorage.setItem('kbl_'+listName, JSON.stringify(items));
+      sessionStorage.setItem('kbl_'+listName, JSON.stringify(items));
     return true;
   } catch(e){
     console.warn('Supabase list save failed:', e);
-    localStorage.setItem('kbl_'+listName, JSON.stringify(items));
+    sessionStorage.setItem('kbl_'+listName, JSON.stringify(items));
     return false;
   }
 }
@@ -4719,11 +4719,10 @@ async function sbLoadPasswords(){
     if(rows && rows.length){
       const map = {};
       rows.forEach(r => map[r.username] = r.password_hash);
-            localStorage.setItem('kbl_pw5', JSON.stringify(map));
       return map;
     }
   } catch(e){ console.warn('Supabase password load failed:', e); }
-    try { return JSON.parse(localStorage.getItem('kbl_pw5')||'{}'); } catch(e){ return {}; }
+    return {};
 }
 
 async function sbSavePassword(username, password){
@@ -4733,15 +4732,9 @@ async function sbSavePassword(username, password){
       headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
       body: JSON.stringify({ username, password_hash: password, updated_at: new Date().toISOString() })
     });
-        const cp = (()=>{ try{ return JSON.parse(localStorage.getItem('kbl_pw5')||'{}'); }catch(e){ return {}; } })();
-    cp[username] = password;
-    localStorage.setItem('kbl_pw5', JSON.stringify(cp));
     return true;
   } catch(e){
     console.warn('Supabase password save failed:', e);
-        const cp = (()=>{ try{ return JSON.parse(localStorage.getItem('kbl_pw5')||'{}'); }catch(e){ return {}; } })();
-    cp[username] = password;
-    localStorage.setItem('kbl_pw5', JSON.stringify(cp));
     return false;
   }
 }
@@ -4751,15 +4744,9 @@ async function sbDeletePassword(username){
     await sbFetch('/rest/v1/kiln_passwords?username=eq.'+encodeURIComponent(username), {
       method: 'DELETE'
     });
-    const cp = (()=>{ try{ return JSON.parse(localStorage.getItem('kbl_pw5')||'{}'); }catch(e){ return {}; } })();
-    delete cp[username];
-    localStorage.setItem('kbl_pw5', JSON.stringify(cp));
     return true;
   } catch(e){
     console.warn('Supabase password delete failed:', e);
-    const cp = (()=>{ try{ return JSON.parse(localStorage.getItem('kbl_pw5')||'{}'); }catch(e){ return {}; } })();
-    delete cp[username];
-    localStorage.setItem('kbl_pw5', JSON.stringify(cp));
     return false;
   }
 }
@@ -4785,12 +4772,12 @@ async function sbLoadUsers(){
         email: r.email || null,
         mustResetPassword: r.must_reset_password || false
       }));
-      localStorage.setItem('kbl_users', JSON.stringify(_usersCache));
+      sessionStorage.setItem('kbl_users', JSON.stringify(_usersCache));
       return _usersCache;
     }
   } catch(e){ console.warn('Supabase users load failed:', e); }
     try {
-    const cached = localStorage.getItem('kbl_users');
+    const cached = sessionStorage.getItem('kbl_users');
     if(cached){ _usersCache = JSON.parse(cached); return _usersCache; }
   } catch(e){}
   return [];
@@ -5033,9 +5020,10 @@ function openPrintWindow(days, note, inclBurners, inclSM, inclCA, win){
   if(!win) win = window.open('', '_blank');
   if(!win){ showToast('Please allow popups for this page to print'); return; }
   var fullHtml = '<!DOCTYPE html><html><head><title>Kiln Log</title><style>@page{margin:1.5cm}body{margin:0;padding:20px;font-family:Arial,sans-serif}</style></head><body>' + pages + tallySection + '</body></html>';
-  win.document.open();
-  win.document.write(fullHtml);
-  win.document.close();
+  var blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8' });
+  var url = URL.createObjectURL(blob);
+  win.location.href = url;
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 60000);
   win.focus();
   setTimeout(function(){ try{ win.print(); } catch(ex){ console.warn('print',ex); } }, 600);
 }
@@ -5170,9 +5158,10 @@ function openPrintOverview(note, win){
 
   if(!win) win=window.open('','_blank');
   if(!win){ showToast('Please allow popups for this page to print'); return; }
-  win.document.open();
-  win.document.write('<!DOCTYPE html><html><head><title>Kiln Log — Week Overview</title><style>@page{margin:1.5cm}body{margin:0;padding:20px;font-family:Arial,sans-serif}</style></head><body>'+html+'</body></html>');
-  win.document.close();
+  var blob = new Blob(['<!DOCTYPE html><html><head><title>Kiln Log — Week Overview</title><style>@page{margin:1.5cm}body{margin:0;padding:20px;font-family:Arial,sans-serif}</style></head><body>'+html+'</body></html>'], { type: 'text/html;charset=utf-8' });
+  var url = URL.createObjectURL(blob);
+  win.location.href = url;
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 60000);
   win.focus();
   setTimeout(function(){ try{ win.print(); }catch(ex){} }, 600);
 }
@@ -5187,7 +5176,7 @@ window.addEventListener("load",()=>{
   if(wd) wd.addEventListener('click', function(){ try{ this.showPicker(); }catch(e){} });
   checkLicence().then(async function(ok){
     if(!ok) return;
-    const savedSession = localStorage.getItem('kbl_session');
+    const savedSession = sessionStorage.getItem('kbl_session');
     if(savedSession){
       try {
         const verifyRes = await fetch(SB_URL + '/auth/v1/user', {
@@ -5199,7 +5188,7 @@ window.addEventListener("load",()=>{
         if(verifyRes.ok){
           const authUser = await verifyRes.json();
           _sbSession = savedSession;
-          _sbRefreshToken = localStorage.getItem('kbl_refresh');
+          _sbRefreshToken = sessionStorage.getItem('kbl_refresh');
           const userRes = await fetch(SB_URL + '/rest/v1/kiln_users?auth_user_id=eq.' + authUser.id + '&select=*&limit=1', {
             headers: {
               'apikey': SB_KEY,
@@ -5213,8 +5202,8 @@ window.addEventListener("load",()=>{
           }
         }
       } catch(e){ console.warn('Session restore failed:', e); }
-      localStorage.removeItem('kbl_session');
-      localStorage.removeItem('kbl_refresh');
+      sessionStorage.removeItem('kbl_session');
+      sessionStorage.removeItem('kbl_refresh');
     }
     document.getElementById('splash').style.display = 'flex';
     animateSplashLoader();
