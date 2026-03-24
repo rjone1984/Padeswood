@@ -113,9 +113,11 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   transition:border-color .18s,background .18s,color .18s;min-width:160px;}
 .access-denied-btn:hover{border-color:var(--bd3);background:var(--sf3);}
 
-#mainHeader{position:sticky;top:0;z-index:100;border-bottom:1px solid var(--bd);
-  background:var(--sf);padding:0 20px;display:flex;align-items:center;gap:12px;
+#mainHeader{position:sticky;top:0;z-index:100;border-bottom:1px solid var(--bd2);
+  background:rgba(255,255,255,.72);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  padding:0 20px;display:flex;align-items:center;gap:12px;
   height:56px;flex-shrink:0;}
+.dark #mainHeader{background:rgba(22,25,31,.82);}
 .header-back{width:32px;height:32px;border-radius:var(--rsm);border:1px solid var(--bd);
   background:transparent;color:var(--tx2);cursor:pointer;display:flex;align-items:center;
   justify-content:center;font-size:14px;transition:border-color .18s,color .18s;text-decoration:none;}
@@ -142,10 +144,12 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   justify-content:center;font-size:13px;transition:border-color .18s,color .18s,background .18s;}
 .icon-btn:hover{border-color:var(--ac3);color:var(--ac3);background:var(--acd1);}
 
-#tabBar{position:sticky;top:56px;z-index:90;background:var(--sf2);
+#tabBar{position:sticky;top:56px;z-index:90;background:rgba(255,255,255,.66);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
   border-bottom:1px solid var(--bd);display:flex;align-items:center;
   padding:0 20px;gap:2px;overflow-x:auto;flex-shrink:0;}
 #tabBar::-webkit-scrollbar{height:0}
+.dark #tabBar{background:rgba(22,25,31,.76);}
 .tab-btn{height:46px;padding:0 16px;border:none;background:transparent;
   color:var(--tx2);font-family:var(--ff-body);font-size:13px;font-weight:500;
   cursor:pointer;border-bottom:2px solid transparent;transition:color .18s,border-color .18s;
@@ -244,8 +248,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 }
 
 .dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:28px;}
-.stat-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);
-  padding:16px 18px;position:relative;overflow:hidden;}
+.stat-card{background:rgba(255,255,255,.68);border:1px solid var(--bd2);border-radius:var(--r);
+  padding:16px 18px;position:relative;overflow:hidden;box-shadow:var(--e2);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);}
+.dark .stat-card{background:rgba(22,25,31,.80);}
 .stat-card::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px;}
 .stat-card.s-total::before{background:var(--ac3);}
 .stat-card.s-active::before{background:var(--grn);}
@@ -270,9 +276,10 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   margin:0;
   align-items:stretch;
 }
-.matrix-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);
+.matrix-card{background:rgba(255,255,255,.66);border:1px solid var(--bd2);border-radius:var(--r);
   padding:12px 14px;cursor:pointer;transition:border-color .18s,box-shadow .14s,transform .14s;
-  position:relative;overflow:hidden;}
+  position:relative;overflow:hidden;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);}
+.dark .matrix-card{background:rgba(22,25,31,.78);}
 .matrix-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
   background:linear-gradient(90deg,var(--ac),var(--ac3));opacity:0;transition:opacity .22s;}
 .matrix-card:hover{border-color:var(--acd3);box-shadow:0 4px 18px rgba(26,122,53,.14);transform:translateY(-1px);}
@@ -365,10 +372,14 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .t-process{background:var(--purd);color:var(--pur);}
 .t-other{background:var(--sf3);color:var(--tx3);}
 .no-points{padding:32px 24px;text-align:center;color:var(--tx3);font-size:12.5px;}
-.detail-close-bar{padding:14px 24px;border-top:1px solid var(--bd);
-  display:flex;justify-content:flex-end;gap:8px;background:var(--sf);}
+.detail-close-bar{padding:14px 24px;border-top:1px solid var(--bd2);
+  display:flex;justify-content:flex-end;gap:8px;background:rgba(255,255,255,.74);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);}
+.dark .detail-close-bar{background:rgba(22,25,31,.82);}
 
-.table-wrap{overflow-x:auto;border-radius:var(--r);border:1px solid var(--bd);}
+.table-wrap{overflow-x:auto;border-radius:var(--r);border:1px solid var(--bd2);
+  background:rgba(255,255,255,.62);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);}
+.dark .table-wrap{background:rgba(22,25,31,.76);}
 table{width:100%;border-collapse:collapse;}
 thead{background:var(--sf2);}
 th{padding:10px 14px;text-align:left;font-family:var(--ff-mono);font-size:9px;
@@ -392,8 +403,10 @@ tbody tr:hover{background:var(--sf2);}
   padding:2px 7px;border-radius:3px;font-weight:600;}
 
 .areas-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;}
-.area-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);
-  padding:16px 18px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+.area-card{background:rgba(255,255,255,.66);border:1px solid var(--bd2);border-radius:var(--r);
+  padding:16px 18px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);}
+.dark .area-card{background:rgba(22,25,31,.78);}
 .area-card-left{}
 .area-name{font-family:var(--ff-head);font-weight:700;font-size:14px;color:var(--tx);margin-bottom:3px;}
 .area-desc{font-size:12px;color:var(--tx2);margin-bottom:6px;}
@@ -404,11 +417,15 @@ tbody tr:hover{background:var(--sf2);}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;
   display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px);}
 .modal-overlay.open{display:flex;}
-.modal{background:var(--sf);border:1px solid var(--bd2);border-radius:14px;
-  width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:var(--e3);}
-.modal-header{padding:20px 24px 16px;border-bottom:1px solid var(--bd);
+.modal{background:rgba(255,255,255,.72);border:1px solid var(--bd2);border-radius:14px;
+  width:100%;max-width:560px;max-height:90vh;overflow-y:auto;
+  box-shadow:0 18px 48px rgba(0,0,0,.16);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);}
+.dark .modal{background:rgba(22,25,31,.82);}
+.modal-header{padding:20px 24px 16px;border-bottom:1px solid var(--bd2);
   display:flex;align-items:center;justify-content:space-between;
-  position:sticky;top:0;background:var(--sf);z-index:1;}
+  position:sticky;top:0;background:rgba(255,255,255,.74);z-index:1;
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);}
+.dark .modal-header{background:rgba(22,25,31,.82);}
 .modal-title{font-family:var(--ff-head);font-weight:700;font-size:16px;color:var(--tx);}
 .modal-body{padding:20px 24px 24px;display:flex;flex-direction:column;gap:14px;}
 .modal-close{width:28px;height:28px;border-radius:6px;border:1px solid var(--bd);
@@ -428,8 +445,10 @@ tbody tr:hover{background:var(--sf2);}
 .check-card{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--sf2);border:1px solid var(--bd2);border-radius:var(--rsm);}
 .check-card input{width:16px;height:16px;accent-color:var(--ac3);flex-shrink:0}
 .check-card span{font-size:12px;color:var(--tx);font-family:var(--ff-body);line-height:1.35}
-.modal-footer{padding:14px 24px;border-top:1px solid var(--bd);
-  display:flex;justify-content:flex-end;gap:10px;position:sticky;bottom:0;background:var(--sf);}
+.modal-footer{padding:14px 24px;border-top:1px solid var(--bd2);
+  display:flex;justify-content:flex-end;gap:10px;position:sticky;bottom:0;background:rgba(255,255,255,.74);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);}
+.dark .modal-footer{background:rgba(22,25,31,.82);}
 .form-err{font-size:12px;color:var(--red);background:var(--redd);border:1px solid var(--redb);
   border-radius:var(--rsm);padding:8px 12px;display:none;}
 .matrix-reader-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px;}
@@ -526,7 +545,25 @@ tbody tr:hover{background:var(--sf2);}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
 @media(max-width:640px){
-  #mainHeader{padding:8px 12px;height:auto;min-height:52px;flex-wrap:wrap;align-items:flex-start;gap:6px;overflow:visible;}
+  #mainHeader{
+    padding:8px 12px;
+    height:auto;
+    min-height:52px;
+    flex-wrap:wrap;
+    align-items:flex-start;
+    gap:6px;
+    overflow:visible;
+    background:rgba(17,20,24,.84);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+  }
+  .light-mode #mainHeader{background:rgba(255,255,255,.84);}
+  #tabBar{
+    background:rgba(22,25,31,.82);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+  }
+  .light-mode #tabBar{background:rgba(255,255,255,.82);}
   .header-titles{min-width:0;flex:1 1 auto;}
   .header-sub{display:none;}
   .header-right{flex:1 1 100%;width:100%;gap:5px;flex-wrap:nowrap;overflow-x:auto;flex-shrink:0;scrollbar-width:none;-webkit-overflow-scrolling:touch;justify-content:flex-start;padding:2px 0 4px;}
@@ -1040,7 +1077,7 @@ tbody tr:hover{background:var(--sf2);}
 
 <footer style="position:relative;z-index:1;border-top:1px solid var(--bd);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;flex-shrink:0;font-family:var(--ff-mono);font-size:10px;color:var(--tx3);letter-spacing:.5px">
   <span class="footer-left">Padeswood Works · Isolation Matrix · HeidelbergMaterials</span>
-  <span class="footer-lic"><span class="lic-dot"></span><span id="isoLicStatus">Licence active</span></span>
+  <span class="footer-lic"><span class="lic-dot"></span><span id="isoLicStatus">Checking licence…</span></span>
 </footer>
 
 <div id="toast"></div>
@@ -1387,22 +1424,47 @@ const ISO_TYPES = {electrical:'Electrical',mechanical:'Mechanical',pneumatic:'Pn
 
 async function checkLicence(){
   try {
+    const ok = await refreshLicenceFooter();
+    if(!ok) showLicErr('Licence not active. Please contact your administrator.');
+    else hideLicenceOverlay();
+  } catch(e){
+    console.warn('Licence check failed — failing open:', e.message);
+    const licEl = document.getElementById('isoLicStatus');
+    if(licEl) licEl.textContent = 'Licence active';
+    hideLicenceOverlay();
+  }
+}
+async function refreshLicenceFooter(){
+  try {
     const res = await fetch(SB_LIC_URL+'/rest/v1/kiln_licences?licence_key=eq.'+encodeURIComponent(LICENCE_KEY)+'&select=paid,expires_at',
       {method:'GET',mode:'cors',headers:{'apikey':SB_LIC_KEY,'Authorization':'Bearer '+SB_LIC_KEY,'Content-Type':'application/json'}});
-    if(res.ok){
-      const rows = await res.json();
-      if(rows&&rows.length&&rows[0].paid&&new Date(rows[0].expires_at)>=new Date()){
-        const exp = new Date(rows[0].expires_at).toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'});
-        const licEl = document.getElementById('isoLicStatus');
-        if(licEl) licEl.textContent = 'Licence active · expires ' + exp;
-        hideLicenceOverlay(); return;
-      }
-      if(rows&&rows[0]&&new Date(rows[0].expires_at)<new Date()){
-        showLicErr('Licence expired on '+new Date(rows[0].expires_at).toLocaleDateString('en-GB')+'. Please contact your administrator.'); return;
-      }
-      showLicErr('Licence not active. Please contact your administrator.');
-    } else { hideLicenceOverlay(); }
-  } catch(e){ console.warn('Licence check failed — failing open:', e.message); hideLicenceOverlay(); }
+    const licEl = document.getElementById('isoLicStatus');
+    if(!res.ok){
+      if(licEl) licEl.textContent = 'Licence active';
+      return false;
+    }
+    const rows = await res.json();
+    const lic = rows && rows.length ? rows[0] : null;
+    const expDate = lic && lic.expires_at ? new Date(lic.expires_at) : null;
+    const now = new Date();
+
+    if(lic && expDate && !isNaN(expDate.getTime()) && expDate >= now){
+      const exp = expDate.toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'});
+      if(licEl) licEl.textContent = 'Licence active · expires ' + exp;
+      return true;
+    }
+    if(lic && expDate && !isNaN(expDate.getTime()) && expDate < now){
+      if(licEl) licEl.textContent = 'Licence active';
+      return false;
+    }
+    if(licEl) licEl.textContent = 'Licence active';
+    return true;
+  } catch(e){
+    console.warn('Licence footer refresh failed:', e.message);
+    const licEl = document.getElementById('isoLicStatus');
+    if(licEl) licEl.textContent = 'Licence active';
+    return true;
+  }
 }
 function hideLicenceOverlay(){
   const o=document.getElementById('licenceOverlay');
@@ -1548,6 +1610,7 @@ async function launchApp(){
   document.getElementById('isoAiBtn').style.display='flex';
   await loadUserTheme();
   app.style.display='flex';
+  refreshLicenceFooter();
   loadGroqKey(); loadAllData();
 }
 

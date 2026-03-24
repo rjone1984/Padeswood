@@ -276,8 +276,13 @@
     height: 56px;
     padding: 0 20px;
     border-bottom: 1px solid var(--border2);
-    background: var(--bg2);
+    background: rgba(255,255,255,.68);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
     overflow: visible;
+  }
+  .dark .tracker-shell {
+    background: rgba(22,25,31,.80);
   }
   .tracker-shell::before {
     content: '';
@@ -300,8 +305,8 @@
     width: 32px;
     height: 32px;
     border-radius: 7px;
-    border: 1px solid var(--border);
-    background: transparent;
+    border: 1px solid var(--border2);
+    background: rgba(255,255,255,.24);
     color: var(--text2);
     text-decoration: none;
     display: inline-flex;
@@ -379,7 +384,7 @@
     font-size: 10px;
     color: var(--text3);
     padding: 4px 10px;
-    border: 1px solid var(--border);
+    border: 1px solid var(--border2);
     border-radius: 5px;
     display: none;
     align-items: center;
@@ -413,16 +418,16 @@
     color: #f5a623;
   }
   .tracker-shell-role.role-viewer {
-    background: var(--bg4);
+    background: rgba(255,255,255,.28);
     color: var(--text3);
-    border: 1px solid var(--border);
+    border: 1px solid var(--border2);
   }
   .tracker-shell-icon {
     width: 32px;
     height: 32px;
     border-radius: 7px;
-    border: 1px solid var(--border);
-    background: transparent;
+    border: 1px solid var(--border2);
+    background: rgba(255,255,255,.22);
     color: var(--text2);
     text-decoration: none;
     cursor: pointer;
@@ -490,23 +495,31 @@
   .pill { transition: all 0.18s cubic-bezier(0.34,1.56,0.64,1); cursor: pointer; user-select: none; -webkit-user-select: none; }
   .pill:active { transform: scale(0.9); }
   .nav-btn { background: var(--bg2); border: 1px solid var(--border2); color: var(--text2); border-radius: 7px; padding: 7px 16px; cursor: pointer; font-size: 20px; line-height: 1; font-family: var(--ff-body); transition: all 0.15s; box-shadow: 0 1px 3px var(--shadow); }
+  .nav-btn { background: rgba(255,255,255,.58); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
+  .dark .nav-btn { background: rgba(22,25,31,.72); }
   .nav-btn:active { background: var(--bg3); transform: scale(0.95); }
-  .tab { cursor: pointer; padding: 8px 13px; border-radius: 8px; font-size: 12px; font-weight: 600; transition: all 0.2s; white-space: nowrap; border: none; background: none; font-family: var(--ff-body); color: var(--text2); }
-  .tab.active { background: var(--bg2); color: var(--accent2); box-shadow: 0 1px 3px var(--shadow); }
+  .tab { cursor: pointer; padding: 8px 13px; border-radius: 8px; font-size: 12px; font-weight: 600; transition: all 0.2s; white-space: nowrap; border: 1px solid transparent; background: rgba(255,255,255,.26); font-family: var(--ff-body); color: var(--text2); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
+  .dark .tab { background: rgba(22,25,31,.58); }
+  .tab.active { background: rgba(255,255,255,.72); color: var(--accent2); box-shadow: 0 1px 3px var(--shadow); border-color: var(--border2); }
+  .dark .tab.active { background: rgba(22,25,31,.82); }
   .tab:active { transform: scale(0.95); }
-  input[type="date"], input[type="text"], textarea { font-family: var(--ff-body); font-size: 14px; border: 1px solid var(--border); border-radius: 7px; padding: 10px 12px; width: 100%; background: var(--bg2); color: var(--text); outline: none; transition: border-color 0.2s; }
+  input[type="date"], input[type="text"], textarea { font-family: var(--ff-body); font-size: 14px; border: 1px solid var(--border2); border-radius: 7px; padding: 10px 12px; width: 100%; background: rgba(255,255,255,.64); color: var(--text); outline: none; transition: border-color 0.2s; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+  .dark input[type="date"], .dark input[type="text"], .dark textarea { background: rgba(22,25,31,.72); }
   input:focus, textarea:focus { border-color: var(--accent2); box-shadow: 0 0 0 3px var(--accent-soft); }
-  .card { background: var(--bg2); border-radius: 14px; padding: 16px; box-shadow: 0 4px 18px var(--shadow); margin-bottom: 14px; border: 1px solid var(--border2); transition: background 0.3s, border-color 0.3s; position: relative; overflow: hidden; }
+  .card { background: rgba(255,255,255,.66); border-radius: 14px; padding: 16px; box-shadow: 0 12px 36px rgba(0,0,0,.12); margin-bottom: 14px; border: 1px solid var(--border2); transition: background 0.3s, border-color 0.3s; position: relative; overflow: hidden; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); }
+  .dark .card { background: rgba(22,25,31,.80); }
   .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--accent2), transparent); opacity: .85; }
   .badge { display: inline-flex; align-items: center; gap: 3px; padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: 600; letter-spacing: 0.05em; }
-  .today-btn { background: var(--bg2); border: 1px solid var(--border2); border-radius: 7px; padding: 5px 12px; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--text2); font-family: var(--ff-body); transition: all 0.15s; }
+  .today-btn { background: rgba(255,255,255,.62); border: 1px solid var(--border2); border-radius: 7px; padding: 5px 12px; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--text2); font-family: var(--ff-body); transition: all 0.15s; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
+  .dark .today-btn { background: rgba(22,25,31,.76); }
   .today-btn:active { background: var(--bg3); }
   .action-btn { width: 100%; padding: 12px; border-radius: 7px; background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; border: none; font-weight: 600; font-size: 14px; cursor: pointer; font-family: var(--ff-head); transition: all 0.2s; box-shadow: 0 4px 22px rgba(26,122,53,.24); }
   .action-btn:active { transform: scale(0.98); opacity: 0.85; }
   .share-btn { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; border: none; border-radius: 7px; padding: 12px; width: 100%; font-size: 14px; font-weight: 600; cursor: pointer; font-family: var(--ff-head); margin-top: 8px; transition: all 0.2s; box-shadow: 0 4px 22px rgba(26,122,53,.24); }
   .dark .share-btn { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; }
   .share-btn:active { transform: scale(0.98); }
-  .ios-banner { background: var(--bg2); border: 1px solid var(--danger-border); border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px; box-shadow: 0 4px 18px var(--shadow); }
+  .ios-banner { background: rgba(255,255,255,.66); border: 1px solid var(--danger-border); border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px; box-shadow: 0 12px 36px rgba(0,0,0,.12); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); }
+  .dark .ios-banner { background: rgba(22,25,31,.80); }
   .splash-panel-label {
     display:block;
     font-family: var(--ff-mono);
@@ -640,7 +653,6 @@
   <div id="app"></div>
   <footer class="tracker-shell-footer">
     <span>Padeswood Works · Shift Tracker · HeidelbergMaterials</span>
-    <span class="tracker-shell-status" id="stLicStatus">Licence active</span>
   </footer>
 </div>
 
@@ -1213,32 +1225,6 @@ function stShowError(text) {
   }
 }
 
-async function stRefreshLicenceFooter() {
-  const el = document.getElementById('stLicStatus');
-  if (!el) return;
-  try {
-    const res = await fetch(
-      ST_LIC_URL + '/rest/v1/kiln_licences?licence_key=eq.' + encodeURIComponent(ST_LICENCE_KEY) + '&select=paid,expires_at',
-      {
-        method: 'GET',
-        mode: 'cors',
-        headers: {
-          'apikey': ST_LIC_KEY,
-          'Authorization': 'Bearer ' + ST_LIC_KEY,
-          'Content-Type': 'application/json'
-        }
-      }
-    );
-    if (!res.ok) return;
-    const rows = await res.json();
-    const lic = rows && rows[0];
-    if (lic && lic.paid && lic.expires_at && new Date(lic.expires_at) >= new Date()) {
-      const exp = new Date(lic.expires_at).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
-      el.textContent = 'Licence active · expires ' + exp;
-    }
-  } catch (e) {}
-}
-
 async function stSyncThemeFromUser(user) {
   if (!user) return;
   const sharedLight = await stLoadSharedTheme(user);
@@ -1485,7 +1471,6 @@ async function initShiftTrackerSupabaseAuth() {
     });
   }
 
-  stRefreshLicenceFooter();
   await hydrateFromSession();
 }
 
