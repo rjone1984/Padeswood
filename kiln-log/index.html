@@ -3023,6 +3023,15 @@ async function buildReportContext(){
   let burnerIssues = 0, burnerNotes = 0, managerNotes = 0;
   let analystHse = 0, qualityIssues = 0, labIssues = 0, grindingIssues = 0;
   const recentLines = [];
+  const aiKnowledge = Array.isArray(_allLists.ai_knowledge) ? _allLists.ai_knowledge : [];
+
+  if (aiKnowledge.length) {
+    lines.push('');
+    lines.push('AI KNOWLEDGE BASE:');
+    aiKnowledge.slice(0, 24).forEach(function(entry, i){
+      lines.push('  ' + (i + 1) + '. ' + String(entry || '').replace(/\s+/g, ' ').trim());
+    });
+  }
 
   weeksData.forEach(function({weekKey, weekState, weekSmState, weekCaState}){
     if(!weekState && !weekSmState && !weekCaState) return;

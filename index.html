@@ -2099,6 +2099,22 @@ async function buildPlatformContext() {
     const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
     let burnerIssues = 0, burnerNotes = 0, managerNotes = 0, analystIssues = 0;
     const recentItems = [];
+    let aiKnowledge = [];
+    try {
+      const aiRes = await sb.from('kiln_lists').select('items').eq('list_name', 'ai_knowledge').maybeSingle();
+      aiKnowledge = Array.isArray(aiRes && aiRes.data && aiRes.data.items) ? aiRes.data.items : [];
+    } catch (e) {
+      console.warn('AI knowledge load failed:', e);
+    }
+
+    if (aiKnowledge.length) {
+      lines.push('');
+      lines.push('AI KNOWLEDGE BASE:');
+      aiKnowledge.slice(0, 24).forEach(function(entry, i) {
+        lines.push('  ' + (i + 1) + '. ' + String(entry || '').replace(/\s+/g, ' ').trim());
+      });
+    }
+
     if (kilnAllowed) {
       rows.forEach(function(r) {
         if (!r.data) return;
