@@ -536,6 +536,27 @@ tbody tr:hover{background:var(--sf2);}
   background:var(--sf3);border:1px solid var(--bd);border-radius:20px;
   color:var(--tx2);cursor:pointer;white-space:nowrap}
 .ai-suggestion:hover{border-color:var(--ac3);color:var(--ac3)}
+#isoAiPanel{
+  background:
+    radial-gradient(120% 90% at 100% 0%, rgba(139,92,246,.12), transparent 48%),
+    linear-gradient(180deg, rgba(255,255,255,.03), transparent 24%),
+    var(--sf) !important;
+  box-shadow:-24px 0 70px rgba(0,0,0,.18);
+  backdrop-filter:blur(22px);
+  -webkit-backdrop-filter:blur(22px);
+}
+#isoAiPanel > div:first-child{
+  background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,0));
+}
+#aiHistory{scrollbar-gutter:stable;}
+#isoAiPanel textarea{
+  background:var(--sf2) !important;
+  border-color:var(--bd) !important;
+  border-radius:16px !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+}
+#isoAiPanel button[id="aiSendBtn"]{box-shadow:0 10px 20px rgba(139,92,246,.24);}
+#aiSuggestions .ai-suggestion:hover{transform:translateY(-1px);}
 
 #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(12px);
   background:var(--sf3);color:var(--tx);border:1px solid var(--bd3);
@@ -2722,8 +2743,8 @@ document.addEventListener('DOMContentLoaded',function(){
 window.addEventListener('load', async function(){
   sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     auth: {
-      persistSession: false,
-      autoRefreshToken: false,
+      persistSession: true,
+      autoRefreshToken: true,
       detectSessionInUrl: false
     }
   });

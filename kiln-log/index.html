@@ -369,11 +369,25 @@ body::before {
   border-radius:var(--rsm); margin-top:6px; overflow:hidden;
   display:none; box-shadow:var(--e3);
 }
-.reports-wrap { max-width:800px; margin:0 auto; padding:24px 0 40px; }
-.reports-header { margin-bottom:24px; }
-.reports-title { font-family:var(--ff-head); font-size:20px; font-weight:700; color:var(--tx); margin-bottom:4px; }
-.reports-sub { font-size:12px; color:var(--tx3); font-family:var(--ff-mono); }
-.reports-scope-row { display:flex; gap:6px; margin-bottom:16px; flex-wrap:wrap; align-items:center; }
+.reports-wrap {
+  max-width:840px;
+  margin:0 auto;
+  padding:24px;
+  background:
+    radial-gradient(120% 90% at 100% 0%, rgba(139,92,246,.08), transparent 46%),
+    linear-gradient(180deg, rgba(255,255,255,.03), transparent 28%),
+    var(--sf);
+  border:1px solid var(--bd);
+  border-radius:20px;
+  box-shadow:var(--e3);
+}
+.reports-header { margin-bottom:20px; }
+.reports-title { font-family:var(--ff-head); font-size:22px; font-weight:800; color:var(--tx); margin-bottom:6px; letter-spacing:-.02em; }
+.reports-sub { font-size:12px; color:var(--tx3); font-family:var(--ff-mono); line-height:1.5; }
+.reports-scope-row {
+  display:flex; gap:6px; margin-bottom:16px; flex-wrap:wrap; align-items:center;
+  padding:10px 12px; background:var(--sf2); border:1px solid var(--bd); border-radius:14px;
+}
 .reports-scope-label { font-size:10px; font-family:var(--ff-mono); color:var(--tx3); margin-right:2px; }
 .reports-prompt-wrap { position:relative; margin-bottom:12px; }
 .reports-prompt { width:100%; background:var(--sf); border:1px solid var(--bd); border-radius:var(--r);
@@ -393,7 +407,7 @@ body::before {
   background:var(--sf2); border:1px solid var(--bd); border-radius:20px; cursor:pointer;
   color:var(--tx2); transition:all .12s; }
 .reports-suggestion:hover { border-color:var(--ac); color:var(--ac); background:var(--acd1); }
-.reports-history { display:flex; flex-direction:column; gap:16px; }
+.reports-history { display:flex; flex-direction:column; gap:14px; }
 .reports-message { display:flex; flex-direction:column; gap:4px; }
 .reports-message-user { align-items:flex-end; }
 .reports-bubble { padding:12px 16px; border-radius:var(--r); font-size:13px; line-height:1.7;
@@ -412,6 +426,30 @@ body::before {
 .reports-thinking-dot:nth-child(3){ animation-delay:.4s; }
 @keyframes spin { to { transform: rotate(360deg) } }
 @keyframes thinking { 0%,60%,100%{transform:translateY(0);opacity:.4} 30%{transform:translateY(-5px);opacity:1} }
+
+@media(max-width:640px) {
+  .reports-wrap {
+    padding:18px 14px;
+    border-radius:16px;
+  }
+  .reports-header {
+    margin-bottom:16px;
+  }
+  .reports-title {
+    font-size:19px;
+  }
+  .reports-scope-row {
+    padding:8px 10px;
+    margin-bottom:14px;
+  }
+  .reports-prompt {
+    min-height:74px;
+    font-size:16px;
+  }
+  .reports-bubble-user {
+    max-width:90%;
+  }
+}
 
 .search-scope-btn {
   padding:4px 10px; font-size:10px; font-family:var(--ff-mono); font-weight:600;
@@ -969,6 +1007,8 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
 </head>
 <body>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <div id="licenceOverlay" style="position:fixed;inset:0;background:var(--bg);z-index:10000;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.3s ease">
   <div style="text-align:center;max-width:420px;padding:0 24px">
     <div style="width:52px;height:52px;background:linear-gradient(135deg,var(--ac) 0%,var(--ac3) 100%);border-radius:14px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center">
@@ -1399,8 +1439,56 @@ let lightMode = false;
 let currentDay = 'Monday';
 let weekStart  = null;
 let currentManageTab = 'equipment';
+let sb = null;
 let _sbSession = null;
 let _sbRefreshToken = null;
+
+function setSharedSession(session){
+  _sbSession = session && session.access_token ? session.access_token : null;
+  _sbRefreshToken = session && session.refresh_token ? session.refresh_token : null;
+}
+
+function ensureSharedClient(){
+  if(sb) return sb;
+  sb = supabase.createClient(SB_URL, SB_KEY, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: false
+    }
+  });
+  sb.auth.onAuthStateChange(function(event, session){
+    if(session){
+      setSharedSession(session);
+      return;
+    }
+    _sbSession = null;
+    _sbRefreshToken = null;
+  });
+  return sb;
+}
+
+async function restoreKilnSharedSession(){
+  ensureSharedClient();
+  const r = await sb.auth.getSession();
+  const session = r && r.data ? r.data.session : null;
+  if(!session || !session.user || !session.user.id) return false;
+  setSharedSession(session);
+
+  const uid = session.user.id;
+  const userRes = await fetch(SB_URL + '/rest/v1/kiln_users?auth_user_id=eq.' + uid + '&select=*&limit=1', {
+    headers: {
+      'apikey': SB_KEY,
+      'Authorization': 'Bearer ' + _sbSession
+    }
+  });
+  const userRows = await userRes.json();
+  if(!userRows || !userRows.length) return false;
+  const match = userRows[0];
+  if(match.shift_log_access === false && !match.is_admin) return false;
+  await _applyUserSession(match);
+  return true;
+}
 
 const mkShift = () => ({burner:'',analyst:'',shiftManager:'',shift:'',notes:'',entries:[{equipment:'',issue:'',status:'',statusBy:'',statusAt:''},{equipment:'',issue:'',status:'',statusBy:'',statusAt:''},{equipment:'',issue:'',status:'',statusAt:'',statusBy:''},{equipment:'',issue:'',status:'',statusBy:'',statusAt:''},{equipment:'',issue:'',status:'',statusBy:'',statusAt:''}]});
 const mkDay   = () => ({notes:'',shift1:mkShift(),shift2:mkShift()});
@@ -1454,17 +1542,10 @@ async function doLogin(){
   }
   document.getElementById('splashErr').textContent = '';
 
-  const authRes = await fetch(SB_URL + '/auth/v1/token?grant_type=password', {
-    method: 'POST',
-    headers: {
-      'apikey': SB_KEY,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ email, password: p })
-  });
-  const authData = await authRes.json();
-
-  if(!authRes.ok || !authData.access_token){
+  ensureSharedClient();
+  const auth = await sb.auth.signInWithPassword({ email, password: p });
+  const session = auth && auth.data ? auth.data.session : null;
+  if(auth.error || !session || !session.access_token || !session.user || !session.user.id){
     _loginAttempts++;
     if(_loginAttempts >= 5){ _loginLockUntil = Date.now() + 30000; _loginAttempts = 0; }
     document.getElementById('splashErr').textContent = 'Invalid username or password.';
@@ -1473,10 +1554,8 @@ async function doLogin(){
 
   _loginAttempts = 0; _loginLockUntil = 0;
 
-  _sbSession = authData.access_token;
-  _sbRefreshToken = authData.refresh_token;
-
-  const uid = authData.user.id;
+  setSharedSession(session);
+  const uid = session.user.id;
   const userRes = await fetch(SB_URL + '/rest/v1/kiln_users?auth_user_id=eq.' + uid + '&select=*&limit=1', {
     headers: {
       'apikey': SB_KEY,
@@ -1486,18 +1565,16 @@ async function doLogin(){
   const userRows = await userRes.json();
   if(!userRows || !userRows.length){
     document.getElementById('splashErr').textContent = 'Account not found. Please contact your administrator.';
-    _sbSession = null;
-      _sbSession = null;
-      _sbRefreshToken = null;
+    setSharedSession(null);
+    sb.auth.signOut().catch(function(){});
       return;
   }
   const match = userRows[0];
 
   if(match.shift_log_access === false && !match.is_admin){
     document.getElementById('splashErr').textContent = 'You do not have access to Shift Log. Please contact your administrator.';
-    _sbSession = null;
-      _sbSession = null;
-      _sbRefreshToken = null;
+    setSharedSession(null);
+    sb.auth.signOut().catch(function(){});
       return;
   }
 
@@ -1520,9 +1597,7 @@ async function _applyUserSession(match){
     document.getElementById('splashErr').textContent = 'You do not have access to Shift Log. Please contact your administrator.';
     document.getElementById('splash').style.display = 'flex';
     document.getElementById('app').style.display = 'none';
-    _sbSession = null;
-    _sbSession = null;
-    _sbRefreshToken = null;
+    setSharedSession(null);
     return;
   }
 
@@ -1558,19 +1633,10 @@ function doLogout(){
   clearTimeout(_sbSaveTimer);
   _sbSaveTimer = null;
 
-  if(_sbSession){
-    fetch(SB_URL + '/auth/v1/logout', {
-      method: 'POST',
-      headers: {
-        'apikey': SB_KEY,
-        'Authorization': 'Bearer ' + _sbSession
-      }
-    }).catch(function(){});
+  if(sb){
+    sb.auth.signOut().catch(function(){});
   }
-  _sbSession = null;
-  _sbRefreshToken = null;
-  _sbSession = null;
-  _sbRefreshToken = null;
+  setSharedSession(null);
   Object.keys(localStorage).forEach(function(k){
     if(k.startsWith('sb-') || k.startsWith('supabase')) localStorage.removeItem(k);
   });
@@ -5120,7 +5186,8 @@ function openPrintOverview(note, win){
 }
 
 
-window.addEventListener("load",()=>{
+window.addEventListener("load", async()=>{
+  ensureSharedClient();
   document.getElementById("splashUser").focus();
   document.getElementById("manageModal").addEventListener("click",function(e){if(e.target===this)closeManageModal();});
   document.getElementById("printModal").addEventListener("click",function(e){if(e.target===this)closePrintModal();});
@@ -5129,6 +5196,8 @@ window.addEventListener("load",()=>{
   if(wd) wd.addEventListener('click', function(){ try{ this.showPicker(); }catch(e){} });
   checkLicence().then(async function(ok){
     if(!ok) return;
+    const restored = await restoreKilnSharedSession();
+    if(restored) return;
     document.getElementById('splash').style.display = 'flex';
     animateSplashLoader();
   });
