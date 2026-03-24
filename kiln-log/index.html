@@ -2853,7 +2853,7 @@ async function loadGroqKey(){
   GROQ_KEY = null;
   console.warn('AI service disabled in browser build.');
 }
-const AI_PROXY_URL = 'https://xnkwrkoxvgptobnmekgv.supabase.co/functions/v1/ai-proxy';
+const AI_PROXY_URL = 'https://xnkwrkoxvgptobnmekgv.supabase.co/functions/v1/hyper-task';
 async function callKilnAiProxy(question, summary) {
   if (!_sbSession) throw new Error('Please sign in again.');
   const res = await fetch(AI_PROXY_URL, {

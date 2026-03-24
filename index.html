@@ -1943,7 +1943,7 @@ async function loadPlatformGroqKey() {
   _platformGroqKey = null;
   console.warn('AI service disabled in browser build.');
 }
-const AI_PROXY_URL = 'https://xnkwrkoxvgptobnmekgv.supabase.co/functions/v1/ai-proxy';
+const AI_PROXY_URL = 'https://xnkwrkoxvgptobnmekgv.supabase.co/functions/v1/hyper-task';
 async function callAiProxy(question, summary) {
   const sessionResult = await sb.auth.getSession();
   const token = sessionResult && sessionResult.data && sessionResult.data.session && sessionResult.data.session.access_token;
