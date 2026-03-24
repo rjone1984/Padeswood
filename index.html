@@ -1191,7 +1191,13 @@ async function loadUserTheme() {
 
 
 window.addEventListener('load', function() {
-  sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false
+    }
+  });
   if (window.location.hash && window.location.hash.includes('access_token')) {
     handleEmailConfirmation();
   } else {
@@ -1934,16 +1940,27 @@ function closeAiPanel() {
   document.getElementById('aiPanel').style.transform = 'translateX(100%)';
 }
 async function loadPlatformGroqKey() {
-  try {
-    const {data:sess} = await sb.auth.getSession();
-    const token = (sess && sess.session && sess.session.access_token) || SUPABASE_ANON_KEY;
-    const res = await fetch(SUPABASE_URL + '/rest/v1/kiln_config?key=eq.groq_api_key&select=value', {
-      headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + token }
-    });
-    const rows = await res.json();
-    if (rows && rows.length && rows[0].value) _platformGroqKey = rows[0].value;
-    else console.warn('Groq key not found in kiln_config');
-  } catch(e) { console.warn('Could not load Groq key:', e); }
+  _platformGroqKey = null;
+  console.warn('AI service disabled in browser build.');
+}
+const AI_PROXY_URL = 'https://xnkwrkoxvgptobnmekgv.supabase.co/functions/v1/ai-proxy';
+async function callAiProxy(question, summary) {
+  const sessionResult = await sb.auth.getSession();
+  const token = sessionResult && sessionResult.data && sessionResult.data.session && sessionResult.data.session.access_token;
+  if (!token) throw new Error('Please sign in again.');
+  const res = await fetch(AI_PROXY_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + token
+    },
+    body: JSON.stringify({ app: 'platform', question: question, summary: summary })
+  });
+  const raw = await res.text();
+  let data = {};
+  try { data = raw ? JSON.parse(raw) : {}; } catch (e) {}
+  if (!res.ok) throw new Error((data && data.error) || ('AI request failed (' + res.status + ')'));
+  return data.reply || 'No response received.';
 }
 function setAiScope(btn, scope) {
   document.querySelectorAll('.ai-scope-btn').forEach(b=>b.classList.remove('active'));
@@ -2126,34 +2143,26 @@ async function sendAiReport() {
   const sendBtn  = document.getElementById('aiSendBtn');
   const q = promptEl.value.trim();
   if (!q) return;
-  if (!_platformGroqKey) {
-    await loadPlatformGroqKey();
-    if (!_platformGroqKey) { alert('AI service unavailable — Groq key not configured.'); return; }
-  }
-  promptEl.value = ''; sendBtn.disabled = true;
+  promptEl.value = '';
+  sendBtn.disabled = true;
   _aiHistory.push({role:'user',content:q});
   renderAiHistory();
   const hist = document.getElementById('aiHistory');
-  hist.innerHTML += '<div style="display:flex" id="aiThinking"><div class="ai-thinking"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div><span style="margin-left:6px;font-size:12px;color:var(--tx3);font-family:var(--ff-mono)">Analysing…</span></div></div>';
+  hist.innerHTML += '<div style="display:flex" id="aiThinking"><div class="ai-thinking"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div><span style="margin-left:6px;font-size:12px;color:var(--tx3);font-family:var(--ff-mono)">Analysing...</span></div></div>';
   hist.scrollTop = hist.scrollHeight;
   try {
     const context = await buildPlatformContext();
-    const systemPrompt = 'You are an expert AI assistant for Padeswood Works (HeidelbergMaterials cement plant, Wales). You have access only to the provided platform summary. Some app sections may be omitted because the current user does not have access to them. Answer concisely from the summary only. If something is not present in the summary, say it is not recorded here. Do not refer to individuals by name — use their role instead.';
-    const dataMsg = {role:'user',content:'Here is the platform summary. Only answer from this data.\n\n'+context};
-    const messages = [{role:'system',content:systemPrompt},dataMsg,..._aiHistory];
-    const res = await fetch('https://api.groq.com/openai/v1/chat/completions',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+_platformGroqKey},
-      body:JSON.stringify({model:'llama-3.3-70b-versatile',max_tokens:1200,messages})
-    });
-    const data = await res.json();
-    const reply = data.choices?.[0]?.message?.content || 'No response received.';
+    const reply = await callAiProxy(q, context);
+    document.getElementById('aiThinking')?.remove();
     _aiHistory.push({role:'assistant',content:reply});
+    renderAiHistory();
   } catch(e) {
-    _aiHistory.push({role:'assistant',content:'Error connecting to AI service. Please try again.'});
+    document.getElementById('aiThinking')?.remove();
+    _aiHistory.push({role:'assistant',content:'Error: ' + (e && e.message ? e.message : 'AI failure')});
+    renderAiHistory();
+  } finally {
+    sendBtn.disabled = false;
   }
-  sendBtn.disabled = false;
-  renderAiHistory();
 }
 
 function showPlatformToast(msg) {

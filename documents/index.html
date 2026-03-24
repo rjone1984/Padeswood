@@ -1709,7 +1709,13 @@ document.addEventListener('keydown',function(e){
 });
 
 window.addEventListener('load',function(){
-  sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false
+    }
+  });
   checkLicence();
 });
 
@@ -1717,16 +1723,27 @@ let _docGroqKey = null;
 let _docAiHistory = [];
 
 async function loadDocGroqKey() {
-  try {
-    const {data:sess} = await sb.auth.getSession();
-    const token = (sess && sess.session && sess.session.access_token) || SUPABASE_ANON_KEY;
-    const res = await fetch(SUPABASE_URL + '/rest/v1/kiln_config?key=eq.groq_api_key&select=value', {
-      headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + token }
-    });
-    const rows = await res.json();
-    if (rows && rows.length && rows[0].value) _docGroqKey = rows[0].value;
-    else console.warn('Groq key not found in kiln_config');
-  } catch(e) { console.warn('Could not load Groq key:', e); }
+  _docGroqKey = null;
+  console.warn('AI service disabled in browser build.');
+}
+const AI_PROXY_URL = 'https://xnkwrkoxvgptobnmekgv.supabase.co/functions/v1/ai-proxy';
+async function callDocAiProxy(question, summary) {
+  const sessionResult = await sb.auth.getSession();
+  const token = sessionResult && sessionResult.data && sessionResult.data.session && sessionResult.data.session.access_token;
+  if (!token) throw new Error('Please sign in again.');
+  const res = await fetch(AI_PROXY_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + token
+    },
+    body: JSON.stringify({ app: 'documents', question: question, summary: summary })
+  });
+  const raw = await res.text();
+  let data = {};
+  try { data = raw ? JSON.parse(raw) : {}; } catch (e) {}
+  if (!res.ok) throw new Error((data && data.error) || ('AI request failed (' + res.status + ')'));
+  return data.reply || 'No response received.';
 }
 
 function openDocAiPanel() {
@@ -1836,46 +1853,26 @@ async function sendDocAiReport() {
   const sendBtn  = document.getElementById('docAiSendBtn');
   const q = promptEl.value.trim();
   if (!q) return;
-  if (!_docGroqKey) {
-    await loadDocGroqKey();
-    if (!_docGroqKey) { alert('AI service unavailable — Groq key not configured.'); return; }
-  }
-  promptEl.value = ''; sendBtn.disabled = true;
+  promptEl.value = '';
+  sendBtn.disabled = true;
   _docAiHistory.push({role:'user', content:q});
   renderDocAiHistory();
   const hist = document.getElementById('docAiHistory');
-  hist.innerHTML += '<div style="display:flex" id="docAiThinking"><div class="ai-thinking"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div><span style="margin-left:6px;font-size:12px;color:var(--tx3);font-family:var(--ff-mono)">Analysing…</span></div></div>';
+  hist.innerHTML += '<div style="display:flex" id="docAiThinking"><div class="ai-thinking"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div><span style="margin-left:6px;font-size:12px;color:var(--tx3);font-family:var(--ff-mono)">Analysing...</span></div></div>';
   hist.scrollTop = hist.scrollHeight;
   try {
     const context = await buildDocContext();
-    const systemPrompt = 'You are an expert AI assistant for Padeswood Works (HeidelbergMaterials cement plant, Wales). You have access to the documents database for risk assessments and audit history. COSHH is managed externally in Sypol. Answer questions concisely and only from the provided data.';
-    const dataMsg = {role:'user', content:'Here is the documents data:\n\n'+context+'\n\nOnly answer from this data.'};
-    const messages = [{role:'system',content:systemPrompt}, dataMsg, ..._docAiHistory];
-    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+_docGroqKey},
-      body:JSON.stringify({model:'llama-3.3-70b-versatile',max_tokens:1200,messages})
-    });
-    const data = await res.json();
-    if(data.error){
-      document.getElementById('docAiThinking')?.remove();
-      const errMsg = data.error.message || JSON.stringify(data.error);
-      console.error('Groq API error:', data.error);
-      _docAiHistory.push({role:'assistant', content:'API error: '+errMsg});
-      renderDocAiHistory();
-      sendBtn.disabled = false;
-      return;
-    }
-    const reply = data.choices?.[0]?.message?.content || 'No response received.';
+    const reply = await callDocAiProxy(q, context);
     document.getElementById('docAiThinking')?.remove();
     _docAiHistory.push({role:'assistant', content:reply});
     renderDocAiHistory();
-  } catch(e) {
+  } catch (e) {
     document.getElementById('docAiThinking')?.remove();
-    _docAiHistory.push({role:'assistant', content:'Error: '+e.message});
+    _docAiHistory.push({role:'assistant', content:'Error: ' + (e && e.message ? e.message : 'AI failure')});
     renderDocAiHistory();
+  } finally {
+    sendBtn.disabled = false;
   }
-  sendBtn.disabled = false;
 }
 
 document.addEventListener('DOMContentLoaded', function() {

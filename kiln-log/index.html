@@ -2847,13 +2847,28 @@ async function navigateToResult(weekKey, day){
 }
 
 let GROQ_KEY = null;
-const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
+const GROQ_URL = null;
 
 async function loadGroqKey(){
-  try {
-    const rows = await sbFetch('/rest/v1/kiln_config?key=eq.groq_api_key&select=value');
-    if(rows && rows.length) GROQ_KEY = rows[0].value;
-  } catch(e){ console.warn('Could not load Groq key:', e); }
+  GROQ_KEY = null;
+  console.warn('AI service disabled in browser build.');
+}
+const AI_PROXY_URL = 'https://xnkwrkoxvgptobnmekgv.supabase.co/functions/v1/ai-proxy';
+async function callKilnAiProxy(question, summary) {
+  if (!_sbSession) throw new Error('Please sign in again.');
+  const res = await fetch(AI_PROXY_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + _sbSession
+    },
+    body: JSON.stringify({ app: 'kiln-log', question: question, summary: summary })
+  });
+  const raw = await res.text();
+  let data = {};
+  try { data = raw ? JSON.parse(raw) : {}; } catch (e) {}
+  if (!res.ok) throw new Error((data && data.error) || ('AI request failed (' + res.status + ')'));
+  return data.reply || 'No response received.';
 }
 let _reportScope = 'week';
 let _reportHistory = []; // {role, content}
@@ -3950,98 +3965,25 @@ async function sendReport(){
   const sendBtn = document.getElementById('reportSendBtn');
   const q = promptEl?.value.trim();
   if(!q) return;
-  if(!GROQ_KEY){
-    await loadGroqKey();
-    if(!GROQ_KEY){ alert('AI service unavailable — could not load configuration.'); return; }
-  }
-
   promptEl.value = '';
   sendBtn.disabled = true;
-
   _reportHistory.push({role:'user', content:q});
-
   const historyEl = document.getElementById('reportHistory');
   historyEl.innerHTML = _reportHistory.map(renderReportMessage).join('');
-  historyEl.innerHTML += `<div class="reports-message" id="thinkingMsg">
-    <div class="reports-thinking">
-      <div class="reports-thinking-dot"></div>
-      <div class="reports-thinking-dot"></div>
-      <div class="reports-thinking-dot"></div>
-      <span style="margin-left:4px">Analysing shift data...</span>
-    </div>
-  </div>`;
+  historyEl.innerHTML += '<div class="reports-message" id="thinkingMsg"><div class="reports-thinking"><div class="reports-thinking-dot"></div><div class="reports-thinking-dot"></div><div class="reports-thinking-dot"></div><span style="margin-left:4px">Analysing shift data...</span></div></div>';
   historyEl.scrollIntoView({behavior:'smooth', block:'end'});
-
   try {
     const context = await buildReportContext();
-    const systemPrompt = `You are an expert AI assistant specialising in cement plant operations, embedded in a shift logging system at a HeidelbergMaterials cement plant (Padeswood, Wales).
-
-CEMENT PLANT KNOWLEDGE:
-- Rotary kilns produce clinker by burning fuel (coal/petcoke) to heat raw meal (limestone, clay, iron ore) to ~1450°C
-- Key systems: preheater tower (cyclone stages), calciner, rotary kiln (shell/tyres/rollers/thrust), clinker cooler (grate/hammer), ID/PA/SA fans, raw mill, coal mill, finish mills, ESP/bag filters, silos
-- Common kiln problems: ring formation, coating loss, red spot, tyre/roller wear, kiln crank, cyclone blockages, snowman in cooler, refractory failure
-- Cement grinding: ball mills or VRMs producing OPC (CEM I), SRPC, CEM II, CEM III — key quality parameters: Blaine fineness, 45μm residue, SO3 content
-- Lab/quality parameters: LSF (Lime Saturation Factor), SM (Silica Modulus), AM (Alumina Modulus), free lime, C3S/C2S/C3A/C4AF clinker phases, strength (1/3/7/28 day)
-- HSE categories: near miss, first aid case, LTI (Lost Time Injury), environmental incident, dangerous occurrence, toolbox talk
-- Shift structure: Day Shift and Night Shift (12-hour), logged by kiln burners, shift managers, and cement analysts
-- Shift rotation labels: A, B, C, D, E — these rotate through the week. Each entry includes the shift label (e.g. 'Shift: E') so you can filter by shift team when asked
-
-BEHAVIOUR — CRITICAL RULES:
-- ONLY answer from the shift log summary and plant knowledge base provided. Never invent, assume, or infer anything not explicitly recorded.
-- If something is not in the data, say "This is not recorded in the log" — do not guess.
-- Be concise and direct. No waffle. Bullet points where appropriate.
-- Use cement industry terminology naturally where relevant.
-- When asked about a specific shift (e.g. E shift), filter strictly to entries with that shift label.
-- If asked for a summary, cover only what is actually recorded: Equipment issues → Quality → HSE → any SM/CA notes.
-- Never refer to specific individuals by name — refer to roles only (e.g. "recorded during day shift").
-- If the log data is empty or a section has nothing recorded, state that clearly rather than padding the response.`;
-
-    const knowledgeEntries = (_allLists.ai_knowledge || []);
-    const knowledgeBlock = knowledgeEntries.length
-      ? '\n\nPLANT KNOWLEDGE BASE (facts about this specific plant — use these when relevant):\n'
-        + knowledgeEntries.map(function(e,i){ return (i+1)+'. '+e; }).join('\n')
-      : '';
-
-    const dataMessage = {
-      role: 'user',
-      content: 'Here is the shift log summary and plant knowledge base you must use to answer questions. '
-        + 'Only refer to information explicitly present in this data. '
-        + 'If something is not recorded, say so clearly — do not guess or infer.\n\n'
-        + context + knowledgeBlock
-    };
-    const messages = [
-      {role:'system', content: systemPrompt},
-      dataMessage,
-      ..._reportHistory
-    ];
-
-    const res = await fetch(GROQ_URL, {
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+GROQ_KEY},
-      body: JSON.stringify({model:'llama-3.3-70b-versatile', max_tokens:1200, messages})
-    });
-    const data = await res.json();
-    const reply = data.choices?.[0]?.message?.content || 'No response received.';
+    const reply = await callKilnAiProxy(q, context);
+    document.getElementById('thinkingMsg')?.remove();
     _reportHistory.push({role:'assistant', content:reply});
-  } catch(e){
-    _reportHistory.push({role:'assistant', content:'Error connecting to Groq. Please check your connection and try again.'});
+  } catch(e) {
+    document.getElementById('thinkingMsg')?.remove();
+    _reportHistory.push({role:'assistant', content:'Error: ' + (e && e.message ? e.message : 'AI failure')});
   }
-
   sendBtn.disabled = false;
   historyEl.innerHTML = _reportHistory.map(renderReportMessage).join('');
   historyEl.scrollIntoView({behavior:'smooth', block:'end'});
-  const pa = document.getElementById('reportPrompt');
-  if(pa){ pa.focus(); }
-  const scopeRow = document.querySelector('.reports-scope-row');
-  if(scopeRow && !document.getElementById('clearConvoBtn')){
-    const clr = document.createElement('button');
-    clr.id = 'clearConvoBtn';
-    clr.className = 'btn btn-ghost';
-    clr.style = 'margin-left:auto;font-size:11px;padding:4px 10px;height:auto';
-    clr.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg> Clear conversation';
-    clr.onclick = clearReportHistory;
-    scopeRow.appendChild(clr);
-  }
 }
 
 function clearReportHistory(){
@@ -4742,10 +4684,11 @@ async function sbLoadPasswords(){
 
 async function sbSavePassword(username, password){
   try {
+    const passwordHash = await hashPassword(password);
     await sbFetch('/rest/v1/kiln_passwords', {
       method: 'POST',
       headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
-      body: JSON.stringify({ username, password_hash: password, updated_at: new Date().toISOString() })
+      body: JSON.stringify({ username, password_hash: passwordHash, updated_at: new Date().toISOString() })
     });
     return true;
   } catch(e){

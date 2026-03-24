@@ -2463,12 +2463,27 @@ async function loadUserTheme(){
 (function(){ const s=readStoredThemePref(); if(s){applyTheme(s==='light');return;} applyTheme(new Date().getHours()>=7&&new Date().getHours()<18); })();
 
 async function loadGroqKey(){
-  try{
-    const {data:sess}=await sb.auth.getSession();
-    const token=(sess&&sess.session&&sess.session.access_token)||SUPABASE_ANON_KEY;
-    const res=await fetch(SUPABASE_URL+'/rest/v1/kiln_config?key=eq.groq_api_key&select=value',{headers:{'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+token}});
-    const rows=await res.json(); if(rows&&rows.length&&rows[0].value) _groqKey=rows[0].value;
-  }catch(e){ console.warn('Could not load Groq key:',e); }
+  _groqKey = null;
+  console.warn('AI service disabled in browser build.');
+}
+const AI_PROXY_URL = 'https://xnkwrkoxvgptobnmekgv.supabase.co/functions/v1/ai-proxy';
+async function callIsolationAiProxy(question, summary) {
+  const sessionResult = await sb.auth.getSession();
+  const token = sessionResult && sessionResult.data && sessionResult.data.session && sessionResult.data.session.access_token;
+  if (!token) throw new Error('Please sign in again.');
+  const res = await fetch(AI_PROXY_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + token
+    },
+    body: JSON.stringify({ app: 'isolation', question: question, summary: summary })
+  });
+  const raw = await res.text();
+  let data = {};
+  try { data = raw ? JSON.parse(raw) : {}; } catch (e) {}
+  if (!res.ok) throw new Error((data && data.error) || ('AI request failed (' + res.status + ')'));
+  return data.reply || 'No response received.';
 }
 function openAiPanel(){
   document.getElementById('isoAiOverlay').style.display='block';
@@ -2664,12 +2679,13 @@ async function buildAiContext(question){
 async function sendAiMessage(){
   const promptEl=document.getElementById('aiPrompt'); const sendBtn=document.getElementById('aiSendBtn');
   const q=promptEl.value.trim(); if(!q) return;
-  if(!_groqKey){ await loadGroqKey(); if(!_groqKey){ alert('AI unavailable — Groq key not configured.'); return; } }
   document.getElementById('aiSuggestions').style.display='none';
-  promptEl.value=''; sendBtn.disabled=true;
-  _aiHistory.push({role:'user',content:q}); renderAiHistory();
+  promptEl.value='';
+  sendBtn.disabled=true;
+  _aiHistory.push({role:'user',content:q});
+  renderAiHistory();
   const hist=document.getElementById('aiHistory');
-  hist.innerHTML+=`<div style="display:flex" id="aiThinking"><div class="ai-thinking"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div><span style="margin-left:6px;font-size:12px;color:var(--tx3);font-family:var(--ff-mono)">Analysing…</span></div></div>`;
+  hist.innerHTML += '<div style="display:flex" id="aiThinking"><div class="ai-thinking"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div><span style="margin-left:6px;font-size:12px;color:var(--tx3);font-family:var(--ff-mono)">Analysing...</span></div></div>';
   hist.scrollTop=hist.scrollHeight;
   try{
     const direct = await matrixAiDirectLookup(q);
@@ -2677,33 +2693,20 @@ async function sendAiMessage(){
       document.getElementById('aiThinking')?.remove();
       _aiHistory.push({role:'assistant',content:direct});
       renderAiHistory();
-      sendBtn.disabled=false;
       return;
     }
-    const context=await buildAiContext(q);
-    const systemPrompt = 'You are an expert AI assistant for Padeswood Works (HeidelbergMaterials cement plant, Wales). You help with isolation matrix, equipment isolation procedures, and work area information. If the data contains a work item, always answer with the required isolation equipment list and mention the equipment codes and names. If the answer is not in the data, say so clearly. Answer concisely and avoid guessing.';
-    const dataMsg={role:'user',content:'Here is the isolation matrix data:\n\n'+context+'\n\nOnly answer from this data. When a work item has required isolations, list them explicitly.'};
-    const dataAck={role:'assistant',content:'Understood. I will only answer from the isolation matrix data provided.'};
-    const messages=[{role:'system',content:systemPrompt},dataMsg,dataAck,..._aiHistory];
-    const res=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+_groqKey},body:JSON.stringify({model:'llama-3.3-70b-versatile',max_tokens:900,messages})});
-    const raw = await res.text();
-    let data = {};
-    try{ data = raw ? JSON.parse(raw) : {}; }catch(parseErr){ throw new Error('Invalid AI response: ' + (raw ? raw.slice(0,160) : 'empty body')); }
-    if(!res.ok){
-      throw new Error((data && data.error && (data.error.message || data.error)) ? (data.error.message || data.error) : `Groq request failed (${res.status})`);
-    }
-    if(data.error){
-      throw new Error(data.error.message || 'Groq returned an error');
-    }
-    const reply = String(data.choices?.[0]?.message?.content || '').trim();
-    if(!reply) throw new Error('No response received from the AI service.');
+    const context = await buildAiContext(q);
+    const reply = await callIsolationAiProxy(q, context);
     document.getElementById('aiThinking')?.remove();
-    _aiHistory.push({role:'assistant',content:reply}); renderAiHistory();
+    _aiHistory.push({role:'assistant',content:reply});
+    renderAiHistory();
   }catch(e){
     document.getElementById('aiThinking')?.remove();
-    _aiHistory.push({role:'assistant',content:'Error: '+(e && e.message ? e.message : 'Unknown AI failure')}); renderAiHistory();
+    _aiHistory.push({role:'assistant',content:'Error: ' + (e && e.message ? e.message : 'AI failure')});
+    renderAiHistory();
+  } finally {
+    sendBtn.disabled=false;
   }
-  sendBtn.disabled=false;
 }
 
 document.addEventListener('keydown',function(e){
@@ -2717,25 +2720,13 @@ document.addEventListener('DOMContentLoaded',function(){
 });
 
 window.addEventListener('load', async function(){
-  sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-  const savedSession = sessionStorage.getItem('kbl_session');
-  if(savedSession){
-    try{
-      const {data, error} = await sb.auth.setSession({
-        access_token:  savedSession,
-        refresh_token: sessionStorage.getItem('kbl_refresh') || ''
-      });
-      if(!error && data && data.user){
-        currentUser = data.user;
-        document.getElementById('licenceOverlay').style.display = 'none';
-        loadProfileAndLaunch();
-        return;
-      }
-    } catch(e){
-      console.warn('Session restore failed:', e.message);
+  sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false
     }
-  }
+  });
   checkLicence();
 });
 
