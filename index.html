@@ -70,6 +70,10 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
 ::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:3px}
 ::-webkit-scrollbar-thumb:hover{background:var(--bd3)}
 @keyframes spin{to{transform:rotate(360deg)}}
+@keyframes cardGlowPulse{
+  0%,100%{opacity:.16;transform:scale(1)}
+  50%{opacity:.34;transform:scale(1.004)}
+}
 
 #licenceOverlay{position:fixed;inset:0;background:var(--bg);z-index:10000;
   display:flex;align-items:center;justify-content:center;}
@@ -155,8 +159,12 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
   box-shadow:0 16px 42px rgba(0,0,0,.14);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);}
 .app-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
   background:linear-gradient(90deg,transparent,var(--ac3),transparent);opacity:0;transition:opacity .22s;}
+.app-card::after{content:'';position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;opacity:.2;
+  box-shadow:0 0 0 1px rgba(46,204,92,.16),0 0 18px rgba(46,204,92,.10),0 0 34px rgba(46,204,92,.06);
+  animation:cardGlowPulse 5.8s ease-in-out infinite;}
 .app-card:hover{border-color:var(--ac);box-shadow:var(--eac),var(--e2);transform:translateY(-2px);}
 .app-card:hover::before{opacity:1;}
+.app-card:hover::after{opacity:.6;box-shadow:0 0 0 1px rgba(46,204,92,.36),0 0 24px rgba(46,204,92,.22),0 0 48px rgba(46,204,92,.14);}
 .card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;}
 .card-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;
   justify-content:center;font-size:20px;flex-shrink:0;}
@@ -202,7 +210,7 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
     <div style="font-family:var(--ff-mono);font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:24px">HeidelbergMaterials</div>
     <div id="licSpinner" style="display:flex;align-items:center;justify-content:center;gap:8px;color:var(--tx3);font-size:12px;font-family:var(--ff-mono)">
       <svg style="animation:spin 1s linear infinite;width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
-      Verifying licence...
+      Verifying…
     </div>
     <div id="licMsg" style="display:none;font-size:13px;color:var(--red);line-height:1.6;margin-bottom:16px"></div>
     <div id="licRetryBtn" style="display:none;margin-top:12px">
@@ -1018,7 +1026,7 @@ async function showAppSelector(user, opts) {
         if (ku.must_reset_password) {
           if (skipResetPrompt) {
             try {
-              await clearResetFlags(user.id, ku.username || null);
+              await callAdminPwFunction({ action: 'clearReset', userId: user.id, email: data && data.email ? data.email : user.email, username: ku.username || null });
             } catch(e) {}
           } else {
             setTimeout(function() { openForcePwResetModal(ku.username); }, 600);
@@ -1029,7 +1037,7 @@ async function showAppSelector(user, opts) {
       if (data && data.must_reset_password) {
         if (skipResetPrompt) {
           try {
-            await clearResetFlags(user.id, ku && ku.username ? ku.username : null);
+            await callAdminPwFunction({ action: 'clearReset', userId: user.id, email: data.email || user.email, username: ku && ku.username ? ku.username : null });
           } catch(e) {}
         } else {
           setTimeout(function() { openForcePwResetModal(null); }, 600);
@@ -1522,17 +1530,33 @@ async function submitPlatformForceReset() {
       return;
     }
 
-    const { error } = await sb.auth.updateUser({ password: newPw });
-    if (error) { btn.disabled = false; btn.textContent = 'Set New Password & Continue'; showForcePwMsg('err', error.message); return; }
     try {
       const { data: sess } = await sb.auth.getSession();
-      if (sess && sess.session) {
-        try {
-          await clearResetFlags(sess.session.user.id, _forcePwUsername || null);
-          sessionStorage.setItem('pw_post_reset_skip_uid', sess.session.user.id);
-        } catch(e) {}
+      const sessionUser = sess && sess.session && sess.session.user;
+      const sessionEmail = sessionUser && sessionUser.email ? sessionUser.email : null;
+      if (!sessionUser || !sessionEmail) {
+        btn.disabled = false; btn.textContent = 'Set New Password & Continue'; showForcePwMsg('err', 'Please sign in again.'); return;
       }
-    } catch(e2) {}
+      await callAdminPwFunction({
+        action: 'selfSetPassword',
+        userId: sessionUser.id,
+        password: newPw,
+        email: sessionEmail,
+        username: _forcePwUsername || null
+      });
+      try { await sb.auth.signOut(); } catch(e) {}
+      const relog = await sb.auth.signInWithPassword({ email: sessionEmail, password: newPw });
+      if (relog.error || !relog.data || !relog.data.user) {
+        btn.disabled = false; btn.textContent = 'Set New Password & Continue';
+        showForcePwMsg('err', (relog.error && relog.error.message) || 'Password updated, but automatic sign-in failed. Please sign in again.');
+        return;
+      }
+      sessionStorage.setItem('pw_post_reset_skip_uid', relog.data.user.id);
+    } catch(e2) {
+      btn.disabled = false; btn.textContent = 'Set New Password & Continue';
+      showForcePwMsg('err', e2 && e2.message ? e2.message : 'Failed to update password.');
+      return;
+    }
     btn.disabled = false; btn.textContent = 'Set New Password & Continue';
     showForcePwMsg('ok','Password updated successfully ✓');
     setTimeout(async function() {
