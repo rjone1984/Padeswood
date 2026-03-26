@@ -26,6 +26,10 @@
   --e1:0 1px 3px rgba(0,0,0,.55),0 1px 2px rgba(0,0,0,.4);
   --e2:0 4px 18px rgba(0,0,0,.6); --e3:0 20px 56px rgba(0,0,0,.72);
   --eac:0 4px 22px rgba(26,122,53,.35);
+  --glass-1: rgba(22,25,31,.82);
+  --glass-2: rgba(22,25,31,.72);
+  --glass-3: rgba(22,25,31,.68);
+  --glass-4: rgba(22,25,31,.56);
 }
 .light-mode {
   --bg:#f0f3f8; --sf:#ffffff; --sf2:#f5f7fc; --sf3:#eaeef6; --sf4:#e0e6f2;
@@ -40,6 +44,10 @@
   --e1:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
   --e2:0 4px 18px rgba(0,0,0,.08); --e3:0 20px 56px rgba(0,0,0,.12);
   --eac:0 4px 22px rgba(10,138,134,.20);
+  --glass-1: rgba(255,255,255,.84);
+  --glass-2: rgba(255,255,255,.72);
+  --glass-3: rgba(255,255,255,.68);
+  --glass-4: rgba(255,255,255,.56);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -66,10 +74,9 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
 #licenceOverlay{position:fixed;inset:0;background:var(--bg);z-index:10000;
   display:flex;align-items:center;justify-content:center;}
 .lic-inner{width:360px;max-width:92vw;text-align:center;
-  background:rgba(255,255,255,.72);border:1px solid var(--bd2);border-radius:14px;
+  background:var(--glass-1);border:1px solid var(--bd2);border-radius:14px;
   padding:36px 32px 32px;box-shadow:0 18px 48px rgba(0,0,0,.16);position:relative;overflow:hidden;
   backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);}
-.dark .lic-inner{background:rgba(22,25,31,.82);}
 .lic-inner::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
   background:linear-gradient(90deg,transparent,var(--ac3),transparent);}
 .lic-logo{width:48px;height:48px;background:linear-gradient(135deg,var(--ac),var(--ac3));
@@ -91,9 +98,9 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
 .login-sub{font-family:var(--ff-mono);font-size:9px;letter-spacing:2.5px;
   text-transform:uppercase;color:var(--tx3);text-align:center;margin-bottom:28px;}
 .login-card{background:var(--sf);border:1px solid var(--bd);border-radius:14px;
+  background:var(--glass-2);
   padding:28px 28px 24px;box-shadow:0 18px 48px rgba(0,0,0,.16);position:relative;overflow:hidden;
   backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);}
-.dark .login-card{background:rgba(22,25,31,.82);}
 .login-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
   background:linear-gradient(90deg,transparent,var(--ac3),transparent);}
 .login-field{margin-bottom:16px;}
@@ -114,9 +121,8 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
   border-radius:var(--rsm);padding:8px 12px;margin-top:12px;display:none;}
 
 #mainHeader{position:relative;z-index:10;border-bottom:1px solid var(--bd2);
-  background:rgba(255,255,255,.72);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  background:var(--glass-1);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
   padding:0 28px;display:flex;align-items:center;gap:14px;height:62px;}
-.dark #mainHeader{background:rgba(22,25,31,.82);}
 .header-logo{width:36px;height:36px;flex-shrink:0;
   background:linear-gradient(135deg,var(--ac),var(--ac3));
   border-radius:8px;display:flex;align-items:center;justify-content:center;
@@ -143,11 +149,10 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
   display:flex;align-items:center;gap:10px;}
 .section-label::after{content:'';flex:1;height:1px;background:var(--bd);}
 .app-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;margin-bottom:40px;}
-.app-card{background:rgba(255,255,255,.68);border:1px solid var(--bd2);border-radius:14px;padding:24px;
+.app-card{background:var(--glass-3);border:1px solid var(--bd2);border-radius:14px;padding:24px;
   position:relative;overflow:hidden;transition:border-color .22s,box-shadow .22s,transform .18s;
   cursor:pointer;text-decoration:none;display:block;color:inherit;
   box-shadow:0 16px 42px rgba(0,0,0,.14);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);}
-.dark .app-card{background:rgba(22,25,31,.80);}
 .app-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
   background:linear-gradient(90deg,transparent,var(--ac3),transparent);opacity:0;transition:opacity .22s;}
 .app-card:hover{border-color:var(--ac);box-shadow:var(--eac),var(--e2);transform:translateY(-2px);}
@@ -164,9 +169,8 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
   transition:background .18s,transform .18s;}
 .app-card:hover .card-arrow{background:var(--acd2);transform:translate(2px,-2px);}
 .coming-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;}
-.coming-card{background:rgba(255,255,255,.56);border:1px dashed var(--bd2);border-radius:12px;
+.coming-card{background:var(--glass-4);border:1px dashed var(--bd2);border-radius:12px;
   padding:20px 18px;display:flex;align-items:center;gap:14px;opacity:.45;}
-.dark .coming-card{background:rgba(22,25,31,.66);}
 .coming-icon{width:36px;height:36px;border-radius:8px;flex-shrink:0;
   background:var(--sf3);display:flex;align-items:center;justify-content:center;font-size:17px;}
 .coming-name{font-family:var(--ff-head);font-weight:600;font-size:13px;color:var(--tx);margin-bottom:2px;}
@@ -591,7 +595,8 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
 <div id="forcePwOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:2000;align-items:center;justify-content:center">
   <div style="width:380px;max-width:94vw;background:var(--sf);border:1px solid var(--ambb);border-radius:14px;padding:28px;box-shadow:var(--e3);position:relative;overflow:hidden">
     <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--amb),transparent)"></div>
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:6px">
+      <div style="display:flex;align-items:center;gap:10px;min-width:0">
       <div style="width:32px;height:32px;border-radius:8px;background:var(--ambd);border:1px solid var(--ambb);display:flex;align-items:center;justify-content:center;flex-shrink:0">
         <svg viewBox="0 0 24 24" fill="none" stroke="var(--amb)" stroke-width="2" width="15" height="15"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
       </div>
@@ -599,6 +604,8 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
         <div id="forcePwTitle" style="font-family:var(--ff-head);font-weight:700;font-size:16px;color:var(--tx)">Password Reset Required</div>
         <div id="forcePwSub" style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">Your administrator has requested a password change</div>
       </div>
+      </div>
+      <button id="forcePwCloseBtn" type="button" onclick="closeForcePwModal()" title="Close" aria-label="Close" style="width:28px;height:28px;border-radius:6px;border:1px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">×</button>
     </div>
     <div style="margin:14px 0;padding:10px 14px;background:var(--ambd);border:1px solid var(--ambb);border-radius:var(--rsm);font-size:12px;color:var(--amb)">
       <span id="forcePwNotice">You must set a new password before continuing.</span>
@@ -613,7 +620,10 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
         <input type="password" id="forcePwConfirm" class="login-input" placeholder="Repeat new password" autocomplete="new-password" onkeydown="if(event.key==='Enter')submitPlatformForceReset()">
       </div>
       <div id="forcePwMsg" style="display:none;font-size:12px;padding:8px 12px;border-radius:var(--rsm)"></div>
-      <button id="forcePwBtn" onclick="submitPlatformForceReset()" style="width:100%;height:40px;background:linear-gradient(135deg,var(--amb),#e8861a);color:#fff;border:none;border-radius:var(--rsm);font-family:var(--ff-head);font-weight:600;font-size:13px;cursor:pointer;margin-top:4px">Set New Password &amp; Continue</button>
+      <div style="display:flex;gap:10px;margin-top:4px">
+        <button id="forcePwCancelBtn" type="button" onclick="closeForcePwModal()" class="btn btn-ghost" style="flex:1;height:40px">Cancel</button>
+        <button id="forcePwBtn" type="button" onclick="submitPlatformForceReset(); return false;" style="flex:1;height:40px;background:linear-gradient(135deg,var(--amb),#e8861a);color:#fff;border:none;border-radius:var(--rsm);font-family:var(--ff-head);font-weight:600;font-size:13px;cursor:pointer">Set New Password &amp; Continue</button>
+      </div>
     </div>
   </div>
 </div>
@@ -678,10 +688,10 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
 #aiPanel > div:first-child,
 #aiPanel > div:nth-child(2),
 #aiPanel > div:last-child{
-  background:rgba(255,255,255,.015);
+  background:color-mix(in srgb, var(--tx) 2%, transparent);
 }
 #aiPanel > div:first-child{
-  background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,0));
+  background:linear-gradient(180deg, color-mix(in srgb, var(--tx) 4%, transparent), transparent);
 }
 #aiHistory{
   scrollbar-gutter:stable;
@@ -707,11 +717,11 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
     align-items:flex-start;
     gap:6px;
     overflow:visible;
-    background:rgba(17,20,24,.84);
+    background:var(--glass-1);
     backdrop-filter:blur(18px);
     -webkit-backdrop-filter:blur(18px);
   }
-  .light-mode #mainHeader{background:rgba(255,255,255,.84);}
+  .light-mode #mainHeader{background:var(--glass-1);}
   .header-titles{min-width:0;flex:1 1 auto;}
   .header-name{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .header-sub{display:none;}
@@ -956,7 +966,7 @@ async function doLogin() {
 }
 
 async function showAppSelector(user, opts) {
-  const skipResetPrompt = !!(opts && opts.skipResetPrompt);
+  const skipResetPrompt = !!(opts && opts.skipResetPrompt) || sessionStorage.getItem('pw_post_reset_skip_uid') === user.id;
   document.getElementById('headerUser').style.display = 'flex';
   document.getElementById('logoutBtn').style.display = 'flex';
   document.getElementById('changePwBtn').style.display = 'flex';
@@ -1008,7 +1018,7 @@ async function showAppSelector(user, opts) {
         if (ku.must_reset_password) {
           if (skipResetPrompt) {
             try {
-              await sb.from('kiln_users').update({ must_reset_password: false }).eq('username', ku.username);
+              await clearResetFlags(user.id, ku.username || null);
             } catch(e) {}
           } else {
             setTimeout(function() { openForcePwResetModal(ku.username); }, 600);
@@ -1019,7 +1029,7 @@ async function showAppSelector(user, opts) {
       if (data && data.must_reset_password) {
         if (skipResetPrompt) {
           try {
-            await sb.from('pw_profiles').update({ must_reset_password: false }).eq('id', user.id);
+            await clearResetFlags(user.id, ku && ku.username ? ku.username : null);
           } catch(e) {}
         } else {
           setTimeout(function() { openForcePwResetModal(null); }, 600);
@@ -1334,6 +1344,22 @@ async function callAdminPwFunction(body) {
   return parsed;
 }
 
+async function clearResetFlags(userId, username) {
+  if (userId) {
+    try {
+      await sb.from('pw_profiles').update({ must_reset_password: false }).eq('id', userId);
+    } catch(e) {}
+    try {
+      await sb.from('kiln_users').update({ must_reset_password: false }).eq('auth_user_id', userId);
+    } catch(e) {}
+  }
+  if (username) {
+    try {
+      await sb.from('kiln_users').update({ must_reset_password: false }).eq('username', username);
+    } catch(e) {}
+  }
+}
+
 function openForcePwResetModal(username) {
   _adminSetPwTarget = null;
   _accessRequestTarget = null;
@@ -1342,6 +1368,7 @@ function openForcePwResetModal(username) {
   document.getElementById('forcePwSub').textContent = 'Your administrator has requested a password change';
   document.getElementById('forcePwNotice').textContent = 'You must set a new password before continuing.';
   document.getElementById('forcePwBtn').textContent = 'Set New Password & Continue';
+  document.getElementById('forcePwCancelBtn').textContent = 'Log Out';
   document.getElementById('forcePwNew').value = '';
   document.getElementById('forcePwConfirm').value = '';
   document.getElementById('forcePwMsg').style.display = 'none';
@@ -1358,6 +1385,7 @@ function openAdminSetPwModal(authUserId, kilnUsername, displayName, fromResetReq
   document.getElementById('forcePwSub').textContent = 'Setting password for ' + displayName;
   document.getElementById('forcePwNotice').textContent = 'Enter a new password for this user. They can change it themselves after logging in.';
   document.getElementById('forcePwBtn').textContent = 'Set Password';
+  document.getElementById('forcePwCancelBtn').textContent = 'Cancel';
   document.getElementById('forcePwNew').value = '';
   document.getElementById('forcePwConfirm').value = '';
   document.getElementById('forcePwMsg').style.display = 'none';
@@ -1373,6 +1401,7 @@ function openAccessRequestPwModal(reqId, email, fullName, role, isoRole, kilnRol
   document.getElementById('forcePwSub').textContent = 'Create a password for ' + fullName + ' (' + email + ')';
   document.getElementById('forcePwNotice').textContent = 'Enter a new password twice to create this account immediately.';
   document.getElementById('forcePwBtn').textContent = 'Create Account';
+  document.getElementById('forcePwCancelBtn').textContent = 'Cancel';
   document.getElementById('forcePwNew').value = '';
   document.getElementById('forcePwConfirm').value = '';
   document.getElementById('forcePwMsg').style.display = 'none';
@@ -1380,132 +1409,148 @@ function openAccessRequestPwModal(reqId, email, fullName, role, isoRole, kilnRol
   setTimeout(function() { document.getElementById('forcePwNew').focus(); }, 80);
 }
 
-async function submitPlatformForceReset() {
-  const newPw = document.getElementById('forcePwNew').value;
-  const conf  = document.getElementById('forcePwConfirm').value;
-  const btn   = document.getElementById('forcePwBtn');
-  msg = document.getElementById('forcePwMsg');
-  msg.style.display = 'none';
-  if (!newPw || !conf) { showForcePwMsg('err','Please fill in both fields.'); return; }
-  if (newPw !== conf)   { showForcePwMsg('err','Passwords do not match.'); return; }
-  btn.disabled = true; btn.textContent = 'Saving…';
+function closeForcePwModal() {
+  const isRequiredReset = !!_forcePwUsername && !_adminSetPwTarget && !_accessRequestTarget;
+  document.getElementById('forcePwOverlay').style.display = 'none';
+  document.getElementById('forcePwNew').value = '';
+  document.getElementById('forcePwConfirm').value = '';
+  document.getElementById('forcePwMsg').style.display = 'none';
+  document.getElementById('forcePwBtn').disabled = false;
 
-  if (_accessRequestTarget) {
-    const target = _accessRequestTarget;
-    try {
-      const [profileRes, kilnRes] = await Promise.all([
-        sb.from('pw_profiles').select('id').eq('email', target.email).maybeSingle(),
-        sb.from('kiln_users').select('username').eq('email', target.email).maybeSingle()
-      ]);
-      if (profileRes.data || kilnRes.data) {
-        throw new Error('A user with this email already has a logon.');
-      }
-      const {data: authData, error: authErr} = await sb.auth.signUp({
-        email: target.email,
-        password: newPw,
-        options: { data: { full_name: target.fullName }, emailRedirectTo: null }
-      });
-      if (authErr) throw new Error(authErr.message);
-      const userId = authData.user ? authData.user.id : null;
-      if (!userId) throw new Error('Failed to create auth user');
-      const req = _accessRequestsCache.find(function(x){ return x.id === target.reqId; }) || null;
-      const trackerAllowed = req ? req.shift_tracker_access !== false : true;
-      const { error: profErr } = await sb.from('pw_profiles').upsert({
-        id: userId, email: target.email, full_name: target.fullName,
-        role: target.role || 'viewer', isolation_role: target.isoRole || 'none',
-        shift_tracker_access: trackerAllowed, approved: true
-      });
-      if (profErr) throw new Error(profErr.message || 'Failed to save platform profile');
-      if (target.kilnRole && target.kilnRole !== 'none') {
-        const flags = {
-          is_admin: target.kilnRole==='admin', is_shift_manager: target.kilnRole==='shift_manager',
-          is_cement_analyst: target.kilnRole==='cement_analyst', is_day_staff: target.kilnRole==='day_staff',
-          is_burner: target.kilnRole==='burner', is_readonly: target.kilnRole==='read_only'
-        };
-        const username = target.email.split('@')[0].replace(/[^a-z0-9_]/gi,'').toLowerCase();
-        const { error: kilnErr } = await sb.from('kiln_users').upsert({
-          ...flags, auth_user_id: userId, username, locked_name: target.fullName, email: target.email,
-          must_reset_password: true
-        });
-        if (kilnErr) throw new Error(kilnErr.message || 'Failed to save kiln account');
-      }
-      const { error: reqErr } = await sb.from('pw_access_requests').update({status:'approved'}).eq('id', target.reqId);
-      if (reqErr) throw new Error(reqErr.message || 'Failed to clear access request');
-      showForcePwMsg('ok', target.fullName + ' activated ✓ — they can now log in');
-      showPlatformToast(target.fullName + ' activated ✓ — they can now log in');
-      btn.disabled = false; btn.textContent = 'Create Account';
-      _accessRequestTarget = null;
-      setTimeout(function() {
-        document.getElementById('forcePwOverlay').style.display = 'none';
-        renderAllUsers();
-        loadPendingBadge();
-      }, 1800);
-      return;
-    } catch(e) {
-      btn.disabled = false; btn.textContent = 'Create Account';
-      showForcePwMsg('err', e.message || 'Failed to create account.');
-      return;
-    }
-  }
-
-  if (_adminSetPwTarget) {
-    if (!_adminSetPwTarget.authUserId) {
-      showForcePwMsg('err', 'No linked auth account — activate this user first.');
-      btn.disabled = false; btn.textContent = 'Set Password'; return;
-    }
-    try {
-      await callAdminPwFunction({ action: 'setPassword', userId: _adminSetPwTarget.authUserId, password: newPw });
-      if (_adminSetPwTarget.kilnUsername) {
-        try {
-          await sb.from('kiln_users').update({ must_reset_password: false }).eq('username', _adminSetPwTarget.kilnUsername);
-        } catch(e) {}
-      }
-      showForcePwMsg('ok', 'Password set for ' + _adminSetPwTarget.displayName + ' ✓');
-      btn.disabled = false; btn.textContent = 'Set Password';
-      if (_pendingResetReqId) {
-        try {
-          await sb.from('pw_reset_requests').update({status:'done'}).eq('id',_pendingResetReqId);
-        } catch(e) {}
-        _pendingResetReqId = null;
-        loadResetReqBadge();
-        if (document.getElementById('resetReqOverlay') && document.getElementById('resetReqOverlay').style.display !== 'none') renderResetRequests();
-      }
-      setTimeout(function() { document.getElementById('forcePwOverlay').style.display = 'none'; renderAllUsers(); }, 1800);
-    } catch(e) {
-      btn.disabled = false; btn.textContent = 'Set Password';
-      showForcePwMsg('err', e.message || 'Failed to set password.');
-    }
+  if (isRequiredReset) {
+    doLogout();
     return;
   }
 
-  const { error } = await sb.auth.updateUser({ password: newPw });
-  if (error) { btn.disabled = false; btn.textContent = 'Set New Password & Continue'; showForcePwMsg('err', error.message); return; }
-  if (_forcePwUsername) {
-    try {
-      await sb.from('kiln_users').update({ must_reset_password: false }).eq('username', _forcePwUsername);
-    } catch(e) {}
-  }
+  _forcePwUsername = null;
+  _adminSetPwTarget = null;
+  _accessRequestTarget = null;
+}
+
+async function submitPlatformForceReset() {
+  const btn = document.getElementById('forcePwBtn');
   try {
-    const { data: sess } = await sb.auth.getSession();
-    if (sess && sess.session) {
+    const newPw = document.getElementById('forcePwNew').value;
+    const conf  = document.getElementById('forcePwConfirm').value;
+    const msg   = document.getElementById('forcePwMsg');
+    msg.style.display = 'none';
+    if (!newPw || !conf) { showForcePwMsg('err','Please fill in both fields.'); return; }
+    if (newPw !== conf)   { showForcePwMsg('err','Passwords do not match.'); return; }
+    btn.disabled = true; btn.textContent = 'Saving…';
+
+    if (_accessRequestTarget) {
+      const target = _accessRequestTarget;
       try {
-        await sb.from('pw_profiles').update({ must_reset_password: false }).eq('id', sess.session.user.id);
-      } catch(e) {}
-    }
-  } catch(e2) {}
-  btn.disabled = false; btn.textContent = 'Set New Password & Continue';
-  showForcePwMsg('ok','Password updated successfully ✓');
-  setTimeout(async function() {
-    document.getElementById('forcePwOverlay').style.display = 'none';
-    try {
-      const { data } = await sb.auth.getSession();
-      const user = data && data.session && data.session.user;
-      if (user) {
-        document.getElementById('loginScreen').style.display = 'none';
-        await showAppSelector(user, { skipResetPrompt: true });
+        const [profileRes, kilnRes] = await Promise.all([
+          sb.from('pw_profiles').select('id').eq('email', target.email).maybeSingle(),
+          sb.from('kiln_users').select('username').eq('email', target.email).maybeSingle()
+        ]);
+        if (profileRes.data || kilnRes.data) {
+          throw new Error('A user with this email already has a logon.');
+        }
+        const {data: authData, error: authErr} = await sb.auth.signUp({
+          email: target.email,
+          password: newPw,
+          options: { data: { full_name: target.fullName }, emailRedirectTo: null }
+        });
+        if (authErr) throw new Error(authErr.message);
+        const userId = authData.user ? authData.user.id : null;
+        if (!userId) throw new Error('Failed to create auth user');
+        const req = _accessRequestsCache.find(function(x){ return x.id === target.reqId; }) || null;
+        const trackerAllowed = req ? req.shift_tracker_access !== false : true;
+        const { error: profErr } = await sb.from('pw_profiles').upsert({
+          id: userId, email: target.email, full_name: target.fullName,
+          role: target.role || 'viewer', isolation_role: target.isoRole || 'none',
+          shift_tracker_access: trackerAllowed, approved: true
+        });
+        if (profErr) throw new Error(profErr.message || 'Failed to save platform profile');
+        if (target.kilnRole && target.kilnRole !== 'none') {
+          const flags = {
+            is_admin: target.kilnRole==='admin', is_shift_manager: target.kilnRole==='shift_manager',
+            is_cement_analyst: target.kilnRole==='cement_analyst', is_day_staff: target.kilnRole==='day_staff',
+            is_burner: target.kilnRole==='burner', is_readonly: target.kilnRole==='read_only'
+          };
+          const username = target.email.split('@')[0].replace(/[^a-z0-9_]/gi,'').toLowerCase();
+          const { error: kilnErr } = await sb.from('kiln_users').upsert({
+            ...flags, auth_user_id: userId, username, locked_name: target.fullName, email: target.email,
+            must_reset_password: true
+          });
+          if (kilnErr) throw new Error(kilnErr.message || 'Failed to save kiln account');
+        }
+        const { error: reqErr } = await sb.from('pw_access_requests').update({status:'approved'}).eq('id', target.reqId);
+        if (reqErr) throw new Error(reqErr.message || 'Failed to clear access request');
+        showForcePwMsg('ok', target.fullName + ' activated ✓ — they can now log in');
+        showPlatformToast(target.fullName + ' activated ✓ — they can now log in');
+        btn.disabled = false; btn.textContent = 'Create Account';
+        _accessRequestTarget = null;
+        setTimeout(function() {
+          document.getElementById('forcePwOverlay').style.display = 'none';
+          renderAllUsers();
+          loadPendingBadge();
+        }, 1800);
+        return;
+      } catch(e) {
+        btn.disabled = false; btn.textContent = 'Create Account';
+        showForcePwMsg('err', e.message || 'Failed to create account.');
+        return;
       }
-    } catch(e) {}
-  }, 2000);
+    }
+
+    if (_adminSetPwTarget) {
+      if (!_adminSetPwTarget.authUserId) {
+        showForcePwMsg('err', 'No linked auth account — activate this user first.');
+        btn.disabled = false; btn.textContent = 'Set Password'; return;
+      }
+      try {
+        await callAdminPwFunction({ action: 'setPassword', userId: _adminSetPwTarget.authUserId, password: newPw });
+        await clearResetFlags(_adminSetPwTarget.authUserId, _adminSetPwTarget.kilnUsername || null);
+        showForcePwMsg('ok', 'Password set for ' + _adminSetPwTarget.displayName + ' ✓');
+        btn.disabled = false; btn.textContent = 'Set Password';
+        if (_pendingResetReqId) {
+          try {
+            await sb.from('pw_reset_requests').update({status:'done'}).eq('id',_pendingResetReqId);
+          } catch(e) {}
+          _pendingResetReqId = null;
+          loadResetReqBadge();
+          if (document.getElementById('resetReqOverlay') && document.getElementById('resetReqOverlay').style.display !== 'none') renderResetRequests();
+        }
+        setTimeout(function() { document.getElementById('forcePwOverlay').style.display = 'none'; renderAllUsers(); }, 1800);
+      } catch(e) {
+        btn.disabled = false; btn.textContent = 'Set Password';
+        showForcePwMsg('err', e.message || 'Failed to set password.');
+      }
+      return;
+    }
+
+    const { error } = await sb.auth.updateUser({ password: newPw });
+    if (error) { btn.disabled = false; btn.textContent = 'Set New Password & Continue'; showForcePwMsg('err', error.message); return; }
+    try {
+      const { data: sess } = await sb.auth.getSession();
+      if (sess && sess.session) {
+        try {
+          await clearResetFlags(sess.session.user.id, _forcePwUsername || null);
+          sessionStorage.setItem('pw_post_reset_skip_uid', sess.session.user.id);
+        } catch(e) {}
+      }
+    } catch(e2) {}
+    btn.disabled = false; btn.textContent = 'Set New Password & Continue';
+    showForcePwMsg('ok','Password updated successfully ✓');
+    setTimeout(async function() {
+      document.getElementById('forcePwOverlay').style.display = 'none';
+      try {
+        const { data } = await sb.auth.getSession();
+        const user = data && data.session && data.session.user;
+        if (user) {
+          document.getElementById('loginScreen').style.display = 'none';
+          await showAppSelector(user, { skipResetPrompt: true });
+        }
+      } catch(e) {}
+    }, 2000);
+  } catch (e) {
+    btn.disabled = false;
+    btn.textContent = _adminSetPwTarget ? 'Set Password' : 'Set New Password & Continue';
+    showForcePwMsg('err', e && e.message ? e.message : 'Failed to set password.');
+  }
 }
 function showForcePwMsg(type, text) {
   const msg = document.getElementById('forcePwMsg');
