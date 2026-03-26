@@ -12,6 +12,7 @@
 <style>
 :root {
   --ff-head:'Outfit',sans-serif; --ff-body:'Figtree',sans-serif; --ff-mono:'Fira Code',monospace;
+  --ease-smooth:cubic-bezier(.22,1,.36,1);
   --bg:#111418; --sf:#16191f; --sf2:#1c2028; --sf3:#222830; --sf4:#282f3a;
   --bd:#252c38; --bd2:#2f3a4a; --bd3:#3d4e62;
   --ac:#1a7a35; --ac2:#22a847; --ac3:#2ecc5c;
@@ -44,11 +45,18 @@
 html{scroll-behavior:smooth}
 body{font-family:var(--ff-body);background:var(--bg);color:var(--tx);
   min-height:100vh;font-size:13.5px;line-height:1.55;-webkit-font-smoothing:antialiased;
-  transition:background .28s,color .28s;overflow-x:hidden;}
+  transition:background .35s var(--ease-smooth),color .35s var(--ease-smooth);
+  animation:pageEnter .45s var(--ease-smooth) both;overflow-x:hidden;}
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   background-image:radial-gradient(circle,rgba(14,165,160,.06) 1px,transparent 1px);
   background-size:28px 28px;}
 .light-mode::before{background-image:radial-gradient(circle,rgba(10,138,134,.05) 1px,transparent 1px);}
+@keyframes pageEnter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important}
+  body{animation:none !important}
+}
+body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.card-arrow,#mainHeader,#adminPanel,#aiPanel,#roleEditPanel,#loginScreen,#licenceOverlay,.toast,.modal,.panel,.tab-btn,.section-label,.header-user){transition-timing-function:var(--ease-smooth);}
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:var(--sf)}
 ::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:3px}
@@ -125,7 +133,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   background:transparent;color:var(--tx2);cursor:pointer;display:flex;align-items:center;
   justify-content:center;transition:border-color .18s,color .18s,background .18s;}
 .icon-btn:hover{border-color:var(--ac);color:var(--ac3);background:var(--acd1);}
-
 #mainContent{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:48px 28px 64px;}
 .platform-hero{margin-bottom:40px;}
 .platform-hero h1{font-family:var(--ff-head);font-weight:800;font-size:clamp(22px,3.5vw,32px);
@@ -948,7 +955,8 @@ async function doLogin() {
   await showAppSelector(data.user);
 }
 
-async function showAppSelector(user) {
+async function showAppSelector(user, opts) {
+  const skipResetPrompt = !!(opts && opts.skipResetPrompt);
   document.getElementById('headerUser').style.display = 'flex';
   document.getElementById('logoutBtn').style.display = 'flex';
   document.getElementById('changePwBtn').style.display = 'flex';
@@ -998,13 +1006,25 @@ async function showAppSelector(user) {
           document.getElementById('headerEmail').textContent = ku.locked_name;
         }
         if (ku.must_reset_password) {
-          setTimeout(function() { openForcePwResetModal(ku.username); }, 600);
-          return false; // handled
+          if (skipResetPrompt) {
+            try {
+              await sb.from('kiln_users').update({ must_reset_password: false }).eq('username', ku.username);
+            } catch(e) {}
+          } else {
+            setTimeout(function() { openForcePwResetModal(ku.username); }, 600);
+            return false; // handled
+          }
         }
       }
       if (data && data.must_reset_password) {
-        setTimeout(function() { openForcePwResetModal(null); }, 600);
-        return false;
+        if (skipResetPrompt) {
+          try {
+            await sb.from('pw_profiles').update({ must_reset_password: false }).eq('id', user.id);
+          } catch(e) {}
+        } else {
+          setTimeout(function() { openForcePwResetModal(null); }, 600);
+          return false;
+        }
       }
     } catch(e2) {}
   } catch(e) {
@@ -1026,6 +1046,7 @@ async function doLogout() {
   });
   sessionStorage.removeItem('kbl_session');
   sessionStorage.removeItem('kbl_refresh');
+  sessionStorage.removeItem('pw_post_reset_skip_uid');
   window.location.reload();
 }
 
@@ -1177,13 +1198,16 @@ function readStoredThemePref() {
 }
 function applyTheme(light) {
   document.body.classList.toggle('light-mode', light);
+  document.body.classList.toggle('dark', !light);
   const icon = document.getElementById('themeIcon');
   if (icon) icon.innerHTML = light
     ? '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>'
     : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
   localStorage.setItem('pw_theme', light ? 'light' : 'dark');
   localStorage.setItem('pw_platform_theme', light ? 'light' : 'dark');
+  localStorage.setItem('dark', light ? '0' : '1');
 }
+
 function toggleTheme() {
   const light = !document.body.classList.contains('light-mode');
   applyTheme(light);
@@ -1287,6 +1311,29 @@ let _adminSetPwTarget = null; // { authUserId, kilnUsername, displayName } when 
 let _accessRequestTarget = null; // { reqId, email, fullName, role, isoRole, kilnRole } when creating a new account
 let _pendingResetReqId = null;  // set when opened from reset request queue
 
+async function callAdminPwFunction(body) {
+  const refreshed = await sb.auth.refreshSession().catch(function(){ return null; });
+  const sess = (refreshed && refreshed.data && refreshed.data.session) ? refreshed : await sb.auth.getSession();
+  const token = sess && sess.data && sess.data.session && sess.data.session.access_token;
+  if (!token) throw new Error('Please sign in again.');
+  const res = await fetch(SB_URL_PLATFORM + '/functions/v1/pw-admin-user', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SB_KEY_PLATFORM,
+      'Authorization': 'Bearer ' + token
+    },
+    body: JSON.stringify(body)
+  });
+  const text = await res.text();
+  let parsed = null;
+  try { parsed = text ? JSON.parse(text) : null; } catch(e) {}
+  if (!res.ok) {
+    throw new Error((parsed && parsed.error) || text || ('HTTP ' + res.status));
+  }
+  return parsed;
+}
+
 function openForcePwResetModal(username) {
   _adminSetPwTarget = null;
   _accessRequestTarget = null;
@@ -1346,6 +1393,13 @@ async function submitPlatformForceReset() {
   if (_accessRequestTarget) {
     const target = _accessRequestTarget;
     try {
+      const [profileRes, kilnRes] = await Promise.all([
+        sb.from('pw_profiles').select('id').eq('email', target.email).maybeSingle(),
+        sb.from('kiln_users').select('username').eq('email', target.email).maybeSingle()
+      ]);
+      if (profileRes.data || kilnRes.data) {
+        throw new Error('A user with this email already has a logon.');
+      }
       const {data: authData, error: authErr} = await sb.auth.signUp({
         email: target.email,
         password: newPw,
@@ -1356,11 +1410,12 @@ async function submitPlatformForceReset() {
       if (!userId) throw new Error('Failed to create auth user');
       const req = _accessRequestsCache.find(function(x){ return x.id === target.reqId; }) || null;
       const trackerAllowed = req ? req.shift_tracker_access !== false : true;
-      await sb.from('pw_profiles').upsert({
+      const { error: profErr } = await sb.from('pw_profiles').upsert({
         id: userId, email: target.email, full_name: target.fullName,
         role: target.role || 'viewer', isolation_role: target.isoRole || 'none',
         shift_tracker_access: trackerAllowed, approved: true
       });
+      if (profErr) throw new Error(profErr.message || 'Failed to save platform profile');
       if (target.kilnRole && target.kilnRole !== 'none') {
         const flags = {
           is_admin: target.kilnRole==='admin', is_shift_manager: target.kilnRole==='shift_manager',
@@ -1368,12 +1423,14 @@ async function submitPlatformForceReset() {
           is_burner: target.kilnRole==='burner', is_readonly: target.kilnRole==='read_only'
         };
         const username = target.email.split('@')[0].replace(/[^a-z0-9_]/gi,'').toLowerCase();
-        await sb.from('kiln_users').upsert({
+        const { error: kilnErr } = await sb.from('kiln_users').upsert({
           ...flags, auth_user_id: userId, username, locked_name: target.fullName, email: target.email,
           must_reset_password: true
         });
+        if (kilnErr) throw new Error(kilnErr.message || 'Failed to save kiln account');
       }
-      await sb.from('pw_access_requests').update({status:'approved'}).eq('id', target.reqId);
+      const { error: reqErr } = await sb.from('pw_access_requests').update({status:'approved'}).eq('id', target.reqId);
+      if (reqErr) throw new Error(reqErr.message || 'Failed to clear access request');
       showForcePwMsg('ok', target.fullName + ' activated ✓ — they can now log in');
       showPlatformToast(target.fullName + ' activated ✓ — they can now log in');
       btn.disabled = false; btn.textContent = 'Create Account';
@@ -1397,17 +1454,18 @@ async function submitPlatformForceReset() {
       btn.disabled = false; btn.textContent = 'Set Password'; return;
     }
     try {
-      const { error } = await sb.functions.invoke('pw-admin-user', {
-        body: { action: 'setPassword', userId: _adminSetPwTarget.authUserId, password: newPw }
-      });
-      if (error) throw new Error(error.message);
+      await callAdminPwFunction({ action: 'setPassword', userId: _adminSetPwTarget.authUserId, password: newPw });
       if (_adminSetPwTarget.kilnUsername) {
-        await sb.from('kiln_users').update({ must_reset_password: false }).eq('username', _adminSetPwTarget.kilnUsername).catch(function(){});
+        try {
+          await sb.from('kiln_users').update({ must_reset_password: false }).eq('username', _adminSetPwTarget.kilnUsername);
+        } catch(e) {}
       }
       showForcePwMsg('ok', 'Password set for ' + _adminSetPwTarget.displayName + ' ✓');
       btn.disabled = false; btn.textContent = 'Set Password';
       if (_pendingResetReqId) {
-        await sb.from('pw_reset_requests').update({status:'done'}).eq('id',_pendingResetReqId).catch(function(){});
+        try {
+          await sb.from('pw_reset_requests').update({status:'done'}).eq('id',_pendingResetReqId);
+        } catch(e) {}
         _pendingResetReqId = null;
         loadResetReqBadge();
         if (document.getElementById('resetReqOverlay') && document.getElementById('resetReqOverlay').style.display !== 'none') renderResetRequests();
@@ -1423,17 +1481,31 @@ async function submitPlatformForceReset() {
   const { error } = await sb.auth.updateUser({ password: newPw });
   if (error) { btn.disabled = false; btn.textContent = 'Set New Password & Continue'; showForcePwMsg('err', error.message); return; }
   if (_forcePwUsername) {
-    await sb.from('kiln_users').update({ must_reset_password: false }).eq('username', _forcePwUsername).catch(function(){});
+    try {
+      await sb.from('kiln_users').update({ must_reset_password: false }).eq('username', _forcePwUsername);
+    } catch(e) {}
   }
   try {
     const { data: sess } = await sb.auth.getSession();
     if (sess && sess.session) {
-      await sb.from('pw_profiles').update({ must_reset_password: false }).eq('id', sess.session.user.id).catch(function(){});
+      try {
+        await sb.from('pw_profiles').update({ must_reset_password: false }).eq('id', sess.session.user.id);
+      } catch(e) {}
     }
   } catch(e2) {}
   btn.disabled = false; btn.textContent = 'Set New Password & Continue';
   showForcePwMsg('ok','Password updated successfully ✓');
-  setTimeout(function() { document.getElementById('forcePwOverlay').style.display = 'none'; }, 2000);
+  setTimeout(async function() {
+    document.getElementById('forcePwOverlay').style.display = 'none';
+    try {
+      const { data } = await sb.auth.getSession();
+      const user = data && data.session && data.session.user;
+      if (user) {
+        document.getElementById('loginScreen').style.display = 'none';
+        await showAppSelector(user, { skipResetPrompt: true });
+      }
+    } catch(e) {}
+  }, 2000);
 }
 function showForcePwMsg(type, text) {
   const msg = document.getElementById('forcePwMsg');
@@ -1872,8 +1944,11 @@ async function removeUser(userId, email) {
   if (!confirm('Remove '+email+'? This will revoke their platform access immediately.')) return;
   const {error} = await sb.from('pw_profiles').delete().eq('id',userId);
   if (error) { showPlatformToast('Failed: '+error.message); return; }
-  try { await sb.functions.invoke('pw-admin-user',{body:{action:'delete',userId}}); } catch(e) { console.warn('Edge fn:',e.message); }
+  try { await callAdminPwFunction({action:'delete',userId}); } catch(e) { console.warn('Edge fn:',e.message); }
   _usersCache = _usersCache.filter(x=>x.id!==userId); renderAllUsers(); showPlatformToast('User removed \u2713');
+}
+async function deleteUser(userId, email) {
+  return removeUser(userId, email);
 }
 async function forceKilnPwReset(username) {
   const {error} = await sb.from('kiln_users').update({must_reset_password:true}).eq('username', username);
@@ -1907,8 +1982,7 @@ async function resetKilnPassword(username, authUserId, email) {
   if (!newPw) return;
   if (!authUserId) { alert('No linked auth account for this user.\nThey need to log in to the shift log app first to create the link.'); return; }
   try {
-    const {error} = await sb.functions.invoke('pw-admin-user',{body:{action:'setPassword',userId:authUserId,password:newPw}});
-    if (error) throw new Error(error.message);
+    await callAdminPwFunction({action:'setPassword',userId:authUserId,password:newPw});
     await sb.from('kiln_users').update({must_reset_password:false}).eq('username',username);
     showPlatformToast('Password set for '+username+' \u2713');
   } catch(e) { showPlatformToast('Failed: '+e.message); }
@@ -1926,8 +2000,23 @@ async function inviteUser() {
   if (!name)  { showInviteMsg('err','Please enter the user\'s full name.'); return; }
   btn.disabled = true; btn.textContent = 'Adding…';
   try {
-    const {data:existing} = await sb.from('pw_profiles').select('id').eq('email',email);
-    if (existing && existing.length) { showInviteMsg('err','A user with this email already exists.'); btn.disabled=false; btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add User'; return; }
+    const [profileRes, kilnRes, pendingRes] = await Promise.all([
+      sb.from('pw_profiles').select('id').eq('email', email).maybeSingle(),
+      sb.from('kiln_users').select('username').eq('email', email).maybeSingle(),
+      sb.from('pw_access_requests').select('id').eq('email', email).eq('status', 'pending').maybeSingle()
+    ]);
+    if (profileRes.data || kilnRes.data) {
+      showInviteMsg('err','A user with this email already has a logon.');
+      btn.disabled = false;
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add User';
+      return;
+    }
+    if (pendingRes.data) {
+      showInviteMsg('err','A request for this email is already pending approval.');
+      btn.disabled = false;
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add User';
+      return;
+    }
     const {error} = await sb.from('pw_access_requests').insert({
       email, full_name: name, role, isolation_role: isoRoleVal,
       kiln_role: kilnRoleVal, shift_tracker_access: trackerAccessVal,
