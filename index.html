@@ -386,7 +386,6 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
 
   <footer class="platform-footer">
     <span class="footer-left">Padeswood Works · Platform · HeidelbergMaterials</span>
-    <span class="footer-lic"><span class="lic-dot"></span><span id="licStatus">Licence active</span></span>
   </footer>
 
 </div>
@@ -400,7 +399,7 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
       </div>
       User Management
     </div>
-    <button onclick="closeAdminPanel()" style="width:28px;height:28px;border-radius:6px;border:1px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center">×</button>
+    <button onclick="closeAdminPanel()" style="width:auto;min-width:64px;height:28px;padding:0 12px;border-radius:6px;border:1px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;font-size:11px;font-family:var(--ff-mono);letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;line-height:1">Close</button>
   </div>
   <div style="flex:1;overflow-y:auto;padding:20px 22px;display:flex;flex-direction:column;gap:20px">
 
@@ -488,7 +487,7 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
       <button id="aiClearBtn" onclick="clearAiHistory()" title="Clear conversation" style="display:none;width:28px;height:28px;border-radius:6px;border:1px solid var(--bd);background:transparent;color:var(--tx3);cursor:pointer;font-size:12px;align-items:center;justify-content:center">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
       </button>
-      <button onclick="closeAiPanel()" style="width:28px;height:28px;border-radius:6px;border:1px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center">×</button>
+      <button onclick="closeAiPanel()" style="width:auto;min-width:64px;height:28px;padding:0 12px;border-radius:6px;border:1px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;font-size:11px;font-family:var(--ff-mono);letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;line-height:1">Close</button>
     </div>
   </div>
   <div style="padding:14px 22px;border-bottom:1px solid var(--bd);flex-shrink:0">
@@ -518,7 +517,7 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
       <div style="font-family:var(--ff-head);font-weight:700;font-size:16px;color:var(--tx)">Edit User Roles</div>
       <div id="roleEditSub" style="font-family:var(--ff-mono);font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:var(--tx3);margin-top:4px">—</div>
     </div>
-    <button onclick="closeRoleEditor()" style="width:28px;height:28px;border-radius:6px;border:1px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center">×</button>
+    <button onclick="closeRoleEditor()" style="width:auto;min-width:64px;height:28px;padding:0 12px;border-radius:6px;border:1px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;font-size:11px;font-family:var(--ff-mono);letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;line-height:1">Close</button>
   </div>
   <div style="padding:18px 22px 20px;overflow:auto;display:flex;flex-direction:column;gap:16px">
     <input type="hidden" id="roleEditProfileId">
@@ -613,7 +612,7 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
         <div id="forcePwSub" style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">Your administrator has requested a password change</div>
       </div>
       </div>
-      <button id="forcePwCloseBtn" type="button" onclick="closeForcePwModal()" title="Close" aria-label="Close" style="width:28px;height:28px;border-radius:6px;border:1px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">×</button>
+      <button id="forcePwCloseBtn" type="button" onclick="closeForcePwModal()" title="Close" aria-label="Close" style="width:auto;min-width:64px;height:28px;padding:0 12px;border-radius:6px;border:1px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;font-family:var(--ff-mono);letter-spacing:1px;text-transform:uppercase;flex-shrink:0;line-height:1">Close</button>
     </div>
     <div style="margin:14px 0;padding:10px 14px;background:var(--ambd);border:1px solid var(--ambb);border-radius:var(--rsm);font-size:12px;color:var(--amb)">
       <span id="forcePwNotice">You must set a new password before continuing.</span>
@@ -645,7 +644,7 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
         </div>
         Change Password
       </div>
-      <button onclick="closeChangePwModal()" style="width:26px;height:26px;border-radius:5px;border:1px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center">×</button>
+      <button onclick="closeChangePwModal()" style="width:auto;min-width:64px;height:26px;padding:0 10px;border-radius:5px;border:1px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;font-size:11px;font-family:var(--ff-mono);letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;line-height:1">Close</button>
     </div>
     <div style="display:flex;flex-direction:column;gap:12px">
       <div>
@@ -795,7 +794,8 @@ async function checkLicence() {
       const lic  = rows && rows[0];
       if (lic && lic.paid && new Date(lic.expires_at) >= new Date()) {
         const exp = new Date(lic.expires_at).toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'});
-        document.getElementById('licStatus').textContent = 'Licence active · expires ' + exp;
+        const licEl = document.getElementById('licStatus');
+        if (licEl) licEl.textContent = 'Licence active · expires ' + exp;
         hideLicenceOverlay();
         return;
       }
@@ -2438,7 +2438,7 @@ async function deleteResetReq(id) {
   <div style="width:520px;max-width:94vw;max-height:80vh;background:var(--sf);border:1px solid var(--bd);border-radius:14px;display:flex;flex-direction:column;overflow:hidden">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--bd)">
       <div style="font-family:var(--ff-head);font-weight:700;font-size:15px">Password Reset Requests</div>
-      <button onclick="closeResetReqModal()" style="width:28px;height:28px;border-radius:6px;border:1px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center">×</button>
+      <button onclick="closeResetReqModal()" style="width:auto;min-width:64px;height:28px;padding:0 12px;border-radius:6px;border:1px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;font-size:11px;font-family:var(--ff-mono);letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;line-height:1">Close</button>
     </div>
     <div id="resetReqList" style="flex:1;overflow-y:auto;padding:16px 20px"></div>
   </div>

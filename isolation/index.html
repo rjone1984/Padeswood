@@ -448,8 +448,9 @@ tbody tr:hover{background:var(--sf2);}
 .dark .modal-header{background:var(--glass-2);}
 .modal-title{font-family:var(--ff-head);font-weight:700;font-size:16px;color:var(--tx);}
 .modal-body{padding:20px 24px 24px;display:flex;flex-direction:column;gap:14px;}
-.modal-close{width:28px;height:28px;border-radius:6px;border:1px solid var(--bd);
-  background:transparent;color:var(--tx2);cursor:pointer;font-size:16px;
+.modal-close{width:auto;min-width:64px;height:28px;padding:0 12px;border-radius:6px;border:1px solid var(--bd);
+  background:transparent;color:var(--tx2);cursor:pointer;font-size:11px;font-family:var(--ff-mono);
+  letter-spacing:1px;text-transform:uppercase;line-height:1;
   display:flex;align-items:center;justify-content:center;transition:border-color .18s,color .18s;}
 .modal-close:hover{border-color:var(--red);color:var(--red);}
 .field-group{display:flex;flex-direction:column;gap:6px;}
@@ -909,7 +910,7 @@ tbody tr:hover{background:var(--sf2);}
   <div class="modal">
     <div class="modal-header">
       <div class="modal-title" id="matrixModalTitle">New Isolation Matrix</div>
-      <button class="modal-close" onclick="closeMatrixModal()">×</button>
+      <button class="modal-close" onclick="closeMatrixModal()">Close</button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="mxId">
@@ -963,7 +964,7 @@ tbody tr:hover{background:var(--sf2);}
   <div class="modal">
     <div class="modal-header">
       <div class="modal-title" id="pointModalTitle">Add Isolation Equipment</div>
-      <button class="modal-close" onclick="closePointModal()">×</button>
+      <button class="modal-close" onclick="closePointModal()">Close</button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="ptId">
@@ -989,7 +990,7 @@ tbody tr:hover{background:var(--sf2);}
   <div class="modal">
     <div class="modal-header">
       <div class="modal-title" id="entryModalTitle">Add Work Item</div>
-      <button class="modal-close" onclick="closeEntryModal()">×</button>
+      <button class="modal-close" onclick="closeEntryModal()">Close</button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="entId">
@@ -1019,7 +1020,7 @@ tbody tr:hover{background:var(--sf2);}
   <div class="modal">
     <div class="modal-header">
       <div class="modal-title" id="equipModalTitle">Add Equipment</div>
-      <button class="modal-close" onclick="closeEquipModal()">×</button>
+      <button class="modal-close" onclick="closeEquipModal()">Close</button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="eqId">
@@ -1094,7 +1095,7 @@ tbody tr:hover{background:var(--sf2);}
       <button id="aiClearBtn" onclick="clearAiHistory()" title="Clear conversation" style="display:none;width:28px;height:28px;border-radius:6px;border:1px solid var(--bd);background:transparent;color:var(--tx3);cursor:pointer;align-items:center;justify-content:center">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
       </button>
-      <button onclick="closeAiPanel()" style="width:28px;height:28px;border-radius:6px;border:1px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center">×</button>
+      <button onclick="closeAiPanel()" style="width:auto;min-width:64px;height:28px;padding:0 12px;border-radius:6px;border:1px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;font-size:11px;font-family:var(--ff-mono);letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;line-height:1">Close</button>
     </div>
   </div>
   <div id="aiSuggestions" style="padding:12px 22px;border-bottom:1px solid var(--bd);display:flex;flex-wrap:wrap;gap:6px;flex-shrink:0">
@@ -1118,7 +1119,6 @@ tbody tr:hover{background:var(--sf2);}
 
 <footer style="position:relative;z-index:1;border-top:1px solid var(--bd);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;flex-shrink:0;font-family:var(--ff-mono);font-size:10px;color:var(--tx3);letter-spacing:.5px">
   <span class="footer-left">Padeswood Works · Isolation Matrix · HeidelbergMaterials</span>
-  <span class="footer-lic"><span class="lic-dot"></span><span id="isoLicStatus">Checking licence…</span></span>
 </footer>
 
 <div id="toast"></div>

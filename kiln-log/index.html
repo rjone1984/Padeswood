@@ -555,8 +555,10 @@ body::before {
   background:var(--sf3);
 }
 .search-modal-close {
+  width:auto;
+  min-width:64px;
   height:28px;
-  padding:0 8px;
+  padding:0 12px;
   background:var(--glass-5);
   border:1px solid var(--bd2);
   border-radius:6px;
@@ -564,6 +566,9 @@ body::before {
   cursor:pointer;
   font-size:11px;
   font-family:var(--ff-mono);
+  letter-spacing:1px;
+  text-transform:uppercase;
+  line-height:1;
   transition:background .12s, border-color .12s, color .12s;
 }
 .search-modal-close:hover {
@@ -842,10 +847,11 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
 .dark .modal-head { background:var(--glass-2); }
 .modal-title { font-family:var(--ff-head); font-weight:700; font-size:15px }
 .modal-close {
-  width:27px; height:27px; border-radius:6px;
+  width:auto; min-width:64px; height:27px; padding:0 12px; border-radius:6px;
   background:var(--glass-5); border:1px solid var(--bd2);
   color:var(--tx2); cursor:pointer; font-size:13px;
   display:flex; align-items:center; justify-content:center; transition:all .12s;
+  font-family:var(--ff-mono); font-size:11px; letter-spacing:1px; text-transform:uppercase; line-height:1;
 }
 .dark .modal-close { background:var(--glass-5); }
 .modal-close:hover { color:var(--tx); background:var(--sf3); border-color:var(--bd2) }
@@ -1322,7 +1328,7 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
   <div class="modal" style="width:560px">
     <div class="modal-head">
       <div class="modal-title">Manage Lists</div>
-      <button class="modal-close" onclick="closeManageModal()">&#x2715;</button>
+      <button class="modal-close" onclick="closeManageModal()">Close</button>
     </div>
     <div class="modal-body">
       <div class="modal-tabs" id="manageModalTabs">
@@ -1355,7 +1361,7 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
   <div class="modal" style="width:440px">
     <div class="modal-head">
       <div class="modal-title">Print / Export PDF</div>
-      <button class="modal-close" onclick="closePrintModal()">&#x2715;</button>
+      <button class="modal-close" onclick="closePrintModal()">Close</button>
     </div>
     <div class="modal-body">
       <div class="modal-field">
@@ -1412,7 +1418,6 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
 
 <footer style="position:relative;z-index:1;border-top:1px solid var(--bd);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;flex-shrink:0;font-family:var(--ff-mono);font-size:10px;color:var(--tx3);letter-spacing:.5px">
   <span>Padeswood Works · Shift Log · HeidelbergMaterials</span>
-  <span style="display:flex;align-items:center;gap:6px;font-family:var(--ff-mono);font-size:10px;color:var(--tx3)"><span style="width:7px;height:7px;border-radius:50%;background:var(--grn);box-shadow:0 0 5px var(--grn)"></span><span id="kblLicStatus">Licence active</span></span>
 </footer>
 
 <div class="overlay" id="searchModal">
@@ -1422,7 +1427,7 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;color:var(--tx3);flex-shrink:0"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="text" id="searchModalInput" class="search-modal-input" placeholder="Search equipment, issues, notes, burners..." autocomplete="off"
           oninput="scheduleSearch()">
-        <button onclick="closeSearchModal()" class="search-modal-close">esc</button>
+        <button onclick="closeSearchModal()" class="search-modal-close">Close</button>
       </div>
       <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
         <span style="font-size:10px;color:var(--tx3);font-family:var(--ff-mono);margin-right:2px">SCOPE</span>
@@ -4466,7 +4471,7 @@ function renderManageTab(tab){
       entries.forEach(function(entry, i){
         html += '<div style="display:flex;align-items:flex-start;gap:8px;background:var(--sf2);border:1px solid var(--bd);border-radius:6px;padding:10px 12px">'
           + '<div style="flex:1;font-size:12px;line-height:1.5;color:var(--tx)">' + esc(entry) + '</div>'
-          + '<button onclick="deleteAiKnowledgeEntry(' + i + ')" style="flex-shrink:0;background:none;border:none;cursor:pointer;color:var(--red,#dc2626);padding:2px 6px;border-radius:4px;font-size:18px;line-height:1" title="Remove this entry">&times;</button>'
+          + '<button onclick="deleteAiKnowledgeEntry(' + i + ')" style="flex-shrink:0;background:none;border:1px solid var(--redb);cursor:pointer;color:var(--red,#dc2626);padding:2px 8px;border-radius:4px;font-size:10px;font-family:var(--ff-mono);letter-spacing:1px;text-transform:uppercase;line-height:1" title="Remove this entry">Remove</button>'
           + '</div>';
       });
     }
