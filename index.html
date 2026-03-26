@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Figtree:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --ff-head:'Outfit',sans-serif; --ff-body:'Figtree',sans-serif; --ff-mono:'Fira Code',monospace;
+  --ff-head:'Helvetica Neue','Arial Nova',Arial,sans-serif; --ff-body:'Helvetica Neue','Arial Nova',Arial,sans-serif; --ff-mono:'Fira Code',monospace;
   --ease-smooth:cubic-bezier(.22,1,.36,1);
   --bg:#111418; --sf:#16191f; --sf2:#1c2028; --sf3:#222830; --sf4:#282f3a;
   --bd:#252c38; --bd2:#2f3a4a; --bd3:#3d4e62;
@@ -74,6 +74,18 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
   0%,100%{opacity:.16;transform:scale(1)}
   50%{opacity:.34;transform:scale(1.004)}
 }
+@keyframes appGlowPulse{
+  0%,100%{opacity:.28;transform:scale(1)}
+  50%{opacity:.62;transform:scale(1.012)}
+}
+@keyframes appFloat{
+  0%,100%{transform:translateY(0px)}
+  50%{transform:translateY(-4px)}
+}
+@keyframes appIconPulse{
+  0%,100%{transform:scale(1);filter:saturate(1)}
+  50%{transform:scale(1.05);filter:saturate(1.15)}
+}
 
 #licenceOverlay{position:fixed;inset:0;background:var(--bg);z-index:10000;
   display:flex;align-items:center;justify-content:center;}
@@ -114,7 +126,49 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
   border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);
   font-family:var(--ff-body);font-size:13.5px;transition:border-color .18s,box-shadow .18s;outline:none;}
 .login-input:focus{border-color:var(--ac2);box-shadow:0 0 0 3px var(--acd1);}
+#emailWrap{
+  display:flex;gap:0;border:1px solid var(--bd2);border-radius:var(--rsm);overflow:hidden;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.025), rgba(255,255,255,0)),
+    var(--sf3);
+  transition:border-color .18s,box-shadow .18s,background .18s;
+}
 #emailWrap:focus-within{border-color:var(--ac2);box-shadow:0 0 0 3px var(--acd1);}
+.email-domain-select{
+  height:40px;
+  padding:0 30px 0 12px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,0)),
+    var(--sf2);
+  border:none;
+  border-left:1px solid color-mix(in srgb, var(--bd2) 82%, var(--ac) 18%);
+  color:var(--tx2);
+  font-family:var(--ff-mono);
+  font-size:9.5px;
+  font-weight:600;
+  letter-spacing:.06em;
+  cursor:pointer;
+  outline:none;
+  flex-shrink:0;
+  min-width:196px;
+  max-width:210px;
+  text-transform:none;
+  appearance:none;
+  -webkit-appearance:none;
+  background-image:
+    linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,0)),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7a96' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat,no-repeat;
+  background-position:0 0,right 11px center;
+  line-height:1;
+}
+.email-domain-select:hover{color:var(--tx);background-color:var(--sf3);}
+.email-domain-select option{
+  background:var(--sf3);
+  color:var(--tx);
+  font-family:var(--ff-mono);
+  font-size:10px;
+}
 .login-btn{width:100%;height:42px;margin-top:8px;
   background:linear-gradient(135deg,var(--ac),var(--ac3));color:#fff;border:none;
   border-radius:var(--rsm);font-family:var(--ff-head);font-weight:600;font-size:14px;
@@ -156,18 +210,25 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
 .app-card{background:var(--glass-3);border:1px solid var(--bd2);border-radius:14px;padding:24px;
   position:relative;overflow:hidden;transition:border-color .22s,box-shadow .22s,transform .18s;
   cursor:pointer;text-decoration:none;display:block;color:inherit;
-  box-shadow:0 16px 42px rgba(0,0,0,.14);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);}
+  box-shadow:0 16px 42px rgba(0,0,0,.14);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  animation:appFloat 6s ease-in-out infinite;}
 .app-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
   background:linear-gradient(90deg,transparent,var(--ac3),transparent);opacity:0;transition:opacity .22s;}
 .app-card::after{content:'';position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;opacity:.2;
-  box-shadow:0 0 0 1px rgba(46,204,92,.16),0 0 18px rgba(46,204,92,.10),0 0 34px rgba(46,204,92,.06);
-  animation:cardGlowPulse 5.8s ease-in-out infinite;}
+  background:
+    radial-gradient(circle at 18% 0%, rgba(46,204,92,.22), transparent 42%),
+    radial-gradient(circle at 82% 100%, rgba(46,204,92,.14), transparent 44%);
+  box-shadow:0 0 0 1px rgba(46,204,92,.14),0 0 20px rgba(46,204,92,.10),0 0 42px rgba(46,204,92,.06);
+  animation:appGlowPulse 4.8s ease-in-out infinite;}
 .app-card:hover{border-color:var(--ac);box-shadow:var(--eac),var(--e2);transform:translateY(-2px);}
 .app-card:hover::before{opacity:1;}
-.app-card:hover::after{opacity:.6;box-shadow:0 0 0 1px rgba(46,204,92,.36),0 0 24px rgba(46,204,92,.22),0 0 48px rgba(46,204,92,.14);}
-.card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;}
+.app-card:hover::after{opacity:.84;box-shadow:0 0 0 1px rgba(46,204,92,.42),0 0 26px rgba(46,204,92,.28),0 0 56px rgba(46,204,92,.18);}
+.app-card:nth-child(2)::after{animation-delay:-1.2s;}
+.app-card:nth-child(2){animation-delay:-2.1s;}
 .card-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;
-  justify-content:center;font-size:20px;flex-shrink:0;}
+  justify-content:center;font-size:20px;flex-shrink:0;animation:appIconPulse 3.8s ease-in-out infinite;}
+.app-card:nth-child(2) .card-icon{animation-delay:-1.3s;}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;}
 .card-title{font-family:var(--ff-head);font-weight:700;font-size:16px;
   color:var(--tx);letter-spacing:-.3px;margin-bottom:5px;}
 .card-desc{font-size:12.5px;color:var(--tx2);line-height:1.55;margin-bottom:16px;}
@@ -227,7 +288,7 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
     <div class="login-card">
       <div class="login-field">
         <label>Email Address</label>
-        <div style="display:flex;gap:0;border:1px solid var(--bd2);border-radius:var(--rsm);overflow:hidden;background:var(--sf3);transition:border-color .18s,box-shadow .18s" id="emailWrap">
+        <div id="emailWrap">
           <input type="text" id="loginEmailUser" class="login-input"
             placeholder="username"
             autocomplete="username"
@@ -236,7 +297,7 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
             onkeydown="if(event.key==='Enter')document.getElementById('loginPass').focus()">
           <select id="loginDomain"
             onchange="syncLoginEmail();if(this.value==='other'){document.getElementById('loginEmailUser').placeholder='full@address.com';document.getElementById('loginEmailUser').type='email';}else{document.getElementById('loginEmailUser').placeholder='username';document.getElementById('loginEmailUser').type='text';}"
-            style="height:40px;padding:0 8px 0 4px;background:var(--sf2);border:none;border-left:1px solid var(--bd2);color:var(--tx2);font-family:var(--ff-mono);font-size:10px;cursor:pointer;outline:none;flex-shrink:0;max-width:190px">
+            class="email-domain-select">
             <option value="@heidelbergmaterials.com">@heidelbergmaterials.com</option>
             <option value="other">other address…</option>
           </select>
@@ -350,25 +411,7 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
           <div class="card-icon" style="background:rgba(26,122,53,.15);border:1px solid rgba(46,204,92,.25)">🔥</div>
         </div>
         <div class="card-title">Padeswood Shift Logs</div>
-        <div class="card-desc">Plant shift logs for kiln burners, cement analysts and shift managers. Track process conditions, coal additions, and shift handover notes.</div>
-        <div class="card-arrow">→</div>
-      </a>
-
-      <a href="documents/index.html" class="app-card">
-        <div class="card-top">
-          <div class="card-icon" style="background:rgba(155,116,232,.12);border:1px solid rgba(155,116,232,.28)">📋</div>
-        </div>
-        <div class="card-title">Documents</div>
-        <div class="card-desc">Risk assessments, review dates, and audit trail for compliance documents, with quick access to Sypol for COSHH sheets.</div>
-        <div class="card-arrow">→</div>
-      </a>
-
-      <a href="isolation/index.html" class="app-card">
-        <div class="card-top">
-          <div class="card-icon" style="background:rgba(232,134,26,.12);border:1px solid rgba(232,134,26,.28)">🔌</div>
-        </div>
-        <div class="card-title">Isolation Matrix</div>
-        <div class="card-desc">Equipment isolation procedures for safe maintenance. Manage isolation points, work areas, and equipment lockout/tagout requirements.</div>
+        <div class="card-desc">Role-based shift logging for burners, shift managers, electricians, mechanical teams and cement analysts, with overview reporting, search, AI summaries, feedback tracking and print-ready handovers.</div>
         <div class="card-arrow">→</div>
       </a>
 
@@ -414,29 +457,19 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
             <input type="email" id="inviteEmail" placeholder="name@heidelbergmaterials.com" style="width:100%;height:38px;padding:0 12px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none;box-sizing:border-box">
           </div>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px">
-          <div><label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Documents</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+          <div><label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Platform Access</label>
             <select id="inviteRole" style="width:100%;height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
-              <option value="none">No Access</option>
-              <option value="viewer">Viewer</option>
-              <option value="editor">Editor</option>
-              <option value="reviewer">Reviewer</option>
-              <option value="admin">Admin</option>
-            </select>
-          </div>
-          <div><label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Isolation</label>
-            <select id="inviteIsoRole" style="width:100%;height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
-              <option value="none">No Access</option>
-              <option value="viewer">Viewer</option>
-              <option value="editor">Editor</option>
-              <option value="reviewer">Reviewer</option>
-              <option value="admin">Admin</option>
+              <option value="true">Allow Access</option>
+              <option value="false">No Access</option>
             </select>
           </div>
           <div><label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Shift Log</label>
             <select id="inviteKilnRole" style="width:100%;height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
               <option value="none">No Access</option>
               <option value="burner">Burner</option>
+              <option value="electrician">Electrician</option>
+              <option value="mechanical">Mechanical</option>
               <option value="shift_manager">Shift Manager</option>
               <option value="cement_analyst">Cement Analyst</option>
               <option value="day_staff">Day Staff</option>
@@ -522,25 +555,12 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
   <div style="padding:18px 22px 20px;overflow:auto;display:flex;flex-direction:column;gap:16px">
     <input type="hidden" id="roleEditProfileId">
     <input type="hidden" id="roleEditKilnUsername">
-    <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px">
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px">
       <label style="display:flex;flex-direction:column;gap:6px">
-        <div style="font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3)">Documents Role</div>
+        <div style="font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3)">Platform Access</div>
         <select id="roleEditDocs" style="height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
-          <option value="none">No Access</option>
-          <option value="viewer">Viewer</option>
-          <option value="editor">Editor</option>
-          <option value="reviewer">Reviewer</option>
-          <option value="admin">Admin</option>
-        </select>
-      </label>
-      <label style="display:flex;flex-direction:column;gap:6px">
-        <div style="font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3)">Isolation Role</div>
-        <select id="roleEditIso" style="height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
-          <option value="none">No Access</option>
-          <option value="viewer">Viewer</option>
-          <option value="editor">Editor</option>
-          <option value="reviewer">Reviewer</option>
-          <option value="admin">Admin</option>
+          <option value="true">Allow Access</option>
+          <option value="false">No Access</option>
         </select>
       </label>
       <label style="display:flex;flex-direction:column;gap:6px">
@@ -561,7 +581,7 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
     <div style="border:1px solid var(--bd);border-radius:var(--rsm);background:var(--sf2);padding:14px 14px 12px">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px">
         <div style="font-family:var(--ff-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--tx3)">Shift Log Roles</div>
-        <div style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">Select one or more</div>
+        <div style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">Toggle access below</div>
       </div>
       <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
         <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--bd2);border-radius:var(--rsm);background:var(--sf);cursor:pointer">
@@ -571,6 +591,14 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
         <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--bd2);border-radius:var(--rsm);background:var(--sf);cursor:pointer">
           <input type="checkbox" id="roleEditKilnManager" style="accent-color:var(--ac3)">
           <span style="font-size:12px;color:var(--tx)">Shift Manager</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--bd2);border-radius:var(--rsm);background:var(--sf);cursor:pointer">
+          <input type="checkbox" id="roleEditKilnElectrician" style="accent-color:#0f766e">
+          <span style="font-size:12px;color:var(--tx)">Electrician</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--bd2);border-radius:var(--rsm);background:var(--sf);cursor:pointer">
+          <input type="checkbox" id="roleEditKilnMechanical" style="accent-color:#2563eb">
+          <span style="font-size:12px;color:var(--tx)">Mechanical</span>
         </label>
         <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--bd2);border-radius:var(--rsm);background:var(--sf);cursor:pointer">
           <input type="checkbox" id="roleEditKilnAnalyst" style="accent-color:var(--ac3)">
@@ -974,14 +1002,14 @@ async function doLogin() {
 }
 
 async function showAppSelector(user, opts) {
-  const skipResetPrompt = !!(opts && opts.skipResetPrompt) || sessionStorage.getItem('pw_post_reset_skip_uid') === user.id;
+  const skipResetPrompt = !!(opts && opts.skipResetPrompt) || _pwPostResetSkipUid === user.id;
   document.getElementById('headerUser').style.display = 'flex';
   document.getElementById('logoutBtn').style.display = 'flex';
   document.getElementById('changePwBtn').style.display = 'flex';
   try {
     const {data} = await sb.from('pw_profiles').select('*').eq('id', user.id).single();
     _platformProfile = data;
-    if (data && (data.approved === false || data.disabled === true)) {
+    if (data && (data.approved === false || data.disabled === true || data.role === 'none')) {
       await sb.auth.signOut();
       Object.keys(localStorage).forEach(function(k) {
         if (k.startsWith('sb-') || k.startsWith('supabase')) localStorage.removeItem(k);
@@ -996,6 +1024,11 @@ async function showAppSelector(user, opts) {
       const err = document.getElementById('loginErr');
       if (data.disabled === true) {
         err.textContent = 'Your account has been disabled. Please contact an administrator.';
+        err.style.background = 'var(--redd)';
+        err.style.color = 'var(--red)';
+        err.style.borderColor = 'var(--redb)';
+      } else if (data.role === 'none') {
+        err.textContent = 'You do not have Platform access. Please contact an administrator if this is unexpected.';
         err.style.background = 'var(--redd)';
         err.style.color = 'var(--red)';
         err.style.borderColor = 'var(--redb)';
@@ -1064,7 +1097,7 @@ async function doLogout() {
   });
   sessionStorage.removeItem('kbl_session');
   sessionStorage.removeItem('kbl_refresh');
-  sessionStorage.removeItem('pw_post_reset_skip_uid');
+  _pwPostResetSkipUid = null;
   window.location.reload();
 }
 
@@ -1109,7 +1142,7 @@ async function doRegister() {
     const {data:existing} = await sb.from('pw_access_requests').select('id').eq('email',normalizedEmail).eq('status','pending');
     if (existing && existing.length) { showRegMsg('err', 'A request for this email is already pending approval.'); btn.disabled=false; btn.textContent='Request Access'; return; }
     const {error} = await sb.from('pw_access_requests').insert({
-      email: normalizedEmail, full_name: name, role: 'viewer', isolation_role: 'none',
+      email: normalizedEmail, full_name: name, role: 'viewer',
       kiln_role: 'read_only', status: 'pending', requested_at: new Date().toISOString()
     });
     if (error) throw error;
@@ -1149,11 +1182,11 @@ async function loadPendingBadge() {
 function activateRequestFromBtn(btn) {
   openAccessRequestPwModal(
     btn.dataset.reqId, btn.dataset.reqEmail, btn.dataset.reqName,
-    btn.dataset.reqRole, btn.dataset.reqIso, btn.dataset.reqKiln
+    btn.dataset.reqRole, btn.dataset.reqKiln
   );
 }
-async function activateAccessRequest(reqId, email, fullName, role, isoRole, kilnRole) {
-  openAccessRequestPwModal(reqId, email, fullName, role, isoRole, kilnRole);
+async function activateAccessRequest(reqId, email, fullName, role, kilnRole) {
+  openAccessRequestPwModal(reqId, email, fullName, role, kilnRole);
 }
 
 function denyRequestFromBtn(btn){
@@ -1292,7 +1325,6 @@ async function handleEmailConfirmation() {
       email: email,
       full_name: name,
       role: 'viewer',
-      isolation_role: 'none',
       approved: false
     }, { onConflict: 'id' });
     if (profErr) throw profErr;
@@ -1326,8 +1358,9 @@ const SB_KEY_PLATFORM = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
 
 let _forcePwUsername = null;
 let _adminSetPwTarget = null; // { authUserId, kilnUsername, displayName } when admin is setting
-let _accessRequestTarget = null; // { reqId, email, fullName, role, isoRole, kilnRole } when creating a new account
+let _accessRequestTarget = null; // { reqId, email, fullName, role, kilnRole } when creating a new account
 let _pendingResetReqId = null;  // set when opened from reset request queue
+let _pwPostResetSkipUid = null;
 
 async function callAdminPwFunction(body) {
   const refreshed = await sb.auth.refreshSession().catch(function(){ return null; });
@@ -1401,8 +1434,8 @@ function openAdminSetPwModal(authUserId, kilnUsername, displayName, fromResetReq
   setTimeout(function() { document.getElementById('forcePwNew').focus(); }, 80);
 }
 
-function openAccessRequestPwModal(reqId, email, fullName, role, isoRole, kilnRole) {
-  _accessRequestTarget = { reqId, email, fullName, role, isoRole, kilnRole };
+function openAccessRequestPwModal(reqId, email, fullName, role, kilnRole) {
+  _accessRequestTarget = { reqId, email, fullName, role, kilnRole };
   _adminSetPwTarget = null;
   _forcePwUsername = null;
   document.getElementById('forcePwTitle').textContent = 'Create Account';
@@ -1456,45 +1489,54 @@ async function submitPlatformForceReset() {
         if (profileRes.data || kilnRes.data) {
           throw new Error('A user with this email already has a logon.');
         }
-        const {data: authData, error: authErr} = await sb.auth.signUp({
+        const createRes = await callAdminPwFunction({
+          action: 'createAccount',
           email: target.email,
           password: newPw,
-          options: { data: { full_name: target.fullName }, emailRedirectTo: null }
+          fullName: target.fullName
         });
-        if (authErr) throw new Error(authErr.message);
-        const userId = authData.user ? authData.user.id : null;
+        const userId = createRes && createRes.userId ? createRes.userId : null;
         if (!userId) throw new Error('Failed to create auth user');
         const req = _accessRequestsCache.find(function(x){ return x.id === target.reqId; }) || null;
         const trackerAllowed = req ? req.shift_tracker_access !== false : true;
         const { error: profErr } = await sb.from('pw_profiles').upsert({
           id: userId, email: target.email, full_name: target.fullName,
-          role: target.role || 'viewer', isolation_role: target.isoRole || 'none',
+          role: target.role || 'viewer',
           shift_tracker_access: trackerAllowed, approved: true
         });
         if (profErr) throw new Error(profErr.message || 'Failed to save platform profile');
         if (target.kilnRole && target.kilnRole !== 'none') {
           const flags = {
             is_admin: target.kilnRole==='admin', is_shift_manager: target.kilnRole==='shift_manager',
+            is_electrician: target.kilnRole==='electrician',
+            is_mechanical: target.kilnRole==='mechanical',
             is_cement_analyst: target.kilnRole==='cement_analyst', is_day_staff: target.kilnRole==='day_staff',
             is_burner: target.kilnRole==='burner', is_readonly: target.kilnRole==='read_only'
           };
           const username = target.email.split('@')[0].replace(/[^a-z0-9_]/gi,'').toLowerCase();
           const { error: kilnErr } = await sb.from('kiln_users').upsert({
             ...flags, auth_user_id: userId, username, locked_name: target.fullName, email: target.email,
+            shift_log_access: true,
+            is_locked: false,
             must_reset_password: true
           });
           if (kilnErr) throw new Error(kilnErr.message || 'Failed to save kiln account');
         }
         const { error: reqErr } = await sb.from('pw_access_requests').update({status:'approved'}).eq('id', target.reqId);
         if (reqErr) throw new Error(reqErr.message || 'Failed to clear access request');
+        _accessRequestsCache = _accessRequestsCache.filter(function(x){ return x.id !== target.reqId; });
         showForcePwMsg('ok', target.fullName + ' activated ✓ — they can now log in');
         showPlatformToast(target.fullName + ' activated ✓ — they can now log in');
         btn.disabled = false; btn.textContent = 'Create Account';
         _accessRequestTarget = null;
+        try {
+          await loadAllUsers();
+        } catch(e) {}
+        try {
+          await loadPendingBadge();
+        } catch(e) {}
         setTimeout(function() {
           document.getElementById('forcePwOverlay').style.display = 'none';
-          renderAllUsers();
-          loadPendingBadge();
         }, 1800);
         return;
       } catch(e) {
@@ -1551,7 +1593,7 @@ async function submitPlatformForceReset() {
         showForcePwMsg('err', (relog.error && relog.error.message) || 'Password updated, but automatic sign-in failed. Please sign in again.');
         return;
       }
-      sessionStorage.setItem('pw_post_reset_skip_uid', relog.data.user.id);
+      _pwPostResetSkipUid = relog.data.user.id;
     } catch(e2) {
       btn.disabled = false; btn.textContent = 'Set New Password & Continue';
       showForcePwMsg('err', e2 && e2.message ? e2.message : 'Failed to update password.');
@@ -1666,7 +1708,7 @@ async function loadAllUsers() {
 
     const [profRes, kilnRes] = await withTimeout(Promise.all([
       sb.from('pw_profiles').select('*').order('email'),
-      sb.from('kiln_users').select('username,locked_name,email,is_admin,is_burner,is_shift_manager,is_cement_analyst,is_day_staff,is_readonly,is_locked,must_reset_password,auth_user_id').order('username')
+      sb.from('kiln_users').select('username,locked_name,email,is_admin,is_burner,is_shift_manager,is_electrician,is_mechanical,is_cement_analyst,is_day_staff,is_readonly,is_locked,shift_log_access,must_reset_password,auth_user_id').order('username')
     ]), 10000);
 
     if (profRes.error) {
@@ -1715,16 +1757,21 @@ function renderAllUsers() {
   const rc = {admin:'var(--ac3)',reviewer:'var(--pur)',editor:'var(--amb)',viewer:'var(--tx3)',none:'var(--tx3)'};
 
   const ROLE_GROUPS = [
-    { label:'Admins',           key:'admin',          color:'var(--ac3)', test: function(m){ const ku=m.kiln; const p=m.prof; return (ku&&ku.is_admin)||(p&&p.role==='admin'); } },
-    { label:'Shift Managers',   key:'shift_manager',  color:'#7c3aed',    test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_shift_manager); } },
-    { label:'Cement Analysts',  key:'cement_analyst', color:'#b45309',    test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_cement_analyst); } },
-    { label:'Day Staff',        key:'day_staff',      color:'#0891b2',    test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_day_staff); } },
-    { label:'Burners',          key:'burner',         color:'var(--amb)', test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_burner); } },
-    { label:'Read Only',        key:'readonly',       color:'var(--tx2)', test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_readonly); } },
-    { label:'Platform Only',    key:'platform',       color:'var(--tx3)', test: function(m){ return !!(m.prof && !m.kiln); } },
+    { label:'Admins',           key:'admin',          color:'#16a34a', bg:'linear-gradient(90deg, rgba(22,163,74,.16), rgba(22,163,74,.08))', border:'rgba(22,163,74,.34)', test: function(m){ const ku=m.kiln; const p=m.prof; return (ku&&ku.is_admin)||(p&&p.role==='admin'); } },
+    { label:'Shift Managers',   key:'shift_manager',  color:'#7c3aed', bg:'rgba(124,58,237,.10)',  border:'rgba(124,58,237,.26)',  test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_shift_manager); } },
+    { label:'Electricians',     key:'electrician',    color:'#0f766e', bg:'rgba(15,118,110,.10)',  border:'rgba(15,118,110,.26)',  test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_electrician); } },
+    { label:'Mechanical',       key:'mechanical',     color:'#2563eb', bg:'rgba(37,99,235,.10)',   border:'rgba(37,99,235,.26)',   test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_mechanical); } },
+    { label:'Cement Analysts',  key:'cement_analyst', color:'#b45309', bg:'rgba(180,83,9,.10)',    border:'rgba(180,83,9,.26)',    test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_cement_analyst); } },
+    { label:'Day Staff',        key:'day_staff',      color:'#0891b2', bg:'rgba(8,145,178,.10)',   border:'rgba(8,145,178,.26)',   test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_day_staff); } },
+    { label:'Burners',          key:'burner',         color:'#d97706', bg:'rgba(217,119,6,.10)',   border:'rgba(217,119,6,.26)',   test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_burner); } },
+    { label:'Read Only',        key:'readonly',       color:'#64748b', bg:'rgba(100,116,139,.10)', border:'rgba(100,116,139,.24)', test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_readonly); } },
+    { label:'Platform Only',    key:'platform',       color:'#94a3b8', bg:'rgba(148,163,184,.10)', border:'rgba(148,163,184,.24)', test: function(m){ return !!(m.prof && !m.kiln); } },
   ];
 
   const _platCollapsed = window._platCollapsed = window._platCollapsed || {};
+  ROLE_GROUPS.forEach(function(grp) {
+    if (typeof _platCollapsed[grp.key] === 'undefined') _platCollapsed[grp.key] = true;
+  });
   let html = '';
 
   if (_accessRequestsCache && _accessRequestsCache.length) {
@@ -1737,7 +1784,7 @@ function renderAllUsers() {
         +'<div style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">'+esc(req.email)+'</div>'
         +'<div style="font-size:10px;color:var(--amb);font-family:var(--ff-mono);margin-top:2px">Requested '+new Date(req.requested_at).toLocaleDateString('en-GB')+'</div>'
         +'</div>'
-        +'<button data-req-id="'+esc(req.id)+'" data-req-email="'+esc(req.email)+'" data-req-name="'+esc(req.full_name||'')+'" data-req-role="'+esc(req.role||'viewer')+'" data-req-iso="'+esc(req.isolation_role||'none')+'" data-req-kiln="'+esc(req.kiln_role||'read_only')+'" onclick="activateRequestFromBtn(this)" style="height:28px;padding:0 12px;font-size:11px;font-family:var(--ff-head);font-weight:600;background:var(--grnd);border:1px solid var(--grnb);border-radius:var(--rsm);color:var(--grn);cursor:pointer;white-space:nowrap">\u2713 Activate</button>'
+        +'<button data-req-id="'+esc(req.id)+'" data-req-email="'+esc(req.email)+'" data-req-name="'+esc(req.full_name||'')+'" data-req-role="'+esc(req.role||'viewer')+'" data-req-kiln="'+esc(req.kiln_role||'read_only')+'" onclick="activateRequestFromBtn(this)" style="height:28px;padding:0 12px;font-size:11px;font-family:var(--ff-head);font-weight:600;background:var(--grnd);border:1px solid var(--grnb);border-radius:var(--rsm);color:var(--grn);cursor:pointer;white-space:nowrap">\u2713 Activate</button>'
         +'<button data-req-id="'+esc(req.id)+'" onclick="denyRequestFromBtn(this)" style="height:28px;padding:0 10px;font-size:11px;font-family:var(--ff-mono);background:transparent;border:1px solid var(--redb);border-radius:var(--rsm);color:var(--red);cursor:pointer">Deny</button>'
         +'</div>';
     });
@@ -1749,7 +1796,7 @@ function renderAllUsers() {
     if (!members.length) return;
     const collapsed = !!_platCollapsed[grp.key];
     html += '<div style="margin-bottom:4px">';
-    html += '<div onclick="window._platCollapsed[\''+grp.key+'\']=!window._platCollapsed[\''+grp.key+'\'];renderAllUsers()" style="display:flex;align-items:center;gap:8px;padding:7px 12px;background:'+grp.color+'18;border:1px solid '+grp.color+'44;border-radius:var(--rsm);cursor:pointer;user-select:none;margin-bottom:4px">'
+    html += '<div onclick="window._platCollapsed[\''+grp.key+'\']=!window._platCollapsed[\''+grp.key+'\'];renderAllUsers()" style="display:flex;align-items:center;gap:8px;padding:7px 12px;background:'+grp.bg+';border:1px solid '+grp.border+';border-radius:var(--rsm);cursor:pointer;user-select:none;margin-bottom:4px">'
       +'<span style="flex:1;font-size:11px;font-weight:700;font-family:var(--ff-mono);color:'+grp.color+'">'+grp.label+'</span>'
       +'<span style="font-size:10px;font-family:var(--ff-mono);color:'+grp.color+';opacity:.7">'+members.length+' user'+(members.length!==1?'s':'')+'</span>'
       +'<svg viewBox="0 0 24 24" fill="none" stroke="'+grp.color+'" stroke-width="2.5" style="width:12px;height:12px;transition:transform .15s;transform:rotate('+(collapsed?'-90deg':'0deg')+')"><polyline points="6 9 12 15 18 9"/></svg>'
@@ -1772,26 +1819,26 @@ function renderUserCard(m, DS, LS, RS, rc) {
   const p = m.prof, ku = m.kiln;
   const PROTECTED_USERNAME = 'rjone';
   const canManageUsers = _platformProfile && _platformProfile.role === 'admin';
-  const isSelf = _platformProfile && p && p.id === _platformProfile.id;
+  const profileId = p ? p.id : (ku && ku.auth_user_id ? ku.auth_user_id : null);
+  const isSelf = _platformProfile && profileId && profileId === _platformProfile.id;
   const isProtectedKiln = ku && ku.username === PROTECTED_USERNAME;
   const displayName = (p&&(p.full_name||p.email))||(ku&&(ku.locked_name||ku.username))||'?';
   const email = (p&&p.email)||(ku&&ku.email)||'\u2014';
   const initials = displayName.split(' ').map(function(w){return w[0]||'';}).join('').slice(0,2).toUpperCase()||'?';
-  const docsRole = p?(p.role||'viewer'):null;
-  const isoRole  = p?(p.isolation_role||'none'):null;
-  const trackerAccess = p ? (p.shift_tracker_access !== false) : null;
   const kilnAccess = ku ? (ku.shift_log_access !== false) : null;
-  const kilnRole = !ku ? null : (kilnAccess === false ? 'none' : ku.is_admin ? 'admin' : ku.is_shift_manager ? 'shift_manager' : ku.is_cement_analyst ? 'cement_analyst' : ku.is_day_staff ? 'day_staff' : ku.is_burner ? 'burner' : 'read_only');
+  const kilnRole = !ku ? null : (kilnAccess === false ? 'none' : ku.is_admin ? 'admin' : ku.is_shift_manager ? 'shift_manager' : ku.is_electrician ? 'electrician' : ku.is_mechanical ? 'mechanical' : ku.is_cement_analyst ? 'cement_analyst' : ku.is_day_staff ? 'day_staff' : ku.is_burner ? 'burner' : 'read_only');
   const kilnRoles = [];
   if (ku) {
     if (ku.is_admin) kilnRoles.push('Admin');
     if (ku.is_shift_manager) kilnRoles.push('Shift Manager');
+    if (ku.is_electrician) kilnRoles.push('Electrician');
+    if (ku.is_mechanical) kilnRoles.push('Mechanical');
     if (ku.is_cement_analyst) kilnRoles.push('Cement Analyst');
     if (ku.is_day_staff) kilnRoles.push('Day Staff');
     if (ku.is_burner) kilnRoles.push('Burner');
     if (ku.is_readonly) kilnRoles.push('Read Only');
   }
-  const col = docsRole?(rc[docsRole]||'var(--tx3)'):'var(--tx3)';
+  const col = rc.viewer || 'var(--tx3)';
   let h = '<div style="background:var(--sf2);border:1px solid var(--bd);border-radius:var(--r);padding:14px 16px;margin-bottom:6px">';
   h += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:13px">'
     +'<div style="width:36px;height:36px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--ff-head);font-weight:700;font-size:13px;color:'+col+';border:1px solid '+col+'33;background:'+col+'18">'+esc(initials)+'</div>'
@@ -1801,40 +1848,26 @@ function renderUserCard(m, DS, LS, RS, rc) {
     +(ku&&ku.must_reset_password?'<span style="font-size:9px;font-family:var(--ff-mono);color:var(--amb);border:1px solid var(--ambb);background:var(--ambd);padding:2px 6px;border-radius:4px;flex-shrink:0;white-space:nowrap">PW RESET</span>':'')
     +(ku&&ku.is_locked?'<span style="font-size:9px;font-family:var(--ff-mono);color:var(--red);border:1px solid var(--redb);background:var(--redd);padding:2px 6px;border-radius:4px;flex-shrink:0">LOCKED</span>':'')
     +'</div>';
-  h += '<div style="'+RS+'"><span style="'+LS+'">Documents</span>';
-  if(p){
-    if(docsRole==='admin' || isProtectedKiln){h+='<div style="height:30px;padding:0 8px;font-size:11px;font-family:var(--ff-mono);background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--ac3);display:flex;align-items:center;flex:1">Admin (protected)</div>';}
-    else{h+='<select onchange="updateDocsRole(\''+esc(p.id)+'\',this.value)"'+(isSelf?' disabled':'')+' style="'+DS+'"><option value="none"'+(docsRole==='none'?' selected':'')+'>No Access</option><option value="viewer"'+(docsRole==='viewer'?' selected':'')+'>Viewer</option><option value="editor"'+(docsRole==='editor'?' selected':'')+'>Editor</option><option value="reviewer"'+(docsRole==='reviewer'?' selected':'')+'>Reviewer</option><option value="admin"'+(docsRole==='admin'?' selected':'')+'>Admin</option></select>';}
-  } else{h+='<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">No platform account</span>';}
-  h+='</div><div style="'+RS+'"><span style="'+LS+'">Isolation Matrix</span>';
-  if(p){
-    if(isProtectedKiln){h+='<div style="height:30px;padding:0 8px;font-size:11px;font-family:var(--ff-mono);background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--ac3);display:flex;align-items:center;flex:1">Admin (protected)</div>';}
-    else{h+='<select onchange="updateIsoRole(\''+esc(p.id)+'\',this.value)"'+(isSelf?' disabled':'')+' style="'+DS+'"><option value="none"'+(isoRole==='none'?' selected':'')+'>No Access</option><option value="viewer"'+(isoRole==='viewer'?' selected':'')+'>Viewer</option><option value="editor"'+(isoRole==='editor'?' selected':'')+'>Editor</option><option value="reviewer"'+(isoRole==='reviewer'?' selected':'')+'>Reviewer</option><option value="admin"'+(isoRole==='admin'?' selected':'')+'>Admin</option></select>';}
-  } else{h+='<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">No platform account</span>';}
-  h+='</div><div style="'+RS+'"><span style="'+LS+'">Shift Log</span>';
+  h += '<div style="'+RS+'"><span style="'+LS+'">Access Levels</span>';
   if(ku){
     if(isProtectedKiln){
       h+='<div style="height:30px;padding:0 8px;font-size:11px;font-family:var(--ff-mono);background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--ac3);display:flex;align-items:center;flex:1">Admin (protected)</div>';
     } else {
       h+='<div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0">'
         +'<div style="height:30px;padding:0 8px;font-size:11px;font-family:var(--ff-mono);background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--tx);display:flex;align-items:center;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(kilnRoles.length ? kilnRoles.join(' · ') : 'No Access')+'</div>'
-        +(canManageUsers ? '<button type="button" onclick="openRoleEditor(\''+esc(p.id)+'\')" style="height:30px;padding:0 10px;font-size:11px;font-family:var(--ff-head);font-weight:600;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--ac3);cursor:pointer;white-space:nowrap">Edit Roles</button>' : '')
+        +(canManageUsers && profileId ? '<button type="button" onclick="openRoleEditor(\''+esc(profileId)+'\')" style="height:30px;padding:0 10px;font-size:11px;font-family:var(--ff-head);font-weight:600;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--ac3);cursor:pointer;white-space:nowrap">Edit Roles</button>' : '')
         +'</div>';
     }
-  } else{h+='<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">No shift log account</span>';}
-  h+='</div><div style="'+RS+'"><span style="'+LS+'">Shift Tracker</span>';
-  if(p){
-    h+='<select onchange="updateShiftTrackerAccess(\''+esc(p.id)+'\',this.value)"'+(isSelf?' disabled':'')+' style="'+DS+'">'
-      +'<option value="true"'+(trackerAccess!==false?' selected':'')+'>Allow Access</option>'
-      +'<option value="false"'+(trackerAccess===false?' selected':'')+'>No Access</option>'
-      +'</select>';
   } else {
-    h+='<span style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">No platform account</span>';
+    h+='<div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0">'
+      +'<div style="height:30px;padding:0 8px;font-size:11px;font-family:var(--ff-mono);background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--tx3);display:flex;align-items:center;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">No shift log account</div>'
+      +(canManageUsers && profileId ? '<button type="button" onclick="openRoleEditor(\''+esc(profileId)+'\')" style="height:30px;padding:0 10px;font-size:11px;font-family:var(--ff-head);font-weight:600;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--ac3);cursor:pointer;white-space:nowrap">Edit Roles</button>' : '')
+      +'</div>';
   }
   h+='</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid var(--bd)">';
   if(p&&p.approved===false){h+='<button onclick="approveUser(\''+esc(p.id)+'\')" style="height:26px;padding:0 12px;font-size:11px;font-family:var(--ff-head);font-weight:600;background:var(--grnd);border:1px solid var(--grnb);border-radius:var(--rsm);color:var(--grn);cursor:pointer">\u2713 Approve</button>';}
   if(!isSelf&&!isProtectedKiln){
-    const authId = p ? p.id : null;
+    const authId = p ? p.id : (ku && ku.auth_user_id ? ku.auth_user_id : null);
     const dName  = (p&&p.full_name) || (ku&&ku.locked_name) || email;
     const kilnUn = ku ? ku.username : null;
     if(authId){
@@ -1844,10 +1877,15 @@ function renderUserCard(m, DS, LS, RS, rc) {
       h+='<button onclick="setKilnPassword(\''+esc(kilnUn)+'\')" style="height:26px;padding:0 10px;font-size:11px;font-family:var(--ff-body);background:var(--sf3);border:1px solid var(--bd);border-radius:var(--rsm);color:var(--tx2);cursor:pointer">Set PW</button>';
     }
   }
-  if(p&&!isSelf&&!isProtectedKiln){
-    const isDisabled = p.disabled === true;
-    h+='<button onclick="toggleDisableUser(\''+esc(p.id)+'\','+(isDisabled?'true':'false')+')" style="height:26px;padding:0 10px;font-size:11px;font-family:var(--ff-body);background:'+(isDisabled?'var(--grnd)':'var(--redd)')+';border:1px solid '+(isDisabled?'var(--grnb)':'var(--redb)')+';border-radius:var(--rsm);color:'+(isDisabled?'var(--grn)':'var(--red)')+';cursor:pointer">'+(isDisabled?'&#10003; Enable':'&#9646; Disable')+'</button>';
-    h+='<button onclick="deleteUser(\''+esc(p.id)+'\',\''+esc(email)+'\')" style="height:26px;padding:0 10px;font-size:11px;font-family:var(--ff-mono);background:transparent;border:1px solid var(--redb);border-radius:var(--rsm);color:var(--red);cursor:pointer;margin-left:auto">Remove</button>';
+  if((p || ku) && !isSelf && !isProtectedKiln){
+    const removeId = p ? p.id : (ku && ku.auth_user_id ? ku.auth_user_id : '');
+    const isDisabled = p && p.disabled === true;
+    if(p){
+      h+='<button onclick="toggleDisableUser(\''+esc(p.id)+'\','+(isDisabled?'true':'false')+')" style="height:26px;padding:0 10px;font-size:11px;font-family:var(--ff-body);background:'+(isDisabled?'var(--grnd)':'var(--redd)')+';border:1px solid '+(isDisabled?'var(--grnb)':'var(--redb)')+';border-radius:var(--rsm);color:'+(isDisabled?'var(--grn)':'var(--red)')+';cursor:pointer">'+(isDisabled?'&#10003; Enable':'&#9646; Disable')+'</button>';
+    }
+    if(removeId){
+      h+='<button onclick="deleteUser(\''+esc(removeId)+'\',\''+esc(email)+'\',\''+esc(ku&&ku.username ? ku.username : '')+'\')" style="height:26px;padding:0 10px;font-size:11px;font-family:var(--ff-mono);background:transparent;border:1px solid var(--redb);border-radius:var(--rsm);color:var(--red);cursor:pointer;margin-left:auto">Remove</button>';
+    }
   }
   h+='</div></div>';
   return h;
@@ -1857,6 +1895,8 @@ async function updateKilnRole(username, role) {
   const flags = {
     is_admin:          role === 'admin',
     is_shift_manager:  role === 'shift_manager',
+    is_electrician:    role === 'electrician',
+    is_mechanical:     role === 'mechanical',
     is_cement_analyst: role === 'cement_analyst',
     is_day_staff:      role === 'day_staff',
     is_burner:         role === 'burner',
@@ -1866,6 +1906,8 @@ async function updateKilnRole(username, role) {
   if (role === 'none') {
     flags.is_admin = false;
     flags.is_shift_manager = false;
+    flags.is_electrician = false;
+    flags.is_mechanical = false;
     flags.is_cement_analyst = false;
     flags.is_day_staff = false;
     flags.is_burner = false;
@@ -1879,22 +1921,13 @@ async function updateKilnRole(username, role) {
 }
 
 async function updateDocsRole(profileId, role) {
-  const nextRole = role || 'none';
+  const nextRole = String(role) === 'false' ? 'none' : 'viewer';
   const {error} = await sb.from('pw_profiles').update({role: nextRole}).eq('id', profileId);
   if (error) { showPlatformToast('Failed: ' + error.message); return; }
   const u = _usersCache.find(x => x.id === profileId);
   if (u) u.role = nextRole;
   renderAllUsers();
-  showPlatformToast('Documents role updated ✓');
-}
-
-async function updateIsoRole(profileId, role) {
-  const {error} = await sb.from('pw_profiles').update({isolation_role: role || 'none'}).eq('id', profileId);
-  if (error) { showPlatformToast('Failed: ' + error.message); return; }
-  const u = _usersCache.find(x => x.id === profileId);
-  if (u) u.isolation_role = role || 'none';
-  renderAllUsers();
-  showPlatformToast('Isolation role updated ✓');
+  showPlatformToast('Platform access updated ✓');
 }
 
 async function updateShiftTrackerAccess(profileId, value) {
@@ -1928,13 +1961,14 @@ function openRoleEditor(profileId) {
   document.getElementById('roleEditProfileId').value = profileId;
   document.getElementById('roleEditKilnUsername').value = ku ? (ku.username || '') : '';
   document.getElementById('roleEditSub').textContent = (p.full_name || p.email || 'User') + ' · ' + (p.email || '—');
-  document.getElementById('roleEditDocs').value = p.role || 'none';
-  document.getElementById('roleEditIso').value = p.isolation_role || 'none';
+  document.getElementById('roleEditDocs').value = p.role === 'none' ? 'false' : 'true';
   document.getElementById('roleEditTracker').value = p.shift_tracker_access === false ? 'false' : 'true';
   const access = !ku ? false : (ku.shift_log_access !== false);
   document.getElementById('roleEditKilnAccess').value = access ? 'true' : 'false';
   document.getElementById('roleEditKilnAdmin').checked = !!(ku && ku.is_admin);
   document.getElementById('roleEditKilnManager').checked = !!(ku && ku.is_shift_manager);
+  document.getElementById('roleEditKilnElectrician').checked = !!(ku && ku.is_electrician);
+  document.getElementById('roleEditKilnMechanical').checked = !!(ku && ku.is_mechanical);
   document.getElementById('roleEditKilnAnalyst').checked = !!(ku && ku.is_cement_analyst);
   document.getElementById('roleEditKilnDay').checked = !!(ku && ku.is_day_staff);
   document.getElementById('roleEditKilnBurner').checked = !!(ku && ku.is_burner);
@@ -1961,13 +1995,14 @@ async function saveRoleEditor() {
   const p = _usersCache.find(function(x){ return x.id === profileId; });
   if (!p) { roleEditorShowMsg('err', 'User not found'); return; }
   const ku = _kilnUsersCache.find(function(x){ return x.auth_user_id === profileId; }) || null;
-  const docsRole = document.getElementById('roleEditDocs').value || 'none';
-  const isoRole = document.getElementById('roleEditIso').value || 'none';
+  const platformAccess = document.getElementById('roleEditDocs').value !== 'false';
   const trackerAccess = document.getElementById('roleEditTracker').value !== 'false';
   const kilnAccess = document.getElementById('roleEditKilnAccess').value !== 'false';
   const kilnFlags = {
     is_admin: !!document.getElementById('roleEditKilnAdmin').checked,
     is_shift_manager: !!document.getElementById('roleEditKilnManager').checked,
+    is_electrician: !!document.getElementById('roleEditKilnElectrician').checked,
+    is_mechanical: !!document.getElementById('roleEditKilnMechanical').checked,
     is_cement_analyst: !!document.getElementById('roleEditKilnAnalyst').checked,
     is_day_staff: !!document.getElementById('roleEditKilnDay').checked,
     is_burner: !!document.getElementById('roleEditKilnBurner').checked,
@@ -1977,47 +2012,88 @@ async function saveRoleEditor() {
   if (!kilnAccess) {
     kilnFlags.is_admin = false;
     kilnFlags.is_shift_manager = false;
+    kilnFlags.is_electrician = false;
+    kilnFlags.is_mechanical = false;
     kilnFlags.is_cement_analyst = false;
     kilnFlags.is_day_staff = false;
     kilnFlags.is_burner = false;
     kilnFlags.is_readonly = false;
   }
-  if (kilnAccess && !kilnFlags.is_admin && !kilnFlags.is_shift_manager && !kilnFlags.is_cement_analyst && !kilnFlags.is_day_staff && !kilnFlags.is_burner && !kilnFlags.is_readonly) {
+  if (kilnAccess && !kilnFlags.is_admin && !kilnFlags.is_shift_manager && !kilnFlags.is_electrician && !kilnFlags.is_mechanical && !kilnFlags.is_cement_analyst && !kilnFlags.is_day_staff && !kilnFlags.is_burner && !kilnFlags.is_readonly) {
     kilnFlags.is_readonly = true;
   }
   roleEditorShowMsg('', '');
   try {
     const {error: profErr} = await sb.from('pw_profiles').update({
-      role: docsRole,
-      isolation_role: isoRole,
+      role: platformAccess ? (p.role && p.role !== 'none' ? p.role : 'viewer') : 'none',
       shift_tracker_access: trackerAccess
     }).eq('id', profileId);
     if (profErr) throw profErr;
     if (ku) {
       const {error: kilnErr} = await sb.from('kiln_users').update(kilnFlags).eq('username', ku.username);
       if (kilnErr) throw kilnErr;
+    } else if (kilnAccess) {
+      const baseUsername = (p.email || '')
+        .split('@')[0]
+        .replace(/[^a-z0-9_]/gi, '')
+        .toLowerCase() || ('user_' + String(profileId).slice(0, 8).toLowerCase());
+      let username = baseUsername;
+      let suffix = 2;
+      while (_kilnUsersCache.some(function(x){ return x && x.username === username; })) {
+        username = baseUsername + '_' + suffix;
+        suffix += 1;
+      }
+      const newKilnUser = {
+        auth_user_id: profileId,
+        username: username,
+        locked_name: p.full_name || p.email || username,
+        email: p.email || null,
+        is_locked: false,
+        must_reset_password: false,
+        ...kilnFlags
+      };
+      const {error: kilnInsertErr} = await sb.from('kiln_users').upsert(newKilnUser);
+      if (kilnInsertErr) throw kilnInsertErr;
+      _kilnUsersCache.push(newKilnUser);
     }
-    p.role = docsRole;
-    p.isolation_role = isoRole;
+    p.role = platformAccess ? (p.role && p.role !== 'none' ? p.role : 'viewer') : 'none';
     p.shift_tracker_access = trackerAccess;
     if (ku) Object.assign(ku, kilnFlags);
     renderAllUsers();
     closeRoleEditor();
-    showPlatformToast('Roles updated ✓');
+    showPlatformToast('Access updated ✓');
   } catch(e) {
     roleEditorShowMsg('err', e && e.message ? e.message : 'Failed to update roles.');
   }
 }
 
-async function removeUser(userId, email) {
+async function removeUser(userId, email, username) {
   if (!confirm('Remove '+email+'? This will revoke their platform access immediately.')) return;
-  const {error} = await sb.from('pw_profiles').delete().eq('id',userId);
-  if (error) { showPlatformToast('Failed: '+error.message); return; }
-  try { await callAdminPwFunction({action:'delete',userId}); } catch(e) { console.warn('Edge fn:',e.message); }
-  _usersCache = _usersCache.filter(x=>x.id!==userId); renderAllUsers(); showPlatformToast('User removed \u2713');
+  const profileMatch = _usersCache.find(function(x){ return x.id === userId; }) || null;
+  const kilnMatch = _kilnUsersCache.find(function(x){ return x.auth_user_id === userId || (username && x.username === username); }) || null;
+  if (profileMatch) {
+    const {error} = await sb.from('pw_profiles').delete().eq('id', userId);
+    if (error) { showPlatformToast('Failed: '+error.message); return; }
+    _usersCache = _usersCache.filter(function(x){ return x.id !== userId; });
+  }
+  if (kilnMatch) {
+    try {
+      if (kilnMatch.auth_user_id) {
+        await sb.from('kiln_users').delete().eq('auth_user_id', kilnMatch.auth_user_id);
+        try { await callAdminPwFunction({action:'delete',userId:kilnMatch.auth_user_id}); } catch(e) { console.warn('Edge fn:',e.message); }
+      } else if (kilnMatch.username) {
+        await sb.from('kiln_users').delete().eq('username', kilnMatch.username);
+      }
+    } catch(e) { console.warn('Kiln delete error:', e); }
+    _kilnUsersCache = _kilnUsersCache.filter(function(x){
+      return !(x.auth_user_id === userId || (username && x.username === username));
+    });
+  }
+  renderAllUsers(); showPlatformToast('User removed \u2713');
 }
 async function deleteUser(userId, email) {
-  return removeUser(userId, email);
+  const ku = _kilnUsersCache.find(function(x){ return x.auth_user_id === userId; }) || null;
+  return removeUser(userId, email, ku ? ku.username : '');
 }
 async function forceKilnPwReset(username) {
   const {error} = await sb.from('kiln_users').update({must_reset_password:true}).eq('username', username);
@@ -2059,8 +2135,7 @@ async function resetKilnPassword(username, authUserId, email) {
 async function inviteUser() {
   const email = document.getElementById('inviteEmail').value.trim().toLowerCase();
   const name  = document.getElementById('inviteName').value.trim();
-  const role  = document.getElementById('inviteRole').value;
-  const isoRoleVal = document.getElementById('inviteIsoRole').value;
+  const platformAccess = document.getElementById('inviteRole').value !== 'false';
   const kilnRoleVal = document.getElementById('inviteKilnRole').value;
   const trackerAccessVal = document.getElementById('inviteTrackerAccess').value === 'true';
   const btn = document.getElementById('inviteBtn');
@@ -2087,16 +2162,14 @@ async function inviteUser() {
       return;
     }
     const {error} = await sb.from('pw_access_requests').insert({
-      email, full_name: name, role, isolation_role: isoRoleVal,
-      kiln_role: kilnRoleVal, shift_tracker_access: trackerAccessVal,
+      email, full_name: name, role: platformAccess ? 'viewer' : 'none', kiln_role: kilnRoleVal, shift_tracker_access: trackerAccessVal,
       status: 'pending', requested_at: new Date().toISOString()
     });
     if (error) throw new Error(error.message);
     document.getElementById('inviteEmail').value = '';
     document.getElementById('inviteName').value = '';
+    document.getElementById('inviteRole').value='true';
     document.getElementById('inviteKilnRole').value='none';
-    document.getElementById('inviteIsoRole').value='none';
-    document.getElementById('inviteRole').value='viewer';
     document.getElementById('inviteTrackerAccess').value='true';
     showInviteMsg('ok', name + ' added to pending queue — set their password in the Users list below.');
     showPlatformToast(name + ' added to queue ✓');
@@ -2156,7 +2229,7 @@ function renderAiHistory() {
   const el = document.getElementById('aiHistory');
   const clr = document.getElementById('aiClearBtn');
   if (!_aiHistory.length) {
-    el.innerHTML = '<div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);text-align:center;padding:40px 0">Ask about data across documents, isolation and kiln log</div>';
+    el.innerHTML = '<div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);text-align:center;padding:40px 0">Ask about platform data and kiln log</div>';
     if (clr) clr.style.display = 'none';
     return;
   }
@@ -2181,81 +2254,63 @@ async function buildPlatformContext() {
     const sessionData = await sb.auth.getSession();
     const sessionUser = sessionData && sessionData.data && sessionData.data.session && sessionData.data.session.user;
     const profile = _platformProfile || null;
-    const docsAllowed = !!(profile && profile.approved !== false && profile.disabled !== true && profile.role && profile.role !== 'none');
-    const isolationAllowed = !!(profile && profile.approved !== false && profile.disabled !== true && profile.isolation_role && profile.isolation_role !== 'none');
+    const trackerAllowed = !!(profile && profile.approved !== false && profile.disabled !== true && profile.shift_tracker_access !== false);
     let kilnAllowed = false;
     let kilnUser = null;
     if (sessionUser) {
       const kilnRes = await sb.from('kiln_users')
-        .select('shift_log_access,is_admin')
+        .select('shift_log_access,is_admin,is_shift_manager,is_electrician,is_mechanical,is_cement_analyst,is_day_staff,is_burner,is_readonly')
         .eq('auth_user_id', sessionUser.id)
         .maybeSingle();
       kilnUser = kilnRes.data || null;
       kilnAllowed = !!(kilnUser && (kilnUser.shift_log_access !== false || kilnUser.is_admin));
     }
 
+    const roleScopes = (function(){
+      if (!kilnUser || !kilnAllowed) {
+        return { burners:false, managers:false, analysts:false, electricians:false, mechanicals:false };
+      }
+      if (kilnUser.is_admin || kilnUser.is_shift_manager) {
+        return { burners:true, managers:true, analysts:true, electricians:true, mechanicals:true };
+      }
+      return {
+        burners: !!(kilnUser.is_burner || kilnUser.is_readonly || kilnUser.is_day_staff),
+        managers: false,
+        analysts: !!(kilnUser.is_cement_analyst || kilnUser.is_day_staff),
+        electricians: !!kilnUser.is_electrician,
+        mechanicals: !!kilnUser.is_mechanical
+      };
+    })();
+
+    const needsMainLogData = roleScopes.burners || roleScopes.managers || roleScopes.analysts;
+
     let kilnQuery = sb.from('kiln_log').select('week_key,data').order('week_key',{ascending:false}).limit(200).neq('week_key','__lists__');
     if (sinceDate) kilnQuery = kilnQuery.gte('week_key', sinceDate);
-    const [kilnRes, raRes, matrixRes, pointRes, equipRes] = await Promise.all([
-      kilnAllowed ? kilnQuery : Promise.resolve({ data: [] }),
-      docsAllowed ? sb.from('pw_risk_assessments').select('ref,title,next_review_date,department').limit(300) : Promise.resolve({ data: [] }),
-      isolationAllowed ? sb.from('pw_isolation_matrices').select('id,title,status,area,equipment_id').limit(200) : Promise.resolve({ data: [] }),
-      isolationAllowed ? sb.from('pw_isolation_points').select('matrix_id').limit(1000) : Promise.resolve({ data: [] }),
-      isolationAllowed ? sb.from('pw_equipment').select('id,name').limit(500) : Promise.resolve({ data: [] })
+    let electricianQuery = sb.from('kiln_electrician_log').select('week_key,day,shift,electrician_name,notes').order('week_key',{ascending:false}).limit(400);
+    if (sinceDate) electricianQuery = electricianQuery.gte('week_key', sinceDate);
+    let mechanicalQuery = sb.from('kiln_mechanical_log').select('week_key,day,shift,mechanical_name,notes').order('week_key',{ascending:false}).limit(400);
+    if (sinceDate) mechanicalQuery = mechanicalQuery.gte('week_key', sinceDate);
+
+    const [kilnRes, electricianRes, mechanicalRes] = await Promise.all([
+      (kilnAllowed && needsMainLogData) ? kilnQuery : Promise.resolve({ data: [] }),
+      (kilnAllowed && roleScopes.electricians) ? electricianQuery : Promise.resolve({ data: [] }),
+      (kilnAllowed && roleScopes.mechanicals) ? mechanicalQuery : Promise.resolve({ data: [] })
     ]);
+
     const lines = ['PADESWOOD WORKS — PLATFORM SUMMARY — scope: '+_aiScope,'='.repeat(60)];
 
     const accessLine = [
       'Accessible apps:',
-      docsAllowed ? 'Documents' : null,
-      isolationAllowed ? 'Isolation' : null,
+      trackerAllowed ? 'Shift Tracker' : null,
       kilnAllowed ? 'Kiln Log' : null
     ].filter(Boolean).join(', ') || 'Accessible apps: none';
     lines.push(accessLine);
 
-    const ras = (raRes.data||[]).map(function(r){
-      const next = r.next_review_date ? new Date(r.next_review_date) : null;
-      let status = 'draft';
-      if (next) {
-        const diff = Math.round((next - now) / 86400000);
-        status = diff < 0 ? 'overdue' : diff <= 30 ? 'due-soon' : 'current';
-      }
-      return Object.assign({}, r, { _status: status });
-    });
-    const raCounts = {
-      overdue: ras.filter(r=>r._status==='overdue').length,
-      dueSoon: ras.filter(r=>r._status==='due-soon').length,
-      current: ras.filter(r=>r._status==='current').length,
-      draft: ras.filter(r=>r._status==='draft').length
-    };
-    if (docsAllowed) {
-      lines.push('');
-      lines.push('DOCUMENTS APP:');
-      lines.push('  Risk assessments: '+ras.length+' total | Overdue: '+raCounts.overdue+' | Due soon: '+raCounts.dueSoon+' | Current: '+raCounts.current+' | Draft: '+raCounts.draft);
-      ras.filter(r=>r._status==='overdue'||r._status==='due-soon').slice(0,8).forEach(function(r){
-        lines.push('  Attention: '+(r.ref||'—')+' | '+(r.title||'—')+' | '+r._status+' | Dept: '+(r.department||'—'));
-      });
-      lines.push('  COSHH: managed externally in Sypol.');
-    }
-
-    const equipmentById = new Map((equipRes.data||[]).map(function(e){ return [e.id, e.name]; }));
-    const pointCounts = {};
-    (pointRes.data||[]).forEach(function(p){ pointCounts[p.matrix_id] = (pointCounts[p.matrix_id] || 0) + 1; });
-    const matrices = matrixRes.data || [];
-    const matrixStatus = {};
-    matrices.forEach(function(m){ matrixStatus[m.status||'draft'] = (matrixStatus[m.status||'draft'] || 0) + 1; });
-    if (isolationAllowed) {
-      lines.push('');
-      lines.push('ISOLATION APP:');
-      lines.push('  Matrices: '+matrices.length+' total | Statuses: '+Object.keys(matrixStatus).sort().map(function(k){ return k+': '+matrixStatus[k]; }).join(' | '));
-      matrices.slice(0,8).forEach(function(m){
-        lines.push('  Matrix: '+(m.title||'—')+' | Status: '+(m.status||'draft')+' | Equipment: '+(equipmentById.get(m.equipment_id)||'—')+' | Area: '+(m.area||'—')+' | Points: '+(pointCounts[m.id]||0));
-      });
-    }
-
     const rows = kilnRes.data || [];
+    const electricianRows = electricianRes.data || [];
+    const mechanicalRows = mechanicalRes.data || [];
     const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-    let burnerIssues = 0, burnerNotes = 0, managerNotes = 0, analystIssues = 0;
+    let burnerIssues = 0, burnerNotes = 0, managerNotes = 0, analystIssues = 0, electricianNotes = 0, mechanicalNotes = 0;
     const recentItems = [];
     let aiKnowledge = [];
     try {
@@ -2279,7 +2334,7 @@ async function buildPlatformContext() {
         const weekState   = r.data.state   || r.data;
         const weekSmState = r.data.smState || null;
         const weekCaState = r.data.caState || null;
-        if (weekState) {
+        if (roleScopes.burners && weekState) {
           DAYS.forEach(function(day) {
             const d = weekState[day]; if (!d) return;
             ['shift1','shift2'].forEach(function(sk,si) {
@@ -2294,7 +2349,7 @@ async function buildPlatformContext() {
             });
           });
         }
-        if (weekSmState) {
+        if (roleScopes.managers && weekSmState) {
           DAYS.forEach(function(day) {
             const d = weekSmState[day]; if (!d) return;
             ['shift1','shift2'].forEach(function(sk,si) {
@@ -2306,7 +2361,7 @@ async function buildPlatformContext() {
             });
           });
         }
-        if (weekCaState) {
+        if (roleScopes.analysts && weekCaState) {
           DAYS.forEach(function(day) {
             const d = weekCaState[day]; if (!d) return;
             ['shift1','shift2'].forEach(function(sk,si) {
@@ -2324,9 +2379,40 @@ async function buildPlatformContext() {
           });
         }
       });
+      if (roleScopes.electricians) {
+        electricianRows.forEach(function(r){
+          if (!r || (!r.electrician_name && !r.notes)) return;
+          electricianNotes++;
+          if (recentItems.length < 12) {
+            recentItems.push('  Electrician '+r.week_key+' '+(r.day||'')+' '+((r.shift||'')==='shift1'?'Day':'Night')+': '+((r.electrician_name||'') ? (r.electrician_name+' — ') : '')+(r.notes||'').slice(0,110));
+          }
+        });
+      }
+      if (roleScopes.mechanicals) {
+        mechanicalRows.forEach(function(r){
+          if (!r || (!r.mechanical_name && !r.notes)) return;
+          mechanicalNotes++;
+          if (recentItems.length < 12) {
+            recentItems.push('  Mechanical '+r.week_key+' '+(r.day||'')+' '+((r.shift||'')==='shift1'?'Day':'Night')+': '+((r.mechanical_name||'') ? (r.mechanical_name+' — ') : '')+(r.notes||'').slice(0,110));
+          }
+        });
+      }
       lines.push('');
       lines.push('KILN LOG APP:');
-      lines.push('  Burner issue entries: '+burnerIssues+' | Burner note entries: '+burnerNotes+' | Shift manager note entries: '+managerNotes+' | Analyst issue entries: '+analystIssues);
+      lines.push('  Visible role scopes: '
+        + [
+          roleScopes.burners ? 'Burners' : null,
+          roleScopes.managers ? 'Shift Managers' : null,
+          roleScopes.electricians ? 'Electricians' : null,
+          roleScopes.mechanicals ? 'Mechanical' : null,
+          roleScopes.analysts ? 'Cement Analysts' : null
+        ].filter(Boolean).join(', '));
+      lines.push('  Burner issue entries: '+burnerIssues
+        +' | Burner note entries: '+burnerNotes
+        +' | Shift manager note entries: '+managerNotes
+        +' | Electrician note entries: '+electricianNotes
+        +' | Mechanical note entries: '+mechanicalNotes
+        +' | Analyst issue entries: '+analystIssues);
       if (recentItems.length) {
         lines.push('  Recent recorded items:');
         recentItems.forEach(function(line){ lines.push(line); });
