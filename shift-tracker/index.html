@@ -168,6 +168,58 @@
     margin: 0 auto;
     padding: 20px 16px 0;
   }
+  .splash-hero {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 6px auto 16px;
+    padding: 0 8px;
+    width: 100%;
+    max-width: 380px;
+  }
+  .splash-hero-mark {
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+      radial-gradient(circle at 30% 20%, rgba(255,255,255,.98), rgba(255,255,255,.78) 24%, rgba(255,255,255,0) 62%),
+      linear-gradient(135deg, rgba(26,122,53,.12), rgba(46,204,92,.08));
+    border: 1px solid var(--border2);
+    box-shadow: 0 12px 28px rgba(0,0,0,.10), inset 0 1px 0 rgba(255,255,255,.48);
+    overflow: hidden;
+  }
+  .splash-hero-mark img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  .splash-hero-copy {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .splash-hero-title {
+    font-family: var(--ff-head);
+    font-size: 25px;
+    line-height: 1.02;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.03em;
+  }
+  .splash-hero-sub {
+    font-family: var(--ff-mono);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 2.4px;
+    text-transform: uppercase;
+    color: var(--text3);
+  }
   .db-dot {
     width:8px;
     height:8px;
@@ -897,7 +949,25 @@
   }
   @media (max-width: 640px) {
     #splash {
-      padding: 14px 10px 0;
+      padding: 12px 10px 0;
+      max-width: none;
+    }
+    .splash-hero {
+      gap: 12px;
+      margin: 4px auto 14px;
+      padding: 0 4px;
+      max-width: none;
+    }
+    .splash-hero-mark {
+      width: 52px;
+      height: 52px;
+      border-radius: 15px;
+    }
+    .splash-hero-title {
+      font-size: 21px;
+    }
+    .splash-hero-sub {
+      letter-spacing: 1.8px;
     }
     #splash-login {
       padding: 0;
@@ -1005,6 +1075,13 @@
 <body>
 
 <div id="splash">
+  <div class="splash-hero">
+    <div class="splash-hero-mark"><img id="stSplashHeroLogo" alt="Padeswood Works"></div>
+    <div class="splash-hero-copy">
+      <div class="splash-hero-title">Padeswood Works</div>
+      <div class="splash-hero-sub">HeidelbergMaterials · Shift Tracker</div>
+    </div>
+  </div>
   <div id="splash-login" style="display:none">
     <div>
       <div class="splash-brand">
@@ -1651,10 +1728,14 @@ function stShowError(text) {
 
 function stSyncSplashBrandLogo() {
   const splashLogo = document.getElementById('stSplashLogo');
+  const splashHeroLogo = document.getElementById('stSplashHeroLogo');
   const headerLogo = document.querySelector('.tracker-shell-mark img');
   if (!splashLogo || !headerLogo) return;
   const src = headerLogo.currentSrc || headerLogo.src;
-  if (src) splashLogo.src = src;
+  if (src) {
+    splashLogo.src = src;
+    if (splashHeroLogo) splashHeroLogo.src = src;
+  }
 }
 
 async function stSyncThemeFromUser(user) {
