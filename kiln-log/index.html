@@ -1723,15 +1723,17 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
   .palette-grid { grid-template-columns:1fr; }
 
   .topbar {
-    height:62px;
-    flex-direction:row;
-    align-items:center;
-    padding:7px 6px;
-    gap:4px;
-    overflow:hidden;
+    height:auto;
+    min-height:62px;
+    flex-direction:column;
+    align-items:stretch;
+    padding:8px 8px 10px;
+    gap:6px;
+    overflow:visible;
   }
   .topbar-left {
     justify-content:flex-start;
+    width:100%;
     min-width:0;
     flex-shrink:0;
     gap:8px;
@@ -1742,14 +1744,15 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
     gap:4px;
     align-items:center;
     justify-content:flex-start;
-    width:auto;
+    width:100%;
     min-width:0;
-    flex:1 1 0;
+    flex:1 1 100%;
     margin-left:0;
+    padding-top:2px;
     overflow-x:auto;
     -webkit-overflow-scrolling:touch;
     scrollbar-width:none;
-    padding-bottom:2px;
+    padding-bottom:6px;
     touch-action:pan-x;
   }
   .topbar-right::-webkit-scrollbar { display:none }
@@ -1774,10 +1777,10 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
     height:32px !important;
   }
   #weekDate {
-    width:86px;
-    min-width:86px;
-    max-width:86px;
-    flex:0 0 86px;
+    width:92px;
+    min-width:92px;
+    max-width:92px;
+    flex:0 0 92px;
     padding:2px 4px;
     font-size:8px;
     height:30px;
@@ -1809,6 +1812,24 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
   .topbar-left { gap:6px }
   .topbar-title {
     max-width:76px;
+  }
+  .topbar {
+    padding-left:6px;
+    padding-right:6px;
+  }
+  .topbar-right {
+    gap:3px;
+    padding-bottom:4px;
+  }
+  #weekDate {
+    width:88px;
+    min-width:88px;
+    max-width:88px;
+    flex-basis:88px;
+  }
+  .topbar .btn,
+  .topbar .btn-icon {
+    flex-shrink:0;
   }
 }
 
