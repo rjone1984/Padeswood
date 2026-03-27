@@ -280,6 +280,7 @@ body::before {
 .topbar-brand { line-height:1.2 }
 .topbar-title { font-family:var(--ff-head); font-weight:700; font-size:14px; color:var(--tx); letter-spacing:-.3px }
 .topbar-sub   { font-size:8.5px; color:var(--tx3); font-family:var(--ff-mono); letter-spacing:2px; text-transform:uppercase; margin-top:1px }
+.topbar-date  { font-size:9px; color:var(--tx2); font-family:var(--ff-mono); letter-spacing:.6px; margin-top:2px }
 
 .topbar-right {
   display:flex; align-items:center; gap:4px; flex-wrap:nowrap;
@@ -335,10 +336,10 @@ body::before {
   box-shadow:var(--e1);
   backdrop-filter:blur(24px);
   -webkit-backdrop-filter:blur(24px);
-  padding:10px 14px 12px;
+  padding:7px 12px 9px;
   display:flex;
   flex-direction:column;
-  gap:8px;
+  gap:6px;
 }
 .light-mode .dual-nav {
   background:
@@ -352,7 +353,7 @@ body::before {
   background:
     linear-gradient(180deg, color-mix(in srgb, var(--green-wash-1) 85%, transparent), transparent 82%),
     var(--bg);
-  padding-top:14px;
+  padding-top:8px;
   margin-bottom:0 !important;
 }
 .dual-nav-row {
@@ -361,21 +362,21 @@ body::before {
   --row-accent-line: var(--acd3);
   --row-accent-shadow: rgba(21,92,40,.18);
   display:flex; align-items:center;
-  gap:12px;
+  gap:9px;
   background:transparent;
   min-width:0;
 }
 .dual-nav-row:last-child { border-bottom:none }
 .dual-nav-label {
-  min-width:106px; width:106px; height:44px;
+  min-width:94px; width:94px; height:36px;
   display:flex; align-items:center; justify-content:flex-start;
   text-align:left;
-  font-family:var(--ff-head); font-size:9px; font-weight:800;
-  letter-spacing:.16em; text-transform:uppercase;
-  color:var(--row-accent); line-height:1.35;
+  font-family:var(--ff-head); font-size:8px; font-weight:800;
+  letter-spacing:.14em; text-transform:uppercase;
+  color:var(--row-accent); line-height:1.2;
   border:1px solid var(--bd);
-  border-radius:14px;
-  padding:0 14px;
+  border-radius:12px;
+  padding:0 11px;
   flex-shrink:0;
   background:
     linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,0)),
@@ -412,11 +413,11 @@ body::before {
     var(--sf2);
   border:1px solid var(--bd);
   border-bottom:none;
-  border-radius:16px;
-  padding:6px;
+  border-radius:14px;
+  padding:4px;
   display:flex; align-items:stretch;
   position:static;
-  gap:6px;
+  gap:4px;
   overflow-x:auto; flex:1;
   min-width:0;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.03);
@@ -424,13 +425,13 @@ body::before {
 .day-nav::-webkit-scrollbar { height:0 }
 
 .day-tab {
-  padding:0 10px; height:44px;
-  font-family:var(--ff-head); font-size:11px; font-weight:700;
+  padding:0 9px; height:36px;
+  font-family:var(--ff-head); font-size:10px; font-weight:700;
   color:var(--tx3); cursor:pointer; border:none; background:transparent;
   border:1px solid transparent;
-  border-radius:12px;
+  border-radius:10px;
   transition:color .14s, border-color .14s, background .14s, transform .14s, box-shadow .14s;
-  letter-spacing:.04em;
+  letter-spacing:.03em;
   display:flex; align-items:center; justify-content:center; gap:7px;
   white-space:nowrap;
   flex:1 1 0;
@@ -443,17 +444,21 @@ body::before {
   border-color:var(--bd2);
   transform:translateY(-1px);
 }
+.day-tab {
+  transition:color .22s var(--ease-smooth), border-color .22s var(--ease-smooth), background .22s var(--ease-smooth), transform .22s var(--ease-smooth), box-shadow .22s var(--ease-smooth), opacity .22s var(--ease-smooth);
+}
 .day-tab.active {
   color:var(--row-accent);
   background:var(--row-accent-soft);
   border-color:var(--row-accent-line);
   box-shadow:0 10px 20px -14px var(--row-accent-shadow), inset 0 1px 0 rgba(255,255,255,.07);
+  transform:translateY(-1px);
 }
 .day-tab.today::after {
   content:'NOW';
-  font-size:7px; font-weight:700; letter-spacing:1.5px;
+  font-size:6px; font-weight:700; letter-spacing:1.3px;
   background:var(--row-accent-soft); color:var(--row-accent);
-  padding:2px 5px; border-radius:3px;
+  padding:1px 4px; border-radius:3px;
   border:1px solid var(--row-accent-line); font-family:var(--ff-mono);
 }
 
@@ -1182,6 +1187,7 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
   display:flex;
   align-items:center;
   justify-content:center;
+  gap:6px;
   text-align:center;
   white-space:nowrap;
   line-height:1.1;
@@ -1199,8 +1205,37 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
 .modal-tab.active { background:var(--sf); color:var(--tx); box-shadow:var(--e1); border-color:var(--bd2) }
 .dark .modal-tab.active { background:var(--sf); }
 .modal-tab:hover:not(.active) { color:var(--tx2) }
+.modal-tab-badge {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:8px;
+  font-weight:700;
+  font-family:var(--ff-mono);
+  letter-spacing:.8px;
+  text-transform:uppercase;
+  line-height:1;
+  padding:2px 5px;
+  border-radius:999px;
+  border:1px solid transparent;
+  white-space:nowrap;
+  flex-shrink:0;
+}
+.modal-tab-badge.cloud { background:var(--grnd); color:var(--grn); border-color:var(--grnb); }
+.modal-tab-badge.local { background:var(--ambd); color:var(--amb); border-color:var(--ambb); }
+.modal-tab-badge.syncing { background:var(--sf3); color:var(--tx3); border-color:var(--bd2); }
+.modal-tab-badge.warn { background:var(--redd); color:var(--red); border-color:var(--redb); }
+.modal-tab-badge.unknown { background:var(--sf2); color:var(--tx3); border-color:var(--bd2); }
 .manage-tab-tools { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:-4px 0 12px; }
 .manage-tab-hint { font-size:11px; color:var(--tx3); line-height:1.5; }
+.manage-tab-sync {
+  font-size:10px;
+  letter-spacing:.8px;
+  text-transform:uppercase;
+  font-family:var(--ff-mono);
+  color:var(--tx3);
+  margin-top:3px;
+}
 .manage-tab-actions { display:flex; gap:6px; flex-shrink:0; }
 .manage-tab-actions .btn { font-size:11px; padding:5px 10px; min-width:92px; }
 .manage-tab-actions .btn:disabled { opacity:.45; cursor:not-allowed; }
@@ -1238,8 +1273,12 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
 #toast.show { display:flex; animation:toastIn .25s cubic-bezier(.34,1.56,.64,1) }
 .toast-dot { width:6px; height:6px; border-radius:50%; background:var(--grn); flex-shrink:0; box-shadow:0 0 7px var(--grn) }
 @keyframes pageIn {
-  from { opacity:0; transform:translateY(6px); }
+  from { opacity:0; transform:translateY(12px) scale(.992); filter:blur(8px); }
   to   { opacity:1; transform:translateY(0); }
+}
+@keyframes pageChildIn {
+  from { opacity:0; transform:translateY(10px); filter:blur(4px); }
+  to   { opacity:1; transform:translateY(0); filter:blur(0); }
 }
 @keyframes tabPop {
   0%   { transform:scaleX(0); opacity:0; }
@@ -1247,8 +1286,34 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
   100% { transform:scaleX(1); opacity:1; }
 }
 .page-enter {
-  animation: pageIn .18s cubic-bezier(.22,.68,0,1.2) both;
+  animation: pageIn .42s cubic-bezier(.2,.8,.2,1) both;
 }
+.page-enter .page-header,
+.page-enter .search-wrap,
+.page-enter .stat-grid,
+.page-enter .shifts-grid,
+.page-enter .card,
+.page-enter .panel,
+.page-enter .notes-section,
+.page-enter .shift-panel,
+.page-enter .whiteboard-wrap,
+.page-enter .overview-wrap,
+.page-enter .ai-wrap,
+.page-enter .feedback-wrap {
+  animation: pageChildIn .42s cubic-bezier(.2,.8,.2,1) both;
+}
+.page-enter .page-header { animation-delay:.02s; }
+.page-enter .search-wrap { animation-delay:.06s; }
+.page-enter .stat-grid { animation-delay:.08s; }
+.page-enter .shifts-grid { animation-delay:.10s; }
+.page-enter .card,
+.page-enter .panel,
+.page-enter .notes-section,
+.page-enter .shift-panel,
+.page-enter .whiteboard-wrap,
+.page-enter .overview-wrap,
+.page-enter .ai-wrap,
+.page-enter .feedback-wrap { animation-delay:.12s; }
 @keyframes toastIn { from{transform:translateY(12px) scale(.95);opacity:0} to{transform:translateY(0) scale(1);opacity:1} }
 
 #weekDate {
@@ -1269,8 +1334,10 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
 .read-only-mode input[type="text"]:not(.overlay input):not(#printNote):not(.search-input):not(#myPwCurrent):not(#myPwNew):not(#myPwConfirm),
 .read-only-mode textarea:not(.overlay textarea):not(#reportPrompt) {
   pointer-events:none; cursor:default;
-  background:transparent !important;
-  border-color:transparent !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.025), rgba(255,255,255,0)),
+    var(--sf2) !important;
+  border-color:var(--bd) !important;
   box-shadow:none !important;
 }
 .read-only-mode .overlay select,.read-only-mode .overlay input,.read-only-mode .overlay textarea,
@@ -1555,6 +1622,7 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
       <div>
         <div class="topbar-title">Padeswood Works</div>
         <div class="topbar-sub">DAILY SHIFT RECORD SYSTEM</div>
+        <div class="topbar-date" id="topbarDate">—</div>
       </div>
     </div>
     <div class="topbar-right">
@@ -1650,6 +1718,10 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
       <div class="dual-nav-label">Kiln<br>Burners</div>
       <div class="day-nav" id="dayNav"></div>
     </div>
+    <div class="dual-nav-row dual-nav-row-ca">
+      <div class="dual-nav-label">Cement<br>Analysts</div>
+      <div class="day-nav" id="caNav"></div>
+    </div>
     <div class="dual-nav-row dual-nav-row-sm">
       <div class="dual-nav-label">Shift<br>Managers</div>
       <div class="day-nav" id="smNav"></div>
@@ -1661,10 +1733,6 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
     <div class="dual-nav-row dual-nav-row-mech">
       <div class="dual-nav-label">Mechanical</div>
       <div class="day-nav" id="mechNav"></div>
-    </div>
-    <div class="dual-nav-row dual-nav-row-ca">
-      <div class="dual-nav-label">Cement<br>Analysts</div>
-      <div class="day-nav" id="caNav"></div>
     </div>
   </div>
   <div class="main" id="mainContent"></div>
@@ -1679,14 +1747,6 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
       <button class="modal-close" onclick="closeManageModal()">Close</button>
     </div>
     <div class="modal-body">
-      <div class="modal-tabs" id="manageModalTabs"></div>
-      <div class="manage-tab-tools">
-        <div class="manage-tab-hint">Select a tab, then move it left or right.</div>
-        <div class="manage-tab-actions">
-          <button class="btn btn-ghost" id="manageTabMoveLeft" onclick="moveManageTab(currentManageTab,-1)">Move Left</button>
-          <button class="btn btn-ghost" id="manageTabMoveRight" onclick="moveManageTab(currentManageTab,1)">Move Right</button>
-        </div>
-      </div>
       <div style="padding:8px 0 4px;border-bottom:1px solid var(--bd);margin-bottom:12px;display:flex;align-items:center;gap:8px">
         <button class="btn btn-ghost" onclick="showNewListForm()" style="font-size:11px;gap:5px">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -1696,6 +1756,17 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
           <input type="text" id="newListNameInput" placeholder="List name e.g. Electricians" style="flex:1;font-size:12px" onkeydown="if(event.key==='Enter')createNewList()">
           <button class="btn btn-primary" onclick="createNewList()" style="font-size:11px;padding:5px 10px">Create</button>
           <button class="btn btn-ghost" onclick="hideNewListForm()" style="font-size:11px;padding:5px 10px">Cancel</button>
+        </div>
+      </div>
+      <div class="modal-tabs" id="manageModalTabs"></div>
+      <div class="manage-tab-tools">
+        <div>
+          <div class="manage-tab-hint">Select a tab, then move it left or right.</div>
+          <div id="manageTabSyncState" class="manage-tab-sync"></div>
+        </div>
+        <div class="manage-tab-actions">
+          <button class="btn btn-ghost" id="manageTabMoveLeft" onclick="moveManageTab(currentManageTab,-1)">Move Left</button>
+          <button class="btn btn-ghost" id="manageTabMoveRight" onclick="moveManageTab(currentManageTab,1)">Move Right</button>
         </div>
       </div>
       <div id="manageTabContent"></div>
@@ -1731,25 +1802,25 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
       <div class="modal-field">
         <label>Include in report</label>
         <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
-          <label style="display:flex;align-items:center;gap:8px;font-weight:400;cursor:pointer">
+          <label id="printOptBurners" style="display:flex;align-items:center;gap:8px;font-weight:400;cursor:pointer">
             <input type="checkbox" id="printIncludeBurners" checked style="width:15px;height:15px;accent-color:var(--ac)">
             Kiln Burners log
           </label>
-          <label style="display:flex;align-items:center;gap:8px;font-weight:400;cursor:pointer">
+          <label id="printOptCA" style="display:flex;align-items:center;gap:8px;font-weight:400;cursor:pointer">
+            <input type="checkbox" id="printIncludeCA" checked style="width:15px;height:15px;accent-color:#b45309">
+            Cement Analysts log
+          </label>
+          <label id="printOptSM" style="display:flex;align-items:center;gap:8px;font-weight:400;cursor:pointer">
             <input type="checkbox" id="printIncludeSM" checked style="width:15px;height:15px;accent-color:#7c3aed">
             Shift Managers log
           </label>
-          <label style="display:flex;align-items:center;gap:8px;font-weight:400;cursor:pointer">
+          <label id="printOptEL" style="display:flex;align-items:center;gap:8px;font-weight:400;cursor:pointer">
             <input type="checkbox" id="printIncludeEL" checked style="width:15px;height:15px;accent-color:#0f766e">
             Electricians log
           </label>
-          <label style="display:flex;align-items:center;gap:8px;font-weight:400;cursor:pointer">
+          <label id="printOptMECH" style="display:flex;align-items:center;gap:8px;font-weight:400;cursor:pointer">
             <input type="checkbox" id="printIncludeMECH" checked style="width:15px;height:15px;accent-color:#2563eb">
             Mechanical log
-          </label>
-          <label style="display:flex;align-items:center;gap:8px;font-weight:400;cursor:pointer">
-            <input type="checkbox" id="printIncludeCA" checked style="width:15px;height:15px;accent-color:#b45309">
-            Cement Analysts log
           </label>
         </div>
       </div>
@@ -1777,7 +1848,7 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
   <span>Padeswood Works · Shift Log · HeidelbergMaterials</span>
 </footer>
 
-<div class="overlay" id="searchModal">
+<div class="overlay" id="searchModal" style="align-items:flex-start;justify-content:center;padding-top:6vh">
   <div class="modal search-modal">
     <div class="search-modal-head">
       <div class="search-modal-row">
@@ -2067,6 +2138,7 @@ let mechanicalState = {};
 let caState = {};
 let _allLists = {}; // {list_name: [items]}
 let equipment = [], burners = [], electricians = [], mechanicals = [], analysts = [], managers = [], trainees = [];
+let _listSyncStates = {}; // {list_name: cloud|local|syncing|warn|unknown}
 
 const DEFAULT_BURNERS  = [];
 const DEFAULT_ELECTRICIANS = [];
@@ -2076,6 +2148,12 @@ const DEFAULT_MANAGERS = [];
 const DEFAULT_EQUIP    = [];
 const SHIFTS = ['A','B','C','D','E'];
 const MANAGE_TAB_ORDER_KEY = 'kbl_manage_tabs5';
+
+function getManageTabOrderUserKey(){
+  if(currentUserThemeId) return 'pw_manage_tabs_' + currentUserThemeId;
+  if(currentUser) return 'pw_manage_tabs_' + currentUser;
+  return null;
+}
 let manageTabOrder = [];
 let _manageTabOrderSavePromise = Promise.resolve(true);
 
@@ -2215,7 +2293,7 @@ async function _applyUserSession(match){
   UM_SELF_ID = match.auth_user_id || null;
   document.getElementById('manageListsBtn').style.display = isAdmin ? '' : 'none';
   const _cdBtn = document.getElementById('clearDayBtn'); if(_cdBtn) _cdBtn.style.display = isAdmin ? '' : 'none';
-  const _canPrint = isAdmin || isShiftManager;
+  const _canPrint = isAdmin || isShiftManager || isDayStaff || readOnly;
   document.querySelectorAll('#printBtn, .printBtn').forEach(function(b){ b.style.display = _canPrint ? '' : 'none'; });
   document.getElementById('btn-weekly-overview').style.display = '';
   document.getElementById('btn-ai-reporting').style.display = '';
@@ -2379,6 +2457,9 @@ async function initApp(){
     managers  = _allLists.managers  || [...DEFAULT_MANAGERS];
     trainees  = _allLists.trainees  || [];
     loadManageTabOrder(savedManageTabOrder);
+    Object.keys(_allLists).forEach(function(key){
+      if(_listSyncStates[key] === undefined) setListSyncState(key, 'cloud');
+    });
   } else {
     equipment = [...DEFAULT_EQUIP];
     burners   = [...DEFAULT_BURNERS];
@@ -2390,6 +2471,9 @@ async function initApp(){
     trainees  = [];
     _allLists = { equipment, burners, electricians, mechanicals, analysts, managers, trainees };
     loadManageTabOrder();
+    Object.keys(_allLists).forEach(function(key){
+      setListSyncState(key, 'local');
+    });
   }
   sortAll();
   syncAllListRefs();
@@ -2540,10 +2624,16 @@ function canUseLocalCache(){
   return navigator.onLine === false;
 }
 function canViewElectricianLog(){
-  return !!(isAdmin || isShiftManager || isElectrician);
+  return !!(isAdmin || isShiftManager || isElectrician || readOnly);
 }
 function canViewMechanicalLog(){
-  return !!(isAdmin || isShiftManager || isMechanical);
+  return !!(isAdmin || isShiftManager || isMechanical || readOnly);
+}
+function canViewShiftManagerLog(){
+  return !!(isAdmin || isShiftManager || readOnly);
+}
+function canViewCementAnalystLog(){
+  return !!(isAdmin || isCementAnalyst || isShiftManager || readOnly || isDayStaff);
 }
 function canViewBurnerLog(){
   return !!(isAdmin || isBurner || isShiftManager || readOnly || isDayStaff);
@@ -2551,14 +2641,23 @@ function canViewBurnerLog(){
 function canViewWhiteboard(){
   return !!(isBurner || isShiftManager || isDayStaff);
 }
+function getPrintableLogAccess(){
+  return {
+    burners: canViewBurnerLog(),
+    managers: canViewShiftManagerLog(),
+    electricians: canViewElectricianLog(),
+    mechanicals: canViewMechanicalLog(),
+    analysts: canViewCementAnalystLog()
+  };
+}
 function getRoleScopedDataAccess(){
   const allLogs = !!(isAdmin || isShiftManager);
   return {
     burners: allLogs || isBurner || isDayStaff || readOnly,
-    managers: allLogs,
-    analysts: allLogs || isCementAnalyst || isDayStaff,
-    electricians: allLogs || isElectrician,
-    mechanicals: allLogs || isMechanical
+    managers: allLogs || readOnly,
+    analysts: allLogs || isCementAnalyst || isDayStaff || readOnly,
+    electricians: allLogs || isElectrician || readOnly,
+    mechanicals: allLogs || isMechanical || readOnly
   };
 }
 function canWriteMainLog(){
@@ -2611,6 +2710,11 @@ function normalizeManageTabOrder(order){
 function loadManageTabOrder(order){
   const local = (() => {
     try {
+      const userKey = getManageTabOrderUserKey();
+      if(userKey){
+        const userRaw = localStorage.getItem(userKey);
+        if(userRaw) return JSON.parse(userRaw);
+      }
       const raw = localStorage.getItem(MANAGE_TAB_ORDER_KEY);
       if(raw) return JSON.parse(raw);
       const sessionRaw = sessionStorage.getItem(MANAGE_TAB_ORDER_KEY);
@@ -2625,6 +2729,8 @@ function loadManageTabOrder(order){
 
 function saveManageTabOrder(){
   manageTabOrder = normalizeManageTabOrder(manageTabOrder);
+  const userKey = getManageTabOrderUserKey();
+  if(userKey) localStorage.setItem(userKey, JSON.stringify(manageTabOrder));
   localStorage.setItem(MANAGE_TAB_ORDER_KEY, JSON.stringify(manageTabOrder));
   sessionStorage.setItem(MANAGE_TAB_ORDER_KEY, JSON.stringify(manageTabOrder));
   _manageTabOrderSavePromise = sbSaveList('__manage_tab_order', manageTabOrder);
@@ -2642,6 +2748,32 @@ function syncAllListRefs(){
   _allLists.trainees = trainees;
 }
 
+function setListSyncState(listName, state){
+  if(!listName) return;
+  _listSyncStates[listName] = state || 'unknown';
+}
+
+function getListSyncState(listName){
+  return _listSyncStates[listName] || 'unknown';
+}
+
+function getListSyncMeta(listName){
+  const state = getListSyncState(listName);
+  if(state === 'cloud') return { text: 'Cloud', cls: 'cloud', title: 'Saved to cloud' };
+  if(state === 'local') return { text: 'Local', cls: 'local', title: 'Saved locally only' };
+  if(state === 'syncing') return { text: 'Saving', cls: 'syncing', title: 'Saving to cloud…' };
+  if(state === 'warn') return { text: 'Error', cls: 'warn', title: 'Cloud save failed' };
+  return { text: 'Unknown', cls: 'unknown', title: 'Sync state unknown' };
+}
+
+function updateManageTabSyncState(activeTab){
+  const el = document.getElementById('manageTabSyncState');
+  if(!el) return;
+  const tab = activeTab && _allLists[activeTab] !== undefined ? activeTab : (manageTabOrder[0] || MANAGE_BASE_TABS[0]);
+  const meta = getListSyncMeta(tab);
+  el.innerHTML = '<span class="modal-tab-badge ' + meta.cls + '" title="' + esc(meta.title) + '">' + esc(meta.text) + '</span>';
+}
+
 function getManageTabLabel(key){
   if(key === 'mechanicals') return 'Mechanical';
   return key.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
@@ -2656,12 +2788,13 @@ function renderManageTabs(activeTab){
   tabsEl.innerHTML = '';
   tabs.forEach(function(key){
     const label = getManageTabLabel(key);
+    const meta = getListSyncMeta(key);
     const btn = document.createElement('button');
     btn.className = 'modal-tab';
     btn.dataset.key = key;
     if(key === current) btn.classList.add('active');
     if(key === 'ai_knowledge') btn.style.color = '#7c3aed';
-    btn.textContent = label;
+    btn.innerHTML = '<span>'+esc(label)+'</span><span class="modal-tab-badge '+meta.cls+'" title="'+esc(meta.title)+'">'+esc(meta.text)+'</span>';
     btn.onclick = function(){
       currentManageTab = key;
       renderManageTabs(key);
@@ -2674,6 +2807,7 @@ function renderManageTabs(activeTab){
   const rightBtn = document.getElementById('manageTabMoveRight');
   if(leftBtn) leftBtn.disabled = currentIdx <= 0;
   if(rightBtn) rightBtn.disabled = currentIdx < 0 || currentIdx >= tabs.length - 1;
+  updateManageTabSyncState(current);
 }
 
 async function moveManageTab(tabKey, delta){
@@ -2822,6 +2956,14 @@ function dayDate(day){
   if(!d) return '';
   return d.toLocaleDateString('en-GB',{day:'2-digit',month:'long',year:'numeric'});
 }
+function updateTopbarDate(day){
+  const el = document.getElementById('topbarDate');
+  if(!el) return;
+  const activeDay = DAYS.includes(day) ? day : currentDay;
+  const label = dayDate(activeDay);
+  const range = weekRange();
+  el.textContent = label + (range ? ' · Week of ' + range : '');
+}
 function getAdjacentDay(day, delta){
   const idx = DAYS.indexOf(day);
   if(idx < 0) return 'Monday';
@@ -2871,10 +3013,10 @@ function buildTabs(){
   buildNav('mechNav', switchMechanicalDay, currentMechDay);
   buildNav('caNav', switchCaDay, currentCaDay);
   document.querySelector('.dual-nav-row').style.display       = canViewBurnerLog() ? '' : 'none';
-  document.querySelector('.dual-nav-row-sm').style.display    = (isAdmin || isShiftManager || readOnly) ? '' : 'none';
+  document.querySelector('.dual-nav-row-sm').style.display    = canViewShiftManagerLog() ? '' : 'none';
   document.querySelector('.dual-nav-row-el').style.display    = canViewElectricianLog() ? '' : 'none';
   document.querySelector('.dual-nav-row-mech').style.display  = canViewMechanicalLog() ? '' : 'none';
-  document.querySelector('.dual-nav-row-ca').style.display    = (isAdmin || isCementAnalyst || isShiftManager || readOnly || isDayStaff) ? '' : 'none';
+  document.querySelector('.dual-nav-row-ca').style.display    = canViewCementAnalystLog() ? '' : 'none';
   const ovBtn=document.getElementById('btn-weekly-overview');
   const aiBtn=document.getElementById('btn-ai-reporting');
   if(ovBtn) ovBtn.style.display='';
@@ -2884,6 +3026,7 @@ function buildTabs(){
   if(_mwo) _mwo.style.display = 'flex';
   if(_mar) _mar.style.display = 'flex';
   updateMobileMenu();
+  updateTopbarDate(currentDay);
 }
 function setDualNavVisibility(show){
   const dualNav = document.getElementById('dualNav');
@@ -2904,6 +3047,7 @@ function switchDay(day){
     if(tab) tab.classList.add('active');
     syncWeekDateInput(day);
   }
+  updateTopbarDate(day);
   renderDay(day);
 }
 function switchSmDay(day){
@@ -2912,6 +3056,7 @@ function switchSmDay(day){
   const tab=document.getElementById('smNav-'+day);
   if(tab) tab.classList.add('active');
   if(DAYS.includes(day)) syncWeekDateInput(day);
+  updateTopbarDate(day);
   renderSmDay(day);
 }
 function switchElectricianDay(day){
@@ -2920,6 +3065,7 @@ function switchElectricianDay(day){
   const tab=document.getElementById('elNav-'+day);
   if(tab) tab.classList.add('active');
   if(DAYS.includes(day)) syncWeekDateInput(day);
+  updateTopbarDate(day);
   renderElectricianDay(day);
 }
 function switchMechanicalDay(day){
@@ -2928,6 +3074,7 @@ function switchMechanicalDay(day){
   const tab=document.getElementById('mechNav-'+day);
   if(tab) tab.classList.add('active');
   if(DAYS.includes(day)) syncWeekDateInput(day);
+  updateTopbarDate(day);
   renderMechanicalDay(day);
 }
 function switchCaDay(day){
@@ -2936,6 +3083,7 @@ function switchCaDay(day){
   const tab=document.getElementById('caNav-'+day);
   if(tab) tab.classList.add('active');
   if(DAYS.includes(day)) syncWeekDateInput(day);
+  updateTopbarDate(day);
   renderCaDay(day);
 }
 
@@ -2971,7 +3119,7 @@ function renderDay(day){
     <div class="search-wrap">
       <button class="btn btn-ghost" onclick="openSearchModal()" style="width:100%;justify-content:flex-start;gap:8px;color:var(--tx3);font-weight:400;font-family:var(--ff-body);font-size:13px;border:1px solid var(--bd);background:var(--sf);padding:9px 14px;border-radius:var(--r)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px;flex-shrink:0"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        Search equipment issues, notes, burners...
+        Search
         <span style="margin-left:auto;font-size:10px;font-family:var(--ff-mono);opacity:0.5">⌘K</span>
       </button>
     </div>
@@ -3035,7 +3183,7 @@ function renderSmDay(day){
     + '<div class="search-wrap">'
     + '<button class="btn btn-ghost" onclick="openSearchModal()" style="width:100%;justify-content:flex-start;gap:8px;color:var(--tx3);font-weight:400;font-family:var(--ff-body);font-size:13px;border:1px solid var(--bd);background:var(--sf);padding:9px 14px;border-radius:var(--r)">'
     + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px;flex-shrink:0"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>'
-    + 'Search shift manager notes...'
+    + 'Search'
     + '<span style="margin-left:auto;font-size:10px;font-family:var(--ff-mono);opacity:0.5">⌘K</span>'
     + '</button>'
     + '</div><div class="shifts-grid" id="smShiftsGrid"></div>';
@@ -3136,7 +3284,7 @@ function renderElectricianDay(day){
     + '<div class="search-wrap">'
     + '<button class="btn btn-ghost" onclick="openSearchModal()" style="width:100%;justify-content:flex-start;gap:8px;color:var(--tx3);font-weight:400;font-family:var(--ff-body);font-size:13px;border:1px solid var(--bd);background:var(--sf);padding:9px 14px;border-radius:var(--r)">'
     + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px;flex-shrink:0"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>'
-    + 'Search electrician notes...'
+    + 'Search'
     + '<span style="margin-left:auto;font-size:10px;font-family:var(--ff-mono);opacity:0.5">⌘K</span>'
     + '</button>'
     + '</div><div class="shifts-grid" id="electricianShiftsGrid"></div>';
@@ -3281,7 +3429,7 @@ function renderMechanicalDay(day){
     + '<div class="search-wrap">'
     + '<button class="btn btn-ghost" onclick="openSearchModal()" style="width:100%;justify-content:flex-start;gap:8px;color:var(--tx3);font-weight:400;font-family:var(--ff-body);font-size:13px;border:1px solid var(--bd);background:var(--sf);padding:9px 14px;border-radius:var(--r)">'
     + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px;flex-shrink:0"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>'
-    + 'Search mechanical notes...'
+    + 'Search'
     + '<span style="margin-left:auto;font-size:10px;font-family:var(--ff-mono);opacity:0.5">⌘K</span>'
     + '</button>'
     + '</div><div class="shifts-grid" id="mechanicalShiftsGrid"></div>';
@@ -3849,7 +3997,7 @@ function renderCaDay(day){
   searchWrap.className='search-wrap';
   searchWrap.innerHTML = '<button class="btn btn-ghost" onclick="openSearchModal()" style="width:100%;justify-content:flex-start;gap:8px;color:var(--tx3);font-weight:400;font-family:var(--ff-body);font-size:13px;border:1px solid var(--bd);background:var(--sf);padding:9px 14px;border-radius:var(--r)">'
     + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px;flex-shrink:0"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>'
-    + 'Search analyst notes...'
+    + 'Search'
     + '<span style="margin-left:auto;font-size:10px;font-family:var(--ff-mono);opacity:0.5">⌘K</span>'
     + '</button>';
   mc.appendChild(searchWrap);
@@ -4415,10 +4563,22 @@ let _reportScope = 'week';
 let _reportHistory = []; // {role, content}
 let _reportRendered = false;
 
+function getReportScopeLabels(){
+  const roleScopes = getRoleScopedDataAccess();
+  const labels = [];
+  if(roleScopes.burners) labels.push('Burners');
+  if(roleScopes.managers) labels.push('Shift Managers');
+  if(roleScopes.electricians) labels.push('Electricians');
+  if(roleScopes.mechanicals) labels.push('Mechanical');
+  if(roleScopes.analysts) labels.push('Cement Analysts');
+  return labels;
+}
+
 function renderReports(){
   animateContent();
   setDualNavVisibility(false);
   const el = document.getElementById('mainContent');
+  const visibleSources = getReportScopeLabels();
   el.innerHTML = `
     <div class="reports-wrap">
       <div class="reports-header">
@@ -4435,6 +4595,7 @@ function renderReports(){
         <button class="search-scope-btn${_reportScope==='year'?' active':''}" onclick="setReportScope(this,'year')">This year</button>
         <button class="search-scope-btn${_reportScope==='all'?' active':''}" onclick="setReportScope(this,'all')">All time</button>
       </div>
+      <div class="reports-sub" style="margin:-4px 0 14px">Using: ${esc(visibleSources.join(', ') || 'No log data')}</div>
       <div class="reports-history" id="reportHistory">
         ${_reportHistory.map(renderReportMessage).join('')}
       </div>
@@ -4468,8 +4629,15 @@ function renderReportMessage(msg){
 function setReportScope(btn, scope){
   document.querySelectorAll('.reports-scope-row .search-scope-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
+  if(_reportScope === scope) return;
   _reportScope = scope;
-  _reportHistory = [];
+  const scopeLabel = scope === 'week' ? 'This week'
+    : scope === 'month' ? 'This month'
+    : scope === 'year' ? 'This year'
+    : 'All time';
+  if(_reportHistory.length){
+    _reportHistory.push({role:'assistant', content:'Scope changed to ' + scopeLabel + '.'});
+  }
   renderReports();
 }
 
@@ -5850,14 +6018,17 @@ async function createNewList(){
     showToast('A list with that name already exists'); return;
   }
   _allLists[key] = [];
-  await sbSaveList(key, []);
+  setListSyncState(key, 'syncing');
+  renderManageTabs(key);
+  const saved = await sbSaveList(key, []);
+  setListSyncState(key, saved ? 'cloud' : 'local');
   manageTabOrder = normalizeManageTabOrder(manageTabOrder.concat(key));
   saveManageTabOrder();
   hideNewListForm();
   currentManageTab = key;
   renderManageTabs(key);
   renderManageTab(key);
-  showToast(`"${name}" list created`);
+  showToast(`"${name}" list created${saved ? '' : ' (saved locally only)'}`);
 }
 
 async function deleteCustomList(key){
@@ -5865,6 +6036,9 @@ async function deleteCustomList(key){
   if(!confirm(`Delete the "${label}" list? This cannot be undone.`)) return;
   delete _allLists[key];
   try { await sbFetch('/rest/v1/kiln_lists?list_name=eq.'+encodeURIComponent(key),{method:'DELETE'}); } catch(e){}
+  delete _listSyncStates[key];
+  localStorage.removeItem(listBackupKey(key));
+  sessionStorage.removeItem('kbl_'+key);
   manageTabOrder = normalizeManageTabOrder(manageTabOrder.filter(function(tab){ return tab !== key; }));
   saveManageTabOrder();
   currentManageTab = _allLists[currentManageTab] !== undefined ? currentManageTab : 'equipment';
@@ -5973,18 +6147,28 @@ function addEquipmentItem(){
   equipment.push(val);
   sortAll();
   syncAllListRefs();
+  setListSyncState('equipment', 'syncing');
+  renderManageTabs(currentManageTab);
   localStorage.setItem('kbl_eq5',JSON.stringify(equipment));
-  sbSaveList('equipment', equipment);
-  renderEqList(); inp.value=''; inp.focus(); showToast('"'+val+'" added');
+  sbSaveList('equipment', equipment).then(function(saved){
+    setListSyncState('equipment', saved ? 'cloud' : 'local');
+    renderManageTabs(currentManageTab);
+    renderEqList(); inp.value=''; inp.focus(); showToast('"'+val+'" added' + (saved ? '' : ' (saved locally only)'));
+  });
 }
 function removeEq(name){
   if(!confirm('Remove "'+name+'"?'))return;
   equipment=equipment.filter(e=>e!==name);
   sortAll();
   syncAllListRefs();
+  setListSyncState('equipment', 'syncing');
+  renderManageTabs(currentManageTab);
   localStorage.setItem('kbl_eq5',JSON.stringify(equipment));
-  sbSaveList('equipment', equipment);
-  renderEqList(); showToast('"'+name+'" removed');
+  sbSaveList('equipment', equipment).then(function(saved){
+    setListSyncState('equipment', saved ? 'cloud' : 'local');
+    renderManageTabs(currentManageTab);
+    renderEqList(); showToast('"'+name+'" removed' + (saved ? '' : ' (saved locally only)'));
+  });
 }
 
 function renderPeopleList(tab){
@@ -6019,10 +6203,15 @@ function toggleTrainee(name,btn){
   if(trainees.includes(name)) trainees=trainees.filter(t=>t!==name);
   else trainees.push(name);
   sortAll();
+  setListSyncState('burners', 'syncing');
+  renderManageTabs(currentManageTab);
   localStorage.setItem('kbl_tra5',JSON.stringify(trainees));
   syncAllListRefs();
-  sbSaveList('trainees', trainees);
-  renderPeopleList('burners');
+  sbSaveList('trainees', trainees).then(function(saved){
+    setListSyncState('burners', saved ? 'cloud' : 'local');
+    renderManageTabs(currentManageTab);
+    renderPeopleList('burners');
+  });
 }
 function addPerson(tab){
   const inp=document.getElementById('newPersonInput'); const val=inp.value.trim();
@@ -6038,8 +6227,13 @@ function addPerson(tab){
   else if(tab==='managers') managers=list;
   sortAll();
   syncAllListRefs();
-  sbSaveList(tab, list);
-  renderPeopleList(tab); inp.value=''; inp.focus(); showToast('"'+val+'" added');
+  setListSyncState(tab, 'syncing');
+  renderManageTabs(currentManageTab);
+  sbSaveList(tab, list).then(function(saved){
+    setListSyncState(tab, saved ? 'cloud' : 'local');
+    renderManageTabs(currentManageTab);
+    renderPeopleList(tab); inp.value=''; inp.focus(); showToast('"'+val+'" added' + (saved ? '' : ' (saved locally only)'));
+  });
 }
 function removePerson(tab,name){
   if(!confirm('Remove "'+name+'"?'))return;
@@ -6052,18 +6246,22 @@ function removePerson(tab,name){
   else if(tab==='managers') managers=_allLists[tab];
   sortAll();
   syncAllListRefs();
-  sbSaveList(tab, _allLists[tab]);
-  renderPeopleList(tab); showToast('"'+name+'" removed');
+  setListSyncState(tab, 'syncing');
+  renderManageTabs(currentManageTab);
+  sbSaveList(tab, _allLists[tab]).then(function(saved){
+    setListSyncState(tab, saved ? 'cloud' : 'local');
+    renderManageTabs(currentManageTab);
+    renderPeopleList(tab); showToast('"'+name+'" removed' + (saved ? '' : ' (saved locally only)'));
+  });
 }
 
 function getOverviewRoleFilters(){
-  const roleScopes = getRoleScopedDataAccess();
   return {
-    burners: !!roleScopes.burners,
-    managers: !!roleScopes.managers,
-    electricians: !!roleScopes.electricians,
-    mechanicals: !!roleScopes.mechanicals,
-    analysts: !!roleScopes.analysts
+    burners: canViewBurnerLog(),
+    managers: canViewShiftManagerLog(),
+    electricians: canViewElectricianLog(),
+    mechanicals: canViewMechanicalLog(),
+    analysts: canViewCementAnalystLog()
   };
 }
 
@@ -6135,9 +6333,18 @@ function renderOverviewBody(){
       : 'background:'+col+'18';
     return '<div class="section-div" style="border-left:4px solid '+col+';padding-left:12px;'+bgStyle+';border-radius:0 4px 4px 0;color:'+col+(topMargin?';margin-top:24px':'')+'">'+icon+' '+label+'</div>';
   }
-  function table(heads,rows,emptyMsg){
+  function table(heads,rows,emptyMsg,widths){
     if(!rows.length) return null;
-    return '<div class="log-section"><div class="tbl-wrap"><table class="log" style="font-size:12px">'
+    const cols = (widths && widths.length ? widths : [
+      '92px',
+      '82px'
+    ].concat(['220px']).concat(heads.slice(3).map(function(){ return ''; }))).map(function(w){
+      if(!w) return '<col>';
+      const width = typeof w === 'number' ? (w + 'px') : String(w);
+      return '<col style="width:'+width+'">';
+    }).join('');
+    return '<div class="log-section"><div class="tbl-wrap"><table class="log" style="font-size:12px;table-layout:fixed;width:100%">'
+      +'<colgroup>'+cols+'</colgroup>'
       +'<thead><tr>'+heads.map(function(h){return '<th>'+h+'</th>';}).join('')+'</tr></thead>'
       +'<tbody>'+rows.join('')+'</tbody></table></div></div>';
   }
@@ -6159,8 +6366,10 @@ function renderOverviewBody(){
         if(notes) smRows.push(row(d,si,[esc(notes)]));
       });
     });
-    add(secHdr('#7c3aed','👤','Shift Managers — Notes',true));
-    add(table(['Day','Shift','Notes'],smRows));
+    if(smRows.length){
+      add(secHdr('#7c3aed','👤','Shift Managers — Notes',true));
+      add(table(['Day','Shift','Notes'],smRows));
+    }
   }
 
   if(F.burners){
@@ -6173,21 +6382,22 @@ function renderOverviewBody(){
           const stBg=e.status==='Resolved'?'#16a34a18':e.status==='Ongoing'?'#dc262618':'transparent';
           const stPill=e.status?('<span style="display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;background:'+stBg+';color:'+stCol+';border:1px solid '+stCol+'">'+esc(e.status)+'</span>'):'<span style="color:var(--tx3);font-size:11px">—</span>';
           const stWho=(e.statusBy||e.statusAt)?('<div style="font-size:10px;color:var(--tx3);font-family:var(--ff-mono);margin-top:2px">'+esc(e.statusBy||'')+(e.statusAt?' · '+esc(e.statusAt):'')+'</div>'):'';
-          bRawRows.push({_status:e.status||'',_html:'<tr>'
-            +'<td style="padding:9px 14px;font-family:var(--ff-head);font-weight:700">'+d+'</td>'
-            +'<td style="padding:9px 14px"><span class="pill pill-empty">'+(si===0?'Day':'Night')+'</span></td>'
-            +'<td style="padding:9px 14px;font-weight:600">'+(esc(e.equipment)||'&mdash;')+'</td>'
-            +'<td style="padding:9px 14px;color:var(--tx2)">'+(esc(e.issue)||'<span style="color:var(--tx3)">No notes</span>')+'</td>'
-            +'<td style="padding:9px 14px;font-size:11px;color:var(--tx2)">'+(esc(sd.burner)||'&mdash;')+'</td>'
-            +'<td style="padding:9px 14px">'+stPill+stWho+'</td>'
-            +'</tr>'});
+          const issueCell = '<div style="font-weight:600;margin-bottom:2px">'+(esc(e.equipment)||'&mdash;')+'</div>'
+            +'<div style="color:var(--tx2)">'+(esc(e.issue)||'<span style="color:var(--tx3)">No notes</span>')+'</div>';
+          bRawRows.push(row(d,si,[
+            '<span style="font-size:11px;color:var(--tx2);font-family:var(--ff-head);font-weight:700">'+(esc(sd.burner)||'&mdash;')+'</span>',
+            issueCell,
+            stPill + stWho
+          ]));
         });
       });
     });
     function statusOrder(s){ return s==='Ongoing'?0:(!s?1:2); }
     const bRows=bRawRows.slice().sort(function(a,b){ return statusOrder(a._status)-statusOrder(b._status); });
-    add(secHdr('var(--ac)','⚙','Kiln Burners — Equipment Issues',false));
-    add(table(['Day','Shift','Equipment','Issue / Notes','Burner','Status'],bRows.map(function(r){return r._html;})));
+    if(bRows.length){
+      add(secHdr('var(--ac)','⚙','Kiln Burners — Equipment Issues',false));
+      add(table(['Day','Shift','Burner','Issue / Notes','Status'],bRows,[92,82,'220px',null,'120px']));
+    }
   }
 
   if(F.analysts){
@@ -6203,8 +6413,10 @@ function renderOverviewBody(){
         });
       });
     });
-    add(secHdr('#b45309','🧪','Cement Analysts — Sampling Plan Non-Compliance',true));
-    add(table(['Day','Shift','Sample','Reason'],sampRows));
+    if(sampRows.length){
+      add(secHdr('#b45309','🧪','Cement Analysts — Sampling Plan Non-Compliance',true));
+      add(table(['Day','Shift','Sample','Reason'],sampRows));
+    }
 
     const blendRows=[];
     DAYS.forEach(function(d){
@@ -6217,8 +6429,10 @@ function renderOverviewBody(){
           blendRows.push(row(d,si,['<span class="pill pill-ok">'+esc(val)+'</span>',esc(login)||'—']));
       });
     });
-    add(secHdr('#b45309','🧪','Cement Analysts — Blendscan Supervisor Log-in',false));
-    add(table(['Day','Shift','Logged In','Time / Date'],blendRows));
+    if(blendRows.length){
+      add(secHdr('#b45309','🧪','Cement Analysts — Blendscan Supervisor Log-in',false));
+      add(table(['Day','Shift','Logged In','Time / Date'],blendRows));
+    }
 
     const hseRows=[];
     DAYS.forEach(function(d){
@@ -6230,8 +6444,10 @@ function renderOverviewBody(){
         });
       });
     });
-    add(secHdr('#b45309','🧪','Cement Analysts — Health, Safety & Environment',false));
-    add(table(['Day','Shift','Type','Details','Actions'],hseRows));
+    if(hseRows.length){
+      add(secHdr('#b45309','🧪','Cement Analysts — Health, Safety & Environment',false));
+      add(table(['Day','Shift','Type','Details','Actions'],hseRows));
+    }
 
     const qaRows=[];
     DAYS.forEach(function(d){
@@ -6243,8 +6459,10 @@ function renderOverviewBody(){
           qaRows.push(row(d,si,[gi.map(function(q){return 'Mill '+(q.mill||'?')+': '+esc(q.issues);}).join('<br>')]));
       });
     });
-    add(secHdr('#b45309','🧪','Cement Analysts — Cement Quality Issues',false));
-    add(table(['Day','Shift','Issues'],qaRows));
+    if(qaRows.length){
+      add(secHdr('#b45309','🧪','Cement Analysts — Cement Quality Issues',false));
+      add(table(['Day','Shift','Issues'],qaRows));
+    }
 
     const outRows=[];
     DAYS.forEach(function(d){
@@ -6258,8 +6476,10 @@ function renderOverviewBody(){
         });
       });
     });
-    add(secHdr('#b45309','🧪','Cement Analysts — Samples Out of Target',false));
-    add(table(['Day','Shift','Sample','Target Details','Reported To'],outRows));
+    if(outRows.length){
+      add(secHdr('#b45309','🧪','Cement Analysts — Samples Out of Target',false));
+      add(table(['Day','Shift','Sample','Target Details','Reported To'],outRows));
+    }
 
     const addRows=[];
     DAYS.forEach(function(d){
@@ -6275,8 +6495,10 @@ function renderOverviewBody(){
         if(parts.length) addRows.push(row(d,si,[parts.join('<br>')]));
       });
     });
-    add(secHdr('#b45309','🧪','Cement Analysts — Additive Check Results',false));
-    add(table(['Day','Shift','Results'],addRows));
+    if(addRows.length){
+      add(secHdr('#b45309','🧪','Cement Analysts — Additive Check Results',false));
+      add(table(['Day','Shift','Results'],addRows));
+    }
 
     const equipRows=[];
     DAYS.forEach(function(d){
@@ -6296,8 +6518,10 @@ function renderOverviewBody(){
         });
       });
     });
-    add(secHdr('#b45309','🧪','Cement Analysts — Non-Functional Equipment',false));
-    add(table(['Day','Shift','Equipment','Status','Details'],equipRows));
+    if(equipRows.length){
+      add(secHdr('#b45309','🧪','Cement Analysts — Non-Functional Equipment',false));
+      add(table(['Day','Shift','Equipment','Status','Details'],equipRows));
+    }
 
     const cfRows=[];
     DAYS.forEach(function(d){
@@ -6315,8 +6539,10 @@ function renderOverviewBody(){
         });
       });
     });
-    add(secHdr('#b45309','🧪','Cement Analysts — Cemfuel Accepted Batches',false));
-    add(table(['Day','Shift','Batch Number','Status'],cfRows));
+    if(cfRows.length){
+      add(secHdr('#b45309','🧪','Cement Analysts — Cemfuel Accepted Batches',false));
+      add(table(['Day','Shift','Batch Number','Status'],cfRows));
+    }
   }
 
   if(F.electricians && canViewElectricianLog()){
@@ -6335,8 +6561,10 @@ function renderOverviewBody(){
         }
       });
     });
-    add(secHdr('#0f766e','⚡','Electricians — Notes',true));
-    add(table(['Day','Shift','Electrician','Notes'],elRows));
+    if(elRows.length){
+      add(secHdr('#0f766e','⚡','Electricians — Notes',true));
+      add(table(['Day','Shift','Electrician','Notes'],elRows));
+    }
   }
 
   if(F.mechanicals && canViewMechanicalLog()){
@@ -6355,8 +6583,10 @@ function renderOverviewBody(){
         }
       });
     });
-    add(secHdr('#2563eb','🔧','Mechanical — Notes',true));
-    add(table(['Day','Shift','Mechanical','Notes'],mechRows));
+    if(mechRows.length){
+      add(secHdr('#2563eb','🔧','Mechanical — Notes',true));
+      add(table(['Day','Shift','Mechanical','Notes'],mechRows));
+    }
   }
 }
 
@@ -6632,17 +6862,25 @@ async function sbSaveCloud(){
   return ok;
 }
 
+const LIST_BACKUP_PREFIX = 'kblist_';
+
+function listBackupKey(listName){
+  return LIST_BACKUP_PREFIX + String(listName || '');
+}
+
 async function sbSaveList(listName, items){
   try {
-    await sbFetch('/rest/v1/kiln_lists', {
+    await sbFetch('/rest/v1/kiln_lists?on_conflict=list_name', {
       method: 'POST',
       headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
       body: JSON.stringify({ list_name: listName, items: items, updated_at: new Date().toISOString() })
     });
-      sessionStorage.setItem('kbl_'+listName, JSON.stringify(items));
+    localStorage.setItem(listBackupKey(listName), JSON.stringify(items));
+    sessionStorage.setItem('kbl_'+listName, JSON.stringify(items));
     return true;
   } catch(e){
     console.warn('Supabase list save failed:', e);
+    localStorage.setItem(listBackupKey(listName), JSON.stringify(items));
     sessionStorage.setItem('kbl_'+listName, JSON.stringify(items));
     return false;
   }
@@ -6650,14 +6888,34 @@ async function sbSaveList(listName, items){
 
 async function sbLoadLists(){
   try {
-    const rows = await sbFetch('/rest/v1/kiln_lists?select=list_name,items');
+    const rows = await sbFetch('/rest/v1/kiln_lists?select=list_name,items,updated_at&order=updated_at.desc');
     if(rows && rows.length){
       const map = {};
-      rows.forEach(r => map[r.list_name] = r.items);
+      rows.forEach(r => {
+        if(r && r.list_name !== undefined && map[r.list_name] === undefined){
+          map[r.list_name] = r.items;
+        }
+      });
+      Object.keys(localStorage).forEach(function(key){
+        if(!key.startsWith(LIST_BACKUP_PREFIX)) return;
+        const listName = key.slice(LIST_BACKUP_PREFIX.length);
+        if(map[listName] !== undefined) return;
+        try {
+          map[listName] = JSON.parse(localStorage.getItem(key));
+        } catch(e) {}
+      });
       return map;
     }
   } catch(e){ console.warn('Supabase lists load failed:', e); }
-  return null;
+  const fallback = {};
+  Object.keys(localStorage).forEach(function(key){
+    if(!key.startsWith(LIST_BACKUP_PREFIX)) return;
+    const listName = key.slice(LIST_BACKUP_PREFIX.length);
+    try {
+      fallback[listName] = JSON.parse(localStorage.getItem(key));
+    } catch(e) {}
+  });
+  return Object.keys(fallback).length ? fallback : null;
 }
 
 async function sbSaveLists(){
@@ -6812,7 +7070,29 @@ function importJSON(event){
   event.target.value = '';
 }
 
-function showPrintModal(){ document.getElementById('printModal').classList.add('open'); }
+function syncPrintModalOptions(){
+  const access = getPrintableLogAccess();
+  [
+    ['Burners', access.burners],
+    ['CA', access.analysts],
+    ['SM', access.managers],
+    ['EL', access.electricians],
+    ['MECH', access.mechanicals]
+  ].forEach(function(pair){
+    const suffix = pair[0];
+    const allowed = pair[1];
+    const wrap = document.getElementById('printOpt' + suffix);
+    const input = document.getElementById('printInclude' + suffix);
+    if(!wrap || !input) return;
+    wrap.style.display = allowed ? 'flex' : 'none';
+    input.disabled = !allowed;
+    if(!allowed) input.checked = false;
+  });
+}
+function showPrintModal(){
+  syncPrintModalOptions();
+  document.getElementById('printModal').classList.add('open');
+}
 function closePrintModal(){ document.getElementById('printModal').classList.remove('open'); }
 function doPrint(){
   const win = window.open('','_blank');
@@ -6820,12 +7100,13 @@ function doPrint(){
   closePrintModal();
   const scope=document.getElementById('printScope').value;
   const note=document.getElementById('printNote').value.trim();
-  const inclBurners=document.getElementById('printIncludeBurners').checked;
-  const inclSM=document.getElementById('printIncludeSM').checked;
-  const inclEL=document.getElementById('printIncludeEL')?.checked ?? true;
-  const inclMECH=document.getElementById('printIncludeMECH')?.checked ?? true;
-  const inclCA=document.getElementById('printIncludeCA')?.checked ?? true;
-  if(scope==='overview'){ openPrintOverview(note, win); return; }
+  const access = getPrintableLogAccess();
+  const inclBurners=!!(access.burners && document.getElementById('printIncludeBurners').checked);
+  const inclSM=!!(access.managers && document.getElementById('printIncludeSM').checked);
+  const inclEL=!!(access.electricians && (document.getElementById('printIncludeEL')?.checked ?? false));
+  const inclMECH=!!(access.mechanicals && (document.getElementById('printIncludeMECH')?.checked ?? false));
+  const inclCA=!!(access.analysts && (document.getElementById('printIncludeCA')?.checked ?? false));
+  if(scope==='overview'){ openPrintOverview(note, win, inclBurners, inclSM, inclEL, inclMECH, inclCA); return; }
   let days;
   if(scope==='current') days=[currentDay==='Overview'?'Monday':currentDay];
   else if(scope==='all') days=DAYS;
@@ -6835,6 +7116,7 @@ function doPrint(){
 }
 
 function openPrintWindow(days, note, inclBurners, inclSM, inclEL, inclMECH, inclCA, win){
+  const printedBy = lockedName || currentUserLogon || currentUser || 'Unknown user';
   const tally = {};
   if(inclBurners){
     days.forEach(function(day){
@@ -6886,13 +7168,13 @@ function openPrintWindow(days, note, inclBurners, inclSM, inclEL, inclMECH, incl
                 +'<td style="padding:7px 10px;border:1px solid #ddd">'+esc(e.issue||'')+'</td>'
                 +'</tr>'; }).join('')
             +'</tbody></table>';
-        return '<div style="margin-bottom:14px"><div style="font-weight:700;font-size:10px;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:6px;color:#555">'+label+' Equipment Issues</div>'+rows+'</div>';
+        return '<div style="margin-bottom:10px"><div style="font-weight:700;font-size:10px;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:6px;color:#555">'+label+' Equipment Issues</div>'+rows+'</div>';
       }).join('');
 
       burnerHtml = '<div style="border-bottom:1px solid #eee;margin-bottom:14px;padding-bottom:4px">'
-        +'<div style="font-size:13px;font-weight:800;margin-bottom:10px">KILN BURNERS</div>'
+        +'<div style="font-size:13px;font-weight:800;color:#1a7a35;margin-bottom:10px">KILN BURNERS</div>'
         +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">'+shiftsGrid+'</div>'
-        + issueRows
+        +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">'+issueRows+'</div>'
         +'</div>';
     }
 
@@ -6902,12 +7184,12 @@ function openPrintWindow(days, note, inclBurners, inclSM, inclEL, inclMECH, incl
         var s = sd[sk] || mkSmShift();
         var label = si===0?'Day Shift':'Night Shift';
         var notes = s.notes
-          ? '<div style="padding:9px 12px;background:#f5f0ff;border:1px solid #d8c8f0;border-radius:4px;font-size:11px;line-height:1.6">'+esc(s.notes)+'</div>'
+          ? '<div style="padding:9px 12px;background:#fff;border:1px solid #c4b5fd;border-left:4px solid #7c3aed;border-radius:4px;font-size:11px;line-height:1.6">'+esc(s.notes)+'</div>'
           : '<div style="padding:9px 12px;background:#f8f8f8;border:1px solid #e8e8e8;border-radius:4px;color:#999;font-size:10px">No notes recorded</div>';
         return '<div style="margin-bottom:10px"><div style="font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:5px;color:#555">'+label+'</div>'+notes+'</div>';
       }).join('');
       smHtml = '<div style="margin-bottom:14px">'
-        +'<div style="font-size:13px;font-weight:800;margin-bottom:10px">SHIFT MANAGERS</div>'
+        +'<div style="font-size:13px;font-weight:800;color:#7c3aed;margin-bottom:10px">SHIFT MANAGERS</div>'
         +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">'+smShifts+'</div>'
         +'</div>';
     }
@@ -6924,7 +7206,7 @@ function openPrintWindow(days, note, inclBurners, inclSM, inclEL, inclMECH, incl
           + '<tr style="border-bottom:1px solid #eee"><td style="padding:5px 12px;color:#666;width:110px">Electrician</td><td style="padding:5px 12px;font-weight:600">'+esc(name||'—')+'</td></tr>'
           + '</table>'
           + (notes
-            ? '<div style="padding:9px 12px;background:#ecfdf5;border:1px solid #99f6e4;border-radius:4px;font-size:11px;line-height:1.6">'+esc(notes)+'</div>'
+            ? '<div style="padding:9px 12px;background:#fff;border:1px solid #ddd;border-radius:4px;font-size:11px;line-height:1.6">'+esc(notes)+'</div>'
             : '<div style="padding:9px 12px;background:#f8f8f8;border:1px solid #e8e8e8;border-radius:4px;color:#999;font-size:10px">No notes recorded</div>')
           + '</div>';
       }).join('');
@@ -6946,7 +7228,7 @@ function openPrintWindow(days, note, inclBurners, inclSM, inclEL, inclMECH, incl
           + '<tr style="border-bottom:1px solid #eee"><td style="padding:5px 12px;color:#666;width:110px">Mechanical</td><td style="padding:5px 12px;font-weight:600">'+esc(name||'—')+'</td></tr>'
           + '</table>'
           + (notes
-            ? '<div style="padding:9px 12px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:4px;font-size:11px;line-height:1.6">'+esc(notes)+'</div>'
+            ? '<div style="padding:9px 12px;background:#fff;border:1px solid #ddd;border-radius:4px;font-size:11px;line-height:1.6">'+esc(notes)+'</div>'
             : '<div style="padding:9px 12px;background:#f8f8f8;border:1px solid #e8e8e8;border-radius:4px;color:#999;font-size:10px">No notes recorded</div>')
           + '</div>';
       }).join('');
@@ -6959,26 +7241,30 @@ function openPrintWindow(days, note, inclBurners, inclSM, inclEL, inclMECH, incl
     var caHtml = '';
     if(inclCA){
       var caShifts = ['shift1','shift2'].map(function(sk,si){
-        var cs = cd[sk];
-        if(!cs) return '';
+        var cs = cd[sk] || mkCaShift();
         var hseItems = (cs.hse||[]).filter(function(h){ return h.type||h.details; });
         var grind    = (cs.cemQuality||[]).filter(function(q){ return (q.issues||'').trim(); });
         var labBad   = Object.entries(cs.labEquip||{}).filter(function(p){ return p[1].functional==='No'||p[1].functional==='N/A'; });
         var grindLog = (cs.grindingLog||[]).filter(function(g){ return g.equipment||g.problem; });
-        if(!cs.name && !hseItems.length && !grind.length && !grindLog.length) return '';
-        var shiftLabel = (si===0?'Day':'Night')+' Shift'+(cs.name?' — '+cs.name:'');
+        var shiftLabel = (si===0?'Day':'Night')+' Shift';
         var html2 = '<div style="margin-bottom:10px"><div style="font-weight:700;font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:#666;margin-bottom:6px">'+shiftLabel+'</div>';
-        if(hseItems.length) html2 += '<div style="font-size:10px;margin-bottom:4px"><strong>HSE:</strong> '+hseItems.map(function(h){ return (h.type||'')+(h.details?' — '+h.details:''); }).join('; ')+'</div>';
-        if(grind.length)    html2 += '<div style="font-size:10px;margin-bottom:4px"><strong>Cement Quality:</strong> '+grind.map(function(q){ return 'Mill '+(q.mill||'?')+': '+q.issues; }).join('; ')+'</div>';
-        if(labBad.length)   html2 += '<div style="font-size:10px;margin-bottom:4px"><strong>Lab Equipment:</strong> '+labBad.map(function(p){ return p[0]+' ('+p[1].functional+')'; }).join(', ')+'</div>';
-        if(grindLog.length) html2 += '<table style="width:100%;border-collapse:collapse;font-size:10px;margin-top:4px"><thead><tr style="background:#f3f3f3"><th style="padding:4px 8px;border:1px solid #ddd">Zone</th><th style="padding:4px 8px;border:1px solid #ddd">Equipment</th><th style="padding:4px 8px;border:1px solid #ddd">Problem</th><th style="padding:4px 8px;border:1px solid #ddd">Comments</th></tr></thead><tbody>'+grindLog.map(function(g){ return '<tr><td style="padding:4px 8px;border:1px solid #ddd">'+(g.zone||'—')+'</td><td style="padding:4px 8px;border:1px solid #ddd">'+(g.equipment||'—')+'</td><td style="padding:4px 8px;border:1px solid #ddd">'+(g.problem||'—')+'</td><td style="padding:4px 8px;border:1px solid #ddd">'+(g.comments||'')+'</td></tr>'; }).join('')+'</tbody></table>';
+        html2 += '<table style="width:100%;font-size:11px;border-collapse:collapse;margin-bottom:6px">'
+          + '<tr style="border-bottom:1px solid #eee"><td style="padding:5px 12px;color:#666;width:110px">Analyst</td><td style="padding:5px 12px;font-weight:600">'+esc(cs.name || state[day][sk].analyst || '—')+'</td></tr>'
+          + '</table>';
+        if(hseItems.length || grind.length || labBad.length || grindLog.length){
+          if(hseItems.length) html2 += '<div style="font-size:10px;margin-bottom:4px"><strong>HSE:</strong> '+hseItems.map(function(h){ return (h.type||'')+(h.details?' — '+h.details:''); }).join('; ')+'</div>';
+          if(grind.length)    html2 += '<div style="font-size:10px;margin-bottom:4px"><strong>Cement Quality:</strong> '+grind.map(function(q){ return 'Mill '+(q.mill||'?')+': '+q.issues; }).join('; ')+'</div>';
+          if(labBad.length)   html2 += '<div style="font-size:10px;margin-bottom:4px"><strong>Lab Equipment:</strong> '+labBad.map(function(p){ return p[0]+' ('+p[1].functional+')'; }).join(', ')+'</div>';
+          if(grindLog.length) html2 += '<table style="width:100%;border-collapse:collapse;font-size:10px;margin-top:4px"><thead><tr style="background:#f3f3f3"><th style="padding:4px 8px;border:1px solid #ddd">Zone</th><th style="padding:4px 8px;border:1px solid #ddd">Equipment</th><th style="padding:4px 8px;border:1px solid #ddd">Problem</th><th style="padding:4px 8px;border:1px solid #ddd">Comments</th></tr></thead><tbody>'+grindLog.map(function(g){ return '<tr><td style="padding:4px 8px;border:1px solid #ddd">'+(g.zone||'—')+'</td><td style="padding:4px 8px;border:1px solid #ddd">'+(g.equipment||'—')+'</td><td style="padding:4px 8px;border:1px solid #ddd">'+(g.problem||'—')+'</td><td style="padding:4px 8px;border:1px solid #ddd">'+(g.comments||'')+'</td></tr>'; }).join('')+'</tbody></table>';
+        } else {
+          html2 += '<div style="padding:9px 12px;background:#f8f8f8;border:1px solid #e8e8e8;border-radius:4px;color:#999;font-size:10px">No issues recorded</div>';
+        }
         return html2 + '</div>';
       }).join('');
-      if(caShifts.trim()){
-        caHtml = '<div style="margin-top:14px;border-top:2px solid #b45309;padding-top:10px">'
-          +'<div style="font-size:13px;font-weight:800;color:#b45309;margin-bottom:10px">CEMENT ANALYSTS</div>'
-          + caShifts +'</div>';
-      }
+      caHtml = '<div style="margin-top:14px;border-top:2px solid #b45309;padding-top:10px">'
+        +'<div style="font-size:13px;font-weight:800;color:#b45309;margin-bottom:10px">CEMENT ANALYSTS</div>'
+        +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">'+caShifts+'</div>'
+        +'</div>';
     }
 
     var header = '<div style="border-bottom:2px solid #000;padding-bottom:10px;margin-bottom:14px;display:flex;justify-content:space-between">'
@@ -6986,33 +7272,14 @@ function openPrintWindow(days, note, inclBurners, inclSM, inclEL, inclMECH, incl
       +'<div style="font-size:12px;font-weight:700;margin-top:2px">'+day.toUpperCase()+' — '+dayDate(day)+'</div>'
       +'<div style="font-size:10px;color:#666;margin-top:2px">Week: '+weekRange()+'</div>'
       +(note?'<div style="margin-top:4px;font-size:10px;font-style:italic;color:#555">Note: '+note+'</div>':'')
-      +'</div><div style="text-align:right;font-size:10px;color:#888">Printed: '+new Date().toLocaleString('en-GB')+'</div></div>';
+      +'</div><div style="text-align:right;font-size:10px;color:#888">Printed by: '+esc(printedBy)+'<br>Printed: '+new Date().toLocaleString('en-GB')+'</div></div>';
 
-    return pageBreak+'<div style="font-family:Arial,sans-serif;font-size:11px;color:#000;padding:0">'+header+burnerHtml+smHtml+elHtml+mechHtml+caHtml+'</div>';
+    return pageBreak+'<div style="font-family:Arial,sans-serif;font-size:11px;color:#000;padding:0">'+header+burnerHtml+caHtml+smHtml+elHtml+mechHtml+'</div>';
   }).join('');
-
-  var tallySection = '';
-  if(inclBurners && tallyRows){
-    tallySection = '<div style="page-break-before:always"></div>'
-      +'<div style="font-family:Arial,sans-serif;font-size:11px;color:#000">'
-      +'<div style="border-bottom:2px solid #000;padding-bottom:10px;margin-bottom:14px">'
-      +'<div style="font-size:18px;font-weight:900">EQUIPMENT MENTIONS TALLY</div>'
-      +'<div style="font-size:11px;color:#666;margin-top:3px">Week: '+weekRange()+' &mdash; Printed: '+new Date().toLocaleString('en-GB')+'</div>'
-      +(note?'<div style="margin-top:4px;font-size:10px;font-style:italic;color:#555">Note: '+note+'</div>':'')
-      +'</div>'
-      +'<table style="width:60%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#f3f3f3">'
-      +'<th style="padding:8px 12px;border:1px solid #ddd;text-align:left">Equipment</th>'
-      +'<th style="padding:8px 12px;border:1px solid #ddd;text-align:center;width:120px">Total Failures</th>'
-      +'</tr></thead><tbody>'+tallyRows+'</tbody>'
-      +'<tfoot><tr style="background:#f0f0f0">'
-      +'<td style="padding:8px 12px;border:1px solid #ddd;font-weight:700">TOTAL</td>'
-      +'<td style="padding:8px 12px;border:1px solid #ddd;text-align:center;font-weight:700">'+Object.values(tally).reduce(function(a,b){return a+b;},0)+'</td>'
-      +'</tr></tfoot></table></div>';
-  }
 
   if(!win) win = window.open('', '_blank');
   if(!win){ showToast('Please allow popups for this page to print'); return; }
-  var fullHtml = '<!DOCTYPE html><html><head><title>Padeswood Works</title><style>@page{margin:1.5cm}body{margin:0;padding:20px;font-family:Arial,sans-serif}</style></head><body>' + pages + tallySection + '</body></html>';
+  var fullHtml = '<!DOCTYPE html><html><head><title>Padeswood Works</title><style>@page{margin:1.5cm}body{margin:0;padding:20px;font-family:Arial,sans-serif}</style></head><body>' + pages + '</body></html>';
   var blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8' });
   var url = URL.createObjectURL(blob);
   win.location.href = url;
@@ -7037,23 +7304,26 @@ document.addEventListener('keydown',e=>{
   }
 });
 
-function openPrintOverview(note, win){
+function openPrintOverview(note, win, inclBurners, inclSM, inclEL, inclMECH, inclCA){
+  const printedBy = lockedName || currentUserLogon || currentUser || 'Unknown user';
   var totalIssues=0, filledDays=0, totalShifts=0;
   var shiftManagerNoteCount=0, electricianNoteCount=0, mechanicalNoteCount=0, analystEntryCount=0;
   DAYS.forEach(function(d){
-    totalIssues += issueCount(d);
-    if(state[d].shift1.burner||state[d].shift2.burner) filledDays++;
-    if(state[d].shift1.burner) totalShifts++;
-    if(state[d].shift2.burner) totalShifts++;
+    if(inclBurners){
+      totalIssues += issueCount(d);
+      if(state[d].shift1.burner||state[d].shift2.burner) filledDays++;
+      if(state[d].shift1.burner) totalShifts++;
+      if(state[d].shift2.burner) totalShifts++;
+    }
     ['shift1','shift2'].forEach(function(sk){
       var sm = smState[d] && smState[d][sk];
       var el = electricianState[d] && electricianState[d][sk];
       var me = mechanicalState[d] && mechanicalState[d][sk];
       var ca = caState[d] && caState[d][sk];
-      if(sm && (sm.notes||'').trim()) shiftManagerNoteCount++;
-      if(el && ((el.name||'').trim() || (el.notes||'').trim())) electricianNoteCount++;
-      if(me && ((me.name||'').trim() || (me.notes||'').trim())) mechanicalNoteCount++;
-      if(ca){
+      if(inclSM && sm && (sm.notes||'').trim()) shiftManagerNoteCount++;
+      if(inclEL && el && ((el.name||'').trim() || (el.notes||'').trim())) electricianNoteCount++;
+      if(inclMECH && me && ((me.name||'').trim() || (me.notes||'').trim())) mechanicalNoteCount++;
+      if(inclCA && ca){
         analystEntryCount += (ca.hse||[]).filter(function(h){ return h.type||h.details; }).length;
         analystEntryCount += (ca.cemQuality||[]).filter(function(q){ return (q.issues||'').trim(); }).length;
         analystEntryCount += Object.entries(ca.labEquip||{}).filter(function(entry){ return entry[1].functional==='No'||entry[1].functional==='N/A'; }).length;
@@ -7063,17 +7333,19 @@ function openPrintOverview(note, win){
   });
 
   var tally={};
-  DAYS.forEach(function(d){
-    ['shift1','shift2'].forEach(function(sk){
-      (state[d][sk].entries||[]).forEach(function(e){
-        if(e.equipment){
-          if(!tally[e.equipment]) tally[e.equipment]={count:0,days:[]};
-          tally[e.equipment].count++;
-          if(tally[e.equipment].days.indexOf(d)<0) tally[e.equipment].days.push(d);
-        }
+  if(inclBurners){
+    DAYS.forEach(function(d){
+      ['shift1','shift2'].forEach(function(sk){
+        (state[d][sk].entries||[]).forEach(function(e){
+          if(e.equipment){
+            if(!tally[e.equipment]) tally[e.equipment]={count:0,days:[]};
+            tally[e.equipment].count++;
+            if(tally[e.equipment].days.indexOf(d)<0) tally[e.equipment].days.push(d);
+          }
+        });
       });
     });
-  });
+  }
   var tallyRows = Object.entries(tally).sort(function(a,b){return b[1].count-a[1].count;})
     .map(function(p){
       return '<tr>'
@@ -7091,52 +7363,57 @@ function openPrintOverview(note, win){
     var me2=(mechanicalState[d]&&mechanicalState[d].shift2)||mkMechanicalShift();
     var ca1=(caState[d]&&caState[d].shift1)||mkCaShift();
     var ca2=(caState[d]&&caState[d].shift2)||mkCaShift();
-    var issues=issueCount(d);
-    return '<tr>'
-      +'<td style="padding:7px 10px;border:1px solid #ddd;font-weight:700">'+d+'</td>'
-      +'<td style="padding:7px 10px;border:1px solid #ddd;color:#666">'+dayDate(d)+'</td>'
-      +'<td style="padding:7px 10px;border:1px solid #ddd">'+esc(s1.burner||'—')+'</td>'
-      +'<td style="padding:7px 10px;border:1px solid #ddd">'+esc(s1.shiftManager||'—')+'</td>'
-      +'<td style="padding:7px 10px;border:1px solid #ddd">'+esc(el1.name||'—')+'</td>'
-      +'<td style="padding:7px 10px;border:1px solid #ddd">'+esc(me1.name||'—')+'</td>'
-      +'<td style="padding:7px 10px;border:1px solid #ddd">'+esc(ca1.name||s1.analyst||'—')+'</td>'
-      +'<td style="padding:7px 10px;border:1px solid #ddd;font-weight:700">'+esc(s1.shift||'—')+'</td>'
-      +'<td style="padding:7px 10px;border:1px solid #ddd">'+esc(s2.burner||'—')+'</td>'
-      +'<td style="padding:7px 10px;border:1px solid #ddd">'+esc(s2.shiftManager||'—')+'</td>'
-      +'<td style="padding:7px 10px;border:1px solid #ddd">'+esc(el2.name||'—')+'</td>'
-      +'<td style="padding:7px 10px;border:1px solid #ddd">'+esc(me2.name||'—')+'</td>'
-      +'<td style="padding:7px 10px;border:1px solid #ddd">'+esc(ca2.name||s2.analyst||'—')+'</td>'
-      +'<td style="padding:7px 10px;border:1px solid #ddd;font-weight:700">'+esc(s2.shift||'—')+'</td>'
-      +'<td style="padding:7px 10px;border:1px solid #ddd;text-align:center">'+(issues||'—')+'</td>'
-      +'</tr>';
+    var issues=inclBurners ? issueCount(d) : 0;
+    var cells = [
+      '<td style="padding:7px 10px;border:1px solid #ddd;font-weight:700">'+d+'</td>',
+      '<td style="padding:7px 10px;border:1px solid #ddd;color:#666">'+dayDate(d)+'</td>'
+    ];
+    if(inclBurners) cells.push('<td style="padding:7px 10px;border:1px solid #ddd">'+esc(s1.burner||'—')+'</td>');
+    if(inclSM) cells.push('<td style="padding:7px 10px;border:1px solid #ddd">'+esc(s1.shiftManager||'—')+'</td>');
+    if(inclEL) cells.push('<td style="padding:7px 10px;border:1px solid #ddd">'+esc(el1.name||'—')+'</td>');
+    if(inclMECH) cells.push('<td style="padding:7px 10px;border:1px solid #ddd">'+esc(me1.name||'—')+'</td>');
+    if(inclCA) cells.push('<td style="padding:7px 10px;border:1px solid #ddd">'+esc(ca1.name||s1.analyst||'—')+'</td>');
+    if(inclBurners) cells.push('<td style="padding:7px 10px;border:1px solid #ddd;font-weight:700">'+esc(s1.shift||'—')+'</td>');
+    if(inclBurners) cells.push('<td style="padding:7px 10px;border:1px solid #ddd">'+esc(s2.burner||'—')+'</td>');
+    if(inclSM) cells.push('<td style="padding:7px 10px;border:1px solid #ddd">'+esc(s2.shiftManager||'—')+'</td>');
+    if(inclEL) cells.push('<td style="padding:7px 10px;border:1px solid #ddd">'+esc(el2.name||'—')+'</td>');
+    if(inclMECH) cells.push('<td style="padding:7px 10px;border:1px solid #ddd">'+esc(me2.name||'—')+'</td>');
+    if(inclCA) cells.push('<td style="padding:7px 10px;border:1px solid #ddd">'+esc(ca2.name||s2.analyst||'—')+'</td>');
+    if(inclBurners) cells.push('<td style="padding:7px 10px;border:1px solid #ddd;font-weight:700">'+esc(s2.shift||'—')+'</td>');
+    if(inclBurners) cells.push('<td style="padding:7px 10px;border:1px solid #ddd;text-align:center">'+(issues||'—')+'</td>');
+    return '<tr>' + cells.join('') + '</tr>';
   }).join('');
 
   var issueRows=[];
-  DAYS.forEach(function(d){
-    ['shift1','shift2'].forEach(function(sk,si){
-      (state[d][sk].entries||[]).filter(function(e){return e.equipment||e.issue;}).forEach(function(e){
-        issueRows.push('<tr>'
+  if(inclBurners){
+    DAYS.forEach(function(d){
+      ['shift1','shift2'].forEach(function(sk,si){
+        (state[d][sk].entries||[]).filter(function(e){return e.equipment||e.issue;}).forEach(function(e){
+          issueRows.push('<tr>'
+            +'<td style="padding:7px 10px;border:1px solid #ddd;font-weight:700">'+d+'</td>'
+            +'<td style="padding:7px 10px;border:1px solid #ddd">'+(si===0?'Day':'Night')+'</td>'
+            +'<td style="padding:7px 10px;border:1px solid #ddd;font-weight:600">'+esc(e.equipment||'—')+'</td>'
+            +'<td style="padding:7px 10px;border:1px solid #ddd">'+esc(e.issue||'')+'</td>'
+            +'</tr>');
+        });
+      });
+    });
+  }
+
+  var shiftManagerRows = [];
+  if(inclSM){
+    DAYS.forEach(function(d){
+      ['shift1','shift2'].forEach(function(sk,si){
+        var s = smState[d] && smState[d][sk];
+        if(!s || !(s.notes||'').trim()) return;
+        shiftManagerRows.push('<tr>'
           +'<td style="padding:7px 10px;border:1px solid #ddd;font-weight:700">'+d+'</td>'
           +'<td style="padding:7px 10px;border:1px solid #ddd">'+(si===0?'Day':'Night')+'</td>'
-          +'<td style="padding:7px 10px;border:1px solid #ddd;font-weight:600">'+esc(e.equipment||'—')+'</td>'
-          +'<td style="padding:7px 10px;border:1px solid #ddd">'+esc(e.issue||'')+'</td>'
+          +'<td style="padding:7px 10px;border:1px solid #ddd">'+esc(s.notes)+'</td>'
           +'</tr>');
       });
     });
-  });
-
-  var shiftManagerRows = [];
-  DAYS.forEach(function(d){
-    ['shift1','shift2'].forEach(function(sk,si){
-      var s = smState[d] && smState[d][sk];
-      if(!s || !(s.notes||'').trim()) return;
-      shiftManagerRows.push('<tr>'
-        +'<td style="padding:7px 10px;border:1px solid #ddd;font-weight:700">'+d+'</td>'
-        +'<td style="padding:7px 10px;border:1px solid #ddd">'+(si===0?'Day':'Night')+'</td>'
-        +'<td style="padding:7px 10px;border:1px solid #ddd">'+esc(s.notes)+'</td>'
-        +'</tr>');
-    });
-  });
+  }
 
   function buildRoleNoteRows(source, label){
     var rows = [];
@@ -7156,52 +7433,66 @@ function openPrintOverview(note, win){
       });
     });
     return rows.length
-      ? '<table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:20px"><thead><tr style="background:'+label.bg+'">'
+      ? '<table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:20px"><thead><tr style="background:#fff">'
         +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Day</th>'
         +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Shift</th>'
-        +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">'+label.name+'</th>'
-        +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Notes</th>'
+        +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left;color:'+label.color+'">'+label.name+'</th>'
+        +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left;color:'+label.color+'">Notes</th>'
         +'</tr></thead><tbody>'+rows.join('')+'</tbody></table>'
       : '<div style="padding:9px 12px;background:#f8f8f8;border:1px solid #e8e8e8;border-radius:4px;color:#999;font-size:10px;margin-bottom:20px">No '+label.name.toLowerCase()+' notes recorded this week</div>';
   }
 
-  var analystRows = [];
-  DAYS.forEach(function(d){
-    ['shift1','shift2'].forEach(function(sk,si){
-      var cs = caState[d] && caState[d][sk];
-      if(!cs) return;
-      var detailParts = [];
-      (cs.hse||[]).forEach(function(h){ if(h.type||h.details) detailParts.push('HSE: ' + (h.type||'') + (h.details ? ' — ' + h.details : '')); });
-      (cs.cemQuality||[]).forEach(function(q){ if((q.issues||'').trim()) detailParts.push('Quality: Mill ' + (q.mill||'?') + ' — ' + q.issues); });
-      Object.entries(cs.labEquip||{}).forEach(function(entry){ if(entry[1].functional==='No'||entry[1].functional==='N/A') detailParts.push('Lab: ' + entry[0] + ' (' + entry[1].functional + ')' + (entry[1].details ? ' — ' + entry[1].details : '')); });
-      (cs.grindingLog||[]).forEach(function(g){ if(g.equipment||g.problem) detailParts.push('Grinding: ' + (g.equipment||g.zone||'?') + ' — ' + (g.problem||g.comments||'')); });
-      if(!detailParts.length) return;
-      analystRows.push('<tr>'
-        +'<td style="padding:7px 10px;border:1px solid #ddd;font-weight:700">'+d+'</td>'
-        +'<td style="padding:7px 10px;border:1px solid #ddd">'+(si===0?'Day':'Night')+'</td>'
-        +'<td style="padding:7px 10px;border:1px solid #ddd">'+esc(cs.name || state[d][sk].analyst || '—')+'</td>'
-        +'<td style="padding:7px 10px;border:1px solid #ddd">'+detailParts.map(esc).join('<br>')+'</td>'
-        +'</tr>');
-    });
-  });
+  function buildAnalystShiftCards(){
+    var cards = ['shift1','shift2'].map(function(sk,si){
+      var label = si===0 ? 'Day Shift' : 'Night Shift';
+      var rows = [];
+      DAYS.forEach(function(d){
+        var cs = caState[d] && caState[d][sk];
+        if(!cs) return;
+        var detailParts = [];
+        (cs.hse||[]).forEach(function(h){ if(h.type||h.details) detailParts.push('HSE: ' + (h.type||'') + (h.details ? ' — ' + h.details : '')); });
+        (cs.cemQuality||[]).forEach(function(q){ if((q.issues||'').trim()) detailParts.push('Quality: Mill ' + (q.mill||'?') + ' — ' + q.issues); });
+        Object.entries(cs.labEquip||{}).forEach(function(entry){ if(entry[1].functional==='No'||entry[1].functional==='N/A') detailParts.push('Lab: ' + entry[0] + ' (' + entry[1].functional + ')' + (entry[1].details ? ' — ' + entry[1].details : '')); });
+        (cs.grindingLog||[]).forEach(function(g){ if(g.equipment||g.problem) detailParts.push('Grinding: ' + (g.equipment||g.zone||'?') + ' — ' + (g.problem||g.comments||'')); });
+        if(!detailParts.length) return;
+        rows.push('<tr>'
+          +'<td style="padding:7px 10px;border:1px solid #ddd;font-weight:700">'+d+'</td>'
+          +'<td style="padding:7px 10px;border:1px solid #ddd">'+esc(cs.name || state[d][sk].analyst || '—')+'</td>'
+          +'<td style="padding:7px 10px;border:1px solid #ddd">'+detailParts.map(esc).join('<br>')+'</td>'
+          +'</tr>');
+      });
+      if(!rows.length){
+        return '<div style="margin-bottom:10px"><div style="font-weight:700;font-size:10px;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:6px;color:#555">'+label+'</div>'
+          +'<div style="padding:9px 12px;background:#f8f8f8;border:1px solid #e8e8e8;border-radius:4px;color:#999;font-size:10px">No issues recorded</div></div>';
+      }
+      return '<div style="margin-bottom:10px"><div style="font-weight:700;font-size:10px;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:6px;color:#555">'+label+'</div>'
+        +'<table style="width:100%;border-collapse:collapse;font-size:11px">'
+        +'<thead><tr style="background:#fff">'
+        +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Day</th>'
+        +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left;color:#b45309">Analyst</th>'
+        +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left;color:#b45309">Recorded Details</th>'
+        +'</tr></thead><tbody>'+rows.join('')+'</tbody></table></div>';
+    }).join('');
+    return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">'+cards+'</div>';
+  }
 
   var statsGrid = [
-    ['Days Logged',filledDays],
-    ['Equipment Issues',totalIssues],
-    ['Shifts Covered',totalShifts],
-    ['Week Complete',Math.round(filledDays/7*100)+'%'],
-    ['Shift Manager Notes',shiftManagerNoteCount],
-    ['Electrician Notes',electricianNoteCount],
-    ['Mechanical Notes',mechanicalNoteCount],
-    ['Analyst Entries',analystEntryCount]
-  ].map(function(p){
+    inclBurners ? ['Days Logged',filledDays] : null,
+    inclBurners ? ['Equipment Issues',totalIssues] : null,
+    inclBurners ? ['Shifts Covered',totalShifts] : null,
+    inclBurners ? ['Week Complete',Math.round(filledDays/7*100)+'%'] : null,
+    inclSM ? ['Shift Manager Notes',shiftManagerNoteCount] : null,
+    inclEL ? ['Electrician Notes',electricianNoteCount] : null,
+    inclMECH ? ['Mechanical Notes',mechanicalNoteCount] : null,
+    inclCA ? ['Analyst Entries',analystEntryCount] : null
+  ].filter(Boolean).map(function(p){
     return '<div style="border:1px solid #ddd;border-radius:5px;padding:12px;text-align:center">'
       +'<div style="font-size:20px;font-weight:900">'+p[1]+'</div>'
       +'<div style="font-size:9px;text-transform:uppercase;letter-spacing:0.5px;color:#666;margin-top:2px">'+p[0]+'</div>'
       +'</div>';
   }).join('');
 
-  var tallyTable = tallyRows
+  var tallyTable = inclBurners && tallyRows
     ? '<table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:20px"><thead><tr style="background:#f3f3f3">'
       +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Equipment</th>'
       +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:center">Mentions</th>'
@@ -7209,7 +7500,7 @@ function openPrintOverview(note, win){
       +'</tr></thead><tbody>'+tallyRows+'</tbody></table>'
     : '<div style="padding:9px 12px;background:#f8f8f8;border:1px solid #e8e8e8;border-radius:4px;color:#999;font-size:10px;margin-bottom:20px">No equipment mentions this week</div>';
 
-  var issueTable = issueRows.length
+  var issueTable = inclBurners && issueRows.length
     ? '<table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:20px"><thead><tr style="background:#f3f3f3">'
       +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Day</th>'
       +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Shift</th>'
@@ -7218,30 +7509,25 @@ function openPrintOverview(note, win){
       +'</tr></thead><tbody>'+issueRows.join('')+'</tbody></table>'
     : '<div style="padding:9px 12px;background:#f8f8f8;border:1px solid #e8e8e8;border-radius:4px;color:#999;font-size:10px;margin-bottom:20px">No equipment issues recorded this week</div>';
 
-  var shiftManagerTable = shiftManagerRows.length
-    ? '<table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:20px"><thead><tr style="background:#f3f0ff">'
+  var shiftManagerTable = inclSM && shiftManagerRows.length
+    ? '<table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:20px"><thead><tr style="background:#fff">'
       +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Day</th>'
       +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Shift</th>'
-      +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Notes</th>'
+      +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left;color:#7c3aed">Notes</th>'
       +'</tr></thead><tbody>'+shiftManagerRows.join('')+'</tbody></table>'
     : '<div style="padding:9px 12px;background:#f8f8f8;border:1px solid #e8e8e8;border-radius:4px;color:#999;font-size:10px;margin-bottom:20px">No shift manager notes recorded this week</div>';
 
-  var electricianTable = buildRoleNoteRows(electricianState, { name:'Electrician', bg:'#ecfdf5' });
-  var mechanicalTable = buildRoleNoteRows(mechanicalState, { name:'Mechanical', bg:'#eff6ff' });
-  var analystTable = analystRows.length
-    ? '<table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:20px"><thead><tr style="background:#fff7ed">'
-      +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Day</th>'
-      +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Shift</th>'
-      +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Analyst</th>'
-      +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Recorded Details</th>'
-      +'</tr></thead><tbody>'+analystRows.join('')+'</tbody></table>'
-    : '<div style="padding:9px 12px;background:#f8f8f8;border:1px solid #e8e8e8;border-radius:4px;color:#999;font-size:10px;margin-bottom:20px">No cement analyst details recorded this week</div>';
+  var electricianTable = inclEL ? buildRoleNoteRows(electricianState, { name:'Electrician', color:'#0f766e' }) : '';
+  var mechanicalTable = inclMECH ? buildRoleNoteRows(mechanicalState, { name:'Mechanical', color:'#2563eb' }) : '';
+  var analystTable = inclCA
+    ? buildAnalystShiftCards()
+    : '';
 
   var header = '<div style="border-bottom:2px solid #000;padding-bottom:10px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:flex-end">'
     +'<div><div style="font-size:18px;font-weight:900;letter-spacing:-0.5px">PADESWOOD WORKS</div>'
     +'<div style="font-size:13px;font-weight:700;margin-top:2px">WEEK OVERVIEW &mdash; '+weekRange()+'</div>'
     +(note?'<div style="margin-top:4px;font-size:10px;font-style:italic;color:#555">Note: '+esc(note)+'</div>':'')
-    +'</div><div style="text-align:right;font-size:10px;color:#888">Printed: '+new Date().toLocaleString('en-GB')+'</div></div>';
+    +'</div><div style="text-align:right;font-size:10px;color:#888">Printed by: '+esc(printedBy)+'<br>Printed: '+new Date().toLocaleString('en-GB')+'</div></div>';
 
   var html = '<div style="font-family:Arial,sans-serif;font-size:11px;color:#000">'
     + header
@@ -7250,32 +7536,26 @@ function openPrintOverview(note, win){
     +'<table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:20px"><thead><tr style="background:#f3f3f3">'
     +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Day</th>'
     +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Date</th>'
-    +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Day Burner</th>'
-    +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Day Manager</th>'
-    +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Day Electrician</th>'
-    +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Day Mechanical</th>'
-    +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Day Analyst</th>'
-    +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Day Shift</th>'
-    +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Night Burner</th>'
-    +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Night Manager</th>'
-    +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Night Electrician</th>'
-    +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Night Mechanical</th>'
-    +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Night Analyst</th>'
-    +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Night Shift</th>'
-    +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:center">Issues</th>'
+    +(inclBurners ? '<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Day Burner</th>' : '')
+    +(inclSM ? '<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Day Manager</th>' : '')
+    +(inclEL ? '<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Day Electrician</th>' : '')
+    +(inclMECH ? '<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Day Mechanical</th>' : '')
+    +(inclCA ? '<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Day Analyst</th>' : '')
+    +(inclBurners ? '<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Day Shift</th>' : '')
+    +(inclBurners ? '<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Night Burner</th>' : '')
+    +(inclSM ? '<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Night Manager</th>' : '')
+    +(inclEL ? '<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Night Electrician</th>' : '')
+    +(inclMECH ? '<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Night Mechanical</th>' : '')
+    +(inclCA ? '<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Night Analyst</th>' : '')
+    +(inclBurners ? '<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Night Shift</th>' : '')
+    +(inclBurners ? '<th style="padding:7px 10px;border:1px solid #ddd;text-align:center">Issues</th>' : '')
     +'</tr></thead><tbody>'+personnelRows+'</tbody></table>'
-    +'<div style="font-weight:700;font-size:10px;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:6px;color:#555">Equipment Mentions</div>'
-    + tallyTable
-    +'<div style="font-weight:700;font-size:10px;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:6px;color:#555">All Equipment Issues</div>'
-    + issueTable
-    +'<div style="font-weight:700;font-size:10px;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:6px;color:#555">Shift Manager Notes</div>'
-    + shiftManagerTable
-    +'<div style="font-weight:700;font-size:10px;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:6px;color:#555">Electrician Log</div>'
-    + electricianTable
-    +'<div style="font-weight:700;font-size:10px;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:6px;color:#555">Mechanical Log</div>'
-    + mechanicalTable
-    +'<div style="font-weight:700;font-size:10px;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:6px;color:#555">Cement Analyst Details</div>'
-    + analystTable
+    +(inclBurners ? '<div style="font-weight:700;font-size:10px;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:6px;color:#1a7a35">Equipment Mentions</div>'+tallyTable : '')
+    +(inclBurners ? '<div style="font-weight:700;font-size:10px;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:6px;color:#1a7a35">All Equipment Issues</div>'+issueTable : '')
+    +(inclCA ? '<div style="font-weight:700;font-size:10px;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:6px;color:#b45309">Cement Analyst Details</div>'+analystTable : '')
+    +(inclSM ? '<div style="font-weight:700;font-size:10px;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:6px;color:#7c3aed">Shift Manager Notes</div>'+shiftManagerTable : '')
+    +(inclEL ? '<div style="font-weight:700;font-size:10px;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:6px;color:#0f766e">Electrician Log</div>'+electricianTable : '')
+    +(inclMECH ? '<div style="font-weight:700;font-size:10px;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:6px;color:#2563eb">Mechanical Log</div>'+mechanicalTable : '')
     +'</div>';
 
   if(!win) win=window.open('','_blank');

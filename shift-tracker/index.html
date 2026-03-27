@@ -408,6 +408,16 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
+  .tracker-shell-date {
+    font-family: var(--ff-mono);
+    font-size: 9px;
+    color: var(--text2);
+    letter-spacing: .7px;
+    margin-top: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
   .tracker-shell-actions {
     display: flex;
     align-items: center;
@@ -670,6 +680,7 @@
       <div class="tracker-shell-copy">
         <div class="tracker-shell-title">Shift Tracker</div>
         <div class="tracker-shell-sub">Padeswood Works · Shared Shift Rotation Tool</div>
+        <div class="tracker-shell-date" id="stHeaderDate">—</div>
       </div>
     </div>
     <div class="tracker-shell-actions">
@@ -825,6 +836,13 @@ function syncSplashLogo(){
   splash.appendChild(img);
 }
 syncSplashLogo();
+
+function updateTrackerDate(){
+  const el = document.getElementById('stHeaderDate');
+  if(!el) return;
+  el.textContent = TODAY.toLocaleDateString('en-GB', { weekday:'short', day:'2-digit', month:'short', year:'numeric' });
+}
+updateTrackerDate();
 
 function _0xd1e2(){
   const hour=new Date().getHours();

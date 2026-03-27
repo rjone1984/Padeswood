@@ -70,25 +70,49 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
 ::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:3px}
 ::-webkit-scrollbar-thumb:hover{background:var(--bd3)}
 @keyframes spin{to{transform:rotate(360deg)}}
-@keyframes cardGlowPulse{
-  0%,100%{opacity:.16;transform:scale(1)}
-  50%{opacity:.34;transform:scale(1.004)}
-}
-@keyframes appGlowPulse{
-  0%,100%{opacity:.28;transform:scale(1)}
-  50%{opacity:.62;transform:scale(1.012)}
-}
-@keyframes appFloat{
-  0%,100%{transform:translateY(0px)}
-  50%{transform:translateY(-4px)}
+@keyframes appBorderPulse{
+  0%,100%{
+    opacity:.08;
+    box-shadow:0 0 0 1px rgba(46,204,92,.08),0 0 8px rgba(46,204,92,.04),0 0 16px rgba(46,204,92,.02);
+  }
+  50%{
+    opacity:.14;
+    box-shadow:0 0 0 1px rgba(46,204,92,.14),0 0 12px rgba(46,204,92,.06),0 0 24px rgba(46,204,92,.03);
+  }
 }
 @keyframes appIconPulse{
   0%,100%{transform:scale(1);filter:saturate(1)}
-  50%{transform:scale(1.05);filter:saturate(1.15)}
+  50%{transform:scale(1.02);filter:saturate(1.03)}
+}
+@keyframes fireIconFlicker{
+  0%,100%{transform:translateY(0) scale(1) rotate(-.4deg) skewX(0deg);filter:hue-rotate(0deg) saturate(1)}
+  10%{transform:translateY(-.5px) scale(1.008) rotate(.4deg) skewX(.2deg);filter:hue-rotate(-.5deg) saturate(1.02)}
+  22%{transform:translateY(-1px) scale(1.015) rotate(-.5deg) skewX(-.2deg);filter:hue-rotate(.5deg) saturate(1.04)}
+  34%{transform:translateY(-.5px) scale(1.006) rotate(.5deg) skewX(.25deg);filter:hue-rotate(-.3deg) saturate(1.015)}
+  48%{transform:translateY(-1.5px) scale(1.02) rotate(-.45deg) skewX(-.25deg);filter:hue-rotate(.7deg) saturate(1.05)}
+  62%{transform:translateY(-.5px) scale(1.008) rotate(.35deg) skewX(.15deg);filter:hue-rotate(-.5deg) saturate(1.02)}
+  78%{transform:translateY(-1px) scale(1.012) rotate(-.5deg) skewX(-.15deg);filter:hue-rotate(.5deg) saturate(1.04)}
+  90%{transform:translateY(-.5px) scale(1.006) rotate(.35deg) skewX(.1deg);filter:hue-rotate(-.25deg) saturate(1.015)}
+}
+@keyframes calendarIconDrift{
+  0%,100%{transform:translateX(0) translateY(0) rotate(0deg) scale(1);filter:saturate(1)}
+  20%{transform:translateX(-.5px) translateY(-.5px) rotate(-.2deg) scale(1.005);filter:saturate(1.01)}
+  50%{transform:translateX(1px) translateY(-1px) rotate(.4deg) scale(1.015);filter:saturate(1.03)}
+  75%{transform:translateX(-.25px) translateY(-.5px) rotate(-.1deg) scale(1.007);filter:saturate(1.01)}
+}
+@keyframes appBorderPulse{
+  0%,100%{
+    opacity:.18;
+    box-shadow:0 0 0 1px rgba(46,204,92,.14),0 0 18px rgba(46,204,92,.08),0 0 36px rgba(46,204,92,.04);
+  }
+  50%{
+    opacity:.5;
+    box-shadow:0 0 0 1px rgba(46,204,92,.34),0 0 26px rgba(46,204,92,.18),0 0 54px rgba(46,204,92,.10);
+  }
 }
 
 #licenceOverlay{position:fixed;inset:0;background:var(--bg);z-index:10000;
-  display:flex;align-items:center;justify-content:center;}
+  display:none;align-items:center;justify-content:center;}
 .lic-inner{width:360px;max-width:92vw;text-align:center;
   background:var(--glass-1);border:1px solid var(--bd2);border-radius:14px;
   padding:36px 32px 32px;box-shadow:0 18px 48px rgba(0,0,0,.16);position:relative;overflow:hidden;
@@ -201,7 +225,16 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
 .platform-hero{margin-bottom:40px;}
 .platform-hero h1{font-family:var(--ff-head);font-weight:800;font-size:clamp(22px,3.5vw,32px);
   color:var(--tx);letter-spacing:-.6px;margin-bottom:8px;}
-.platform-hero p{color:var(--tx2);font-size:14px;max-width:480px;line-height:1.6;}
+.platform-hero p{
+  color:var(--grn);
+  font-size:8px;
+  font-family:var(--ff-mono);
+  letter-spacing:.4px;
+  max-width:480px;
+  line-height:1.6;
+  opacity:.78;
+  text-shadow:0 0 4px rgba(33,194,122,.10);
+}
 .section-label{font-family:var(--ff-mono);font-size:9px;letter-spacing:2.5px;
   text-transform:uppercase;color:var(--tx3);margin-bottom:14px;
   display:flex;align-items:center;gap:10px;}
@@ -211,23 +244,33 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
   position:relative;overflow:hidden;transition:border-color .22s,box-shadow .22s,transform .18s;
   cursor:pointer;text-decoration:none;display:block;color:inherit;
   box-shadow:0 16px 42px rgba(0,0,0,.14);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
-  animation:appFloat 6s ease-in-out infinite;}
+  will-change:transform,box-shadow;}
 .app-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
   background:linear-gradient(90deg,transparent,var(--ac3),transparent);opacity:0;transition:opacity .22s;}
+.app-card::before,
+.app-card::after{pointer-events:none}
 .app-card::after{content:'';position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;opacity:.2;
   background:
     radial-gradient(circle at 18% 0%, rgba(46,204,92,.22), transparent 42%),
     radial-gradient(circle at 82% 100%, rgba(46,204,92,.14), transparent 44%);
-  box-shadow:0 0 0 1px rgba(46,204,92,.14),0 0 20px rgba(46,204,92,.10),0 0 42px rgba(46,204,92,.06);
-  animation:appGlowPulse 4.8s ease-in-out infinite;}
-.app-card:hover{border-color:var(--ac);box-shadow:var(--eac),var(--e2);transform:translateY(-2px);}
+  box-shadow:0 0 0 1px rgba(46,204,92,.14),0 0 18px rgba(46,204,92,.08),0 0 36px rgba(46,204,92,.04);
+  transform:scale(1);
+  transition:opacity 1s ease, box-shadow 1s ease, transform 1s ease, filter 1s ease;
+  animation:appBorderPulse 12s ease-in-out infinite;}
+.app-card:hover{border-color:var(--ac);box-shadow:0 18px 48px rgba(0,0,0,.16),0 0 0 1px rgba(46,204,92,.12),0 0 10px rgba(46,204,92,.08);transform:translateY(-1px);}
 .app-card:hover::before{opacity:1;}
-.app-card:hover::after{opacity:.84;box-shadow:0 0 0 1px rgba(46,204,92,.42),0 0 26px rgba(46,204,92,.28),0 0 56px rgba(46,204,92,.18);}
-.app-card:nth-child(2)::after{animation-delay:-1.2s;}
-.app-card:nth-child(2){animation-delay:-2.1s;}
+.app-card:hover::after{
+  opacity:.42;
+  transform:scale(1.008);
+  box-shadow:0 0 0 1px rgba(46,204,92,.16),0 0 12px rgba(46,204,92,.08),0 0 28px rgba(46,204,92,.05);
+  filter:brightness(1.01);
+}
+.app-card:nth-child(2)::after{animation-delay:-4.6s;}
 .card-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;
-  justify-content:center;font-size:20px;flex-shrink:0;animation:appIconPulse 3.8s ease-in-out infinite;}
-.app-card:nth-child(2) .card-icon{animation-delay:-1.3s;}
+  justify-content:center;font-size:20px;flex-shrink:0;animation:appIconPulse 12s ease-in-out infinite;}
+.app-card:nth-child(2) .card-icon{animation-delay:-4.2s;}
+.card-icon.fire-icon{animation:fireIconFlicker 6.5s ease-in-out infinite;transform-origin:50% 72%;}
+.card-icon.calendar-icon{animation:calendarIconDrift 8.8s ease-in-out infinite;transform-origin:50% 55%;}
 .card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;}
 .card-title{font-family:var(--ff-head);font-weight:700;font-size:16px;
   color:var(--tx);letter-spacing:-.3px;margin-bottom:5px;}
@@ -374,9 +417,6 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
       <div class="header-user" id="headerUser" style="display:none">
         <span id="headerEmail">—</span>
       </div>
-      <button class="icon-btn" id="aiReportBtn" onclick="openAiPanel()" title="AI Reporting" style="display:none">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="9" y1="14" x2="13" y2="14"/></svg>
-      </button>
       <button class="icon-btn" id="adminPanelBtn" onclick="openAdminPanel()" title="User Management" style="display:none;position:relative">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         <span id="pendingBadge" style="display:none;position:absolute;top:2px;right:2px;background:var(--amb);color:#000;font-size:9px;font-weight:700;border-radius:10px;padding:1px 5px;min-width:16px;text-align:center;line-height:16px"></span>
@@ -400,7 +440,7 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
   <main id="mainContent">
     <div class="platform-hero">
       <h1>Platform Apps</h1>
-      <p>Select an application to continue. All apps share a single licence and are optimised for plant operations at Padeswood Works.</p>
+      <p>Created by Rob Jones @ Padeswood</p>
     </div>
 
     <div class="section-label">Live Applications</div>
@@ -408,7 +448,7 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
 
       <a href="kiln-log/index.html" class="app-card">
         <div class="card-top">
-          <div class="card-icon" style="background:rgba(26,122,53,.15);border:1px solid rgba(46,204,92,.25)">🔥</div>
+          <div class="card-icon fire-icon" style="background:rgba(26,122,53,.15);border:1px solid rgba(46,204,92,.25)">🔥</div>
         </div>
         <div class="card-title">Padeswood Shift Logs</div>
         <div class="card-desc">Role-based shift logging for burners, shift managers, electricians, mechanical teams and cement analysts, with overview reporting, search, AI summaries, feedback tracking and print-ready handovers.</div>
@@ -417,7 +457,7 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
 
       <a href="shift-tracker/index.html" class="app-card">
         <div class="card-top">
-          <div class="card-icon" style="background:rgba(14,165,160,.12);border:1px solid rgba(14,165,160,.28)">📆</div>
+          <div class="card-icon calendar-icon" style="background:rgba(14,165,160,.12);border:1px solid rgba(14,165,160,.28)">📆</div>
         </div>
         <div class="card-title">Shift Tracker</div>
         <div class="card-desc">Shift rotation lookup for A, B, C, D and E teams, with date search, calendar view and quick shift summaries.</div>
@@ -429,6 +469,7 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
 
   <footer class="platform-footer">
     <span class="footer-left">Padeswood Works · Platform · HeidelbergMaterials</span>
+    <span class="footer-lic"><span class="lic-dot"></span><span id="licStatus">Licence checking…</span></span>
   </footer>
 
 </div>
@@ -507,41 +548,6 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
   </div>
 </div>
 
-<div id="aiOverlay" onclick="closeAiPanel()" style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:800;display:none"></div>
-<div id="aiPanel" style="position:fixed;top:0;right:0;bottom:0;width:580px;max-width:96vw;background:var(--sf);border-left:1px solid var(--bd);z-index:801;transform:translateX(100%);transition:transform .28s ease;display:flex;flex-direction:column;overflow:hidden">
-  <div style="padding:18px 22px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
-    <div style="display:flex;align-items:center;gap:10px;font-family:var(--ff-head);font-weight:700;font-size:16px;color:var(--tx)">
-      <div style="width:30px;height:30px;border-radius:7px;background:var(--purd);display:flex;align-items:center;justify-content:center">
-        <svg viewBox="0 0 24 24" fill="none" stroke="var(--pur)" stroke-width="2" width="14" height="14"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-      </div>
-      AI Reporting
-    </div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <button id="aiClearBtn" onclick="clearAiHistory()" title="Clear conversation" style="display:none;width:28px;height:28px;border-radius:6px;border:1px solid var(--bd);background:transparent;color:var(--tx3);cursor:pointer;font-size:12px;align-items:center;justify-content:center">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
-      </button>
-      <button onclick="closeAiPanel()" style="width:auto;min-width:64px;height:28px;padding:0 12px;border-radius:6px;border:1px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;font-size:11px;font-family:var(--ff-mono);letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;line-height:1">Close</button>
-    </div>
-  </div>
-  <div style="padding:14px 22px;border-bottom:1px solid var(--bd);flex-shrink:0">
-    <div style="font-family:var(--ff-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--tx3);margin-bottom:8px">Data Scope</div>
-    <div style="display:flex;gap:6px;flex-wrap:wrap" id="aiScopeRow">
-      <button class="ai-scope-btn active" onclick="setAiScope(this,'week')">This week</button>
-      <button class="ai-scope-btn" onclick="setAiScope(this,'month')">This month</button>
-      <button class="ai-scope-btn" onclick="setAiScope(this,'year')">This year</button>
-      <button class="ai-scope-btn" onclick="setAiScope(this,'all')">All time</button>
-    </div>
-  </div>
-  <div id="aiHistory" style="flex:1;overflow-y:auto;padding:16px 22px;display:flex;flex-direction:column;gap:10px"></div>
-  <div style="padding:12px 22px;border-top:1px solid var(--bd);flex-shrink:0">
-    <div style="display:flex;gap:8px;align-items:flex-end">
-      <textarea id="aiPrompt" rows="2" placeholder="Message… (⌘↵ to send)" onkeydown="if((event.ctrlKey||event.metaKey)&&event.key==='Enter'){event.preventDefault();sendAiReport();}" style="flex:1;padding:10px 12px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;resize:none;outline:none;line-height:1.5"></textarea>
-      <button id="aiSendBtn" onclick="sendAiReport()" style="width:38px;height:38px;background:linear-gradient(135deg,var(--ac),var(--ac3));border:none;border-radius:var(--rsm);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" width="14" height="14"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-      </button>
-    </div>
-  </div>
-</div>
 
 <div id="roleEditOverlay" onclick="closeRoleEditor()" style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:805;display:none"></div>
 <div id="roleEditPanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.98);width:640px;max-width:94vw;background:var(--sf);border:1px solid var(--bd);border-radius:14px;z-index:806;display:none;flex-direction:column;overflow:hidden;box-shadow:var(--e3)">
@@ -621,9 +627,9 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
     </div>
     <div id="roleEditMsg" style="display:none;font-size:12px;padding:8px 12px;border-radius:var(--rsm)"></div>
   </div>
-  <div style="padding:14px 22px;border-top:1px solid var(--bd);display:flex;justify-content:flex-end;gap:10px;flex-shrink:0">
-    <button class="btn btn-ghost" onclick="closeRoleEditor()">Cancel</button>
-    <button class="btn btn-iso" onclick="saveRoleEditor()">Save Roles</button>
+  <div style="padding:14px 22px;border-top:1px solid var(--bd);display:flex;justify-content:flex-end;gap:10px;flex-shrink:0;background:linear-gradient(180deg, rgba(255,255,255,.02), transparent)">
+    <button class="btn btn-ghost" onclick="closeRoleEditor()" style="min-width:96px;height:38px;padding:0 14px;font-size:12px;font-weight:600">Cancel</button>
+    <button class="btn btn-iso" onclick="saveRoleEditor()" style="min-width:112px;height:38px;padding:0 14px;font-size:12px;font-weight:700">Save Roles</button>
   </div>
 </div>
 
@@ -840,6 +846,11 @@ async function checkLicence() {
 }
 
 function showLicenceError(text) {
+  const overlay = document.getElementById('licenceOverlay');
+  if (overlay) {
+    overlay.style.display = 'flex';
+    overlay.style.opacity = '1';
+  }
   document.getElementById('licSpinner').style.display = 'none';
   document.getElementById('licMsg').textContent = text;
   document.getElementById('licMsg').style.display = 'block';
@@ -848,6 +859,10 @@ function showLicenceError(text) {
 
 function hideLicenceOverlay() {
   const overlay = document.getElementById('licenceOverlay');
+  if (!overlay || overlay.style.display === 'none') {
+    checkExistingSession();
+    return;
+  }
   overlay.style.transition = 'opacity .3s ease';
   overlay.style.opacity = '0';
   setTimeout(function() {
@@ -1049,9 +1064,13 @@ async function showAppSelector(user, opts) {
       loadResetReqBadge();
       loadPendingBadge();
     }
-    document.getElementById('aiReportBtn').style.display = 'flex';
     try {
-      const {data: ku} = await sb.from('kiln_users').select('must_reset_password,username,locked_name').eq('auth_user_id', user.id).maybeSingle();
+      const {data: ku} = await sb.from('kiln_users')
+        .select('must_reset_password,username,locked_name,shift_log_access,is_admin,is_shift_manager,is_electrician,is_mechanical,is_cement_analyst,is_day_staff,is_burner,is_readonly')
+        .eq('auth_user_id', user.id)
+        .maybeSingle();
+      _platformKilnUser = ku || null;
+      _platformAiScopeLabels = computePlatformAiScopeLabels(_platformProfile, _platformKilnUser);
       if (ku) {
         if ((!data || !data.full_name) && ku.locked_name) {
           document.getElementById('headerEmail').textContent = ku.locked_name;
@@ -1081,12 +1100,14 @@ async function showAppSelector(user, opts) {
   } catch(e) {
     const fallback = user.email || '—';
     document.getElementById('headerEmail').textContent = fallback;
-    document.getElementById('aiReportBtn').style.display = 'flex';
+    _platformKilnUser = null;
+    _platformAiScopeLabels = computePlatformAiScopeLabels(_platformProfile, null);
     return false;
   }
   await loadUserTheme();
   document.getElementById('mainWrapper').style.display = 'block';
   checkAppStatus();
+  refreshPlatformAiScopeLabels();
   return true;
 }
 
@@ -1098,6 +1119,8 @@ async function doLogout() {
   sessionStorage.removeItem('kbl_session');
   sessionStorage.removeItem('kbl_refresh');
   _pwPostResetSkipUid = null;
+  _platformKilnUser = null;
+  _platformAiScopeLabels = null;
   window.location.reload();
 }
 
@@ -1193,6 +1216,10 @@ function denyRequestFromBtn(btn){
   denyAccessRequest(btn.dataset.reqId);
 }
 async function denyAccessRequest(reqId) {
+  if (!canManagePlatformUsers()) {
+    showPlatformToast('Admin only');
+    return;
+  }
   if (!confirm('Deny and remove this access request?')) return;
   await sb.from('pw_access_requests').update({status:'denied'}).eq('id',reqId);
   _accessRequestsCache = _accessRequestsCache.filter(x=>x.id!==reqId);
@@ -1200,6 +1227,10 @@ async function denyAccessRequest(reqId) {
 }
 
 async function approveUser(userId) {
+  if (!canManagePlatformUsers()) {
+    showPlatformToast('Admin only');
+    return;
+  }
   const { error } = await sb.from('pw_profiles').update({ approved: true }).eq('id', userId);
   if (error) { showPlatformToast('Failed: ' + error.message); return; }
   const u = _usersCache.find(x => x.id === userId);
@@ -1211,6 +1242,10 @@ async function approveUser(userId) {
 
 
 async function toggleDisableUser(userId, currentlyDisabled) {
+  if (!canManagePlatformUsers()) {
+    showPlatformToast('Admin only');
+    return;
+  }
   const u = _usersCache.find(x => x.id === userId);
   const name = (u && (u.full_name || u.email)) || 'this user';
   const action = currentlyDisabled ? 'enable' : 'disable';
@@ -1353,6 +1388,8 @@ let _kilnUsersCache = [];
 let _aiHistory = [];
 let _aiScope = 'week';
 let _platformProfile = null;
+let _platformKilnUser = null;
+let _platformAiScopeLabels = null;
 const SB_URL_PLATFORM = 'https://xnkwrkoxvgptobnmekgv.supabase.co';
 const SB_KEY_PLATFORM = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhua3dya294dmdwdG9ibm1la2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NjAxNTQsImV4cCI6MjA4ODIzNjE1NH0.PrmnJ4eGepac41bQuNPG7TcBaunrfTWdjLtkGLr_2LY';
 
@@ -1361,6 +1398,9 @@ let _adminSetPwTarget = null; // { authUserId, kilnUsername, displayName } when 
 let _accessRequestTarget = null; // { reqId, email, fullName, role, kilnRole } when creating a new account
 let _pendingResetReqId = null;  // set when opened from reset request queue
 let _pwPostResetSkipUid = null;
+function canManagePlatformUsers() {
+  return !!(_platformProfile && _platformProfile.role === 'admin');
+}
 
 async function callAdminPwFunction(body) {
   const refreshed = await sb.auth.refreshSession().catch(function(){ return null; });
@@ -1418,6 +1458,10 @@ function openForcePwResetModal(username) {
 }
 
 function openAdminSetPwModal(authUserId, kilnUsername, displayName, fromResetReqId) {
+  if (!canManagePlatformUsers()) {
+    showPlatformToast('Admin only');
+    return;
+  }
   _adminSetPwTarget = { authUserId, kilnUsername, displayName };
   _accessRequestTarget = null;
   _forcePwUsername = null;
@@ -1435,6 +1479,10 @@ function openAdminSetPwModal(authUserId, kilnUsername, displayName, fromResetReq
 }
 
 function openAccessRequestPwModal(reqId, email, fullName, role, kilnRole) {
+  if (!canManagePlatformUsers()) {
+    showPlatformToast('Admin only');
+    return;
+  }
   _accessRequestTarget = { reqId, email, fullName, role, kilnRole };
   _adminSetPwTarget = null;
   _forcePwUsername = null;
@@ -1471,15 +1519,24 @@ function closeForcePwModal() {
 async function submitPlatformForceReset() {
   const btn = document.getElementById('forcePwBtn');
   try {
-    const newPw = document.getElementById('forcePwNew').value;
-    const conf  = document.getElementById('forcePwConfirm').value;
+    const newPwEl = document.getElementById('forcePwNew');
+    const confEl  = document.getElementById('forcePwConfirm');
+    let passwordValue = newPwEl.value;
+    const conf  = confEl.value;
     const msg   = document.getElementById('forcePwMsg');
     msg.style.display = 'none';
-    if (!newPw || !conf) { showForcePwMsg('err','Please fill in both fields.'); return; }
-    if (newPw !== conf)   { showForcePwMsg('err','Passwords do not match.'); return; }
+    if (!passwordValue || !conf) { showForcePwMsg('err','Please fill in both fields.'); return; }
+    if (passwordValue !== conf)   { showForcePwMsg('err','Passwords do not match.'); return; }
+    newPwEl.value = '';
+    confEl.value = '';
     btn.disabled = true; btn.textContent = 'Saving…';
 
     if (_accessRequestTarget) {
+      if (!canManagePlatformUsers()) {
+        btn.disabled = false; btn.textContent = 'Create Account';
+        showForcePwMsg('err', 'Admin only');
+        return;
+      }
       const target = _accessRequestTarget;
       try {
         const [profileRes, kilnRes] = await Promise.all([
@@ -1492,7 +1549,7 @@ async function submitPlatformForceReset() {
         const createRes = await callAdminPwFunction({
           action: 'createAccount',
           email: target.email,
-          password: newPw,
+          password: passwordValue,
           fullName: target.fullName
         });
         const userId = createRes && createRes.userId ? createRes.userId : null;
@@ -1542,17 +1599,23 @@ async function submitPlatformForceReset() {
       } catch(e) {
         btn.disabled = false; btn.textContent = 'Create Account';
         showForcePwMsg('err', e.message || 'Failed to create account.');
+        passwordValue = '';
         return;
       }
     }
 
     if (_adminSetPwTarget) {
+      if (!canManagePlatformUsers()) {
+        btn.disabled = false; btn.textContent = 'Set Password';
+        showForcePwMsg('err', 'Admin only');
+        return;
+      }
       if (!_adminSetPwTarget.authUserId) {
         showForcePwMsg('err', 'No linked auth account — activate this user first.');
         btn.disabled = false; btn.textContent = 'Set Password'; return;
       }
       try {
-        await callAdminPwFunction({ action: 'setPassword', userId: _adminSetPwTarget.authUserId, password: newPw });
+        await callAdminPwFunction({ action: 'setPassword', userId: _adminSetPwTarget.authUserId, password: passwordValue });
         await clearResetFlags(_adminSetPwTarget.authUserId, _adminSetPwTarget.kilnUsername || null);
         showForcePwMsg('ok', 'Password set for ' + _adminSetPwTarget.displayName + ' ✓');
         btn.disabled = false; btn.textContent = 'Set Password';
@@ -1569,6 +1632,7 @@ async function submitPlatformForceReset() {
         btn.disabled = false; btn.textContent = 'Set Password';
         showForcePwMsg('err', e.message || 'Failed to set password.');
       }
+      passwordValue = '';
       return;
     }
 
@@ -1582,21 +1646,24 @@ async function submitPlatformForceReset() {
       await callAdminPwFunction({
         action: 'selfSetPassword',
         userId: sessionUser.id,
-        password: newPw,
+        password: passwordValue,
         email: sessionEmail,
         username: _forcePwUsername || null
       });
       try { await sb.auth.signOut(); } catch(e) {}
-      const relog = await sb.auth.signInWithPassword({ email: sessionEmail, password: newPw });
+      const relog = await sb.auth.signInWithPassword({ email: sessionEmail, password: passwordValue });
       if (relog.error || !relog.data || !relog.data.user) {
         btn.disabled = false; btn.textContent = 'Set New Password & Continue';
         showForcePwMsg('err', (relog.error && relog.error.message) || 'Password updated, but automatic sign-in failed. Please sign in again.');
+        passwordValue = '';
         return;
       }
       _pwPostResetSkipUid = relog.data.user.id;
+      passwordValue = '';
     } catch(e2) {
       btn.disabled = false; btn.textContent = 'Set New Password & Continue';
       showForcePwMsg('err', e2 && e2.message ? e2.message : 'Failed to update password.');
+      passwordValue = '';
       return;
     }
     btn.disabled = false; btn.textContent = 'Set New Password & Continue';
@@ -1892,6 +1959,10 @@ function renderUserCard(m, DS, LS, RS, rc) {
 }
 
 async function updateKilnRole(username, role) {
+  if (!canManagePlatformUsers()) {
+    showPlatformToast('Admin only');
+    return;
+  }
   const flags = {
     is_admin:          role === 'admin',
     is_shift_manager:  role === 'shift_manager',
@@ -1921,6 +1992,10 @@ async function updateKilnRole(username, role) {
 }
 
 async function updateDocsRole(profileId, role) {
+  if (!canManagePlatformUsers()) {
+    showPlatformToast('Admin only');
+    return;
+  }
   const nextRole = String(role) === 'false' ? 'none' : 'viewer';
   const {error} = await sb.from('pw_profiles').update({role: nextRole}).eq('id', profileId);
   if (error) { showPlatformToast('Failed: ' + error.message); return; }
@@ -1931,6 +2006,10 @@ async function updateDocsRole(profileId, role) {
 }
 
 async function updateShiftTrackerAccess(profileId, value) {
+  if (!canManagePlatformUsers()) {
+    showPlatformToast('Admin only');
+    return;
+  }
   const allowed = String(value) !== 'false';
   const {error} = await sb.from('pw_profiles').update({shift_tracker_access: allowed}).eq('id', profileId);
   if (error) { showPlatformToast('Failed: ' + error.message); return; }
@@ -2068,6 +2147,10 @@ async function saveRoleEditor() {
 }
 
 async function removeUser(userId, email, username) {
+  if (!canManagePlatformUsers()) {
+    showPlatformToast('Admin only');
+    return;
+  }
   if (!confirm('Remove '+email+'? This will revoke their platform access immediately.')) return;
   const profileMatch = _usersCache.find(function(x){ return x.id === userId; }) || null;
   const kilnMatch = _kilnUsersCache.find(function(x){ return x.auth_user_id === userId || (username && x.username === username); }) || null;
@@ -2096,6 +2179,10 @@ async function deleteUser(userId, email) {
   return removeUser(userId, email, ku ? ku.username : '');
 }
 async function forceKilnPwReset(username) {
+  if (!canManagePlatformUsers()) {
+    showPlatformToast('Admin only');
+    return;
+  }
   const {error} = await sb.from('kiln_users').update({must_reset_password:true}).eq('username', username);
   if (error) { showPlatformToast('Failed: '+error.message); return; }
   const u = _kilnUsersCache.find(x=>x.username===username); if (u) u.must_reset_password = true;
@@ -2111,6 +2198,10 @@ function setKilnPassword(username) {
 }
 
 async function forcePlatformPwReset(profileId, displayName) {
+  if (!canManagePlatformUsers()) {
+    showPlatformToast('Admin only');
+    return;
+  }
   const {error} = await sb.from('pw_profiles').update({must_reset_password:true}).eq('id',profileId);
   if (error && error.message && error.message.includes('column')) {
     const ku = _kilnUsersCache.find(x=>x.auth_user_id===profileId);
@@ -2122,17 +2213,11 @@ async function forcePlatformPwReset(profileId, displayName) {
   if (ku) { await sb.from('kiln_users').update({must_reset_password:true}).eq('username',ku.username); ku.must_reset_password = true; }
   renderAllUsers(); showPlatformToast((displayName||'User')+' must reset password on next login ✓');
 }
-async function resetKilnPassword(username, authUserId, email) {
-  const newPw = prompt('Set new password for '+username+':');
-  if (!newPw) return;
-  if (!authUserId) { alert('No linked auth account for this user.\nThey need to log in to the shift log app first to create the link.'); return; }
-  try {
-    await callAdminPwFunction({action:'setPassword',userId:authUserId,password:newPw});
-    await sb.from('kiln_users').update({must_reset_password:false}).eq('username',username);
-    showPlatformToast('Password set for '+username+' \u2713');
-  } catch(e) { showPlatformToast('Failed: '+e.message); }
-}
 async function inviteUser() {
+  if (!canManagePlatformUsers()) {
+    showInviteMsg('err', 'Admin only.');
+    return;
+  }
   const email = document.getElementById('inviteEmail').value.trim().toLowerCase();
   const name  = document.getElementById('inviteName').value.trim();
   const platformAccess = document.getElementById('inviteRole').value !== 'false';
@@ -2190,14 +2275,21 @@ function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;'
 
 
 function openAiPanel() {
-  document.getElementById('aiOverlay').style.display = 'block';
-  document.getElementById('aiPanel').style.transform = 'translateX(0)';
+  const overlay = document.getElementById('aiOverlay');
+  const panel = document.getElementById('aiPanel');
+  if (!overlay || !panel) return;
+  overlay.style.display = 'block';
+  panel.style.transform = 'translateX(0)';
   renderAiHistory();
-  document.getElementById('aiPrompt').focus();
+  const prompt = document.getElementById('aiPrompt');
+  if (prompt) prompt.focus();
 }
 function closeAiPanel() {
-  document.getElementById('aiOverlay').style.display = 'none';
-  document.getElementById('aiPanel').style.transform = 'translateX(100%)';
+  const overlay = document.getElementById('aiOverlay');
+  const panel = document.getElementById('aiPanel');
+  if (!overlay || !panel) return;
+  overlay.style.display = 'none';
+  panel.style.transform = 'translateX(100%)';
 }
 const AI_PROXY_URL = 'https://xnkwrkoxvgptobnmekgv.supabase.co/functions/v1/hyper-task';
 async function callAiProxy(question, summary) {
@@ -2218,6 +2310,56 @@ async function callAiProxy(question, summary) {
   if (!res.ok) throw new Error((data && data.error) || ('AI request failed (' + res.status + ')'));
   return data.reply || 'No response received.';
 }
+function derivePlatformRoleScopes(ku) {
+  if (!ku || (ku.shift_log_access === false && !ku.is_admin)) {
+    return { burners:false, managers:false, analysts:false, electricians:false, mechanicals:false };
+  }
+  if (ku.is_admin || ku.is_shift_manager) {
+    return { burners:true, managers:true, analysts:true, electricians:true, mechanicals:true };
+  }
+  return {
+    burners: !!(ku.is_burner || ku.is_readonly || ku.is_day_staff),
+    managers: !!ku.is_readonly,
+    analysts: !!(ku.is_cement_analyst || ku.is_day_staff || ku.is_readonly),
+    electricians: !!(ku.is_electrician || ku.is_readonly),
+    mechanicals: !!(ku.is_mechanical || ku.is_readonly)
+  };
+}
+function computePlatformAiScopeLabels(profile, ku) {
+  const labels = [];
+  if (profile && profile.approved !== false && profile.disabled !== true && profile.shift_tracker_access !== false) {
+    labels.push('Shift Tracker');
+  }
+  const roleScopes = derivePlatformRoleScopes(ku);
+  if (roleScopes.burners) labels.push('Burners');
+  if (roleScopes.managers) labels.push('Shift Managers');
+  if (roleScopes.electricians) labels.push('Electricians');
+  if (roleScopes.mechanicals) labels.push('Mechanical');
+  if (roleScopes.analysts) labels.push('Cement Analysts');
+  return labels;
+}
+function getPlatformAiScopeLabels() {
+  return _platformAiScopeLabels || computePlatformAiScopeLabels(_platformProfile, _platformKilnUser);
+}
+async function refreshPlatformAiScopeLabels() {
+  try {
+    const sessionData = await sb.auth.getSession();
+    const sessionUser = sessionData && sessionData.data && sessionData.data.session && sessionData.data.session.user;
+    if (!sessionUser) {
+      _platformKilnUser = null;
+      _platformAiScopeLabels = computePlatformAiScopeLabels(_platformProfile, null);
+      renderAiHistory();
+      return;
+    }
+    const kilnRes = await sb.from('kiln_users')
+      .select('shift_log_access,is_admin,is_shift_manager,is_electrician,is_mechanical,is_cement_analyst,is_day_staff,is_burner,is_readonly')
+      .eq('auth_user_id', sessionUser.id)
+      .maybeSingle();
+    _platformKilnUser = kilnRes.data || null;
+    _platformAiScopeLabels = computePlatformAiScopeLabels(_platformProfile, _platformKilnUser);
+    renderAiHistory();
+  } catch(e) {}
+}
 function setAiScope(btn, scope) {
   document.querySelectorAll('.ai-scope-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
@@ -2228,12 +2370,17 @@ function setAiScope(btn, scope) {
 function renderAiHistory() {
   const el = document.getElementById('aiHistory');
   const clr = document.getElementById('aiClearBtn');
+  if (!el) return;
   if (!_aiHistory.length) {
-    el.innerHTML = '<div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);text-align:center;padding:40px 0">Ask about platform data and kiln log</div>';
+    el.innerHTML = '<div style="color:var(--tx3);font-size:11px;font-family:var(--ff-mono);text-align:center;padding:8px 0 10px">Using: '
+      + esc(getPlatformAiScopeLabels().join(', ') || 'No accessible app data')
+      + '</div><div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);text-align:center;padding:28px 0">Ask about platform data and kiln log</div>';
     if (clr) clr.style.display = 'none';
     return;
   }
-  el.innerHTML = _aiHistory.map(function(msg) {
+  el.innerHTML = '<div style="color:var(--tx3);font-size:11px;font-family:var(--ff-mono);padding:0 0 8px">Using: '
+    + esc(getPlatformAiScopeLabels().join(', ') || 'No accessible app data')
+    + '</div>' + _aiHistory.map(function(msg) {
     if (msg.role==='user') return '<div style="display:flex;justify-content:flex-end"><div class="ai-bubble-user">'+esc(msg.content)+'</div></div>';
     return '<div style="display:flex"><div class="ai-bubble-ai">'+esc(msg.content).replace(/\n/g,'<br>')+'</div></div>';
   }).join('');
@@ -2266,21 +2413,9 @@ async function buildPlatformContext() {
       kilnAllowed = !!(kilnUser && (kilnUser.shift_log_access !== false || kilnUser.is_admin));
     }
 
-    const roleScopes = (function(){
-      if (!kilnUser || !kilnAllowed) {
-        return { burners:false, managers:false, analysts:false, electricians:false, mechanicals:false };
-      }
-      if (kilnUser.is_admin || kilnUser.is_shift_manager) {
-        return { burners:true, managers:true, analysts:true, electricians:true, mechanicals:true };
-      }
-      return {
-        burners: !!(kilnUser.is_burner || kilnUser.is_readonly || kilnUser.is_day_staff),
-        managers: false,
-        analysts: !!(kilnUser.is_cement_analyst || kilnUser.is_day_staff),
-        electricians: !!kilnUser.is_electrician,
-        mechanicals: !!kilnUser.is_mechanical
-      };
-    })();
+    const roleScopes = kilnAllowed ? derivePlatformRoleScopes(kilnUser) : { burners:false, managers:false, analysts:false, electricians:false, mechanicals:false };
+    _platformKilnUser = kilnUser;
+    _platformAiScopeLabels = computePlatformAiScopeLabels(profile, kilnUser);
 
     const needsMainLogData = roleScopes.burners || roleScopes.managers || roleScopes.analysts;
 
@@ -2426,6 +2561,7 @@ async function buildPlatformContext() {
 async function sendAiReport() {
   const promptEl = document.getElementById('aiPrompt');
   const sendBtn  = document.getElementById('aiSendBtn');
+  if (!promptEl || !sendBtn) return;
   const q = promptEl.value.trim();
   if (!q) return;
   promptEl.value = '';
