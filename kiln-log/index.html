@@ -2236,6 +2236,11 @@ const mkDay   = () => ({notes:'',shift1:mkShift(),shift2:mkShift()});
 
 const mkSmShift = () => ({ notes: '' });
 const mkSmDay   = () => ({ shift1: mkSmShift(), shift2: mkSmShift() });
+const mkSmWeek  = () => {
+  const week = {};
+  DAYS.forEach(function(day){ week[day] = mkSmDay(); });
+  return week;
+};
 function ensureSmDayState(day){
   if(!smState[day] || typeof smState[day] !== 'object') smState[day] = mkSmDay();
   if(!smState[day].shift1 || typeof smState[day].shift1 !== 'object') smState[day].shift1 = mkSmShift();
@@ -2243,6 +2248,11 @@ function ensureSmDayState(day){
   if(typeof smState[day].shift1.notes !== 'string') smState[day].shift1.notes = smState[day].shift1.notes ? String(smState[day].shift1.notes) : '';
   if(typeof smState[day].shift2.notes !== 'string') smState[day].shift2.notes = smState[day].shift2.notes ? String(smState[day].shift2.notes) : '';
   return smState[day];
+}
+function resetSmWeekState(){
+  smState = {};
+  DAYS.forEach(function(day){ ensureSmDayState(day); });
+  _smDirty = new Set();
 }
 const mkElectricianShift = () => ({ name: '', notes: '' });
 const mkElectricianDay = () => ({ shift1: mkElectricianShift(), shift2: mkElectricianShift() });
@@ -2295,6 +2305,10 @@ const DEFAULT_MANAGERS = [];
 const DEFAULT_EQUIP    = [];
 const SHIFTS = ['A','B','C','D','E'];
 const MANAGE_TAB_ORDER_KEY = 'kbl_manage_tabs5';
+const KILN_BURNER_LOG_TABLE = 'kiln_burner_log';
+const KILN_SM_LOG_TABLE = 'kiln_shift_manager_log';
+const KILN_CA_LOG_TABLE = 'kiln_cement_analyst_log';
+const KILN_FEEDBACK_ITEMS_TABLE = 'kiln_feedback_items';
 
 function getManageTabOrderUserKey(){
   if(currentUserThemeId) return 'pw_manage_tabs_' + currentUserThemeId;
@@ -2635,10 +2649,13 @@ async function initApp(){
   const iso = weekStart ? toISO(weekStart) : null;
   if(iso){
     showSyncDot('syncing');
+    const burnerData = await sbLoadBurnerWeek(iso);
     const sbData = await sbLoadWeek(iso);
-    if(sbData && sbData.state){
+    if(burnerData){
+      state = burnerData.state && typeof burnerData.state === 'object' ? burnerData.state : burnerData;
+      showSyncDot('ok');
+    } else if(sbData && sbData.state){
       state = sbData.state;
-      if(sbData.smState) smState = sbData.smState;
       if(sbData.caState) caState = sbData.caState;
       if(sbData.equipment) equipment = sbData.equipment;
       if(sbData.burners)   burners   = sbData.burners;
@@ -2670,6 +2687,8 @@ async function initApp(){
         showSyncDot('warn');
       }
     }
+    await loadShiftManagerWeekIfAllowed(iso);
+    await loadAnalystWeekIfAllowed(iso);
     await loadElectricianWeekIfAllowed(iso);
     await loadMechanicalWeekIfAllowed(iso);
     if(!canWriteMainLog() && (canViewElectricianLog() || canViewMechanicalLog())) showSyncDot('ok');
@@ -2691,11 +2710,21 @@ async function _gotoTodayAndSwitch(silent, forceBuild){
     const wd=document.getElementById('weekDate'); if(wd)wd.value=iso;
     localStorage.setItem('kbl_wk5',iso);
     state={};
+    resetSmWeekState();
+    caState = {};
     resetElectricianWeekState();
     resetMechanicalWeekState();
     showSyncDot('syncing');
+    const burnerData = await sbLoadBurnerWeek(iso);
     const sbData = await sbLoadWeek(iso);
-  if(sbData && sbData.state){ state=sbData.state; if(sbData.smState) smState=sbData.smState; if(sbData.caState) caState=sbData.caState; showSyncDot('ok'); }
+  if(burnerData){
+    state = burnerData.state && typeof burnerData.state === 'object' ? burnerData.state : burnerData;
+    showSyncDot('ok');
+  } else if(sbData && sbData.state){
+    state=sbData.state;
+    if(sbData.caState) caState=sbData.caState;
+    showSyncDot('ok');
+  }
   else {
       if(canUseLocalCache()){
         const wkData=localStorage.getItem('kbl_week_'+iso);
@@ -2709,6 +2738,8 @@ async function _gotoTodayAndSwitch(silent, forceBuild){
         showSyncDot('warn');
       }
     }
+    await loadShiftManagerWeekIfAllowed(iso);
+    await loadAnalystWeekIfAllowed(iso);
     await loadElectricianWeekIfAllowed(iso);
     await loadMechanicalWeekIfAllowed(iso);
     if(!canWriteMainLog() && (canViewElectricianLog() || canViewMechanicalLog())) showSyncDot('ok');
@@ -2814,7 +2845,7 @@ function getRoleScopedDataAccess(){
   };
 }
 function canWriteMainLog(){
-  return !!(isAdmin || isBurner || isShiftManager || isCementAnalyst || isDayStaff);
+  return !!(isAdmin || isBurner || isShiftManager || isDayStaff);
 }
 function renderPrimaryDay(day){
   if(isElectrician && !isBurner && !isShiftManager && !isAdmin && !isCementAnalyst){
@@ -2987,14 +3018,20 @@ document.getElementById('weekDate').addEventListener('change', async function(){
   weekStart = monday;
   const iso = toISO(monday);
   localStorage.setItem('kbl_wk5', iso);
-  state = {}; smState = {}; caState = {};
+  state = {};
+  smState = {};
+  caState = {};
+  resetSmWeekState();
   resetElectricianWeekState();
   resetMechanicalWeekState();
   showSyncDot('syncing');
+  const burnerData = await sbLoadBurnerWeek(iso);
   const sbData = await sbLoadWeek(iso);
-  if(sbData && sbData.state){
+  if(burnerData){
+    state = burnerData.state && typeof burnerData.state === 'object' ? burnerData.state : burnerData;
+    showSyncDot('ok');
+  } else if(sbData && sbData.state){
     state = sbData.state;
-    if(sbData.smState) smState = sbData.smState;
     if(sbData.caState) caState = sbData.caState;
     showSyncDot('ok');
   } else {
@@ -3010,6 +3047,8 @@ document.getElementById('weekDate').addEventListener('change', async function(){
       showSyncDot('warn');
     }
   }
+  await loadShiftManagerWeekIfAllowed(iso);
+  await loadAnalystWeekIfAllowed(iso);
   await loadElectricianWeekIfAllowed(iso);
   await loadMechanicalWeekIfAllowed(iso);
   if(!canWriteMainLog() && (canViewElectricianLog() || canViewMechanicalLog())) showSyncDot('ok');
@@ -3037,16 +3076,18 @@ async function loadWeekIntoState(iso, selectedDay){
   const input = document.getElementById('weekDate');
   if(input) input.value = iso;
   state = {};
-  smState = {};
+  resetSmWeekState();
   caState = {};
   resetElectricianWeekState();
   resetMechanicalWeekState();
   showSyncDot('syncing');
+  const burnerData = (canViewBurnerLog() || canWriteMainLog()) ? await sbLoadBurnerWeek(iso) : null;
   const sbData = await sbLoadWeek(iso);
-  if(sbData && sbData.state){
+  if(burnerData){
+    state = burnerData.state && typeof burnerData.state === 'object' ? burnerData.state : burnerData;
+    showSyncDot('ok');
+  } else if(sbData && sbData.state){
     state = sbData.state;
-    if(sbData.smState) smState = sbData.smState;
-    if(sbData.caState) caState = sbData.caState;
     showSyncDot('ok');
   } else {
     if(canUseLocalCache()){
@@ -3061,6 +3102,9 @@ async function loadWeekIntoState(iso, selectedDay){
       showSyncDot('warn');
     }
   }
+  if(sbData && sbData.caState) caState = sbData.caState;
+  await loadShiftManagerWeekIfAllowed(iso);
+  await loadAnalystWeekIfAllowed(iso);
   await loadElectricianWeekIfAllowed(iso);
   await loadMechanicalWeekIfAllowed(iso);
   if(!canWriteMainLog() && (canViewElectricianLog() || canViewMechanicalLog())) showSyncDot('ok');
@@ -3205,6 +3249,7 @@ let currentSmDay = 'Monday';
 let currentElDay = 'Monday';
 let currentMechDay = 'Monday';
 let currentCaDay = 'Monday';
+let _smDirty = new Set();
 let _electricianDirty = new Set();
 let _mechanicalDirty = new Set();
 function switchDay(day){
@@ -3301,9 +3346,6 @@ function renderDay(day){
   `;
   renderRows('shift1',d.shift1.entries);
   renderRows('shift2',d.shift2.entries);
-  if(isShiftManager){
-    renderSmQuickNotes(day);
-  }
   updatePills();
   updateDayStatus();
     document.addEventListener('click', closeSearchOnOutside, {once:false});
@@ -3337,7 +3379,7 @@ function renderSmQuickNotes(day){
       ta.placeholder = 'Shift manager notes...';
       ta.addEventListener('focus', function(){ this.style.borderColor='var(--ac)'; this.style.boxShadow='0 0 0 3px var(--acd1)'; });
       ta.addEventListener('blur', function(){ this.style.borderColor='var(--bd)'; this.style.boxShadow='none'; });
-      ta.addEventListener('input', (function(day,sk){ return function(){ smState[day][sk].notes=this.value; autoSave(); updateDots(); }; })(day,sk));
+      ta.addEventListener('input', (function(day,sk){ return function(){ smState[day][sk].notes=this.value; _smDirty.add(day+'|'+sk); autoSave(); updateDots(); }; })(day,sk));
     }
     row.appendChild(ta);
     body.appendChild(row);
@@ -3379,7 +3421,7 @@ function renderSmDay(day){
       ta.placeholder = 'Shift manager notes...';
       ta.addEventListener('focus', function(){ this.style.borderColor='var(--ac)'; this.style.boxShadow='0 0 0 3px var(--acd1)'; });
       ta.addEventListener('blur', function(){ this.style.borderColor='var(--bd)'; this.style.boxShadow='none'; });
-      ta.addEventListener('input', (function(day,sk){ return function(){ smState[day][sk].notes=this.value; autoSave(); updateDots(); }; })(day,sk));
+      ta.addEventListener('input', (function(day,sk){ return function(){ smState[day][sk].notes=this.value; _smDirty.add(day+'|'+sk); autoSave(); updateDots(); }; })(day,sk));
     }
     body.appendChild(ta);
     section.appendChild(head);
@@ -3395,8 +3437,8 @@ function markElectricianDirty(day, sk){
 
 function canEditElectricianNameField(day, sk, val){
   if(readOnly) return false;
-  if(isAdmin || isShiftManager) return true;
-  if(!isElectrician) return false;
+  if(isAdmin) return true;
+  if(!(isElectrician || isShiftManager)) return false;
   const row = ensureElectricianDayState(day)[sk];
   const current = row.name || '';
   if(current && lockedName && current !== lockedName) return false;
@@ -3411,6 +3453,15 @@ function canEditElectricianShift(day, sk){
   const row = ensureElectricianDayState(day)[sk];
   const current = row.name || '';
   return !current || !lockedName || current === lockedName;
+}
+
+function getElectricianNameOptions(rowName){
+  if(isAdmin){
+    const names = electricians.slice();
+    if(rowName && names.indexOf(rowName) < 0) names.push(rowName);
+    return names.sort(function(a, b){ return String(a).localeCompare(String(b), undefined, { sensitivity: 'base' }); });
+  }
+  return lockedName ? [lockedName] : [];
 }
 
 function setElectricianShift(day, sk, field, val){
@@ -3483,12 +3534,15 @@ function renderElectricianDay(day){
   blank.value = '';
   blank.textContent = 'Select electrician...';
   nameSel.appendChild(blank);
-    const electricianOptions = (isElectrician && !isAdmin && !isShiftManager)
-      ? (lockedName ? [lockedName] : [])
-      : electricians.slice();
-    if((isAdmin || isShiftManager) && row.name && electricianOptions.indexOf(row.name) < 0) electricianOptions.push(row.name);
-    if(isElectrician && !isAdmin && !isShiftManager && lockedName && electricianOptions.indexOf(lockedName) < 0) electricianOptions.push(lockedName);
-    electricianOptions.sort(function(a, b){ return String(a).localeCompare(String(b), undefined, { sensitivity: 'base' }); });
+    const electricianOptions = getElectricianNameOptions(row.name);
+    if(!isAdmin && lockedName){
+      const lockedOp = document.createElement('option');
+      lockedOp.value = lockedName;
+      lockedOp.textContent = lockedName;
+      lockedOp.selected = row.name === lockedName || !row.name;
+      nameSel.appendChild(lockedOp);
+      if(!row.name) row.name = lockedName;
+    } else {
     electricianOptions.forEach(function(name){
       const op = document.createElement('option');
       op.value = name;
@@ -3496,6 +3550,7 @@ function renderElectricianDay(day){
       if(row.name === name) op.selected = true;
       nameSel.appendChild(op);
     });
+    }
     if(!canEditElectricianNameField(day, sk, row.name || '')){
       nameSel.disabled = true;
       nameSel.style.opacity = '0.75';
@@ -3540,8 +3595,8 @@ function markMechanicalDirty(day, sk){
 
 function canEditMechanicalNameField(day, sk, val){
   if(readOnly) return false;
-  if(isAdmin || isShiftManager) return true;
-  if(!isMechanical) return false;
+  if(isAdmin) return true;
+  if(!(isMechanical || isShiftManager)) return false;
   const row = ensureMechanicalDayState(day)[sk];
   const current = row.name || '';
   if(current && lockedName && current !== lockedName) return false;
@@ -3556,6 +3611,15 @@ function canEditMechanicalShift(day, sk){
   const row = ensureMechanicalDayState(day)[sk];
   const current = row.name || '';
   return !current || !lockedName || current === lockedName;
+}
+
+function getMechanicalNameOptions(rowName){
+  if(isAdmin){
+    const names = mechanicals.slice();
+    if(rowName && names.indexOf(rowName) < 0) names.push(rowName);
+    return names.sort(function(a, b){ return String(a).localeCompare(String(b), undefined, { sensitivity: 'base' }); });
+  }
+  return lockedName ? [lockedName] : [];
 }
 
 function setMechanicalShift(day, sk, field, val){
@@ -3628,12 +3692,15 @@ function renderMechanicalDay(day){
     blank.value = '';
     blank.textContent = 'Select mechanical...';
     nameSel.appendChild(blank);
-    const mechanicalOptions = (isMechanical && !isAdmin && !isShiftManager)
-      ? (lockedName ? [lockedName] : [])
-      : mechanicals.slice();
-    if((isAdmin || isShiftManager) && row.name && mechanicalOptions.indexOf(row.name) < 0) mechanicalOptions.push(row.name);
-    if(isMechanical && !isAdmin && !isShiftManager && lockedName && mechanicalOptions.indexOf(lockedName) < 0) mechanicalOptions.push(lockedName);
-    mechanicalOptions.sort(function(a, b){ return String(a).localeCompare(String(b), undefined, { sensitivity: 'base' }); });
+    const mechanicalOptions = getMechanicalNameOptions(row.name);
+    if(!isAdmin && lockedName){
+      const lockedOp = document.createElement('option');
+      lockedOp.value = lockedName;
+      lockedOp.textContent = lockedName;
+      lockedOp.selected = row.name === lockedName || !row.name;
+      nameSel.appendChild(lockedOp);
+      if(!row.name) row.name = lockedName;
+    } else {
     mechanicalOptions.forEach(function(name){
       const op = document.createElement('option');
       op.value = name;
@@ -3641,6 +3708,7 @@ function renderMechanicalDay(day){
       if(row.name === name) op.selected = true;
       nameSel.appendChild(op);
     });
+    }
     if(!canEditMechanicalNameField(day, sk, row.name || '')){
       nameSel.disabled = true;
       nameSel.style.opacity = '0.75';
@@ -4622,12 +4690,71 @@ async function loadMechanicalWeeksForScope(scopeMondays){
   return loadTradeWeeksForScope('mechanical', scopeMondays);
 }
 
+async function loadShiftManagerWeeksForScope(scopeMondays){
+  const rowsForManager = async function(tableName){
+    if(scopeMondays){
+      const fetches = scopeMondays.map(function(m){
+        return sbFetch('/rest/v1/'+tableName+'?week_key=eq.'+m+'&select=week_key,day,shift,notes').catch(function(){ return []; });
+      });
+      const results = await Promise.all(fetches);
+      return results.flat().filter(Boolean);
+    }
+    return await sbFetch('/rest/v1/'+tableName+'?select=week_key,day,shift,notes&order=week_key.desc&limit=200');
+  };
+
+  try {
+    const rows = await rowsForManager(KILN_SM_LOG_TABLE);
+    if(!rows || !rows.length) throw new Error('No merged shift manager rows yet');
+    const grouped = {};
+    (rows || []).forEach(function(row){
+      if(!row || !row.week_key || row.week_key === '__lists__') return;
+      if(!grouped[row.week_key]) grouped[row.week_key] = [];
+      grouped[row.week_key].push(row);
+    });
+    return Object.keys(grouped).sort().map(function(weekKey){
+      return { weekKey: weekKey, weekSmState: smRowsToWeek(grouped[weekKey]) };
+    });
+  } catch(e){
+    console.warn('Supabase shift manager load failed:', e);
+    return [];
+  }
+}
+
+async function loadAnalystWeeksForScope(scopeMondays){
+  const rowsForAnalyst = async function(tableName){
+    if(scopeMondays){
+      const fetches = scopeMondays.map(function(m){
+        return sbFetch('/rest/v1/'+tableName+'?week_key=eq.'+m+'&select=week_key,data').catch(function(){ return []; });
+      });
+      const results = await Promise.all(fetches);
+      return results.flat().filter(Boolean);
+    }
+    return await sbFetch('/rest/v1/'+tableName+'?select=week_key,data&order=week_key.desc&limit=200');
+  };
+
+  try {
+    const rows = await rowsForAnalyst(KILN_CA_LOG_TABLE);
+    if(!rows || !rows.length) throw new Error('No merged analyst rows yet');
+    const grouped = {};
+    (rows || []).forEach(function(row){
+      if(!row || !row.week_key || row.week_key === '__lists__') return;
+      if(!grouped[row.week_key]) grouped[row.week_key] = row.data;
+    });
+    return Object.keys(grouped).sort().map(function(weekKey){
+      return { weekKey: weekKey, weekCaState: caRowsToWeek(grouped[weekKey]) };
+    });
+  } catch(e){
+    console.warn('Supabase analyst load failed:', e);
+    return [];
+  }
+}
+
 async function runSearch(){
   const q = document.getElementById('searchModalInput').value.trim().toLowerCase();
   const box = document.getElementById('searchModalResults');
   const status = document.getElementById('searchStatus');
   const roleScopes = getRoleScopedDataAccess();
-  const needsMainLogData = roleScopes.burners || roleScopes.managers || roleScopes.analysts;
+  const needsMainLogData = roleScopes.burners;
   if(!q){ box.innerHTML = '<div style="text-align:center;padding:40px;color:var(--tx3);font-family:var(--ff-mono);font-size:11px">Start typing to search</div>'; status.textContent=''; return; }
 
   box.innerHTML = '<div style="text-align:center;padding:30px;color:var(--tx3);font-family:var(--ff-mono);font-size:11px">Searching...</div>';
@@ -4652,18 +4779,18 @@ async function runSearch(){
       if(needsMainLogData){
         let rows;
         if(mondays){
-          const fetches = mondays.map(m => sbFetch('/rest/v1/kiln_log?week_key=eq.'+m+'&select=week_key,data').catch(()=>[]));
+          const fetches = mondays.map(m => sbFetch('/rest/v1/'+KILN_BURNER_LOG_TABLE+'?week_key=eq.'+m+'&select=week_key,data').catch(()=>[]));
           const results = await Promise.all(fetches);
           rows = results.flat().filter(Boolean);
         } else {
-          rows = await sbFetch('/rest/v1/kiln_log?select=week_key,data&order=week_key.desc&limit=200');
+          rows = await sbFetch('/rest/v1/'+KILN_BURNER_LOG_TABLE+'?select=week_key,data&order=week_key.desc&limit=200');
         }
         weeksData = (rows||[])
           .filter(r => r.week_key && r.week_key !== '__lists__')
           .map(r => ({
             weekKey: r.week_key,
             weekState: roleScopes.burners ? (r.data?.state || r.data) : null,
-            weekSmState: roleScopes.managers ? (r.data?.smState || null) : null,
+            weekSmState: null,
             weekCaState: roleScopes.analysts ? (r.data?.caState || null) : null,
             weekElState: null,
             weekMechState: null
@@ -4676,13 +4803,33 @@ async function runSearch(){
         weeksData.unshift({
           weekKey: curKey,
           weekState: roleScopes.burners ? state : null,
-          weekSmState: roleScopes.managers ? smState : null,
+          weekSmState: null,
           weekCaState: roleScopes.analysts ? caState : null,
           weekElState: null,
           weekMechState: null
         });
       }
-      if(roleScopes.electricians){
+      if(roleScopes.managers){
+        const managerWeeks = await loadShiftManagerWeeksForScope(mondays);
+        const managerMap = new Map(managerWeeks.map(function(item){ return [item.weekKey, item.weekSmState]; }));
+        const weekMap = new Map(weeksData.map(function(item){ return [item.weekKey, item]; }));
+        weeksData = weeksData.map(function(item){
+          return Object.assign({}, item, { weekSmState: managerMap.get(item.weekKey) || item.weekSmState || null });
+        });
+        managerWeeks.forEach(function(item){
+          if(weekMap.has(item.weekKey)) return;
+          weeksData.push({ weekKey: item.weekKey, weekState: null, weekSmState: item.weekSmState, weekCaState: null, weekElState: null, weekMechState: null });
+        });
+        if(curKey && !weeksData.find(function(w){ return w.weekKey === curKey; })){
+          weeksData.unshift({ weekKey: curKey, weekState: null, weekSmState: smState, weekCaState: null, weekElState: null, weekMechState: null });
+        } else if(curKey && !weeksData.find(function(w){ return w.weekKey === curKey && w.weekSmState; })){
+          weeksData = weeksData.map(function(item){
+            if(item.weekKey !== curKey) return item;
+            return Object.assign({}, item, { weekSmState: smState });
+          });
+        }
+      }
+    if(roleScopes.electricians){
         const electricianWeeks = await loadElectricianWeeksForScope(mondays);
         const electricianMap = new Map(electricianWeeks.map(function(item){ return [item.weekKey, item.weekElState]; }));
         const weekMap = new Map(weeksData.map(function(item){ return [item.weekKey, item]; }));
@@ -4821,8 +4968,20 @@ async function navigateToResult(weekKey, day){
   if(weekKey !== 'current' && weekKey !== (weekStart ? toISO(weekStart) : null)){
     const [y,m,d] = weekKey.split('-').map(Number);
     weekStart = new Date(y, m-1, d);
+    resetSmWeekState();
+    caState = {};
+    const burnerData = await sbLoadBurnerWeek(weekKey);
     const sbData = await sbLoadWeek(weekKey);
-    if(sbData){ Object.assign(state, sbData); DAYS.forEach(dd=>{ if(!state[dd]) state[dd]=mkDay(); }); }
+    if(burnerData){
+      state = burnerData.state && typeof burnerData.state === 'object' ? burnerData.state : burnerData;
+    } else if(sbData){
+      Object.assign(state, sbData);
+    }
+    DAYS.forEach(dd=>{ if(!state[dd]) state[dd]=mkDay(); });
+    const smData = await sbLoadShiftManagerWeek(weekKey);
+    if(smData) smState = smData;
+    const caData = await sbLoadAnalystWeek(weekKey);
+    if(caData) caState = caData;
     await loadElectricianWeekIfAllowed(weekKey);
     await loadMechanicalWeekIfAllowed(weekKey);
     document.getElementById('weekDate').value = weekKey;
@@ -4944,7 +5103,7 @@ function setReportScope(btn, scope){
 async function buildReportContext(){
   const mondays = getMondaysForScope(_reportScope);
   const roleScopes = getRoleScopedDataAccess();
-  const needsMainLogData = roleScopes.burners || roleScopes.managers || roleScopes.analysts;
+  const needsMainLogData = roleScopes.burners;
   let weeksData = [];
   if(_reportScope === 'week'){
     weeksData = [{
@@ -4960,16 +5119,16 @@ async function buildReportContext(){
       if(needsMainLogData){
         let rows;
         if(mondays){
-          const fetches = mondays.map(m => sbFetch('/rest/v1/kiln_log?week_key=eq.'+m+'&select=week_key,data').catch(()=>[]));
+          const fetches = mondays.map(m => sbFetch('/rest/v1/'+KILN_BURNER_LOG_TABLE+'?week_key=eq.'+m+'&select=week_key,data').catch(()=>[]));
           const results = await Promise.all(fetches);
           rows = results.flat().filter(Boolean);
         } else {
-          rows = await sbFetch('/rest/v1/kiln_log?select=week_key,data&order=week_key.desc&limit=200');
+          rows = await sbFetch('/rest/v1/'+KILN_BURNER_LOG_TABLE+'?select=week_key,data&order=week_key.desc&limit=200');
         }
         weeksData = (rows||[]).filter(r=>r.week_key&&r.week_key!=='__lists__').map(r=>({
           weekKey:     r.week_key,
           weekState:   roleScopes.burners ? (r.data?.state || r.data) : null,
-          weekSmState: roleScopes.managers ? (r.data?.smState || null) : null,
+          weekSmState: null,
           weekCaState: roleScopes.analysts ? (r.data?.caState || null) : null,
           weekElState: null,
           weekMechState: null,
@@ -4982,11 +5141,31 @@ async function buildReportContext(){
         weeksData.unshift({
           weekKey:curKey,
           weekState: roleScopes.burners ? state : null,
-          weekSmState: roleScopes.managers ? smState : null,
+          weekSmState: null,
           weekCaState: roleScopes.analysts ? caState : null,
           weekElState: null,
           weekMechState: null
         });
+      }
+      if(roleScopes.managers){
+        const managerWeeks = await loadShiftManagerWeeksForScope(mondays);
+        const managerMap = new Map(managerWeeks.map(function(item){ return [item.weekKey, item.weekSmState]; }));
+        const weekMap = new Map(weeksData.map(function(item){ return [item.weekKey, item]; }));
+        weeksData = weeksData.map(function(item){
+          return Object.assign({}, item, { weekSmState: managerMap.get(item.weekKey) || item.weekSmState || null });
+        });
+        managerWeeks.forEach(function(item){
+          if(weekMap.has(item.weekKey)) return;
+          weeksData.push({ weekKey: item.weekKey, weekState: null, weekSmState: item.weekSmState, weekCaState: null, weekElState: null, weekMechState: null });
+        });
+        if(curKey && !weeksData.find(function(w){ return w.weekKey === curKey; })){
+          weeksData.unshift({ weekKey: curKey, weekState: null, weekSmState: smState, weekCaState: null, weekElState: null, weekMechState: null });
+        } else if(curKey && !weeksData.find(function(w){ return w.weekKey === curKey && w.weekSmState; })){
+          weeksData = weeksData.map(function(item){
+            if(item.weekKey !== curKey) return item;
+            return Object.assign({}, item, { weekSmState: smState });
+          });
+        }
       }
       if(roleScopes.electricians){
         const electricianWeeks = await loadElectricianWeeksForScope(mondays);
@@ -5028,7 +5207,7 @@ async function buildReportContext(){
           });
         }
       }
-    } catch(e){ weeksData = [{weekKey:'current',weekState:needsMainLogData ? state : null,weekSmState:roleScopes.managers ? smState : null,weekCaState:roleScopes.analysts ? caState : null,weekElState: roleScopes.electricians ? electricianState : null, weekMechState: roleScopes.mechanicals ? mechanicalState : null}]; }
+  } catch(e){ weeksData = [{weekKey:'current',weekState:needsMainLogData ? state : null,weekSmState:roleScopes.managers ? smState : null,weekCaState:roleScopes.analysts ? caState : null,weekElState: roleScopes.electricians ? electricianState : null, weekMechState: roleScopes.mechanicals ? mechanicalState : null}]; }
   }
 
   const lines = ['KILN OPERATIONS SHIFT LOG SUMMARY — scope: '+_reportScope, '='.repeat(50)];
@@ -5287,6 +5466,99 @@ function canManageFeedbackIssue(issue){
   return !!(lockedName && owner && owner === lockedName);
 }
 
+function buildFeedbackRowsFromWeek(weekKey, weekData){
+  const rows = [];
+  if(!weekKey || !weekData) return rows;
+  DAYS.forEach(function(day){
+    const d = weekData[day];
+    if(!d) return;
+    ['shift1','shift2'].forEach(function(sk, si){
+      const s = d[sk];
+      if(!s || !Array.isArray(s.entries)) return;
+      s.entries.forEach(function(e){
+        if(!e || (!e.equipment && !e.issue)) return;
+        if(e.status !== 'Ongoing' && e.status !== 'Resolved') return;
+        rows.push({
+          week_key: weekKey,
+          day: day,
+          shift: sk,
+          equipment: e.equipment || '',
+          issue: e.issue || '',
+          status: e.status || '',
+          status_by: e.statusBy || '',
+          status_at: e.statusAt || '',
+          flagged_by: e.flaggedBy || e.statusBy || d.burner || '',
+          flagged_at: e.flaggedAt || '',
+          burner: d.burner || '',
+          updated_at: new Date().toISOString()
+        });
+      });
+    });
+  });
+  return rows;
+}
+
+function feedbackRowToIssue(row){
+  if(!row || !row.week_key) return null;
+  const weekDate = parseLocalDate(row.week_key);
+  if(!weekDate || isNaN(weekDate.getTime())) return null;
+  const day = row.day || '';
+  const dayIdx = DAYS.indexOf(day);
+  const shift = row.shift || 'shift1';
+  const shiftDate = new Date(weekDate);
+  if(dayIdx >= 0) shiftDate.setDate(shiftDate.getDate() + dayIdx);
+  return {
+    iso: row.week_key,
+    day: day,
+    sk: shift,
+    si: shift === 'shift1' ? 0 : 1,
+    equipment: row.equipment || '',
+    issue: row.issue || '',
+    status: row.status || '',
+    statusBy: row.status_by || '',
+    statusAt: row.status_at || '',
+    flaggedBy: row.flagged_by || '',
+    burner: row.burner || '',
+    shiftDate
+  };
+}
+
+async function syncFeedbackWeekFromState(weekKey, weekData){
+  if(!weekKey || !weekData) return true;
+  const rows = buildFeedbackRowsFromWeek(weekKey, weekData);
+  try {
+    await sbFetch('/rest/v1/'+KILN_FEEDBACK_ITEMS_TABLE+'?week_key=eq.'+encodeURIComponent(weekKey), {
+      method: 'DELETE'
+    });
+  } catch(e) {
+    console.warn('Feedback table clear failed:', e);
+    return false;
+  }
+  if(!rows.length){
+    if(canUseLocalCache()){
+      try { localStorage.setItem('kbl_feedback_week_'+weekKey, JSON.stringify([])); } catch(e) {}
+    }
+    return true;
+  }
+  try {
+    await sbFetch('/rest/v1/'+KILN_FEEDBACK_ITEMS_TABLE+'?on_conflict=week_key,day,shift,equipment,issue', {
+      method: 'POST',
+      headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+      body: JSON.stringify(rows)
+    });
+    if(canUseLocalCache()){
+      try { localStorage.setItem('kbl_feedback_week_'+weekKey, JSON.stringify(rows)); } catch(e) {}
+    }
+    return true;
+  } catch(e) {
+    console.warn('Feedback table sync failed:', e);
+    if(canUseLocalCache()){
+      try { localStorage.setItem('kbl_feedback_week_'+weekKey, JSON.stringify(rows)); } catch(err) {}
+    }
+    return false;
+  }
+}
+
 async function renderFeedback(){
   animateContent();
   setDualNavVisibility(false);
@@ -5444,95 +5716,46 @@ async function loadFeedbackIssues(){
   if(!list) return;
 
   const cutoff = feedbackRangeCutoff();
-  let weekKeys = [];
-
-  if(canUseLocalCache()){
-    const allKeys = Object.keys(localStorage).filter(k=>k.startsWith('kbl_week_'));
-    allKeys.forEach(function(k){
-      const iso = k.replace('kbl_week_','');
-      const d = parseLocalDate(iso);
-      if(!cutoff || d >= cutoff) weekKeys.push(iso);
-    });
-  }
-
+  let rows = [];
   try {
-    let url = '/rest/v1/kiln_log?select=week_key,data';
+    let url = '/rest/v1/'+KILN_FEEDBACK_ITEMS_TABLE+'?select=week_key,day,shift,equipment,issue,status,status_by,status_at,flagged_by,flagged_at,burner,updated_at';
     if(cutoff){
       url += '&week_key=gte.'+toISO(cutoff);
     }
-    url += '&order=week_key.desc';
-    const rows = await sbFetch(url);
-    if(rows && rows.length){
-      rows.forEach(function(r){
-        if(!weekKeys.includes(r.week_key)) weekKeys.push(r.week_key);
-      });
-    }
+    url += '&status=eq.Ongoing&order=week_key.desc';
+    const dbRows = await sbFetch(url);
+    if(dbRows && dbRows.length) rows = rows.concat(dbRows);
   } catch(e){ console.warn('Feedback load error:', e); }
 
-  const weekDataMap = {};
+  if(canUseLocalCache()){
+    Object.keys(localStorage).filter(function(k){ return k.startsWith('kbl_feedback_week_'); }).forEach(function(k){
+      try {
+        const cachedRows = JSON.parse(localStorage.getItem(k));
+        if(Array.isArray(cachedRows) && cachedRows.length){
+          rows = rows.concat(cachedRows.filter(function(r){ return r && r.status === 'Ongoing'; }));
+        }
+      } catch(e){}
+    });
+  }
 
   if(weekStart){
     const currentIso = toISO(weekStart);
     const currentCutoff = feedbackRangeCutoff();
     const currentWeekDate = parseLocalDate(currentIso);
     if(!currentCutoff || currentWeekDate >= currentCutoff){
-      if(!weekKeys.includes(currentIso)) weekKeys.push(currentIso);
-      weekDataMap[currentIso] = state; // live in-memory state
+      rows = rows.concat(buildFeedbackRowsFromWeek(currentIso, state).filter(function(r){ return r.status === 'Ongoing'; }));
     }
   }
 
-  await Promise.all(weekKeys.map(async function(iso){
-    try {
-      if(weekDataMap[iso]) return;
-      const rows = await sbFetch('/rest/v1/kiln_log?week_key=eq.'+iso+'&select=data&limit=1');
-      if(rows && rows.length){
-        const d = rows[0].data;
-        weekDataMap[iso] = (d && d.state) ? d.state : d;
-        return;
-      }
-      if(canUseLocalCache()){
-        const cached = localStorage.getItem('kbl_week_'+iso);
-        if(cached){
-          const parsed = JSON.parse(cached);
-          weekDataMap[iso] = (parsed && parsed.state) ? parsed.state : parsed;
-        }
-      }
-    } catch(e){}
-  }));
-
+  const seen = new Set();
   const issues = [];
-  const cutoffTime = cutoff ? cutoff.getTime() : 0;
-
-  Object.entries(weekDataMap).forEach(function(entry){
-    const iso = entry[0], wData = entry[1];
-    if(!wData) return;
-    const weekDate = parseLocalDate(iso);
-    DAYS.forEach(function(day){
-      if(!wData[day]) return;
-      ['shift1','shift2'].forEach(function(sk, si){
-        const sd = wData[day][sk];
-        if(!sd || !sd.entries) return;
-        sd.entries.forEach(function(e, ei){
-          if(!e.equipment && !e.issue) return;
-          if(e.status === 'Resolved') return; // hide resolved
-          if(!e.status) return; // hide unmarked — only show explicitly flagged Ongoing
-          const shiftDate = new Date(weekDate);
-          shiftDate.setDate(shiftDate.getDate() + DAYS.indexOf(day));
-          if(cutoffTime && shiftDate.getTime() < cutoffTime) return;
-          issues.push({
-            iso, day, sk, si, ei,
-            equipment: e.equipment||'',
-            issue: e.issue||'',
-            status: e.status||'',
-            statusBy: e.statusBy||'',
-            statusAt: e.statusAt||'',
-            flaggedBy: getIssueOwner(e, sd.burner||''),
-            burner: sd.burner||'',
-            shiftDate
-          });
-        });
-      });
-    });
+  rows.forEach(function(row){
+    const issue = feedbackRowToIssue(row);
+    if(!issue || issue.status !== 'Ongoing') return;
+    const k = [issue.iso, issue.day, issue.sk, issue.equipment, issue.issue].join('|');
+    if(seen.has(k)) return;
+    seen.add(k);
+    issues.push(issue);
   });
 
   issues.sort(function(a,b){
@@ -5612,7 +5835,7 @@ async function resolveFeedbackIssue(idx){
   const ts = now.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})+' '+now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
 
   try {
-    const rows = await sbFetch('/rest/v1/kiln_log?week_key=eq.'+iss.iso+'&select=data&limit=1');
+    const rows = await sbFetch('/rest/v1/'+KILN_BURNER_LOG_TABLE+'?week_key=eq.'+iss.iso+'&select=data&limit=1');
     if(!rows || !rows.length){ showToast('Could not load week data'); return; }
     const payload = rows[0].data;
     const wState = (payload && payload.state) ? payload.state : payload;
@@ -5632,10 +5855,11 @@ async function resolveFeedbackIssue(idx){
     if(resolverName && !entry.flaggedBy) entry.flaggedBy = resolverName;
     if(ts && !entry.flaggedAt) entry.flaggedAt = ts;
 
-    await sbFetch('/rest/v1/kiln_log?week_key=eq.'+iss.iso, {
+    await sbFetch('/rest/v1/'+KILN_BURNER_LOG_TABLE+'?week_key=eq.'+iss.iso, {
       method: 'PATCH',
       body: JSON.stringify({ data: payload, updated_at: new Date().toISOString() })
     });
+    await syncFeedbackWeekFromState(iss.iso, wState);
 
     localStorage.setItem('kbl_week_'+iss.iso, JSON.stringify(payload));
 
@@ -5706,85 +5930,48 @@ async function loadResolvedIssues(){
   if(!list) return;
 
   const cutoff = resolvedRangeCutoff();
-  let weekKeys = [];
+  let rows = [];
+  try {
+    let url = '/rest/v1/'+KILN_FEEDBACK_ITEMS_TABLE+'?select=week_key,day,shift,equipment,issue,status,status_by,status_at,flagged_by,flagged_at,burner,updated_at';
+    if(cutoff) url += '&week_key=gte.'+toISO(cutoff);
+    url += '&status=eq.Resolved&order=week_key.desc';
+    const dbRows = await sbFetch(url);
+    if(dbRows && dbRows.length) rows = rows.concat(dbRows);
+  } catch(e){ console.warn('Resolved load error:', e); }
 
   if(canUseLocalCache()){
-    const allKeys = Object.keys(localStorage).filter(k=>k.startsWith('kbl_week_'));
-    allKeys.forEach(function(k){
-      const iso = k.replace('kbl_week_','');
-      const d = parseLocalDate(iso);
-      if(!cutoff || d >= cutoff) weekKeys.push(iso);
+    Object.keys(localStorage).filter(function(k){ return k.startsWith('kbl_feedback_week_'); }).forEach(function(k){
+      try {
+        const cachedRows = JSON.parse(localStorage.getItem(k));
+        if(Array.isArray(cachedRows) && cachedRows.length){
+          rows = rows.concat(cachedRows.filter(function(r){ return r && r.status === 'Resolved'; }));
+        }
+      } catch(e){}
     });
   }
 
-  try {
-    let url = '/rest/v1/kiln_log?select=week_key,data';
-    if(cutoff) url += '&week_key=gte.'+toISO(cutoff);
-    url += '&order=week_key.desc';
-    const rows = await sbFetch(url);
-    if(rows && rows.length){
-      rows.forEach(function(r){
-        if(!weekKeys.includes(r.week_key)) weekKeys.push(r.week_key);
-      });
+  if(weekStart){
+    const currentIso = toISO(weekStart);
+    const currentCutoff = resolvedRangeCutoff();
+    const currentWeekDate = parseLocalDate(currentIso);
+    if(!currentCutoff || currentWeekDate >= currentCutoff){
+      rows = rows.concat(buildFeedbackRowsFromWeek(currentIso, state).filter(function(r){ return r.status === 'Resolved'; }));
     }
-  } catch(e){ console.warn('Resolved load error:', e); }
+  }
 
-  const weekDataMap = {};
-  await Promise.all(weekKeys.map(async function(iso){
-    try {
-      const rows = await sbFetch('/rest/v1/kiln_log?week_key=eq.'+iso+'&select=data&limit=1');
-      if(rows && rows.length){
-        const d = rows[0].data;
-        weekDataMap[iso] = (d && d.state) ? d.state : d;
-        return;
-      }
-      if(canUseLocalCache()){
-        const cached = localStorage.getItem('kbl_week_'+iso);
-        if(cached){
-          const parsed = JSON.parse(cached);
-          weekDataMap[iso] = (parsed && parsed.state) ? parsed.state : parsed;
-        }
-      }
-    } catch(e){}
-  }));
-
+  const seen = new Set();
   const issues = [];
-  const cutoffTime = cutoff ? cutoff.getTime() : 0;
-
-  Object.entries(weekDataMap).forEach(function(entry){
-    const iso = entry[0], wData = entry[1];
-    if(!wData) return;
-    const weekDate = parseLocalDate(iso);
-    DAYS.forEach(function(day){
-      if(!wData[day]) return;
-      ['shift1','shift2'].forEach(function(sk, si){
-        const sd = wData[day][sk];
-        if(!sd || !sd.entries) return;
-        sd.entries.forEach(function(e, ei){
-          if(!e.equipment && !e.issue) return;
-          if(e.status !== 'Resolved') return; // only resolved
-          const shiftDate = new Date(weekDate);
-          shiftDate.setDate(shiftDate.getDate() + DAYS.indexOf(day));
-          if(cutoffTime && shiftDate.getTime() < cutoffTime) return;
-          let resolvedDate = shiftDate;
-          if(e.statusAt){
-            const parsed = new Date(e.statusAt);
-            if(!isNaN(parsed)) resolvedDate = parsed;
-          }
-          issues.push({
-            iso, day, sk, si, ei,
-            equipment: e.equipment||'',
-            issue: e.issue||'',
-            resolvedBy: e.statusBy||'',
-            resolvedAt: e.statusAt||'',
-            flaggedBy: getIssueOwner(e, sd.burner||''),
-            resolvedDate,
-            burner: sd.burner||'',
-            shiftDate
-          });
-        });
-      });
-    });
+  rows.forEach(function(row){
+    const issue = feedbackRowToIssue(row);
+    if(!issue || issue.status !== 'Resolved') return;
+    const k = [issue.iso, issue.day, issue.sk, issue.equipment, issue.issue].join('|');
+    if(seen.has(k)) return;
+    seen.add(k);
+    issue.resolvedBy = issue.statusBy || '';
+    issue.resolvedAt = issue.statusAt || '';
+    const parsed = issue.resolvedAt ? new Date(issue.resolvedAt) : null;
+    issue.resolvedDate = parsed && !isNaN(parsed) ? parsed : issue.shiftDate;
+    issues.push(issue);
   });
 
   issues.sort(function(a,b){ return b.resolvedDate - a.resolvedDate; });
@@ -5861,7 +6048,7 @@ async function reopenFeedbackIssue(idx){
   const ts = now.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})+' '+now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
 
   try {
-    const rows = await sbFetch('/rest/v1/kiln_log?week_key=eq.'+encodeURIComponent(iss.iso)+'&select=data&limit=1');
+    const rows = await sbFetch('/rest/v1/'+KILN_BURNER_LOG_TABLE+'?week_key=eq.'+encodeURIComponent(iss.iso)+'&select=data&limit=1');
     if(!rows || !rows.length){ showToast('Could not load week data'); return; }
     const payload = rows[0].data;
     const wState = (payload && payload.state) ? payload.state : payload;
@@ -5882,10 +6069,11 @@ async function reopenFeedbackIssue(idx){
     if(reopenerName && !entry.flaggedBy) entry.flaggedBy = reopenerName;
     if(ts && !entry.flaggedAt) entry.flaggedAt = ts;
 
-    await sbFetch('/rest/v1/kiln_log?week_key=eq.'+encodeURIComponent(iss.iso), {
+    await sbFetch('/rest/v1/'+KILN_BURNER_LOG_TABLE+'?week_key=eq.'+encodeURIComponent(iss.iso), {
       method: 'PATCH',
       body: JSON.stringify({ data: payload, updated_at: now.toISOString() })
     });
+    await syncFeedbackWeekFromState(iss.iso, wState);
     localStorage.setItem('kbl_week_'+iss.iso, JSON.stringify(payload));
 
     if(weekStart && toISO(weekStart) === iss.iso){
@@ -6690,12 +6878,12 @@ function renderOverviewBody(){
       if(!smState[d])return;
       ['shift1','shift2'].forEach(function(sk,si){
         const notes=(smState[d][sk].notes||'').trim();
-        if(notes) smRows.push(row(d,si,[esc(notes)]));
+        if(notes) smRows.push(row(d,si,['Shift Manager', esc(notes)]));
       });
     });
     if(smRows.length){
       add(secHdr('#7c3aed','👤','Shift Managers — Notes',true));
-      add(table(['Day','Shift','Notes'],smRows));
+      add(table(['Day','Shift','Shift Manager','Notes'],smRows,[92,82,'220px',null]));
     }
   }
 
@@ -6983,10 +7171,46 @@ async function sbFetch(path, options={}){
 }
 
 async function sbLoadWeek(isoMonday){
+  return sbLoadBurnerWeek(isoMonday);
+}
+
+async function sbLoadBurnerWeek(isoMonday){
   try {
-    const rows = await sbFetch('/rest/v1/kiln_log?week_key=eq.'+isoMonday+'&select=data,updated_at&order=updated_at.desc&limit=1');
+    const rows = await sbFetch('/rest/v1/'+KILN_BURNER_LOG_TABLE+'?week_key=eq.'+isoMonday+'&select=data,updated_at&order=updated_at.desc&limit=1');
     if(rows && rows.length) return rows[0].data;
-  } catch(e){ console.warn('Supabase load failed:', e); }
+  } catch(e){ console.warn('Supabase burner load failed:', e); }
+  return null;
+}
+
+function smRowsToWeek(rows){
+  const week = mkSmWeek();
+  (rows || []).forEach(function(row){
+    if(!row || !row.day || !row.shift || !week[row.day] || !week[row.day][row.shift]) return;
+    week[row.day][row.shift] = { notes: row.notes || '' };
+  });
+  return week;
+}
+
+async function sbLoadShiftManagerWeek(isoMonday){
+  try {
+    const rows = await sbFetch('/rest/v1/'+KILN_SM_LOG_TABLE+'?week_key=eq.'+isoMonday+'&select=day,shift,notes,updated_at&order=updated_at.desc');
+    if(rows && rows.length) return smRowsToWeek(rows);
+  } catch(e){ console.warn('Supabase shift manager load failed:', e); }
+  return null;
+}
+
+function caRowsToWeek(data){
+  if(!data || typeof data !== 'object') return null;
+  if(data.caState && typeof data.caState === 'object') return data.caState;
+  if(data.state && typeof data.state === 'object') return data.state;
+  return null;
+}
+
+async function sbLoadAnalystWeek(isoMonday){
+  try {
+    const rows = await sbFetch('/rest/v1/'+KILN_CA_LOG_TABLE+'?week_key=eq.'+isoMonday+'&select=data,updated_at&order=updated_at.desc&limit=1');
+    if(rows && rows.length) return caRowsToWeek(rows[0].data);
+  } catch(e){ console.warn('Supabase analyst load failed:', e); }
   return null;
 }
 
@@ -7020,41 +7244,123 @@ async function loadMechanicalWeekIfAllowed(isoMonday){
   DAYS.forEach(function(day){ ensureMechanicalDayState(day); });
 }
 
+async function loadShiftManagerWeekIfAllowed(isoMonday){
+  resetSmWeekState();
+  if(!canViewShiftManagerLog()) return;
+  const rows = await sbLoadShiftManagerWeek(isoMonday);
+  if(rows) {
+    smState = rows;
+  }
+  DAYS.forEach(function(day){ ensureSmDayState(day); });
+}
+
+async function loadAnalystWeekIfAllowed(isoMonday){
+  if(!canViewCementAnalystLog()) {
+    DAYS.forEach(function(day){ if(!caState[day]) caState[day] = mkCaDay(); });
+    return;
+  }
+  const rows = await sbLoadAnalystWeek(isoMonday);
+  if(rows) caState = rows;
+  DAYS.forEach(function(day){ if(!caState[day]) caState[day] = mkCaDay(); });
+}
+
 let _sbSaveTimer = null;
 async function sbSaveWeek(showState){
-  if(!weekStart) return;
+  return sbSaveBurnerWeek(showState);
+}
+
+async function sbSaveBurnerWeek(showState){
+  if(!weekStart || !canWriteMainLog()) return true;
   const iso = toISO(weekStart);
-  const payload = buildPayload();
   const shouldShowState = showState !== false;
   try {
-    await sbFetch('/rest/v1/kiln_log?on_conflict=week_key', {
+    await sbFetch('/rest/v1/'+KILN_BURNER_LOG_TABLE+'?on_conflict=week_key', {
       method: 'POST',
       headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
       body: JSON.stringify({
         week_key: iso,
-        data: payload,
+        data: state,
         updated_at: new Date().toISOString()
       })
     });
     if(shouldShowState) showSyncDot('ok');
     return true;
-  } catch(upsertErr){
-    console.warn('Supabase upsert failed, trying RPC fallback:', upsertErr);
-    try {
-      await sbFetch('/rest/v1/rpc/save_kiln_week', {
-        method: 'POST',
-        body: JSON.stringify({
-          p_week_key: iso,
-          p_payload: payload
-        })
-      });
-      if(shouldShowState) showSyncDot('ok');
-      return true;
-    } catch(e){
-      console.warn('Supabase save failed:', e);
-      if(shouldShowState) showSyncDot('warn');
-      return false;
+  } catch(e){
+    console.warn('Supabase burner save failed:', e);
+    if(shouldShowState) showSyncDot('warn');
+    return false;
+  }
+}
+
+async function sbSaveSmDirty(showState){
+  if(!weekStart || !canEditSmShift()) return true;
+  const shouldShowState = showState !== false;
+  const dirtyKeys = [];
+  DAYS.forEach(function(day){
+    ['shift1','shift2'].forEach(function(sk){
+      if(_smDirty && _smDirty.has(day + '|' + sk)) dirtyKeys.push(day + '|' + sk);
+    });
+  });
+  if(!_smDirty || !_smDirty.size) return true;
+  try {
+    for(const dirtyKey of dirtyKeys){
+      const parts = dirtyKey.split('|');
+      const day = parts[0];
+      const shift = parts[1];
+      const row = ensureSmDayState(day)[shift];
+      const isEmpty = !row || !String(row.notes || '').trim();
+      try {
+        if(isEmpty){
+          await sbFetch('/rest/v1/'+KILN_SM_LOG_TABLE+'?week_key=eq.'+encodeURIComponent(toISO(weekStart))+'&day=eq.'+encodeURIComponent(day)+'&shift=eq.'+encodeURIComponent(shift), { method: 'DELETE' });
+        } else {
+          await sbFetch('/rest/v1/'+KILN_SM_LOG_TABLE+'?on_conflict=week_key,day,shift', {
+            method: 'POST',
+            headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+            body: JSON.stringify({
+              week_key: toISO(weekStart),
+              day: day,
+              shift: shift,
+              notes: row.notes || '',
+              updated_at: new Date().toISOString()
+            })
+          });
+        }
+      } catch(inner){
+        _smDirty = new Set();
+        if(shouldShowState) showSyncDot('warn');
+        return false;
+      }
+      _smDirty.delete(dirtyKey);
     }
+    if(shouldShowState) showSyncDot('ok');
+    return true;
+  } catch(e){
+    console.warn('Supabase shift manager save failed:', e);
+    if(shouldShowState) showSyncDot('warn');
+    return false;
+  }
+}
+
+async function sbSaveAnalystWeek(showState){
+  if(!weekStart || !(isAdmin || isCementAnalyst)) return true;
+  const shouldShowState = showState !== false;
+  const iso = toISO(weekStart);
+  try {
+    await sbFetch('/rest/v1/'+KILN_CA_LOG_TABLE+'?on_conflict=week_key', {
+      method: 'POST',
+      headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+      body: JSON.stringify({
+        week_key: iso,
+        data: { caState },
+        updated_at: new Date().toISOString()
+      })
+    });
+    if(shouldShowState) showSyncDot('ok');
+    return true;
+  } catch(e){
+    console.warn('Supabase analyst save failed:', e);
+    if(shouldShowState) showSyncDot('warn');
+    return false;
   }
 }
 
@@ -7068,8 +7374,19 @@ async function sbSaveMechanicalDirty(showState){
 
 async function sbSaveCloud(){
   const results = [];
-  if(canWriteMainLog()){
-    results.push(await sbSaveWeek(false));
+  if(canViewBurnerLog()){
+    const burnerOk = await sbSaveBurnerWeek(false);
+    results.push(burnerOk);
+    if(burnerOk && weekStart){
+      const fbOk = await syncFeedbackWeekFromState(toISO(weekStart), state);
+      results.push(fbOk);
+    }
+  }
+  if(canEditSmShift()){
+    results.push(await sbSaveSmDirty(false));
+  }
+  if(isAdmin || isCementAnalyst){
+    results.push(await sbSaveAnalystWeek(false));
   }
   if(canViewElectricianLog()){
     results.push(await sbSaveElectricianDirty(false));
@@ -7256,6 +7573,8 @@ function clearDay(){
   if(!confirm('Clear ALL log data for ' + currentDay + ' (Burners, Shift Managers, Electricians, Mechanical & Cement Analysts)? This cannot be undone.')) return;
   state[currentDay]   = mkDay();
   smState[currentDay] = mkSmDay();
+  _smDirty.add(currentDay + '|shift1');
+  _smDirty.add(currentDay + '|shift2');
   electricianState[currentDay] = mkElectricianDay();
   markElectricianDirty(currentDay, 'shift1');
   markElectricianDirty(currentDay, 'shift2');
