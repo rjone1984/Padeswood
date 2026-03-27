@@ -329,6 +329,53 @@
   .splash-input::placeholder { color: var(--text3); opacity: 1; }
   .splash-input:focus::placeholder { color: transparent; }
   .splash-input:focus { border-color: var(--accent2); box-shadow: 0 0 0 3px var(--accent-soft); }
+  #stLoginEmailWrap {
+    display: flex;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    overflow: hidden;
+    background: var(--bg3);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  #stLoginEmailWrap:focus-within {
+    border-color: var(--accent2);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+  #stLoginUser {
+    border: none !important;
+    border-radius: 0 !important;
+    flex: 1 1 auto;
+    min-width: 0;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  .st-login-domain {
+    height: 40px;
+    min-width: 196px;
+    max-width: 210px;
+    padding: 0 12px;
+    border: none;
+    border-left: 1px solid var(--border);
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,0)),
+      var(--bg2);
+    color: var(--text2);
+    font-family: var(--ff-mono);
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .st-login-domain option {
+    background: var(--bg3);
+    color: var(--text);
+    font-family: var(--ff-mono);
+    font-size: 10px;
+  }
   .splash-btn {
     width: 100%; height: 42px; border-radius: 7px;
     background: linear-gradient(135deg, var(--accent), var(--accent2));
@@ -975,6 +1022,35 @@
     #splash-login > div {
       padding: 22px 16px 18px;
     }
+    #stLoginEmailWrap {
+      flex-direction: column;
+      gap: 8px;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      overflow: visible;
+    }
+    #stLoginUser {
+      width: 100%;
+      min-height: 40px;
+      padding: 0 12px !important;
+      background: var(--bg3) !important;
+      border: 1px solid var(--border2) !important;
+      border-radius: 7px !important;
+      color: var(--text) !important;
+      box-sizing: border-box;
+    }
+    .st-login-domain {
+      width: 100%;
+      max-width: none;
+      min-width: 0;
+      border-left: 1px solid var(--border);
+      border-top: 1px solid var(--border);
+      padding: 0 12px;
+      min-height: 40px;
+      border-radius: 7px;
+      text-align: left;
+    }
     .splash-brand {
       gap: 10px;
       margin-bottom: 2px;
@@ -1092,8 +1168,15 @@
         </div>
       </div>
       <div class="splash-panel-label">HeidelbergMaterials Sign In</div>
-      <input class="splash-input" id="login-user" type="text" placeholder="Username"
-        autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false">
+      <div id="stLoginEmailWrap">
+        <input class="splash-input" id="login-user" type="text" placeholder="Username"
+          autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false">
+        <select id="login-domain" class="st-login-domain" aria-label="Email domain">
+          <option value="@heidelbergmaterials.com">@heidelbergmaterials.com</option>
+          <option value="other">other address…</option>
+        </select>
+      </div>
+      <input type="hidden" id="login-email">
       <input class="splash-input" id="login-pass" type="password" placeholder="Password"
         autocomplete="current-password">
       <button class="splash-btn" id="login-btn">Sign In</button>
@@ -1709,10 +1792,27 @@ function stGetEls() {
     deniedArea: document.getElementById('access-denied'),
     deniedMsg: document.getElementById('access-denied-msg'),
     userInput: document.getElementById('login-user'),
+    domainInput: document.getElementById('login-domain'),
+    emailHidden: document.getElementById('login-email'),
     passInput: document.getElementById('login-pass'),
     loginBtn: document.getElementById('login-btn'),
     errorEl: document.getElementById('login-error')
   };
+}
+
+function stSyncLoginEmail() {
+  const els = stGetEls();
+  if (!els.userInput || !els.domainInput || !els.emailHidden) return;
+  const user = els.userInput.value.trim();
+  const domain = els.domainInput.value || '@heidelbergmaterials.com';
+  els.emailHidden.value = domain === 'other' ? user : (user + domain);
+  if (domain === 'other') {
+    els.userInput.placeholder = 'full@address.com';
+    els.userInput.type = 'email';
+  } else {
+    els.userInput.placeholder = 'username';
+    els.userInput.type = 'text';
+  }
 }
 
 function stShowError(text) {
@@ -1819,26 +1919,35 @@ async function initShiftTrackerSupabaseAuth() {
   const panelLabel = document.querySelector('.splash-panel-label');
   if (panelLabel) panelLabel.textContent = 'HeidelbergMaterials Sign In';
   const cleanUser = els.userInput.cloneNode(true);
+  const cleanDomain = els.domainInput ? els.domainInput.cloneNode(true) : null;
+  const cleanEmail = els.emailHidden ? els.emailHidden.cloneNode(true) : null;
   const cleanPass = els.passInput.cloneNode(true);
   els.userInput.type = 'text';
-  els.userInput.placeholder = 'Email address or username';
+  els.userInput.placeholder = 'Username';
   els.userInput.setAttribute('autocomplete', 'username');
   els.userInput.setAttribute('autocapitalize', 'none');
   els.userInput.setAttribute('autocorrect', 'off');
   els.userInput.setAttribute('spellcheck', 'false');
   els.passInput.placeholder = 'Password';
   els.userInput.parentNode.replaceChild(cleanUser, els.userInput);
+  if (cleanDomain && els.domainInput && els.domainInput.parentNode) {
+    els.domainInput.parentNode.replaceChild(cleanDomain, els.domainInput);
+  }
+  if (cleanEmail && els.emailHidden && els.emailHidden.parentNode) {
+    els.emailHidden.parentNode.replaceChild(cleanEmail, els.emailHidden);
+  }
   els.passInput.parentNode.replaceChild(cleanPass, els.passInput);
   const cleanBtn = els.loginBtn.cloneNode(true);
   els.loginBtn.parentNode.replaceChild(cleanBtn, els.loginBtn);
   els = stGetEls();
   els.userInput.type = 'text';
-  els.userInput.placeholder = 'Email address or username';
+  els.userInput.placeholder = 'Username';
   els.userInput.setAttribute('autocomplete', 'username');
   els.userInput.setAttribute('autocapitalize', 'none');
   els.userInput.setAttribute('autocorrect', 'off');
   els.userInput.setAttribute('spellcheck', 'false');
   els.passInput.placeholder = 'Password';
+  stSyncLoginEmail();
 
   async function hydrateFromSession() {
     const { data } = await sb.auth.getSession();
@@ -1867,7 +1976,8 @@ async function initShiftTrackerSupabaseAuth() {
   }
 
   async function handleLogin() {
-    const email = els.userInput.value.trim();
+    stSyncLoginEmail();
+    const email = els.emailHidden ? els.emailHidden.value.trim() : els.userInput.value.trim();
     const password = els.passInput.value;
     if (!email || !password) {
       stShowError('Please enter your login and password.');
@@ -1912,6 +2022,10 @@ async function initShiftTrackerSupabaseAuth() {
       els.passInput.focus();
     }
   });
+  if (els.domainInput) {
+    els.domainInput.addEventListener('change', stSyncLoginEmail);
+  }
+  els.userInput.addEventListener('input', stSyncLoginEmail);
   els.passInput.addEventListener('keydown', function(e) {
     if (e.key === 'Enter') {
       e.preventDefault();
