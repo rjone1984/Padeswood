@@ -202,6 +202,51 @@
     animation: trackerCardBreath 6.5s var(--ease-smooth) infinite;
     transform-origin: center center;
   }
+  .splash-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 4px;
+  }
+  .splash-brand-mark {
+    width: 54px;
+    height: 54px;
+    flex-shrink: 0;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+      radial-gradient(circle at 30% 20%, rgba(255,255,255,.98), rgba(255,255,255,.78) 24%, rgba(255,255,255,0) 62%),
+      linear-gradient(135deg, rgba(26,122,53,.10), rgba(46,204,92,.06));
+    border: 1px solid var(--border2);
+    box-shadow: 0 10px 26px rgba(0,0,0,.08), inset 0 1px 0 rgba(255,255,255,.48);
+    overflow: hidden;
+  }
+  .splash-brand-mark img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  .splash-brand-copy { min-width: 0; }
+  .splash-brand-title {
+    font-family: var(--ff-head);
+    font-size: 24px;
+    line-height: 1.04;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+  .splash-brand-sub {
+    margin-top: 4px;
+    font-family: var(--ff-mono);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 2.2px;
+    text-transform: uppercase;
+    color: var(--text3);
+  }
   #splash-login > div::before {
     content: '';
     position: absolute;
@@ -851,6 +896,30 @@
     margin-bottom: 4px;
   }
   @media (max-width: 640px) {
+    #splash {
+      padding: 14px 10px 0;
+    }
+    #splash-login {
+      padding: 0;
+    }
+    #splash-login > div {
+      padding: 22px 16px 18px;
+    }
+    .splash-brand {
+      gap: 10px;
+      margin-bottom: 2px;
+    }
+    .splash-brand-mark {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+    }
+    .splash-brand-title {
+      font-size: 21px;
+    }
+    .splash-brand-sub {
+      letter-spacing: 1.8px;
+    }
     #app {
       padding: 18px 14px 0;
     }
@@ -938,6 +1007,13 @@
 <div id="splash">
   <div id="splash-login" style="display:none">
     <div>
+      <div class="splash-brand">
+        <div class="splash-brand-mark"><img id="stSplashLogo" alt="Padeswood Works"></div>
+        <div class="splash-brand-copy">
+          <div class="splash-brand-title">Padeswood Works</div>
+          <div class="splash-brand-sub">HeidelbergMaterials · Shift Tracker</div>
+        </div>
+      </div>
       <div class="splash-panel-label">HeidelbergMaterials Sign In</div>
       <input class="splash-input" id="login-user" type="text" placeholder="Username"
         autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false">
@@ -1573,6 +1649,14 @@ function stShowError(text) {
   }
 }
 
+function stSyncSplashBrandLogo() {
+  const splashLogo = document.getElementById('stSplashLogo');
+  const headerLogo = document.querySelector('.tracker-shell-mark img');
+  if (!splashLogo || !headerLogo) return;
+  const src = headerLogo.currentSrc || headerLogo.src;
+  if (src) splashLogo.src = src;
+}
+
 async function stSyncThemeFromUser(user) {
   if (!user) return;
   const sharedLight = await stLoadSharedTheme(user);
@@ -1596,6 +1680,7 @@ function stShowLogin() {
   const userChip = document.getElementById('stHeaderUser');
   stCancelLoginReveal();
   sessionStorage.removeItem('auth');
+  stSyncSplashBrandLogo();
   if (els.splash) {
     els.splash.style.display = 'block';
   }
@@ -1647,6 +1732,7 @@ async function initShiftTrackerSupabaseAuth() {
   stSb = sb;
   let els = stGetEls();
   if (!els.loginArea || !els.userInput || !els.passInput || !els.loginBtn) return;
+  stSyncSplashBrandLogo();
   const logoutBtn = document.getElementById('stLogoutBtn');
 
   const panelLabel = document.querySelector('.splash-panel-label');

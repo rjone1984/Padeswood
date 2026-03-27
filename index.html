@@ -1011,7 +1011,7 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
     margin-bottom:12px;
   }
   .login-input{
-    font-size:14px;
+    font-size:16px;
   }
   #emailWrap,
   #regEmailWrap{
@@ -1063,11 +1063,9 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
   .header-sub{display:none;}
   .header-actions,.header-right{
     flex:1 1 100%;width:100%;
-    flex-wrap:nowrap;overflow-x:auto;flex-shrink:0;
-    scrollbar-width:none;-webkit-overflow-scrolling:touch;
+    flex-wrap:wrap;overflow:visible;flex-shrink:0;
     gap:4px;justify-content:flex-start;padding-bottom:2px;
   }
-  .header-actions::-webkit-scrollbar,.header-right::-webkit-scrollbar{display:none;}
   .header-user{display:inline-flex;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .icon-btn{width:30px;height:30px;flex-shrink:0;}
   #mainContent{padding:24px 12px 44px;}
@@ -1274,7 +1272,10 @@ async function submitResetRequest() {
 function showLoginScreen() {
   const screen = document.getElementById('loginScreen');
   screen.style.display = 'flex';
-  setTimeout(function() { document.getElementById('loginEmailUser').focus(); }, 100);
+  setTimeout(function() {
+    if (window.matchMedia && window.matchMedia('(max-width: 640px)').matches) return;
+    document.getElementById('loginEmailUser').focus();
+  }, 100);
 }
 
 async function doLogin() {
