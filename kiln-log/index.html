@@ -498,7 +498,9 @@ body.app-ready #app {
 .page-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:18px }
 .page-title-wrap { display:flex; align-items:center; gap:10px }
 .page-title  { font-family:var(--ff-head); font-size:22px; font-weight:700; color:var(--tx); letter-spacing:-.5px }
-.page-nav-group { display:flex; align-items:center; gap:6px; flex-wrap:wrap }
+.page-nav-group { display:flex; flex-direction:column; align-items:flex-start; gap:6px; flex-wrap:wrap }
+.overview-period-group,
+.overview-date-group { display:flex; align-items:center; gap:6px; flex-wrap:wrap }
 .page-day-jump {
   width:28px; height:28px;
   border-radius:999px;
@@ -544,11 +546,37 @@ body.app-ready #app {
   transform:translateY(-1px);
   box-shadow:0 10px 22px -18px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.05);
 }
+.page-period-jump.active {
+  color:var(--tx);
+  border-color:var(--ac);
+  background:
+    linear-gradient(180deg, rgba(46,204,92,.16), rgba(46,204,92,.06)),
+    var(--sf2);
+  box-shadow:
+    0 0 0 1px rgba(46,204,92,.16),
+    inset 0 1px 0 rgba(255,255,255,.05);
+}
+.page-period-jump.active:hover {
+  border-color:var(--ac);
+  box-shadow:
+    0 0 0 1px rgba(46,204,92,.2),
+    0 10px 22px -18px rgba(0,0,0,.45),
+    inset 0 1px 0 rgba(255,255,255,.05);
+}
 .page-period-jump:active { transform:translateY(0) scale(.98) }
+.overview-step-jump {
+  width:24px;
+  min-width:24px;
+  height:24px;
+  padding:0;
+  font-size:13px;
+  font-weight:700;
+  line-height:1;
+}
 .page-date   { font-family:var(--ff-mono); font-size:10px; color:var(--tx2); margin-top:4px; letter-spacing:.3px }
 .overview-date-picker {
-  height:28px;
-  padding:0 10px;
+  height:24px;
+  padding:0 8px;
   border-radius:999px;
   border:1px solid var(--bd);
   background:
@@ -556,8 +584,8 @@ body.app-ready #app {
     var(--sf2);
   color:var(--tx2);
   font-family:var(--ff-mono);
-  font-size:9px;
-  letter-spacing:.04em;
+  font-size:8px;
+  letter-spacing:.02em;
   cursor:pointer;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
   transition:transform .14s, border-color .14s, background .14s, color .14s, box-shadow .14s;
@@ -2185,6 +2213,10 @@ let currentManageTab = 'equipment';
 let sb = null;
 let _sbSession = null;
 
+function isHiddenManageTab(key){
+  return key === 'whiteboard_data';
+}
+
 function setSharedSession(session){
   _sbSession = session && session.access_token ? session.access_token : null;
 }
@@ -2823,7 +2855,7 @@ function canViewBurnerLog(){
   return !!(isAdmin || isBurner || isShiftManager || readOnly || isDayStaff);
 }
 function canViewWhiteboard(){
-  return !!(isBurner || isShiftManager || isDayStaff);
+  return !!(isAdmin || isBurner || isShiftManager || isDayStaff);
 }
 function getPrintableLogAccess(){
   return {
@@ -2880,6 +2912,7 @@ function normalizeManageTabOrder(order){
   function addKey(key){
     if(typeof key !== 'string') return;
     if(key === 'trainees' || key === '__manage_tab_order') return;
+    if(isHiddenManageTab(key)) return;
     if(_allLists[key] === undefined) return;
     if(seen.has(key)) return;
     seen.add(key);
@@ -2968,7 +3001,8 @@ function renderManageTabs(activeTab){
   if(!tabsEl) return;
   const tabs = normalizeManageTabOrder(manageTabOrder);
   manageTabOrder = tabs.slice();
-  const current = activeTab && _allLists[activeTab] !== undefined ? activeTab : (tabs[0] || MANAGE_BASE_TABS[0]);
+  const visibleActive = activeTab && _allLists[activeTab] !== undefined && !isHiddenManageTab(activeTab) ? activeTab : null;
+  const current = visibleActive || (tabs[0] || MANAGE_BASE_TABS[0]);
   tabsEl.innerHTML = '';
   tabs.forEach(function(key){
     const label = getManageTabLabel(key);
@@ -3123,44 +3157,94 @@ async function loadWeekIntoState(iso, selectedDay){
   updateDots();
 }
 
-async function jumpOverviewPeriod(unit, delta){
-  const base = weekStart ? new Date(weekStart) : parseLocalDate(document.getElementById('weekDate').value);
-  const target = new Date(base);
-  if(unit === 'month') target.setMonth(target.getMonth() + delta);
-  else target.setDate(target.getDate() + (delta * 7));
-  const dow = target.getDay();
-  const monday = new Date(target);
-  monday.setDate(target.getDate() - (dow === 0 ? 6 : dow - 1));
-  const activeDay = DAYS.includes(currentDay) ? currentDay : (DAYS.includes(currentSmDay) ? currentSmDay : 'Monday');
-  window._overviewPickedDate = toISO(monday);
-  await loadWeekIntoState(toISO(monday), activeDay);
-  renderOverview();
-  showToast((delta < 0 ? 'Moved to ' : 'Jumped to ') + 'week of ' + toISO(monday));
+function getOverviewAnchorDate(){
+  if(window._overviewPickedDate){
+    return parseLocalDate(window._overviewPickedDate);
+  }
+  return new Date();
 }
 
-async function jumpOverviewToCurrentWeek(){
-  const now = new Date();
-  const dow = now.getDay();
-  const monday = new Date(now);
-  monday.setDate(now.getDate() - (dow === 0 ? 6 : dow - 1));
-  const activeDay = DAYS.includes(currentDay) ? currentDay : (DAYS.includes(currentSmDay) ? currentSmDay : 'Monday');
-  window._overviewPickedDate = toISO(monday);
-  await loadWeekIntoState(toISO(monday), activeDay);
-  renderOverview();
-  showToast('Returned to this week');
+function getOverviewActiveDay(){
+  return DAYS.includes(currentDay) ? currentDay : (DAYS.includes(currentSmDay) ? currentSmDay : 'Monday');
 }
 
-async function jumpOverviewToDate(isoDate){
-  if(!isoDate) return;
+function getOverviewPeriodStart(period, anchorDate){
+  const base = anchorDate || getOverviewAnchorDate();
+  if(period === 'month') return new Date(base.getFullYear(), base.getMonth(), 1);
+  if(period === 'year') return new Date(base.getFullYear(), 0, 1);
+  return new Date(base);
+}
+
+function getOverviewPeriodMonday(period, anchorDate){
+  const start = getOverviewPeriodStart(period, anchorDate);
+  const dow = start.getDay();
+  const monday = new Date(start);
+  monday.setDate(start.getDate() - (dow === 0 ? 6 : dow - 1));
+  monday.setHours(0,0,0,0);
+  return monday;
+}
+
+function getOverviewPeriodLabel(period){
+  return period === 'month' ? 'Month' : period === 'year' ? 'Year' : 'Week';
+}
+
+async function loadOverviewWeekForDate(isoDate){
   const pickedDate = parseLocalDate(isoDate);
   const dow = pickedDate.getDay();
   const monday = new Date(pickedDate);
   monday.setDate(pickedDate.getDate() - (dow === 0 ? 6 : dow - 1));
-  const activeDay = DAYS.includes(currentDay) ? currentDay : (DAYS.includes(currentSmDay) ? currentSmDay : 'Monday');
+  monday.setHours(0,0,0,0);
+  await loadWeekIntoState(toISO(monday), getOverviewActiveDay());
   window._overviewPickedDate = isoDate;
-  await loadWeekIntoState(toISO(monday), activeDay);
+  return monday;
+}
+
+async function setOverviewPeriod(period){
+  window._overviewPeriod = period;
+  const anchor = window._overviewPickedDate || toISO(new Date());
+  await loadOverviewWeekForDate(anchor);
   renderOverview();
-  showToast('Showing week of ' + toISO(monday));
+  showToast('Showing ' + getOverviewPeriodLabel(period).toLowerCase());
+}
+
+async function jumpOverviewToDate(isoDate){
+  if(!isoDate) return;
+  await loadOverviewWeekForDate(isoDate);
+  renderOverview();
+  showToast('Showing week of ' + toISO(parseLocalDate(isoDate)));
+}
+
+async function moveOverviewDate(delta){
+  const period = window._overviewPeriod || 'week';
+  const base = getOverviewAnchorDate();
+  const target = new Date(base);
+  if(period === 'month') target.setMonth(target.getMonth() + delta);
+  else if(period === 'year') target.setFullYear(target.getFullYear() + delta);
+  else target.setDate(target.getDate() + (delta * 7));
+  const iso = toISO(target);
+  await loadOverviewWeekForDate(iso);
+  renderOverview();
+  showToast('Showing ' + getOverviewPeriodLabel(period).toLowerCase() + ' of ' + iso);
+}
+
+async function resetOverviewToCurrentWeek(){
+  const now = new Date();
+  const dow = now.getDay();
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - (dow === 0 ? 6 : dow - 1));
+  monday.setHours(0,0,0,0);
+  window._overviewPeriod = 'week';
+  await loadOverviewWeekForDate(toISO(monday));
+  renderOverview();
+  showToast('Returned to this week');
+}
+
+async function openOverview(){
+  if(!window._overviewPickedDate){
+    window._overviewPeriod = 'week';
+    await loadOverviewWeekForDate(toISO(new Date()));
+  }
+  renderOverview();
 }
 
 function dayDate(day){
@@ -3313,7 +3397,7 @@ function animateContent(){
 // Main view renderers
 // ---------------------------------------------------------------------------
 function renderDay(day){
-  if(day==='Overview'){renderOverview();return;}
+  if(day==='Overview'){openOverview();return;}
   if(day==='AI Reporting'){renderReports();return;}
   if(day==='Whiteboard'){
     if(!canViewWhiteboard()){
@@ -3467,11 +3551,6 @@ function getElectricianNameOptions(rowName){
 function setElectricianShift(day, sk, field, val){
   const row = ensureElectricianDayState(day)[sk];
   if(field === 'name'){
-    if(!val && row.notes && !isAdmin && !isShiftManager){
-      showToast('Clear notes before removing your name');
-      renderElectricianDay(day);
-      return;
-    }
     if(!canEditElectricianNameField(day, sk, val)){
       showToast('You can only edit your own shift');
       renderElectricianDay(day);
@@ -3490,9 +3569,6 @@ function setElectricianShift(day, sk, field, val){
     return;
   }
   row.notes = val;
-  if(isElectrician && !isAdmin && !isShiftManager && !row.name && lockedName){
-    row.name = lockedName;
-  }
   markElectricianDirty(day, sk);
   autoSave();
 }
@@ -3530,18 +3606,25 @@ function renderElectricianDay(day){
 
   const nameSel = document.createElement('select');
   nameSel.style.cssText = 'width:100%;height:38px;background:var(--inp);border:1px solid var(--bd);border-radius:var(--rxs);color:var(--tx);font-family:var(--ff-body);font-size:13px;padding:0 10px;outline:none;margin-bottom:12px';
-  const blank = document.createElement('option');
-  blank.value = '';
-  blank.textContent = 'Select electrician...';
-  nameSel.appendChild(blank);
+    const blank = document.createElement('option');
+    blank.value = '';
+    blank.textContent = 'Select electrician...';
+    if(!row.name) blank.selected = true;
+    nameSel.appendChild(blank);
     const electricianOptions = getElectricianNameOptions(row.name);
     if(!isAdmin && lockedName){
       const lockedOp = document.createElement('option');
       lockedOp.value = lockedName;
       lockedOp.textContent = lockedName;
-      lockedOp.selected = row.name === lockedName || !row.name;
+      lockedOp.selected = row.name === lockedName;
       nameSel.appendChild(lockedOp);
-      if(!row.name) row.name = lockedName;
+      if(row.name === lockedName){
+        const removeOp = document.createElement('option');
+        removeOp.value = '';
+        removeOp.textContent = '✕ Remove my name';
+        removeOp.style.color = 'var(--red)';
+        nameSel.appendChild(removeOp);
+      }
     } else {
     electricianOptions.forEach(function(name){
       const op = document.createElement('option');
@@ -3600,7 +3683,7 @@ function canEditMechanicalNameField(day, sk, val){
   const row = ensureMechanicalDayState(day)[sk];
   const current = row.name || '';
   if(current && lockedName && current !== lockedName) return false;
-  if(!val) return !current || current === lockedName;
+  if(!val) return true;
   return !lockedName || val === lockedName;
 }
 
@@ -3625,11 +3708,6 @@ function getMechanicalNameOptions(rowName){
 function setMechanicalShift(day, sk, field, val){
   const row = ensureMechanicalDayState(day)[sk];
   if(field === 'name'){
-    if(!val && row.notes && !isAdmin && !isShiftManager){
-      showToast('Clear notes before removing your name');
-      renderMechanicalDay(day);
-      return;
-    }
     if(!canEditMechanicalNameField(day, sk, val)){
       showToast('You can only edit your own shift');
       renderMechanicalDay(day);
@@ -3648,9 +3726,6 @@ function setMechanicalShift(day, sk, field, val){
     return;
   }
   row.notes = val;
-  if(isMechanical && !isAdmin && !isShiftManager && !row.name && lockedName){
-    row.name = lockedName;
-  }
   markMechanicalDirty(day, sk);
   autoSave();
 }
@@ -3691,23 +3766,30 @@ function renderMechanicalDay(day){
     const blank = document.createElement('option');
     blank.value = '';
     blank.textContent = 'Select mechanical...';
+    if(!row.name) blank.selected = true;
     nameSel.appendChild(blank);
     const mechanicalOptions = getMechanicalNameOptions(row.name);
     if(!isAdmin && lockedName){
       const lockedOp = document.createElement('option');
       lockedOp.value = lockedName;
       lockedOp.textContent = lockedName;
-      lockedOp.selected = row.name === lockedName || !row.name;
+      lockedOp.selected = row.name === lockedName;
       nameSel.appendChild(lockedOp);
-      if(!row.name) row.name = lockedName;
+      if(row.name === lockedName){
+        const removeOp = document.createElement('option');
+        removeOp.value = '';
+        removeOp.textContent = '✕ Remove my name';
+        removeOp.style.color = 'var(--red)';
+        nameSel.appendChild(removeOp);
+      }
     } else {
-    mechanicalOptions.forEach(function(name){
-      const op = document.createElement('option');
-      op.value = name;
-      op.textContent = name;
-      if(row.name === name) op.selected = true;
-      nameSel.appendChild(op);
-    });
+      mechanicalOptions.forEach(function(name){
+        const op = document.createElement('option');
+        op.value = name;
+        op.textContent = name;
+        if(row.name === name) op.selected = true;
+        nameSel.appendChild(op);
+      });
     }
     if(!canEditMechanicalNameField(day, sk, row.name || '')){
       nameSel.disabled = true;
@@ -4265,7 +4347,7 @@ function shiftHTML(sk,sd,label,day){
     ? (burnerLocked
         ? `<select disabled style="opacity:0.75;cursor:not-allowed"><option>${esc(sd.burner)||'&mdash;'}</option></select>`
         : `<select onchange="setShift('${sk}','burner',this.value)">
-            <option value="">&#8212; Select name &#8212;</option>
+            <option value=""${!sd.burner ? ' selected' : ''}>&#8212; Select name &#8212;</option>
             ${sd.burner===lockedName ? `<option value="" style="color:var(--red)">&#10005; Remove my name</option>` : ''}
             ${[lockedName].map(n=>`<option value="${esc(n)}"${sd.burner===n?' selected':''}>${esc(n)}</option>`).join('')}
            </select>`)
@@ -6152,7 +6234,7 @@ function renderWhiteboard(){
     }
     return;
   }
-  const canEdit = isAdmin || isDayStaff;
+  const canEdit = !readOnly && (isAdmin || isDayStaff);
   const targets = (_allLists.whiteboard_targets || []);
   const mc = document.getElementById('mainContent');
 
@@ -6580,6 +6662,10 @@ function switchManageTab(tab,btn){
 
 function renderManageTab(tab){
   const cont=document.getElementById('manageTabContent'); if(!cont)return;
+  if(isHiddenManageTab(tab)){
+    tab = manageTabOrder.find(function(key){ return !isHiddenManageTab(key) && _allLists[key] !== undefined; }) || MANAGE_BASE_TABS[0];
+    currentManageTab = tab;
+  }
   if(tab==='equipment'){
     cont.innerHTML=`
       <p style="font-size:12px;color:var(--text-soft);margin-bottom:12px;line-height:1.6">Add or remove equipment. Changes apply to all dropdowns immediately.</p>
@@ -6783,6 +6869,7 @@ function renderOverview(){
   setDualNavVisibility(false);
   const canSeeAllOverview = !!(isAdmin || isShiftManager);
   const roleFilters = getOverviewRoleFilters();
+  if(!window._overviewPeriod) window._overviewPeriod = 'week';
   if(typeof window._ovFilters === 'undefined'){
     window._ovFilters = Object.assign({}, roleFilters);
   }
@@ -6803,15 +6890,20 @@ function renderOverview(){
     + '<div class="page-title-wrap">'
     + '<div class="page-title">Overview</div>'
     + '<div class="page-nav-group">'
-    + '<button type="button" class="page-period-jump" onclick="jumpOverviewPeriod(\'month\',-1)">- Month</button>'
-    + '<button type="button" class="page-period-jump" onclick="jumpOverviewPeriod(\'week\',-1)">- Week</button>'
-    + '<button type="button" class="page-period-jump" onclick="jumpOverviewToCurrentWeek()">This Week</button>'
-    + '<button type="button" class="page-period-jump" onclick="jumpOverviewPeriod(\'week\',1)">+ Week</button>'
-    + '<button type="button" class="page-period-jump" onclick="jumpOverviewPeriod(\'month\',1)">+ Month</button>'
-    + '<input type="date" id="overviewDatePicker" class="overview-date-picker" value="'+esc(overviewDateValue)+'" onchange="jumpOverviewToDate(this.value)" title="Jump to week by date">'
+    + '<div class="overview-period-group">'
+    + '<button type="button" class="page-period-jump'+(window._overviewPeriod==='week'?' active':'')+'" onclick="setOverviewPeriod(\'week\')">Week</button>'
+    + '<button type="button" class="page-period-jump'+(window._overviewPeriod==='month'?' active':'')+'" onclick="setOverviewPeriod(\'month\')">Month</button>'
+    + '<button type="button" class="page-period-jump'+(window._overviewPeriod==='year'?' active':'')+'" onclick="setOverviewPeriod(\'year\')">Year</button>'
+    + '</div>'
+    + '<div class="overview-date-group">'
+    + '<button type="button" class="page-period-jump overview-step-jump" onclick="moveOverviewDate(-1)" title="Previous '+getOverviewPeriodLabel(window._overviewPeriod).toLowerCase()+'">−</button>'
+    + '<input type="date" id="overviewDatePicker" class="overview-date-picker" value="'+esc(overviewDateValue)+'" onchange="jumpOverviewToDate(this.value)" title="Jump to a date">'
+    + '<button type="button" class="page-period-jump overview-step-jump" onclick="moveOverviewDate(1)" title="Next '+getOverviewPeriodLabel(window._overviewPeriod).toLowerCase()+'">+</button>'
+    + '<button type="button" class="page-period-jump" onclick="resetOverviewToCurrentWeek()">This Week</button>'
     + '</div>'
     + '</div>'
-    + '<div class="page-date">'+weekRange()+'</div>'
+    + '</div>'
+    + '<div class="page-date">'+weekRange()+' · '+getOverviewPeriodLabel(window._overviewPeriod)+'</div>'
     + '</div>';
   mc.appendChild(hdr);
   if(canSeeAllOverview){
