@@ -295,6 +295,32 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
 .footer-lic{display:flex;align-items:center;gap:6px;
   font-family:var(--ff-mono);font-size:10px;color:var(--tx3);}
 .lic-dot{width:7px;height:7px;border-radius:50%;background:var(--grn);box-shadow:0 0 6px var(--grn);}
+.db-dot{
+  width:8px;
+  height:8px;
+  display:inline-block;
+  border-radius:50%;
+  background:var(--grn);
+  box-shadow:0 0 0 1px rgba(255,255,255,.04), 0 0 0 4px rgba(46,204,92,.08), 0 0 12px rgba(46,204,92,.28);
+  vertical-align:middle;
+  animation:dbDotPulse 3.2s ease-in-out infinite;
+}
+.db-dot.local{
+  background:var(--amb);
+  box-shadow:0 0 0 1px rgba(255,255,255,.04), 0 0 0 4px rgba(245,158,11,.08), 0 0 12px rgba(245,158,11,.22);
+}
+.db-dot.warn{
+  background:var(--red);
+  box-shadow:0 0 0 1px rgba(255,255,255,.04), 0 0 0 4px rgba(239,68,68,.08), 0 0 12px rgba(239,68,68,.24);
+}
+.db-dot.syncing{
+  background:var(--tx3);
+  box-shadow:0 0 0 1px rgba(255,255,255,.04), 0 0 0 4px rgba(148,163,184,.06), 0 0 12px rgba(148,163,184,.18);
+}
+@keyframes dbDotPulse{
+  0%,100%{ transform:scale(.94); opacity:.78; }
+  50%{ transform:scale(1.08); opacity:1; }
+}
 
 #mainWrapper{display:none}
 
@@ -417,6 +443,7 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
       <div class="header-user" id="headerUser" style="display:none">
         <span id="headerEmail">—</span>
       </div>
+      <span class="db-dot" title="Database connected" aria-label="Database connected" style="flex:0 0 auto"></span>
       <button class="icon-btn" id="adminPanelBtn" onclick="openAdminPanel()" title="User Management" style="display:none;position:relative">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         <span id="pendingBadge" style="display:none;position:absolute;top:2px;right:2px;background:var(--amb);color:#000;font-size:9px;font-weight:700;border-radius:10px;padding:1px 5px;min-width:16px;text-align:center;line-height:16px"></span>
@@ -750,6 +777,31 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
 #aiScopeRow .ai-scope-btn.active{box-shadow:0 10px 20px rgba(139,92,246,.12);}
 
 @media(max-width:640px){
+  #loginScreen{
+    padding:12px 0 18px;
+  }
+  .login-inner{
+    width:calc(100vw - 20px);
+    max-width:calc(100vw - 20px);
+    padding:0 0 8px;
+  }
+  .login-card{
+    padding:22px 14px 20px;
+  }
+  #emailWrap,
+  #regEmailWrap{
+    flex-direction:column;
+  }
+  .email-domain-select,
+  #regDomain{
+    width:100%;
+    max-width:none;
+    min-width:0;
+    border-left:none;
+    border-top:1px solid var(--bd2);
+    padding:0 12px;
+    text-align:left;
+  }
   #mainHeader{
     padding:8px 10px;
     height:auto;
@@ -802,6 +854,13 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
   #aiPanel textarea{
     font-size:16px !important;
     line-height:1.4;
+  }
+  button[onclick*="openAiPanel"],
+  button[title="AI"],
+  button[aria-label="AI"],
+  .ai-launch-btn,
+  .ai-trigger-btn{
+    display:none !important;
   }
 }
 @media(max-width:400px){

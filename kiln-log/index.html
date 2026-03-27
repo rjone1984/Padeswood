@@ -251,7 +251,21 @@ body::before {
 .splash-line { height:1px; background:var(--bd); margin:18px 0 }
 .splash-version { text-align:center; font-size:9px; color:var(--tx3); font-family:var(--ff-mono); letter-spacing:.5px }
 
-#app { display:none; position:relative; z-index:1 }
+#app {
+  display:none;
+  position:relative;
+  z-index:1;
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transition:opacity .22s ease, visibility 0s linear .22s;
+}
+body.app-ready #app {
+  opacity:1;
+  visibility:visible;
+  pointer-events:auto;
+  transition:opacity .22s ease;
+}
 
 .topbar {
   background:
@@ -415,12 +429,16 @@ body::before {
   border-bottom:none;
   border-radius:14px;
   padding:4px;
-  display:flex; align-items:stretch;
+  display:grid;
+  grid-auto-flow:column;
+  grid-auto-columns:minmax(92px, 1fr);
+  align-items:stretch;
   position:static;
   gap:4px;
   overflow-x:auto; flex:1;
   min-width:0;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.03);
+  scroll-snap-type:x proximity;
 }
 .day-nav::-webkit-scrollbar { height:0 }
 
@@ -434,9 +452,11 @@ body::before {
   letter-spacing:.03em;
   display:flex; align-items:center; justify-content:center; gap:7px;
   white-space:nowrap;
-  flex:1 1 0;
+  flex:0 0 auto;
+  width:100%;
   min-width:0;
   position:relative;
+  scroll-snap-align:center;
 }
 .day-tab:hover {
   color:var(--tx);
@@ -452,7 +472,7 @@ body::before {
   background:var(--row-accent-soft);
   border-color:var(--row-accent-line);
   box-shadow:0 10px 20px -14px var(--row-accent-shadow), inset 0 1px 0 rgba(255,255,255,.07);
-  transform:translateY(-1px);
+  transform:none;
 }
 .day-tab.today::after {
   content:'NOW';
@@ -541,14 +561,16 @@ body::before {
 .ca-inp:disabled,
 .ca-sel:disabled {
   background:
-    linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,0)),
-    var(--sf2) !important;
-  border:1px solid var(--bd) !important;
+    radial-gradient(120% 120% at 0% 0%, rgba(46,204,92,.07), transparent 42%),
+    linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,0)),
+    var(--sf) !important;
+  border:1px solid color-mix(in srgb, var(--green-edge) 40%, var(--bd)) !important;
   color:var(--tx) !important;
   opacity:1 !important;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.035),
-    inset 3px 0 0 rgba(255,255,255,.06) !important;
+    inset 0 1px 0 rgba(255,255,255,.05),
+    inset 3px 0 0 rgba(46,204,92,.08),
+    0 10px 24px rgba(0,0,0,.04) !important;
   cursor:default !important;
   pointer-events:none !important;
 }
@@ -558,6 +580,14 @@ body::before {
   min-height:96px;
   resize:none !important;
   line-height:1.7;
+  background:
+    radial-gradient(120% 120% at 0% 0%, rgba(46,204,92,.05), transparent 40%),
+    linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,0)),
+    var(--sf) !important;
+  border-color: color-mix(in srgb, var(--green-edge) 34%, var(--bd)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.045),
+    0 10px 24px rgba(0,0,0,.035) !important;
 }
 .shift-panel select:disabled,
 .notes-section select:disabled,
@@ -590,6 +620,7 @@ body::before {
 .log-section:has(select:disabled),
 .log-section:has(textarea[readonly]) {
   position:relative;
+  overflow:hidden;
 }
 .field-cell:has(select:disabled)::after,
 .notes-section:has(textarea[readonly])::after,
@@ -601,14 +632,15 @@ body::before {
   right:12px;
   padding:3px 8px;
   border-radius:999px;
-  border:1px solid var(--bd2);
-  background:rgba(255,255,255,.04);
-  color:var(--tx3);
+  border:1px solid color-mix(in srgb, var(--green-edge) 30%, var(--bd2));
+  background:linear-gradient(180deg, rgba(46,204,92,.08), rgba(255,255,255,.02));
+  color:var(--ac3);
   font-family:var(--ff-mono);
   font-size:9px;
   font-weight:700;
   letter-spacing:.12em;
   pointer-events:none;
+  box-shadow:0 0 0 1px rgba(255,255,255,.03), 0 6px 14px rgba(0,0,0,.08);
 }
 .search-results {
   background:var(--sf); border:1px solid var(--bd2);
@@ -728,6 +760,24 @@ body::before {
   }
   .reports-bubble-user {
     max-width:90%;
+  }
+  #searchModal {
+    align-items:flex-start !important;
+    justify-content:center !important;
+    padding-top:12px !important;
+  }
+  .search-modal {
+    width:calc(100vw - 14px);
+    max-height:calc(100vh - 20px);
+  }
+  .search-modal-head {
+    padding:12px;
+  }
+  .search-modal-row {
+    gap:8px;
+  }
+  .search-modal-input {
+    font-size:16px;
   }
 }
 
@@ -1209,31 +1259,61 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  font-size:8px;
-  font-weight:700;
-  font-family:var(--ff-mono);
-  letter-spacing:.8px;
-  text-transform:uppercase;
-  line-height:1;
-  padding:2px 5px;
-  border-radius:999px;
+  width:7px;
+  height:7px;
+  padding:0;
+  border-radius:50%;
   border:1px solid transparent;
   white-space:nowrap;
   flex-shrink:0;
+  position:relative;
+  box-shadow:0 0 0 1px rgba(255,255,255,.05), 0 0 8px rgba(46,204,92,.14);
+  animation:manageDotPulse 2.8s ease-in-out infinite;
 }
-.modal-tab-badge.cloud { background:var(--grnd); color:var(--grn); border-color:var(--grnb); }
-.modal-tab-badge.local { background:var(--ambd); color:var(--amb); border-color:var(--ambb); }
-.modal-tab-badge.syncing { background:var(--sf3); color:var(--tx3); border-color:var(--bd2); }
-.modal-tab-badge.warn { background:var(--redd); color:var(--red); border-color:var(--redb); }
-.modal-tab-badge.unknown { background:var(--sf2); color:var(--tx3); border-color:var(--bd2); }
+.modal-tab-badge::before{
+  content:'';
+  width:100%;
+  height:100%;
+  border-radius:inherit;
+  background:currentColor;
+  opacity:.95;
+}
+.modal-tab-badge.connected { background:var(--grn); color:var(--grn); border-color:var(--grnb); box-shadow:0 0 0 1px rgba(255,255,255,.05), 0 0 8px rgba(46,204,92,.2); }
+.modal-tab-badge.local { background:var(--amb); color:var(--amb); border-color:var(--ambb); box-shadow:0 0 0 1px rgba(255,255,255,.05), 0 0 8px rgba(245,158,11,.16); }
+.modal-tab-badge.syncing { background:var(--tx3); color:var(--tx3); border-color:var(--bd2); box-shadow:0 0 0 1px rgba(255,255,255,.05), 0 0 8px rgba(148,163,184,.16); }
+.modal-tab-badge.warn { background:var(--red); color:var(--red); border-color:var(--redb); box-shadow:0 0 0 1px rgba(255,255,255,.05), 0 0 8px rgba(239,68,68,.16); }
+.modal-tab-badge.unknown { background:var(--tx3); color:var(--tx3); border-color:var(--bd2); box-shadow:0 0 0 1px rgba(255,255,255,.05), 0 0 8px rgba(148,163,184,.1); }
+.modal-tab-badge.syncing { animation:manageDotPulse 1.1s ease-in-out infinite; }
+.modal-tab-badge.warn { animation:none; }
+.modal-tab-badge.local { animation:manageDotPulse 2.4s ease-in-out infinite; }
+@keyframes manageDotPulse{
+  0%,100%{ transform:scale(.92); opacity:.82; }
+  50%{ transform:scale(1.18); opacity:1; }
+}
+.db-dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  display:inline-block;
+  background:var(--grn);
+  box-shadow:0 0 0 1px rgba(255,255,255,.05), 0 0 0 4px rgba(46,204,92,.08), 0 0 12px rgba(46,204,92,.28);
+  vertical-align:middle;
+  animation:dbDotPulse 3.2s ease-in-out infinite;
+}
+.db-dot.local{ background:var(--amb); box-shadow:0 0 0 1px rgba(255,255,255,.05), 0 0 0 4px rgba(245,158,11,.08), 0 0 12px rgba(245,158,11,.22); }
+.db-dot.warn{ background:var(--red); box-shadow:0 0 0 1px rgba(255,255,255,.05), 0 0 0 4px rgba(239,68,68,.08), 0 0 12px rgba(239,68,68,.24); }
+.db-dot.syncing{ background:var(--tx3); box-shadow:0 0 0 1px rgba(255,255,255,.05), 0 0 0 4px rgba(148,163,184,.06), 0 0 12px rgba(148,163,184,.16); }
+@keyframes dbDotPulse{
+  0%,100%{ transform:scale(.94); opacity:.78; }
+  50%{ transform:scale(1.08); opacity:1; }
+}
 .manage-tab-tools { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:-4px 0 12px; }
 .manage-tab-hint { font-size:11px; color:var(--tx3); line-height:1.5; }
 .manage-tab-sync {
-  font-size:10px;
-  letter-spacing:.8px;
-  text-transform:uppercase;
-  font-family:var(--ff-mono);
-  color:var(--tx3);
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  min-height:16px;
   margin-top:3px;
 }
 .manage-tab-actions { display:flex; gap:6px; flex-shrink:0; }
@@ -1335,10 +1415,14 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
 .read-only-mode textarea:not(.overlay textarea):not(#reportPrompt) {
   pointer-events:none; cursor:default;
   background:
-    linear-gradient(180deg, rgba(255,255,255,.025), rgba(255,255,255,0)),
-    var(--sf2) !important;
-  border-color:var(--bd) !important;
-  box-shadow:none !important;
+    radial-gradient(120% 120% at 0% 0%, rgba(46,204,92,.06), transparent 42%),
+    linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,0)),
+    var(--sf) !important;
+  border-color:color-mix(in srgb, var(--green-edge) 38%, var(--bd)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.045),
+    inset 0 0 0 1px rgba(46,204,92,.03),
+    0 10px 24px rgba(0,0,0,.035) !important;
 }
 .read-only-mode .overlay select,.read-only-mode .overlay input,.read-only-mode .overlay textarea,
 .read-only-mode #printScope,.read-only-mode #printNote,
@@ -1348,14 +1432,33 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
 }
 .read-only-mode table.log td select,
 .read-only-mode table.log td textarea,
-.read-only-mode table.log td input { pointer-events:none; color:var(--tx); opacity:1 }
+.read-only-mode table.log td input {
+  pointer-events:none;
+  color:var(--tx);
+  opacity:1;
+  background:
+    radial-gradient(120% 120% at 0% 0%, rgba(46,204,92,.05), transparent 40%),
+    linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,0)),
+    var(--sf) !important;
+  border-color:color-mix(in srgb, var(--green-edge) 34%, var(--bd)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.045),
+    0 8px 20px rgba(0,0,0,.03) !important;
+}
 .read-only-mode .add-row-btn,.read-only-mode .del-btn { display:none !important }
 .read-only-mode .field-cell:hover { background:var(--sf) }
 .read-only-mode .shift-panel:hover { border-color:var(--bd); box-shadow:var(--e1) }
 
 @media(max-width:860px){
   .shifts-grid { grid-template-columns:1fr }
-  .main   { padding:10px }
+  .main   { padding:8px 8px 12px }
+  .log-section,
+  .notes-section,
+  .ca-section,
+  .shift-panel {
+    width:100%;
+    box-sizing:border-box;
+  }
   .dual-nav { padding:8px 8px 10px; gap:6px; }
   .dual-nav-row { gap:8px; }
   .dual-nav-label {
@@ -1363,9 +1466,16 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
     padding:0 8px; border-radius:12px;
     font-size:8px; letter-spacing:.12em;
   }
-  .day-nav{ padding:5px; overflow-x:auto; -webkit-overflow-scrolling:touch; flex-wrap:nowrap; scrollbar-width:none; gap:5px; }
+  .day-nav{
+    padding:5px;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    gap:4px;
+    grid-auto-columns:minmax(84px, 1fr);
+  }
   .day-nav::-webkit-scrollbar { display:none }
-  .day-tab  { flex:0 0 auto; min-width:86px; height:40px; padding:0 12px; font-size:10px; }
+  .day-tab  { height:40px; padding:0 10px; font-size:10px; }
   .stat-grid  { grid-template-columns:repeat(2,1fr) }
   .week-cards { grid-template-columns:repeat(4,1fr) }
 
@@ -1700,6 +1810,7 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
       <button class="btn-icon" onclick="openSearchModal()" id="searchTopbarBtn" title="Search logs" style="display:none">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       </button>
+      <span class="db-dot" title="Database connected" style="flex:0 0 auto"></span>
 
       <button class="btn-icon" onclick="toggleTheme()" id="themeBtn" title="Toggle light/dark mode">
         <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
@@ -2262,6 +2373,7 @@ async function doLogin(){
 }
 
 async function _applyUserSession(match){
+  document.body.classList.remove('app-ready');
   currentUser     = match.username;
   currentUserLogon = match.email || match.username || null;
   currentUserThemeId = match.auth_user_id || match.email || match.username || null;
@@ -2310,9 +2422,11 @@ async function _applyUserSession(match){
   document.body.classList.toggle('read-only-mode', readOnly);
   const _wdLogin=document.getElementById('weekDate'); if(_wdLogin)_wdLogin.disabled=false;
   await sbLoadUserTheme();
-  initApp().then(function(){ });
+  await initApp();
+  document.body.classList.add('app-ready');
 }
 async function doLogout(){
+  document.body.classList.remove('app-ready');
   clearTimeout(_sbSaveTimer);
   _sbSaveTimer = null;
   try { await _manageTabOrderSavePromise; } catch(e) {}
@@ -2458,7 +2572,7 @@ async function initApp(){
     trainees  = _allLists.trainees  || [];
     loadManageTabOrder(savedManageTabOrder);
     Object.keys(_allLists).forEach(function(key){
-      if(_listSyncStates[key] === undefined) setListSyncState(key, 'cloud');
+      if(_listSyncStates[key] === undefined) setListSyncState(key, 'connected');
     });
   } else {
     equipment = [...DEFAULT_EQUIP];
@@ -2759,11 +2873,11 @@ function getListSyncState(listName){
 
 function getListSyncMeta(listName){
   const state = getListSyncState(listName);
-  if(state === 'cloud') return { text: 'Cloud', cls: 'cloud', title: 'Saved to cloud' };
-  if(state === 'local') return { text: 'Local', cls: 'local', title: 'Saved locally only' };
-  if(state === 'syncing') return { text: 'Saving', cls: 'syncing', title: 'Saving to cloud…' };
-  if(state === 'warn') return { text: 'Error', cls: 'warn', title: 'Cloud save failed' };
-  return { text: 'Unknown', cls: 'unknown', title: 'Sync state unknown' };
+  if(state === 'connected' || state === 'cloud') return { cls: 'connected', title: 'Database connected' };
+  if(state === 'local') return { cls: 'local', title: 'Saved locally only' };
+  if(state === 'syncing') return { cls: 'syncing', title: 'Saving changes…' };
+  if(state === 'warn') return { cls: 'warn', title: 'Sync issue' };
+  return { cls: 'unknown', title: 'Sync state unknown' };
 }
 
 function updateManageTabSyncState(activeTab){
@@ -2771,7 +2885,7 @@ function updateManageTabSyncState(activeTab){
   if(!el) return;
   const tab = activeTab && _allLists[activeTab] !== undefined ? activeTab : (manageTabOrder[0] || MANAGE_BASE_TABS[0]);
   const meta = getListSyncMeta(tab);
-  el.innerHTML = '<span class="modal-tab-badge ' + meta.cls + '" title="' + esc(meta.title) + '">' + esc(meta.text) + '</span>';
+  el.innerHTML = '<span class="modal-tab-badge ' + meta.cls + '" title="' + esc(meta.title) + '"></span>';
 }
 
 function getManageTabLabel(key){
@@ -2794,7 +2908,7 @@ function renderManageTabs(activeTab){
     btn.dataset.key = key;
     if(key === current) btn.classList.add('active');
     if(key === 'ai_knowledge') btn.style.color = '#7c3aed';
-    btn.innerHTML = '<span>'+esc(label)+'</span><span class="modal-tab-badge '+meta.cls+'" title="'+esc(meta.title)+'">'+esc(meta.text)+'</span>';
+    btn.innerHTML = '<span>'+esc(label)+'</span><span class="modal-tab-badge '+meta.cls+'" title="'+esc(meta.title)+'"></span>';
     btn.onclick = function(){
       currentManageTab = key;
       renderManageTabs(key);
@@ -6021,7 +6135,7 @@ async function createNewList(){
   setListSyncState(key, 'syncing');
   renderManageTabs(key);
   const saved = await sbSaveList(key, []);
-  setListSyncState(key, saved ? 'cloud' : 'local');
+  setListSyncState(key, saved ? 'connected' : 'local');
   manageTabOrder = normalizeManageTabOrder(manageTabOrder.concat(key));
   saveManageTabOrder();
   hideNewListForm();
@@ -6151,7 +6265,7 @@ function addEquipmentItem(){
   renderManageTabs(currentManageTab);
   localStorage.setItem('kbl_eq5',JSON.stringify(equipment));
   sbSaveList('equipment', equipment).then(function(saved){
-    setListSyncState('equipment', saved ? 'cloud' : 'local');
+    setListSyncState('equipment', saved ? 'connected' : 'local');
     renderManageTabs(currentManageTab);
     renderEqList(); inp.value=''; inp.focus(); showToast('"'+val+'" added' + (saved ? '' : ' (saved locally only)'));
   });
@@ -6165,7 +6279,7 @@ function removeEq(name){
   renderManageTabs(currentManageTab);
   localStorage.setItem('kbl_eq5',JSON.stringify(equipment));
   sbSaveList('equipment', equipment).then(function(saved){
-    setListSyncState('equipment', saved ? 'cloud' : 'local');
+    setListSyncState('equipment', saved ? 'connected' : 'local');
     renderManageTabs(currentManageTab);
     renderEqList(); showToast('"'+name+'" removed' + (saved ? '' : ' (saved locally only)'));
   });
@@ -6208,7 +6322,7 @@ function toggleTrainee(name,btn){
   localStorage.setItem('kbl_tra5',JSON.stringify(trainees));
   syncAllListRefs();
   sbSaveList('trainees', trainees).then(function(saved){
-    setListSyncState('burners', saved ? 'cloud' : 'local');
+    setListSyncState('burners', saved ? 'connected' : 'local');
     renderManageTabs(currentManageTab);
     renderPeopleList('burners');
   });
@@ -6230,7 +6344,7 @@ function addPerson(tab){
   setListSyncState(tab, 'syncing');
   renderManageTabs(currentManageTab);
   sbSaveList(tab, list).then(function(saved){
-    setListSyncState(tab, saved ? 'cloud' : 'local');
+    setListSyncState(tab, saved ? 'connected' : 'local');
     renderManageTabs(currentManageTab);
     renderPeopleList(tab); inp.value=''; inp.focus(); showToast('"'+val+'" added' + (saved ? '' : ' (saved locally only)'));
   });
@@ -6249,7 +6363,7 @@ function removePerson(tab,name){
   setListSyncState(tab, 'syncing');
   renderManageTabs(currentManageTab);
   sbSaveList(tab, _allLists[tab]).then(function(saved){
-    setListSyncState(tab, saved ? 'cloud' : 'local');
+    setListSyncState(tab, saved ? 'connected' : 'local');
     renderManageTabs(currentManageTab);
     renderPeopleList(tab); showToast('"'+name+'" removed' + (saved ? '' : ' (saved locally only)'));
   });

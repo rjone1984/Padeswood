@@ -100,78 +100,34 @@
   body * { transition: background-color 0.3s, border-color 0.3s, color 0.3s; }
 
   #splash {
-    position: fixed; inset: 0; z-index: 1000;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: flex-start;
-    background: var(--bg);
-    transition: opacity 0.6s ease, transform 0.6s ease;
-    padding: clamp(56px, 9vh, 96px) 24px 32px;
+    position: relative;
+    inset: auto;
+    z-index: 2;
+    display: none;
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    padding: 20px 16px 0;
   }
-  #splash::after {
-    content: '';
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, transparent 0%, var(--accent) 50%, transparent 100%);
-    opacity: .5;
+  .db-dot {
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    display:inline-block;
+    background:var(--accent2);
+    box-shadow:0 0 0 1px rgba(255,255,255,.05), 0 0 0 4px rgba(46,204,92,.08), 0 0 12px rgba(46,204,92,.28);
+    vertical-align:middle;
+    animation:dbDotPulse 3.2s ease-in-out infinite;
   }
-  #splash.hide { opacity: 0; transform: scale(1.04); pointer-events: none; }
-
-  .splash-icon {
-    width: 52px; height: 52px; border-radius: 12px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    display: flex; align-items: center; justify-content: center;
-    font-size: 22px;
-    font-family: var(--ff-head);
-    font-weight: 800;
-    letter-spacing: -0.06em;
-    color: #fff;
-    overflow: hidden;
-    box-shadow: var(--eac);
-    animation: splashPop 0.6s cubic-bezier(0.34,1.56,0.64,1) both;
-    animation-delay: 0.2s; opacity: 0;
-  }
-  .splash-title {
-    font-family: var(--ff-head);
-    font-size: 24px; font-weight: 700; color: var(--text);
-    letter-spacing: -.5px; margin-top: 5px;
-    animation: splashFade 0.5s ease both;
-    animation-delay: 0.5s; opacity: 0;
-  }
-  .splash-sub {
-    font-family: var(--ff-mono);
-    font-size: 9px; color: var(--text3);
-    letter-spacing: 2.5px; text-transform: uppercase;
-    margin-top: 5px;
-    animation: splashFade 0.5s ease both;
-    animation-delay: 0.7s; opacity: 0;
-    text-align: center;
-  }
-  .splash-credit {
-    font-family: var(--ff-mono);
-    font-size: 9px; color: var(--text3);
-    margin-top: 12px; letter-spacing: 0.5px;
-    text-transform: uppercase;
-    animation: splashFade 0.5s ease both;
-    animation-delay: 1.1s; opacity: 0;
-  }
-  .splash-loader {
-    position: fixed; bottom: 0; left: 0; right: 0; height: 3px;
-    background: var(--border);
-    z-index: 10001; overflow: hidden;
-  }
-  .splash-loader-bar {
-    height: 100%; width: 0%;
-    background: linear-gradient(90deg, var(--accent) 0%, var(--accent2) 100%);
-    border-radius: 0 2px 2px 0;
-    transition: width 0.4s ease;
-    box-shadow: 0 0 8px var(--accent-glow);
+  .db-dot.local { background:#f5a623; box-shadow:0 0 0 1px rgba(255,255,255,.05), 0 0 0 4px rgba(245,166,35,.08), 0 0 12px rgba(245,166,35,.22); }
+  .db-dot.warn { background:#f0524f; box-shadow:0 0 0 1px rgba(255,255,255,.05), 0 0 0 4px rgba(240,82,79,.08), 0 0 12px rgba(240,82,79,.24); }
+  .db-dot.syncing { background:var(--border); box-shadow:0 0 0 1px rgba(255,255,255,.05), 0 0 0 4px rgba(154,170,191,.06), 0 0 12px rgba(154,170,191,.16); }
+  @keyframes dbDotPulse {
+    0%,100%{ transform:scale(.94); opacity:.78; }
+    50%{ transform:scale(1.08); opacity:1; }
   }
   #splash-login {
-    width: 100%; max-width: 380px; margin-top: 22px; padding: 0 8px;
-    animation: splashFade 0.5s ease both; animation-delay: 0.9s; opacity: 0;
+    width: 100%; max-width: 380px; padding: 0 8px;
   }
   #splash-login > div {
     display: flex;
@@ -523,7 +479,10 @@
   .tracker-shell-status {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
+    font-size: 8px;
+    letter-spacing: .1em;
+    opacity: .82;
   }
   .tracker-shell-status::before {
     content: '';
@@ -531,7 +490,7 @@
     height: 7px;
     border-radius: 50%;
     background: var(--accent2);
-    box-shadow: 0 0 0 4px var(--accent-soft);
+    box-shadow: 0 0 0 3px var(--accent-soft);
   }
 
   .page { animation: pageIn 0.28s cubic-bezier(0.25,0.46,0.45,0.94) both; }
@@ -642,10 +601,6 @@
 <body>
 
 <div id="splash">
-  <div class="splash-loader"><div class="splash-loader-bar" id="splashLoaderBar"></div></div>
-  <div class="splash-icon" id="splashLogo"></div>
-  <div class="splash-title">Padeswood Works</div>
-  <div class="splash-sub">Shift Tracker · A · B · C · D · E</div>
   <div id="splash-login" style="display:none">
     <div>
       <div class="splash-panel-label">HeidelbergMaterials Sign In</div>
@@ -662,12 +617,6 @@
     <div class="access-denied-msg" id="access-denied-msg">You do not have access to Shift Tracker.</div>
     <a class="access-denied-btn" href="../index.html">Back to Platform</a>
   </div>
-  <div id="splash-dots" class="splash-dots" style="display:none">
-    <div class="splash-dot"></div>
-    <div class="splash-dot"></div>
-    <div class="splash-dot"></div>
-  </div>
-  <div class="splash-credit">HeidelbergMaterials</div>
 </div>
 
 <div id="app-wrap">
@@ -687,6 +636,7 @@
       <div class="tracker-shell-user" id="stHeaderUser">
         <span class="tracker-shell-user-email" id="stHeaderEmail">—</span>
       </div>
+      <span class="db-dot" title="Database connected" aria-label="Database connected" style="flex:0 0 auto"></span>
       <button type="button" class="tracker-shell-icon" id="stThemeBtn" title="Toggle theme" aria-label="Toggle theme">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/></svg>
       </button>
@@ -820,23 +770,6 @@ function _0xb7c8(){ const synced=_0xsyncThemeAlias(); if(synced!==null) return s
 function _0xc9d0(v){ const theme=v?"dark":"light"; localStorage.setItem("dark",v?"1":"0"); localStorage.setItem("pw_theme",theme); localStorage.setItem("kbl_theme",theme); }
 function _0xda0b(){ const s=localStorage.getItem("pw_theme") || localStorage.getItem("kbl_theme"); if(s==="light"||s==="dark"){ localStorage.setItem("dark",s==="dark"?"1":"0"); localStorage.setItem("pw_theme",s); localStorage.setItem("kbl_theme",s); return s==="light"; } return localStorage.getItem("pw_theme")==="light"; }
 function _0xeb1c(v){ const theme=v?"light":"dark"; localStorage.setItem("pw_theme",theme); localStorage.setItem("kbl_theme",theme); localStorage.setItem("dark",v?"0":"1"); }
-function syncSplashLogo(){
-  const splash = document.getElementById('splashLogo');
-  const headerLogo = document.querySelector('.tracker-shell-mark img');
-  if(!splash || !headerLogo || splash.dataset.branded === '1') return;
-  splash.dataset.branded = '1';
-  splash.style.background = 'none';
-  splash.style.border = 'none';
-  splash.style.padding = '0';
-  splash.textContent = '';
-  const img = document.createElement('img');
-  img.alt = 'Padeswood Works';
-  img.src = headerLogo.src;
-  img.style.cssText = 'width:100%;height:100%;object-fit:contain;display:block';
-  splash.appendChild(img);
-}
-syncSplashLogo();
-
 function updateTrackerDate(){
   const el = document.getElementById('stHeaderDate');
   if(!el) return;
@@ -1260,6 +1193,22 @@ let stSb = null;
 const ST_LICENCE_KEY = 'KBL-HEIDELBERG-PADESWOOD-2026';
 const ST_LIC_URL = 'https://dviicnomxeibbuafbozp.supabase.co';
 const ST_LIC_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2aWljbm9teGVpYmJ1YWZib3pwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4ODM0MzcsImV4cCI6MjA4ODQ1OTQzN30.c1T3WXC225tdBbq_1R__9bhGFIZdSxim9dgxfvmkRjU';
+let stLoginRevealTimer = null;
+
+function stCancelLoginReveal(){
+  if(stLoginRevealTimer){
+    clearTimeout(stLoginRevealTimer);
+    stLoginRevealTimer = null;
+  }
+}
+
+function stScheduleLoginScreen(){
+  stCancelLoginReveal();
+  stLoginRevealTimer = setTimeout(function(){
+    stLoginRevealTimer = null;
+    stShowLogin();
+  }, 500);
+}
 
 function stGetEls() {
   return {
@@ -1268,7 +1217,6 @@ function stGetEls() {
     loginArea: document.getElementById('splash-login'),
     deniedArea: document.getElementById('access-denied'),
     deniedMsg: document.getElementById('access-denied-msg'),
-    dotsArea: document.getElementById('splash-dots'),
     userInput: document.getElementById('login-user'),
     passInput: document.getElementById('login-pass'),
     loginBtn: document.getElementById('login-btn'),
@@ -1298,29 +1246,23 @@ async function stSyncThemeFromUser(user) {
 
 function stRevealApp() {
   const els = stGetEls();
+  stCancelLoginReveal();
   sessionStorage.setItem('auth', '1');
   if (els.loginArea) els.loginArea.style.display = 'none';
-  if (els.dotsArea) els.dotsArea.style.display = 'flex';
+  if (els.splash) els.splash.style.display = 'none';
   if (els.appWrap) els.appWrap.classList.add('visible');
-  setTimeout(function() {
-    if (els.splash) els.splash.classList.add('hide');
-    setTimeout(function() {
-      if (els.splash) els.splash.style.display = 'none';
-    }, 700);
-  }, 900);
 }
 
 function stShowLogin() {
   const els = stGetEls();
   const userChip = document.getElementById('stHeaderUser');
+  stCancelLoginReveal();
   sessionStorage.removeItem('auth');
   if (els.splash) {
-    els.splash.classList.remove('hide');
-    els.splash.style.display = 'flex';
+    els.splash.style.display = 'block';
   }
   if (userChip) userChip.style.display = 'none';
   if (els.appWrap) els.appWrap.classList.remove('visible');
-  if (els.dotsArea) els.dotsArea.style.display = 'none';
   if (els.deniedArea) els.deniedArea.style.display = 'none';
   if (els.loginArea) els.loginArea.style.display = 'block';
   setTimeout(function() {
@@ -1331,14 +1273,13 @@ function stShowLogin() {
 function stShowAccessDenied(message) {
   const els = stGetEls();
   const userChip = document.getElementById('stHeaderUser');
+  stCancelLoginReveal();
   sessionStorage.removeItem('auth');
   if (els.splash) {
-    els.splash.classList.remove('hide');
-    els.splash.style.display = 'flex';
+    els.splash.style.display = 'block';
   }
   if (userChip) userChip.style.display = 'none';
   if (els.appWrap) els.appWrap.classList.remove('visible');
-  if (els.dotsArea) els.dotsArea.style.display = 'none';
   if (els.loginArea) els.loginArea.style.display = 'none';
   if (els.deniedArea) els.deniedArea.style.display = 'block';
   if (els.deniedMsg) els.deniedMsg.textContent = message || 'You do not have access to this app.';
@@ -1412,7 +1353,7 @@ async function initShiftTrackerSupabaseAuth() {
         stRevealApp();
         return true;
       }
-      stShowLogin();
+      stScheduleLoginScreen();
       return false;
     }
     stClearLegacyLogin();
@@ -1429,7 +1370,7 @@ async function initShiftTrackerSupabaseAuth() {
       stRevealApp();
       return true;
     } catch (e) {
-      stShowLogin();
+      stScheduleLoginScreen();
       stShowError('Could not verify your account.');
       return false;
     }
