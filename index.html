@@ -17,6 +17,11 @@
   --bd:#252c38; --bd2:#2f3a4a; --bd3:#3d4e62;
   --ac:#1a7a35; --ac2:#22a847; --ac3:#2ecc5c;
   --acd1:rgba(26,122,53,.10); --acd2:rgba(26,122,53,.18); --acd3:rgba(26,122,53,.28);
+  --palette-card-bg-1: rgba(34,168,71,.24);
+  --palette-card-bg-2: rgba(21,92,40,.12);
+  --palette-card-border: rgba(46,204,92,.24);
+  --palette-card-glow-1: rgba(46,204,92,.18);
+  --palette-card-glow-2: rgba(46,204,92,.10);
   --tx:#dde4ee; --tx2:#9aa9be; --tx3:#6f8097;
   --red:#f0524f; --redd:rgba(240,82,79,.10); --redb:rgba(240,82,79,.28);
   --grn:#21c27a; --grnd:rgba(33,194,122,.10); --grnb:rgba(33,194,122,.28);
@@ -41,6 +46,11 @@
   --bd:#dce5f0; --bd2:#cdd8e6; --bd3:#a9bbd3;
   --ac:#155c28; --ac2:#1a7a35; --ac3:#22a847;
   --acd1:rgba(21,92,40,.07); --acd2:rgba(21,92,40,.14); --acd3:rgba(21,92,40,.24);
+  --palette-card-bg-1: rgba(34,168,71,.18);
+  --palette-card-bg-2: rgba(21,92,40,.10);
+  --palette-card-border: rgba(46,204,92,.20);
+  --palette-card-glow-1: rgba(46,204,92,.14);
+  --palette-card-glow-2: rgba(46,204,92,.08);
   --tx:#0d1526; --tx2:#405063; --tx3:#74839a;
   --red:#d93f3c; --redd:rgba(217,63,60,.07); --redb:rgba(217,63,60,.22);
   --grn:#15924f; --grnd:rgba(21,146,79,.07); --grnb:rgba(21,146,79,.22);
@@ -62,7 +72,7 @@
 body.light-mode{
   background:
     radial-gradient(1200px 620px at 18% -6%, rgba(255,255,255,.98), transparent 58%),
-    radial-gradient(960px 520px at 100% 0%, rgba(34,168,71,.045), transparent 54%),
+    radial-gradient(960px 520px at 100% 0%, var(--palette-card-glow-1), transparent 54%),
     linear-gradient(180deg, rgba(255,255,255,.2), rgba(255,255,255,0)),
     var(--bg);
 }
@@ -97,7 +107,7 @@ body.light-mode .lic-inner,
 body.light-mode .panel,
 body.light-mode .modal{
   background:
-    radial-gradient(130% 170% at 0% 0%, rgba(21,92,40,.05), transparent 42%),
+    radial-gradient(130% 170% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
     linear-gradient(180deg, rgba(255,255,255,.94), rgba(255,255,255,.8)),
     var(--glass-1);
 }
@@ -113,9 +123,9 @@ body{font-family:var(--ff-body);background:var(--bg);color:var(--tx);
   transition:background .35s var(--ease-smooth),color .35s var(--ease-smooth);
   animation:pageEnter .45s var(--ease-smooth) both;overflow-x:hidden;}
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-  background-image:radial-gradient(circle,rgba(14,165,160,.06) 1px,transparent 1px);
+  background-image:radial-gradient(circle,var(--palette-card-glow-2) 1px,transparent 1px);
   background-size:28px 28px;}
-.light-mode::before{background-image:radial-gradient(circle,rgba(10,138,134,.05) 1px,transparent 1px);}
+.light-mode::before{background-image:radial-gradient(circle,var(--palette-card-glow-2) 1px,transparent 1px);}
 @keyframes pageEnter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important}
@@ -256,19 +266,127 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
   background:transparent;color:var(--tx2);cursor:pointer;display:flex;align-items:center;
   justify-content:center;transition:border-color .18s,color .18s,background .18s;}
 .icon-btn:hover{border-color:var(--ac);color:var(--ac3);background:var(--acd1);}
+#paletteBtn.active{border-color:var(--ac);color:var(--ac3);background:var(--acd1);box-shadow:0 0 0 1px var(--acd2),0 0 16px var(--acd1);}
+.palette-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 820;
+  display: none;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 7vh 16px 24px;
+  background: rgba(4,10,20,.56);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.palette-overlay.open { display: flex; }
+.palette-panel {
+  width: 560px;
+  max-width: min(92vw, 560px);
+  border: 1px solid var(--bd2);
+  border-radius: 18px;
+  background: var(--glass-3);
+  box-shadow: 0 18px 44px rgba(15,23,42,.10);
+  overflow: hidden;
+}
+.palette-head {
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--bd2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.palette-title {
+  font-family: var(--ff-head);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--tx);
+}
+.palette-close {
+  width: auto;
+  min-width: 64px;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 6px;
+  border: 1px solid var(--bd2);
+  background: transparent;
+  color: var(--tx2);
+  cursor: pointer;
+  font-size: 11px;
+  font-family: var(--ff-mono);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+.palette-body { padding: 18px 22px 20px; display: flex; flex-direction: column; gap: 14px; }
+.palette-help { font-size: 12px; color: var(--tx2); line-height: 1.6; }
+.palette-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+.palette-option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  border: 1px solid var(--bd2);
+  border-radius: 14px;
+  padding: 12px;
+  background: var(--glass-2);
+  color: var(--tx);
+  cursor: pointer;
+  text-align: left;
+  transition: transform .18s, border-color .18s, box-shadow .18s, background .18s;
+}
+.palette-option:hover {
+  transform: translateY(-1px);
+  border-color: var(--ac3);
+  box-shadow: 0 10px 24px rgba(0,0,0,.08);
+}
+.palette-option.active {
+  border-color: var(--ac3);
+  background: var(--acd1);
+  box-shadow: 0 0 0 1px var(--acd2), 0 0 16px var(--acd1);
+}
+.palette-sample {
+  width: 72px;
+  height: 44px;
+  border-radius: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 1px solid var(--bd2);
+}
+.palette-sample span { display: block; }
+.palette-meta { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.palette-name { font-family: var(--ff-head); font-weight: 700; font-size: 13px; color: var(--tx); }
+.palette-desc { font-size: 11px; color: var(--tx2); line-height: 1.5; }
+.palette-actions {
+  padding: 14px 22px 18px;
+  border-top: 1px solid var(--bd2);
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+.palette-actions button {
+  min-width: 116px;
+}
 #mainContent{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:48px 28px 64px;}
 .platform-hero{margin-bottom:40px;}
 .platform-hero h1{font-family:var(--ff-head);font-weight:800;font-size:clamp(22px,3.5vw,32px);
   color:var(--tx);letter-spacing:-.6px;margin-bottom:8px;}
 .platform-hero p{
-  color:var(--grn);
+  color:var(--ac3);
   font-size:8px;
   font-family:var(--ff-mono);
   letter-spacing:.4px;
   max-width:480px;
   line-height:1.6;
   opacity:.78;
-  text-shadow:0 0 4px rgba(33,194,122,.10);
+  text-shadow:0 0 4px var(--acd1);
 }
 .section-label{font-family:var(--ff-mono);font-size:9px;letter-spacing:2.5px;
   text-transform:uppercase;color:var(--tx3);margin-bottom:14px;
@@ -276,7 +394,7 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
 .section-label::after{content:'';flex:1;height:1px;background:var(--bd);}
 .app-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;margin-bottom:40px;}
 .app-card{background:
-  radial-gradient(130% 150% at 0% 0%, rgba(46,204,92,.08), transparent 38%),
+  radial-gradient(130% 150% at 0% 0%, var(--palette-card-glow-1), transparent 38%),
   linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,0)),
   var(--glass-3);border:1px solid var(--bd2);border-radius:16px;padding:24px;
   position:relative;overflow:hidden;transition:border-color .22s,box-shadow .22s,transform .18s;
@@ -289,18 +407,18 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
 .app-card::after{pointer-events:none}
 .app-card::after{content:'';position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;opacity:.2;
   background:
-    radial-gradient(circle at 18% 0%, rgba(46,204,92,.18), transparent 42%),
-    radial-gradient(circle at 82% 100%, rgba(46,204,92,.10), transparent 44%);
-  box-shadow:0 0 0 1px rgba(46,204,92,.12),0 0 18px rgba(46,204,92,.08),0 0 36px rgba(46,204,92,.04);
+    radial-gradient(circle at 18% 0%, var(--palette-card-glow-2), transparent 42%),
+    radial-gradient(circle at 82% 100%, var(--palette-card-glow-1), transparent 44%);
+  box-shadow:0 0 0 1px var(--palette-card-border),0 0 18px var(--palette-card-glow-2),0 0 36px var(--palette-card-glow-1);
   transform:scale(1);
   transition:opacity 1s ease, box-shadow 1s ease, transform 1s ease, filter 1s ease;
   animation:appBorderPulse 12s ease-in-out infinite;}
-.app-card:hover{border-color:color-mix(in srgb, var(--ac3) 58%, var(--bd2));box-shadow:0 20px 52px rgba(0,0,0,.16),0 0 0 1px rgba(46,204,92,.12),0 0 14px rgba(46,204,92,.08);transform:translateY(-2px);}
+.app-card:hover{border-color:color-mix(in srgb, var(--ac3) 58%, var(--bd2));box-shadow:0 20px 52px rgba(0,0,0,.16),0 0 0 1px var(--palette-card-border),0 0 14px var(--palette-card-glow-2);transform:translateY(-2px);}
 .app-card:hover::before{opacity:1;}
 .app-card:hover::after{
   opacity:.42;
   transform:scale(1.008);
-  box-shadow:0 0 0 1px rgba(46,204,92,.16),0 0 12px rgba(46,204,92,.08),0 0 28px rgba(46,204,92,.05);
+  box-shadow:0 0 0 1px var(--palette-card-border),0 0 12px var(--palette-card-glow-2),0 0 28px var(--palette-card-glow-1);
   filter:brightness(1.01);
 }
 .app-card:nth-child(2)::after{animation-delay:-4.6s;}
@@ -308,16 +426,21 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
   justify-content:center;flex-shrink:0;position:relative;overflow:hidden;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.22), 0 14px 26px rgba(15,23,42,.10);
   animation:appIconFloat 8.4s ease-in-out infinite;}
+.card-icon.fire-icon,
+.card-icon.calendar-icon{
+  background:linear-gradient(180deg,var(--palette-card-bg-1),var(--palette-card-bg-2));
+  border:1px solid var(--palette-card-border);
+}
 .card-icon::before{content:'';position:absolute;inset:0;background:
   linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,0)),
   radial-gradient(circle at 20% 16%, rgba(255,255,255,.26), transparent 34%);
   opacity:.9}
-.card-icon::after{content:'';position:absolute;inset:8px;border-radius:12px;border:1px solid rgba(255,255,255,.16);opacity:.62;animation:iconHaloPulse 7.5s ease-in-out infinite}
+.card-icon::after{content:'';position:absolute;inset:8px;border-radius:12px;border:1px solid color-mix(in srgb, var(--palette-card-border) 60%, #fff 40%);opacity:.62;animation:iconHaloPulse 7.5s ease-in-out infinite}
 .card-icon svg{position:relative;z-index:1;width:23px;height:23px;stroke-linecap:round;stroke-linejoin:round;color:var(--tx)}
 .app-card:nth-child(2) .card-icon{animation-delay:-3.2s;}
 .app-card:nth-child(2) .card-icon::after{animation-delay:-2.6s;}
-.card-icon.fire-icon svg{filter:drop-shadow(0 3px 8px rgba(249,115,22,.18));}
-.card-icon.calendar-icon svg{filter:drop-shadow(0 3px 8px rgba(14,165,160,.15));}
+.card-icon.fire-icon svg{filter:drop-shadow(0 3px 8px var(--palette-card-glow-1));}
+.card-icon.calendar-icon svg{filter:drop-shadow(0 3px 8px var(--palette-card-glow-1));}
 .app-card:hover .card-icon::after{opacity:.9;transform:scale(1.05);}
 .card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;}
 .card-title{font-family:var(--ff-head);font-weight:700;font-size:16px;
@@ -423,7 +546,7 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
       </div>
       <div class="login-field">
         <label>Password</label>
-        <input type="password" id="loginPass" class="login-input" placeholder="••••••••" autocomplete="current-password">
+        <input type="password" id="loginPass" class="login-input" placeholder="••••••••">
       </div>
       <button class="login-btn" id="loginBtn" onclick="doLogin()">Sign In</button>
       <div class="login-err" id="loginErr"></div>
@@ -506,6 +629,15 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
       <button class="icon-btn" onclick="toggleTheme()" title="Toggle theme">
         <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       </button>
+      <button class="icon-btn" id="paletteBtn" onclick="openPaletteModal()" title="Choose colour scheme" aria-label="Choose colour scheme">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+          <path d="M12 3a9 9 0 1 0 0 18h1a2 2 0 0 0 0-4h-1a2 2 0 0 1 0-4h1a2 2 0 0 0 0-4h-1a2 2 0 0 1 0-4z"/>
+          <circle cx="8" cy="8.5" r="1.1" fill="currentColor" stroke="none"/>
+          <circle cx="6.6" cy="13" r="1.1" fill="currentColor" stroke="none"/>
+          <circle cx="10.6" cy="15.5" r="1.1" fill="currentColor" stroke="none"/>
+          <circle cx="15.6" cy="8.9" r="1.1" fill="currentColor" stroke="none"/>
+        </svg>
+      </button>
       <button class="icon-btn" id="logoutBtn" onclick="doLogout()" title="Sign out" style="display:none;color:var(--red)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
       </button>
@@ -521,9 +653,9 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
     <div class="section-label">Live Applications</div>
     <div class="app-grid">
 
-      <a href="kiln-log/index.html" class="app-card">
+      <a href="kiln-log/index.html" class="app-card" onclick="return openKilnLogsApp(event)">
         <div class="card-top">
-          <div class="card-icon fire-icon" style="background:linear-gradient(180deg, rgba(34,168,71,.24), rgba(21,92,40,.12));border:1px solid rgba(46,204,92,.24)">
+          <div class="card-icon fire-icon">
             <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <defs>
                 <linearGradient id="cardFlameGrad" x1="7" y1="3" x2="17" y2="21" gradientUnits="userSpaceOnUse">
@@ -544,7 +676,7 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
 
       <a href="shift-tracker/index.html" class="app-card">
         <div class="card-top">
-          <div class="card-icon calendar-icon" style="background:linear-gradient(180deg, rgba(14,165,160,.18), rgba(8,145,178,.10));border:1px solid rgba(14,165,160,.24)">
+          <div class="card-icon calendar-icon">
             <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <defs>
                 <linearGradient id="cardCalGrad" x1="4" y1="3" x2="20" y2="21" gradientUnits="userSpaceOnUse">
@@ -571,6 +703,48 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
     <span class="footer-lic"><span class="lic-dot"></span><span id="licStatus">Licence checking…</span></span>
   </footer>
 
+</div>
+
+<div class="palette-overlay" id="paletteModal" onclick="if(event.target===this)closePaletteModal()">
+  <div class="palette-panel">
+    <div class="palette-head">
+      <div class="palette-title">Colour Scheme</div>
+      <button class="palette-close" type="button" onclick="closePaletteModal()">Close</button>
+    </div>
+    <div class="palette-body">
+      <div class="palette-help">Choose a general colour scheme for this browser only. It will carry across the Platform, Shift Tracker and Logs apps, and you can reset it at any time.</div>
+      <div class="palette-grid" id="paletteGrid">
+        <button type="button" class="palette-option" data-palette="default" onclick="setPalettePreset('default')">
+          <span class="palette-sample"><span style="background:#1a7a35"></span><span style="background:#22a847"></span><span style="background:#2ecc5c"></span><span style="background:#155c28"></span></span>
+          <span class="palette-meta"><span class="palette-name">Default Green</span><span class="palette-desc">The current suite look, kept as the fallback.</span></span>
+        </button>
+        <button type="button" class="palette-option" data-palette="ocean" onclick="setPalettePreset('ocean')">
+          <span class="palette-sample"><span style="background:#0f766e"></span><span style="background:#14b8a6"></span><span style="background:#2dd4bf"></span><span style="background:#0b4f4a"></span></span>
+          <span class="palette-meta"><span class="palette-name">Ocean</span><span class="palette-desc">Cool teal tones with a calmer feel.</span></span>
+        </button>
+        <button type="button" class="palette-option" data-palette="sky" onclick="setPalettePreset('sky')">
+          <span class="palette-sample"><span style="background:#2563eb"></span><span style="background:#3b82f6"></span><span style="background:#60a5fa"></span><span style="background:#1e40af"></span></span>
+          <span class="palette-meta"><span class="palette-name">Sky</span><span class="palette-desc">Brighter blue accents for a sharper read.</span></span>
+        </button>
+        <button type="button" class="palette-option" data-palette="violet" onclick="setPalettePreset('violet')">
+          <span class="palette-sample"><span style="background:#6d28d9"></span><span style="background:#8b5cf6"></span><span style="background:#a78bfa"></span><span style="background:#4c1d95"></span></span>
+          <span class="palette-meta"><span class="palette-name">Violet</span><span class="palette-desc">A more premium purple accent without layout changes.</span></span>
+        </button>
+        <button type="button" class="palette-option" data-palette="amber" onclick="setPalettePreset('amber')">
+          <span class="palette-sample"><span style="background:#b45309"></span><span style="background:#d97706"></span><span style="background:#f59e0b"></span><span style="background:#92400e"></span></span>
+          <span class="palette-meta"><span class="palette-name">Amber</span><span class="palette-desc">Warm industrial tones with a bit more glow.</span></span>
+        </button>
+        <button type="button" class="palette-option" data-palette="slate" onclick="setPalettePreset('slate')">
+          <span class="palette-sample"><span style="background:#334155"></span><span style="background:#475569"></span><span style="background:#64748b"></span><span style="background:#0f172a"></span></span>
+          <span class="palette-meta"><span class="palette-name">Slate</span><span class="palette-desc">A calmer neutral scheme if you want less colour.</span></span>
+        </button>
+      </div>
+    </div>
+    <div class="palette-actions">
+      <button class="btn btn-ghost" type="button" onclick="resetPalettePreset()">Reset to default</button>
+      <button class="btn btn-ghost" type="button" onclick="closePaletteModal()">Done</button>
+    </div>
+  </div>
 </div>
 
 <div id="adminOverlay" onclick="closeAdminPanel()" style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:800;display:none"></div>
@@ -766,11 +940,11 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
     <div style="display:flex;flex-direction:column;gap:12px">
       <div>
         <label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">New Password</label>
-        <input type="password" id="forcePwNew" class="login-input" placeholder="New password" autocomplete="new-password" onkeydown="if(event.key==='Enter')document.getElementById('forcePwConfirm').focus()">
+        <input type="password" id="forcePwNew" class="login-input" placeholder="New password" onkeydown="if(event.key==='Enter')document.getElementById('forcePwConfirm').focus()">
       </div>
       <div>
         <label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Confirm New Password</label>
-        <input type="password" id="forcePwConfirm" class="login-input" placeholder="Repeat new password" autocomplete="new-password" onkeydown="if(event.key==='Enter')submitPlatformForceReset()">
+        <input type="password" id="forcePwConfirm" class="login-input" placeholder="Repeat new password" onkeydown="if(event.key==='Enter')submitPlatformForceReset()">
       </div>
       <div id="forcePwMsg" style="display:none;font-size:12px;padding:8px 12px;border-radius:var(--rsm)"></div>
       <div style="display:flex;gap:10px;margin-top:4px">
@@ -795,15 +969,15 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
     <div style="display:flex;flex-direction:column;gap:12px">
       <div>
         <label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Current Password</label>
-        <input type="password" id="cpwCurrent" class="login-input" placeholder="Your current password" autocomplete="current-password">
+        <input type="password" id="cpwCurrent" class="login-input" placeholder="Your current password">
       </div>
       <div>
         <label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">New Password</label>
-        <input type="password" id="cpwNew" class="login-input" placeholder="New password" autocomplete="new-password">
+        <input type="password" id="cpwNew" class="login-input" placeholder="New password">
       </div>
       <div>
         <label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Confirm New Password</label>
-        <input type="password" id="cpwConfirm" class="login-input" placeholder="Repeat new password" autocomplete="new-password">
+        <input type="password" id="cpwConfirm" class="login-input" placeholder="Repeat new password">
       </div>
       <div id="cpwMsg" style="display:none;font-size:12px;padding:8px 12px;border-radius:var(--rsm)"></div>
       <button id="cpwBtn" onclick="doChangePw()" style="width:100%;height:40px;background:linear-gradient(135deg,var(--ac),var(--ac3));color:#fff;border:none;border-radius:var(--rsm);font-family:var(--ff-head);font-weight:600;font-size:13px;cursor:pointer;margin-top:4px">Update Password</button>
@@ -1349,6 +1523,8 @@ async function toggleDisableUser(userId, currentlyDisabled) {
   const u = mergedUser ? mergedUser.prof : (_usersCache.find(function(x){ return x.id === userId; }) || null);
   const name = mergedUser ? getManagedUserDisplayName(mergedUser) : ((u && (u.full_name || u.email)) || 'this user');
   if (!confirm((currentlyDisabled ? 'Re-enable ' : 'Disable ') + name + '?\n\n' + (currentlyDisabled ? 'They will be able to sign in across the suite again.' : 'They will be immediately blocked from Platform, Shift Tracker, and Logs.'))) return;
+  const typed = prompt(currentlyDisabled ? 'Type ENABLE USER to confirm.' : 'Type DISABLE USER to confirm.');
+  if(String(typed || '').trim().toUpperCase() !== (currentlyDisabled ? 'ENABLE USER' : 'DISABLE USER')) return;
   try {
     await setManagedUsersDisabled([mergedUser ? toManagedUserTarget(mergedUser) : { profileId: userId, authUserId: null, username: null, displayName: name }], !currentlyDisabled);
     renderAllUsers();
@@ -1409,6 +1585,189 @@ function toggleTheme() {
     }).catch(function(){});
   });
 }
+
+const PALETTE_STORAGE_KEY = 'pw_palette_scheme';
+const PALETTE_PRESETS = {
+  default: null,
+  ocean: {
+    label: 'Ocean',
+    description: 'Cool teal tones with a calmer feel.',
+    accent: '#0f766e',
+    accent2: '#14b8a6',
+    accent3: '#2dd4bf'
+  },
+  sky: {
+    label: 'Sky',
+    description: 'Brighter blue accents for a sharper read.',
+    accent: '#2563eb',
+    accent2: '#3b82f6',
+    accent3: '#60a5fa'
+  },
+  violet: {
+    label: 'Violet',
+    description: 'A more premium purple accent without layout changes.',
+    accent: '#6d28d9',
+    accent2: '#8b5cf6',
+    accent3: '#a78bfa'
+  },
+  amber: {
+    label: 'Amber',
+    description: 'Warm industrial tones with a bit more glow.',
+    accent: '#b45309',
+    accent2: '#d97706',
+    accent3: '#f59e0b'
+  },
+  slate: {
+    label: 'Slate',
+    description: 'A calmer neutral scheme if you want less colour.',
+    accent: '#334155',
+    accent2: '#475569',
+    accent3: '#64748b'
+  }
+};
+const PALETTE_VARS = [
+  '--ac','--ac2','--ac3','--acd1','--acd2','--acd3','--acgl','--eac',
+  '--palette-card-bg-1','--palette-card-bg-2','--palette-card-border','--palette-card-glow-1','--palette-card-glow-2'
+];
+
+function hexToRgb(hex){
+  const raw = String(hex || '').trim().replace(/^#/, '');
+  if(raw.length === 3){
+    const r = raw[0] + raw[0];
+    const g = raw[1] + raw[1];
+    const b = raw[2] + raw[2];
+    return { r: parseInt(r, 16), g: parseInt(g, 16), b: parseInt(b, 16) };
+  }
+  if(raw.length === 6){
+    return {
+      r: parseInt(raw.slice(0, 2), 16),
+      g: parseInt(raw.slice(2, 4), 16),
+      b: parseInt(raw.slice(4, 6), 16)
+    };
+  }
+  return null;
+}
+
+function rgbaFromHex(hex, alpha){
+  const rgb = hexToRgb(hex);
+  if(!rgb) return '';
+  return `rgba(${rgb.r},${rgb.g},${rgb.b},${alpha})`;
+}
+
+function getStoredPalettePreset(){
+  const key = localStorage.getItem(PALETTE_STORAGE_KEY);
+  if(!key) return 'default';
+  if(!PALETTE_PRESETS[key]){
+    localStorage.removeItem(PALETTE_STORAGE_KEY);
+    return 'default';
+  }
+  return key;
+}
+
+function setPaletteVarMap(vars){
+  const root = document.body || document.documentElement;
+  Object.keys(vars).forEach(function(key){
+    root.style.setProperty(key, vars[key]);
+  });
+  if(document.documentElement && document.documentElement !== root){
+    Object.keys(vars).forEach(function(key){
+      document.documentElement.style.setProperty(key, vars[key]);
+    });
+  }
+}
+
+function clearPaletteVars(){
+  const root = document.body || document.documentElement;
+  PALETTE_VARS.forEach(function(key){
+    root.style.removeProperty(key);
+  });
+  if(document.documentElement && document.documentElement !== root){
+    PALETTE_VARS.forEach(function(key){
+      document.documentElement.style.removeProperty(key);
+    });
+  }
+}
+
+function getPaletteVars(key){
+  const preset = PALETTE_PRESETS[key];
+  if(!preset) return null;
+  const ac = preset.accent;
+  const ac2 = preset.accent2 || preset.accent;
+  const ac3 = preset.accent3 || preset.accent2 || preset.accent;
+  return {
+    '--ac': ac,
+    '--ac2': ac2,
+    '--ac3': ac3,
+    '--acd1': rgbaFromHex(ac, .10),
+    '--acd2': rgbaFromHex(ac, .18),
+    '--acd3': rgbaFromHex(ac, .28),
+    '--acgl': rgbaFromHex(ac3, .38),
+    '--eac': `0 4px 22px ${rgbaFromHex(ac, .35)}`,
+    '--palette-card-bg-1': rgbaFromHex(ac, .24),
+    '--palette-card-bg-2': rgbaFromHex(ac3, .12),
+    '--palette-card-border': rgbaFromHex(ac3, .24),
+    '--palette-card-glow-1': rgbaFromHex(ac3, .18),
+    '--palette-card-glow-2': rgbaFromHex(ac3, .10)
+  };
+}
+
+function updatePaletteUi(){
+  const preset = getStoredPalettePreset();
+  const btn = document.getElementById('paletteBtn');
+  if(btn){
+    const label = preset === 'default' ? 'Default Green' : (PALETTE_PRESETS[preset] ? PALETTE_PRESETS[preset].label : 'Default Green');
+    btn.classList.toggle('active', preset !== 'default');
+    btn.title = 'Colour scheme: ' + label;
+    btn.setAttribute('aria-label', 'Colour scheme: ' + label);
+  }
+  document.querySelectorAll('[data-palette]').forEach(function(el){
+    el.classList.toggle('active', el.dataset.palette === preset);
+  });
+}
+
+function applyStoredPalette(){
+  const preset = getStoredPalettePreset();
+  if(preset === 'default'){
+    clearPaletteVars();
+  } else {
+    const vars = getPaletteVars(preset);
+    if(vars) setPaletteVarMap(vars);
+    else clearPaletteVars();
+  }
+  updatePaletteUi();
+}
+
+function setPalettePreset(key){
+  if(key === 'default'){
+    localStorage.removeItem(PALETTE_STORAGE_KEY);
+  } else if(PALETTE_PRESETS[key]){
+    localStorage.setItem(PALETTE_STORAGE_KEY, key);
+  }
+  applyStoredPalette();
+}
+
+function resetPalettePreset(){
+  setPalettePreset('default');
+  closePaletteModal();
+}
+
+function openPaletteModal(){
+  updatePaletteUi();
+  const modal = document.getElementById('paletteModal');
+  if(modal) modal.classList.add('open');
+}
+
+function closePaletteModal(){
+  const modal = document.getElementById('paletteModal');
+  if(modal) modal.classList.remove('open');
+}
+
+window.addEventListener('storage', function(e){
+  if(e.key === PALETTE_STORAGE_KEY) applyStoredPalette();
+});
+
+applyStoredPalette();
+document.addEventListener('DOMContentLoaded', applyStoredPalette);
 async function loadUserTheme() {
   try {
     const r = await sb.auth.getSession();
@@ -2069,6 +2428,8 @@ async function bulkToggleAllUsers(shouldDisable) {
     ? 'Lock down ' + targets.length + ' non-admin account' + (targets.length !== 1 ? 's' : '') + '?\n\nThis will immediately block them from Platform, Shift Tracker, and Logs.'
     : 'Enable ' + targets.length + ' non-admin account' + (targets.length !== 1 ? 's' : '') + '?\n\nThey will be able to sign in again across the suite.';
   if (!confirm(message)) return;
+  const typed = prompt(shouldDisable ? 'Type LOCKDOWN to confirm.' : 'Type ENABLE to confirm.');
+  if(String(typed || '').trim().toUpperCase() !== (shouldDisable ? 'LOCKDOWN' : 'ENABLE')) return;
   try {
     await setManagedUsersDisabled(targets, shouldDisable);
     renderAllUsers();
@@ -2101,6 +2462,8 @@ async function bulkSetRoleDisabled(groupKey, shouldDisable) {
     ? 'Disable ' + targets.length + ' user' + (targets.length !== 1 ? 's' : '') + ' in ' + group.label + '?\n\nThis will block them across Platform, Shift Tracker, and Logs.'
     : 'Enable ' + targets.length + ' user' + (targets.length !== 1 ? 's' : '') + ' in ' + group.label + '?\n\nThey will be able to sign in again across the suite.';
   if (!confirm(message)) return;
+  const typed = prompt(shouldDisable ? 'Type DISABLE ROLE to confirm.' : 'Type ENABLE ROLE to confirm.');
+  if(String(typed || '').trim().toUpperCase() !== (shouldDisable ? 'DISABLE ROLE' : 'ENABLE ROLE')) return;
   try {
     await setManagedUsersDisabled(targets, shouldDisable);
     renderAllUsers();
@@ -2632,6 +2995,18 @@ function showPlatformToast(msg) {
   if (!t) { t=document.createElement('div'); t.id='platformToast'; t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:10px 18px;font-size:13px;color:var(--tx);z-index:9999;box-shadow:var(--e2);transition:opacity .3s'; document.body.appendChild(t); }
   t.textContent = msg; t.style.opacity = '1';
   clearTimeout(t._timer); t._timer = setTimeout(function(){t.style.opacity='0';}, 2800);
+}
+
+function openKilnLogsApp(event) {
+  const ku = _platformKilnUser || null;
+  const hasPlatformSession = !!_platformProfile;
+  const hasAccess = !!(ku && (ku.is_admin || ku.shift_log_access !== false));
+  if (hasPlatformSession && !hasAccess) {
+    if (event) event.preventDefault();
+    window.location.href = 'kiln-log/index.html?access=denied';
+    return false;
+  }
+  return true;
 }
 
 async function loadResetReqBadge() {

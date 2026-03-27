@@ -260,6 +260,232 @@
       box-shadow: 0 16px 42px rgba(0,0,0,.12), 0 0 0 1px rgba(34,168,71,.12), 0 0 22px rgba(34,168,71,.11);
     }
   }
+  .hero-emoji-wrap {
+    position: relative;
+    width: 88px;
+    height: 88px;
+    margin: 0 auto 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .hero-emoji {
+    position: relative;
+    z-index: 2;
+    font-size: 52px;
+    line-height: 1;
+    display: block;
+    will-change: transform, filter, opacity;
+  }
+  .hero-emoji-wrap.sun .hero-emoji {
+    animation: heroSunSizzle 1.35s ease-in-out infinite;
+    filter: drop-shadow(0 0 10px rgba(253,186,116,.30)) drop-shadow(0 0 18px rgba(249,115,22,.18));
+    transform-origin: 50% 60%;
+  }
+  .hero-emoji-wrap.moon .hero-emoji {
+    animation: heroMoonBreath 4.8s ease-in-out infinite;
+    filter: drop-shadow(0 0 10px rgba(99,102,241,.22));
+  }
+  .hero-emoji-wrap.bed .hero-emoji {
+    animation: heroBedBreathe 4.6s ease-in-out infinite;
+  }
+  .hero-emoji-wrap.plane .hero-emoji {
+    animation: heroPlaneGlide 4.4s ease-in-out infinite;
+  }
+  .hero-emoji-wrap.sun::before,
+  .hero-emoji-wrap.sun::after {
+    content: '';
+    position: absolute;
+    inset: 16px;
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .hero-emoji-wrap.sun::before {
+    border: 1px solid rgba(251,146,60,.24);
+    box-shadow: 0 0 0 8px rgba(251,146,60,.09), 0 0 24px rgba(251,146,60,.16);
+    animation: heroSunSizzleRing 1.15s ease-in-out infinite;
+  }
+  .hero-emoji-wrap.sun::after {
+    inset: 7px;
+    background: radial-gradient(circle at 50% 46%, rgba(255,251,235,.95) 0 8%, rgba(253,186,116,.90) 14%, rgba(249,115,22,.46) 28%, rgba(239,68,68,.12) 50%, transparent 72%);
+    filter: blur(.2px);
+    mix-blend-mode: screen;
+    animation: heroSunSizzleHeat 1.15s ease-in-out infinite;
+  }
+  .hero-emoji-wrap.moon::before {
+    content: '';
+    position: absolute;
+    inset: 16px;
+    border-radius: 50%;
+    border: 1px solid rgba(99,102,241,.22);
+    box-shadow: 0 0 0 12px rgba(99,102,241,.05), 0 0 26px rgba(99,102,241,.10);
+    animation: heroMoonHalo 4.8s ease-in-out infinite;
+    pointer-events: none;
+  }
+  .hero-emoji-wrap.moon::after {
+    content: '';
+    position: absolute;
+    inset: 10px;
+    border-radius: 50%;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 24% 24%, rgba(255,255,255,.95) 0 1.5px, transparent 1.8px),
+      radial-gradient(circle at 72% 30%, rgba(255,255,255,.88) 0 1.2px, transparent 1.6px),
+      radial-gradient(circle at 62% 74%, rgba(199,210,254,.82) 0 1.1px, transparent 1.5px),
+      radial-gradient(circle at 36% 68%, rgba(255,255,255,.86) 0 1.3px, transparent 1.8px);
+    filter: drop-shadow(0 0 4px rgba(255,255,255,.45)) drop-shadow(0 0 8px rgba(99,102,241,.16));
+    animation: heroMoonTwinkle 2.8s ease-in-out infinite;
+    opacity: .82;
+  }
+  .hero-emoji-wrap.bed::before,
+  .hero-emoji-wrap.bed::after {
+    content: 'zzz';
+    position: absolute;
+    top: -6px;
+    right: 6px;
+    font-family: var(--ff-mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    color: rgba(13,21,38,.76);
+    text-shadow: 0 0 3px rgba(255,255,255,.92), 0 0 10px rgba(255,255,255,.55);
+    animation: heroZzzFloat 2.6s ease-in-out infinite;
+    pointer-events: none;
+  }
+  .hero-emoji-wrap.bed::after {
+    top: 4px;
+    right: 18px;
+    animation-delay: .7s;
+    opacity: .72;
+  }
+  .dark .hero-emoji-wrap.bed::before,
+  .dark .hero-emoji-wrap.bed::after {
+    color: rgba(255,255,255,.98);
+    text-shadow: 0 0 4px rgba(255,255,255,.30), 0 0 12px rgba(251,191,36,.16);
+  }
+  .hero-emoji-wrap.plane .plane-smoke {
+    position: absolute;
+    left: 4px;
+    top: 50%;
+    width: 10px;
+    height: 10px;
+    margin-top: -5px;
+    border-radius: 50%;
+    background: rgba(148,163,184,.45);
+    filter: blur(.2px);
+    animation: heroPlaneSmoke 2.4s ease-in-out infinite;
+    pointer-events: none;
+  }
+  .hero-emoji-wrap.plane .plane-smoke:nth-child(2) {
+    left: -2px;
+    width: 8px;
+    height: 8px;
+    margin-top: -4px;
+    animation-delay: .45s;
+  }
+  .hero-emoji-wrap.plane .plane-smoke:nth-child(3) {
+    left: -10px;
+    width: 12px;
+    height: 12px;
+    margin-top: -6px;
+    animation-delay: .9s;
+  }
+  .hero-emoji-wrap.plane .plane-smoke:nth-child(4) {
+    left: -18px;
+    width: 9px;
+    height: 9px;
+    margin-top: -4.5px;
+    animation-delay: 1.2s;
+  }
+  @keyframes heroSunSizzle {
+    0% { transform: translate(0,0) rotate(0deg) scale(1); }
+    12% { transform: translate(.2px,-.5px) rotate(-2deg) scale(1.01); }
+    24% { transform: translate(-.3px,.3px) rotate(2deg) scale(.995); }
+    38% { transform: translate(.4px,-.2px) rotate(-1deg) scale(1.015); }
+    52% { transform: translate(-.2px,.4px) rotate(1deg) scale(1); }
+    68% { transform: translate(.3px,-.4px) rotate(-2deg) scale(1.02); }
+    84% { transform: translate(-.1px,.2px) rotate(1deg) scale(.998); }
+    100% { transform: translate(0,0) rotate(0deg) scale(1); }
+  }
+  @keyframes heroSunSizzleRing {
+    0%, 100% {
+      transform: scale(1);
+      opacity: .76;
+      box-shadow: 0 0 0 8px rgba(251,146,60,.09), 0 0 24px rgba(251,146,60,.16);
+    }
+    18% {
+      transform: scale(1.04);
+      opacity: .92;
+      box-shadow: 0 0 0 10px rgba(251,146,60,.12), 0 0 28px rgba(249,115,22,.20);
+    }
+    46% {
+      transform: scale(1.08);
+      opacity: .98;
+      box-shadow: 0 0 0 12px rgba(251,146,60,.14), 0 0 34px rgba(249,115,22,.26);
+    }
+    72% {
+      transform: scale(1.02);
+      opacity: .88;
+      box-shadow: 0 0 0 9px rgba(251,146,60,.11), 0 0 26px rgba(249,115,22,.18);
+    }
+  }
+  @keyframes heroSunSizzleHeat {
+    0%, 100% { transform: scale(.97) rotate(0deg); opacity: .58; }
+    16% { transform: scale(1.02) rotate(-2deg); opacity: .84; }
+    34% { transform: scale(1.08) rotate(3deg); opacity: .96; }
+    58% { transform: scale(1.01) rotate(-1deg); opacity: .74; }
+    82% { transform: scale(1.06) rotate(2deg); opacity: .90; }
+  }
+  @keyframes heroMoonBreath {
+    0%, 100% { transform: scale(1) translateY(0); opacity: .96; filter: drop-shadow(0 0 10px rgba(99,102,241,.22)); }
+    50% { transform: scale(.95) translateY(-1px); opacity: 1; filter: drop-shadow(0 0 18px rgba(99,102,241,.34)); }
+  }
+  @keyframes heroMoonHalo {
+    0%, 100% { transform: scale(1); opacity: .85; }
+    50% { transform: scale(1.05); opacity: 1; }
+  }
+  @keyframes heroMoonTwinkle {
+    0%, 100% {
+      transform: scale(.98);
+      opacity: .55;
+      filter: drop-shadow(0 0 3px rgba(255,255,255,.30)) drop-shadow(0 0 7px rgba(99,102,241,.12));
+    }
+    18% {
+      transform: scale(1.01);
+      opacity: .88;
+      filter: drop-shadow(0 0 5px rgba(255,255,255,.48)) drop-shadow(0 0 10px rgba(99,102,241,.18));
+    }
+    42% {
+      transform: scale(1.03);
+      opacity: 1;
+      filter: drop-shadow(0 0 7px rgba(255,255,255,.62)) drop-shadow(0 0 14px rgba(99,102,241,.24));
+    }
+    66% {
+      transform: scale(.99);
+      opacity: .72;
+      filter: drop-shadow(0 0 4px rgba(255,255,255,.38)) drop-shadow(0 0 8px rgba(99,102,241,.14));
+    }
+  }
+  @keyframes heroBedBreathe {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-1px) scale(1.05); }
+  }
+  @keyframes heroZzzFloat {
+    0% { transform: translateY(0) scale(.92); opacity: 0; }
+    15% { opacity: .65; }
+    50% { transform: translateY(-8px) scale(1.06); opacity: .9; }
+    100% { transform: translateY(-16px) scale(1.15); opacity: 0; }
+  }
+  @keyframes heroPlaneGlide {
+    0%, 100% { transform: translateX(0) translateY(0) rotate(0deg); }
+    50% { transform: translateX(1px) translateY(-1px) rotate(-1deg); }
+  }
+  @keyframes heroPlaneSmoke {
+    0% { transform: translateX(0) scale(.7); opacity: 0; }
+    15% { opacity: .75; }
+    55% { transform: translateX(-12px) translateY(-3px) scale(1.15); opacity: .42; }
+    100% { transform: translateX(-24px) translateY(-6px) scale(1.35); opacity: 0; }
+  }
   #splash-login > div:hover {
     animation-duration: 4.6s;
   }
@@ -949,7 +1175,20 @@ function renderTodayView(active){
 
   const hero=h("div",{class:"card",style:{background:`linear-gradient(135deg,${active.color}20,${active.color}06)`,border:`2px solid ${active.color}33`,textAlign:"center",padding:"28px 20px",marginBottom:"12px",position:"relative",overflow:"hidden",animation:"trackerCardGlow 6.8s var(--ease-smooth) infinite"}});
   hero.appendChild(h("div",{style:{position:"absolute",top:"-30px",right:"-30px",width:"120px",height:"120px",borderRadius:"50%",background:`${active.color}10`,pointerEvents:"none"}}));
-  hero.appendChild(h("div",{style:{fontSize:"52px",marginBottom:"10px",lineHeight:"1",animation:"splashPop 0.4s cubic-bezier(0.34,1.56,0.64,1) both"}},tM.emoji));
+  const heroEmojiClass =
+    tM.emoji === "☀️" ? "sun" :
+    tM.emoji === "🌙" ? "moon" :
+    tM.emoji === "🛌" ? "bed" :
+    tM.emoji === "✈️" ? "plane" : "";
+  const heroEmojiWrap = h("div",{class:`hero-emoji-wrap ${heroEmojiClass}`});
+  if(heroEmojiClass === "plane"){
+    heroEmojiWrap.appendChild(h("span",{class:"plane-smoke"}));
+    heroEmojiWrap.appendChild(h("span",{class:"plane-smoke"}));
+    heroEmojiWrap.appendChild(h("span",{class:"plane-smoke"}));
+    heroEmojiWrap.appendChild(h("span",{class:"plane-smoke"}));
+  }
+  heroEmojiWrap.appendChild(h("div",{class:"hero-emoji",style:{animation:"splashPop 0.4s cubic-bezier(0.34,1.56,0.64,1) both"}},tM.emoji));
+  hero.appendChild(heroEmojiWrap);
   hero.appendChild(h("div",{style:{fontSize:"24px",fontWeight:"700",color:"var(--text)",letterSpacing:"-0.02em",marginBottom:"4px"}},tM.label));
   hero.appendChild(h("div",{class:"mono",style:{fontSize:"11px",color:"var(--text3)",marginBottom:"18px"}},describeCyclePosition(active,viewDate)));
   hero.appendChild(h("div",{style:{display:"inline-flex",alignItems:"center",gap:"10px",padding:"10px 18px",borderRadius:"12px",background:"var(--bg2)",border:"1px solid var(--border)",boxShadow:"0 2px 8px var(--shadow)"}},
@@ -1099,7 +1338,24 @@ function renderSearchView(){
   const wrap=h("div",{class:"page"});
   wrap.appendChild(h("div",{style:{fontWeight:"700",fontSize:"15px",color:"var(--text)",marginBottom:"10px"}},"Search by Date"));
   const inp=h("input",{type:"date",value:S.searchDate,style:{marginBottom:"14px"}});
-  inp.addEventListener("change",e=>set({searchDate:e.target.value}));
+  inp.addEventListener("change",e=>{
+    const next = e.target.value;
+    if(!next) {
+      set({searchDate:""});
+      return;
+    }
+    const parts = next.split("-").map(Number);
+    if(parts.length!==3 || parts.some(Number.isNaN)) {
+      set({searchDate:next});
+      return;
+    }
+    const d = new Date(parts[0], parts[1]-1, parts[2]);
+    set({
+      searchDate: next,
+      tab: "Today",
+      viewOffset: daysBetween(TODAY, d)
+    });
+  });
   wrap.appendChild(inp);
   if(S.searchDate){
     const[y,m,d]=S.searchDate.split("-").map(Number);

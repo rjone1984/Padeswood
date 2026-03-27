@@ -125,7 +125,7 @@
 body.light-mode {
   background:
     radial-gradient(1200px 620px at 18% -6%, rgba(255,255,255,.96), transparent 58%),
-    radial-gradient(900px 480px at 100% 0%, rgba(34,168,71,.03), transparent 54%),
+    radial-gradient(900px 480px at 100% 0%, var(--green-wash-3), transparent 54%),
     var(--bg);
 }
 body.light-mode .topbar,
@@ -178,15 +178,15 @@ body :where(.splash-btn,.btn-primary,.btn-ghost,.btn-icon,.day-tab,.search-scope
 body::before {
   content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
   background-image:
-    radial-gradient(circle, rgba(46,204,92,.08) 1px, transparent 1px),
-    radial-gradient(900px 520px at 50% 0%, rgba(26,122,53,.08), transparent 65%);
+    radial-gradient(circle, var(--green-wash-2) 1px, transparent 1px),
+    radial-gradient(900px 520px at 50% 0%, var(--green-wash-1), transparent 65%);
   background-size: 28px 28px;
   opacity:.9;
 }
 .light-mode::before {
   background-image:
-    radial-gradient(circle, rgba(21,92,40,.05) 1px, transparent 1px),
-    radial-gradient(900px 520px at 50% 0%, rgba(21,92,40,.05), transparent 65%);
+    radial-gradient(circle, var(--green-wash-2) 1px, transparent 1px),
+    radial-gradient(900px 520px at 50% 0%, var(--green-wash-1), transparent 65%);
 }
 
 ::-webkit-scrollbar { width:5px; height:5px }
@@ -268,6 +268,61 @@ body::before {
 }
 .splash-line { height:1px; background:var(--bd); margin:18px 0 }
 .splash-version { text-align:center; font-size:9px; color:var(--tx3); font-family:var(--ff-mono); letter-spacing:.5px }
+.access-denied {
+  display:none;
+  margin-top:18px;
+  background:var(--glass-2);
+  border:1px solid color-mix(in srgb, var(--redb) 45%, var(--bd));
+  border-radius:14px;
+  padding:22px 20px 18px;
+  box-shadow:var(--e2);
+  text-align:center;
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+}
+.access-denied::before {
+  content:'';
+  display:block;
+  height:1px;
+  margin:-22px -20px 16px;
+  background:linear-gradient(90deg, transparent, var(--red), transparent);
+}
+.access-denied-title {
+  font-family:var(--ff-head);
+  font-weight:700;
+  font-size:19px;
+  letter-spacing:-.4px;
+  color:var(--tx);
+  margin-bottom:8px;
+}
+.access-denied-msg {
+  font-size:13px;
+  line-height:1.6;
+  color:var(--tx2);
+  margin-bottom:16px;
+}
+.access-denied-btn {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:150px;
+  height:34px;
+  padding:0 16px;
+  border-radius:8px;
+  text-decoration:none;
+  background:var(--sf3);
+  border:1px solid var(--bd2);
+  color:var(--tx);
+  font-family:var(--ff-mono);
+  font-size:11px;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  transition:all .15s;
+}
+.access-denied-btn:hover {
+  background:var(--sf2);
+  border-color:var(--bd3);
+}
 
 #app {
   display:none;
@@ -362,6 +417,12 @@ body.app-ready #app {
 }
 .btn-icon svg { width:15px; height:15px }
 .btn-icon:hover { background:var(--sf2); color:var(--tx); border-color:var(--bd2) }
+#paletteBtn.active {
+  color:var(--ac);
+  background:var(--acd1);
+  border-color:var(--acd3);
+  box-shadow:0 0 0 1px var(--acd1);
+}
 
 .dual-nav {
   background:
@@ -770,6 +831,11 @@ body.app-ready #app {
   background:var(--acd1);
   transform:translateY(-1px);
 }
+.reports-clear-row {
+  display:flex;
+  justify-content:flex-end;
+  margin-top:10px;
+}
 .reports-scope-row {
   display:flex; gap:6px; margin-bottom:16px; flex-wrap:wrap; align-items:center;
   padding:10px 12px; background:var(--sf2); border:1px solid var(--bd); border-radius:14px;
@@ -1023,7 +1089,7 @@ body.app-ready #app {
 .dark .shift-panel { background:var(--glass-2); }
 .light-mode .shift-panel {
   background:
-    radial-gradient(140% 150% at 0% 0%, rgba(21,92,40,.05), transparent 40%),
+    radial-gradient(140% 150% at 0% 0%, var(--green-wash-1), transparent 40%),
     linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.82)),
     var(--glass-2);
 }
@@ -1116,7 +1182,7 @@ textarea { resize:vertical; line-height:1.55 }
 .dark .log-section { background:var(--glass-2); }
 .light-mode .log-section {
   background:
-    radial-gradient(140% 150% at 0% 0%, rgba(21,92,40,.05), transparent 40%),
+    radial-gradient(140% 150% at 0% 0%, var(--green-wash-1), transparent 40%),
     linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.84)),
     var(--glass-2);
 }
@@ -1199,7 +1265,7 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
 .dark .notes-section { background:var(--glass-2); }
 .light-mode .notes-section {
   background:
-    radial-gradient(140% 150% at 0% 0%, rgba(21,92,40,.05), transparent 40%),
+    radial-gradient(140% 150% at 0% 0%, var(--green-wash-1), transparent 40%),
     linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.84)),
     var(--glass-2);
 }
@@ -1239,7 +1305,7 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
 .dark .stat-card { background:var(--glass-3); }
 .light-mode .stat-card {
   background:
-    radial-gradient(140% 150% at 0% 0%, rgba(21,92,40,.05), transparent 42%),
+    radial-gradient(140% 150% at 0% 0%, var(--green-wash-1), transparent 42%),
     linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.84)),
     var(--glass-3);
 }
@@ -1317,6 +1383,79 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
 .dark .modal-footer { background:var(--sf2); }
 .modal-field  { margin-bottom:14px }
 .modal-field label { display:block; font-size:9px; font-weight:600; letter-spacing:1.3px; text-transform:uppercase; color:var(--tx2); margin-bottom:7px; font-family:var(--ff-mono) }
+.palette-help {
+  margin-bottom:12px;
+  padding:10px 12px;
+  border:1px solid var(--bd);
+  border-radius:14px;
+  background:
+    radial-gradient(120% 120% at 0% 0%, rgba(46,204,92,.07), transparent 46%),
+    var(--sf2);
+  color:var(--tx2);
+  font-size:12px;
+  line-height:1.55;
+}
+.palette-grid {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+.palette-option {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  width:100%;
+  padding:12px;
+  border-radius:16px;
+  border:1px solid var(--bd);
+  background:var(--sf2);
+  color:var(--tx);
+  cursor:pointer;
+  text-align:left;
+  transition:transform .14s, border-color .14s, background .14s, box-shadow .14s, color .14s;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+}
+.palette-option:hover {
+  transform:translateY(-1px);
+  border-color:var(--bd2);
+  background:var(--sf3);
+}
+.palette-option.active {
+  border-color:var(--ac);
+  background:
+    radial-gradient(120% 120% at 0% 0%, var(--acd1), transparent 50%),
+    var(--sf);
+  box-shadow:0 0 0 1px var(--acd1), var(--e1);
+}
+.palette-sample {
+  width:50px;
+  flex-shrink:0;
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:4px;
+}
+.palette-sample span {
+  display:block;
+  height:16px;
+  border-radius:999px;
+}
+.palette-meta {
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+}
+.palette-name {
+  font-family:var(--ff-head);
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:-.02em;
+}
+.palette-desc {
+  font-size:11px;
+  color:var(--tx3);
+  line-height:1.45;
+}
 
 .modal-tabs {
   display:flex;
@@ -1581,6 +1720,7 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
   .day-tab  { height:38px; padding:0 10px; font-size:10px; }
   .stat-grid  { grid-template-columns:repeat(2,1fr) }
   .week-cards { grid-template-columns:repeat(4,1fr) }
+  .palette-grid { grid-template-columns:1fr; }
 
   .topbar {
     height:62px;
@@ -1814,12 +1954,17 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
       </div>
       <div class="splash-field">
         <label>Password</label>
-        <input type="password" id="splashPass" placeholder="Enter password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+        <input type="password" id="splashPass" placeholder="Enter password" onkeydown="if(event.key==='Enter')doLogin()">
       </div>
       <button class="splash-btn" onclick="doLogin()">Sign In</button>
       <div class="splash-err" id="splashErr"></div>
       <div class="splash-line"></div>
       <div class="splash-version">Padeswood Works &nbsp;&#8226;&nbsp; Shift Record System</div>
+    </div>
+    <div id="accessDenied" class="access-denied">
+      <div class="access-denied-title">No Access</div>
+      <div class="access-denied-msg" id="accessDeniedMsg">You do not have access to Logs.</div>
+      <a class="access-denied-btn" href="../index.html">Back to Platform</a>
     </div>
   </div>
 </div>
@@ -1904,7 +2049,6 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
         Save
       </button>
-      <div id="syncDot" title="Synced" style="display:none;align-items:center;justify-content:center;width:24px;height:24px;border-radius:6px;border:1px solid var(--bd);background:var(--sf2)"></div>
       <button class="btn btn-ghost" id="clearDayBtn" onclick="clearDay()" style="display:none">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.67"/></svg>
         Clear Day
@@ -1913,15 +2057,24 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
       <button class="btn-icon" onclick="openSearchModal()" id="searchTopbarBtn" title="Search logs" style="display:none">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       </button>
-      <span class="db-dot" title="Database connected" style="flex:0 0 auto"></span>
-
-      <button class="btn-icon" onclick="toggleTheme()" id="themeBtn" title="Toggle light/dark mode">
-        <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-      </button>
       <div class="user-chip" id="userChip">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         <span id="userLabel">operator</span>
       </div>
+      <span class="db-dot" title="Database connected" aria-label="Database connected" style="flex:0 0 auto"></span>
+      <div id="syncDot" title="Synced" style="display:none;align-items:center;justify-content:center;width:24px;height:24px;border-radius:6px;border:1px solid var(--bd);background:var(--sf2)"></div>
+      <button class="btn-icon" onclick="toggleTheme()" id="themeBtn" title="Toggle light/dark mode">
+        <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      </button>
+      <button class="btn-icon" onclick="openPaletteModal()" id="paletteBtn" title="Choose colour scheme">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 3a9 9 0 1 0 0 18h1a2 2 0 0 0 0-4h-1a2 2 0 0 1 0-4h1a2 2 0 0 0 0-4h-1a2 2 0 0 1 0-4z"/>
+          <circle cx="8" cy="8.5" r="1.1" fill="currentColor" stroke="none"/>
+          <circle cx="6.6" cy="13" r="1.1" fill="currentColor" stroke="none"/>
+          <circle cx="10.6" cy="15.5" r="1.1" fill="currentColor" stroke="none"/>
+          <circle cx="15.6" cy="8.9" r="1.1" fill="currentColor" stroke="none"/>
+        </svg>
+      </button>
       <button class="btn-icon" onclick="doLogout()" title="Sign out">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
       </button>
@@ -2049,6 +2202,86 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
         Print Now
       </button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="paletteModal" style="align-items:flex-start;justify-content:center;padding-top:7vh" onclick="if(event.target===this)closePaletteModal()">
+  <div class="modal" style="width:560px;max-width:92vw">
+    <div class="modal-head">
+      <div class="modal-title">Colour Scheme</div>
+      <button class="modal-close" onclick="closePaletteModal()">Close</button>
+    </div>
+    <div class="modal-body">
+      <div class="palette-help">
+        Choose a general colour scheme for this browser only. It will carry across the Platform, Shift Tracker and Logs apps, and you can reset it at any time.
+      </div>
+      <div class="palette-grid" id="paletteGrid">
+        <button type="button" class="palette-option" data-palette="default" onclick="setPalettePreset('default')">
+          <span class="palette-sample">
+            <span style="background:#1a7a35"></span><span style="background:#22a847"></span>
+            <span style="background:#2ecc5c"></span><span style="background:#155c28"></span>
+          </span>
+          <span class="palette-meta">
+            <span class="palette-name">Default Green</span>
+            <span class="palette-desc">The current suite look, kept as the fallback.</span>
+          </span>
+        </button>
+        <button type="button" class="palette-option" data-palette="ocean" onclick="setPalettePreset('ocean')">
+          <span class="palette-sample">
+            <span style="background:#0f766e"></span><span style="background:#14b8a6"></span>
+            <span style="background:#2dd4bf"></span><span style="background:#0b4f4a"></span>
+          </span>
+          <span class="palette-meta">
+            <span class="palette-name">Ocean</span>
+            <span class="palette-desc">Cool teal tones with a calmer feel.</span>
+          </span>
+        </button>
+        <button type="button" class="palette-option" data-palette="sky" onclick="setPalettePreset('sky')">
+          <span class="palette-sample">
+            <span style="background:#2563eb"></span><span style="background:#3b82f6"></span>
+            <span style="background:#60a5fa"></span><span style="background:#1e40af"></span>
+          </span>
+          <span class="palette-meta">
+            <span class="palette-name">Sky</span>
+            <span class="palette-desc">Brighter blue accents for a sharper read.</span>
+          </span>
+        </button>
+        <button type="button" class="palette-option" data-palette="violet" onclick="setPalettePreset('violet')">
+          <span class="palette-sample">
+            <span style="background:#6d28d9"></span><span style="background:#8b5cf6"></span>
+            <span style="background:#a78bfa"></span><span style="background:#4c1d95"></span>
+          </span>
+          <span class="palette-meta">
+            <span class="palette-name">Violet</span>
+            <span class="palette-desc">A more premium purple accent without layout changes.</span>
+          </span>
+        </button>
+        <button type="button" class="palette-option" data-palette="amber" onclick="setPalettePreset('amber')">
+          <span class="palette-sample">
+            <span style="background:#b45309"></span><span style="background:#d97706"></span>
+            <span style="background:#f59e0b"></span><span style="background:#92400e"></span>
+          </span>
+          <span class="palette-meta">
+            <span class="palette-name">Amber</span>
+            <span class="palette-desc">Warm industrial tones with a bit more glow.</span>
+          </span>
+        </button>
+        <button type="button" class="palette-option" data-palette="slate" onclick="setPalettePreset('slate')">
+          <span class="palette-sample">
+            <span style="background:#334155"></span><span style="background:#475569"></span>
+            <span style="background:#64748b"></span><span style="background:#0f172a"></span>
+          </span>
+          <span class="palette-meta">
+            <span class="palette-name">Slate</span>
+            <span class="palette-desc">A calmer neutral scheme if you want less colour.</span>
+          </span>
+        </button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="resetPalettePreset()">Reset to default</button>
+      <button class="btn btn-ghost" onclick="closePaletteModal()">Done</button>
     </div>
   </div>
 </div>
@@ -2218,6 +2451,7 @@ function applyThemeMode(light){
   document.body.classList.toggle('dark', !lightMode);
   storeThemePref(lightMode ? 'light' : 'dark');
   updateThemeIcon();
+  if(window.__kblPaletteReady) applyStoredPalette();
 }
 
 (function(){
@@ -2263,6 +2497,43 @@ function setSharedSession(session){
   _sbSession = session && session.access_token ? session.access_token : null;
 }
 
+function showKilnAccessDenied(message){
+  const splash = document.getElementById('splash');
+  const loginCard = document.querySelector('#splash .splash-card');
+  const deniedCard = document.getElementById('accessDenied');
+  const deniedMsg = document.getElementById('accessDeniedMsg');
+  const loader = document.querySelector('#splash .splash-loader');
+  const errEl = document.getElementById('splashErr');
+  if(splash) splash.style.display = 'flex';
+  if(loginCard) loginCard.style.display = 'none';
+  if(deniedCard) deniedCard.style.display = 'block';
+  if(deniedMsg) deniedMsg.textContent = message || 'You do not have access to Logs. Please contact your administrator.';
+  if(loader) loader.style.display = 'none';
+  if(errEl) errEl.style.display = 'none';
+}
+
+function showKilnLoginScreen(){
+  const splash = document.getElementById('splash');
+  const loginCard = document.querySelector('#splash .splash-card');
+  const deniedCard = document.getElementById('accessDenied');
+  const loader = document.querySelector('#splash .splash-loader');
+  const errEl = document.getElementById('splashErr');
+  if(splash) splash.style.display = 'flex';
+  if(loginCard) loginCard.style.display = '';
+  if(deniedCard) deniedCard.style.display = 'none';
+  if(loader) loader.style.display = '';
+  if(errEl) errEl.style.display = 'none';
+}
+
+function hasLaunchAccessDenied(){
+  try{
+    const params = new URLSearchParams(window.location.search || '');
+    return params.get('access') === 'denied' || params.get('noaccess') === '1';
+  } catch(e){
+    return false;
+  }
+}
+
 function ensureSharedClient(){
   if(sb) return sb;
   sb = supabase.createClient(SB_URL, SB_KEY, {
@@ -2300,16 +2571,17 @@ async function restoreKilnSharedSession(){
   if(!userRows || !userRows.length) return false;
   const match = pickBestKilnUser(userRows, session.user);
   if(match.is_locked === true && !match.is_admin){
-    const errEl = document.getElementById('splashErr');
-    if(errEl){
-      errEl.textContent = 'Your account has been disabled. Please contact your administrator.';
-      errEl.style.display = 'block';
-    }
+    showKilnAccessDenied('Your account has been disabled. Please contact your administrator.');
     setSharedSession(null);
     sb.auth.signOut().catch(function(){});
-    return false;
+    return true;
   }
-  if(match.shift_log_access === false && !match.is_admin) return false;
+  if(match.shift_log_access === false && !match.is_admin){
+    showKilnAccessDenied('You do not have access to Logs. Please contact your administrator.');
+    setSharedSession(null);
+    sb.auth.signOut().catch(function(){});
+    return true;
+  }
   await _applyUserSession(match);
   return true;
 }
@@ -2559,16 +2831,14 @@ async function doLogin(){
   const match = pickBestKilnUser(userRows, session.user);
 
   if(match.is_locked === true && !match.is_admin){
-    errEl.textContent = 'Your account has been disabled. Please contact your administrator.';
-    errEl.style.display = 'block';
+    showKilnAccessDenied('Your account has been disabled. Please contact your administrator.');
     setSharedSession(null);
     sb.auth.signOut().catch(function(){});
       return;
   }
 
   if(match.shift_log_access === false && !match.is_admin){
-    errEl.textContent = 'You do not have access to Logs. Please contact your administrator.';
-    errEl.style.display = 'block';
+    showKilnAccessDenied('You do not have access to Logs. Please contact your administrator.');
     setSharedSession(null);
     sb.auth.signOut().catch(function(){});
       return;
@@ -2761,6 +3031,184 @@ function toggleTheme(){
   sbSaveTheme(nextLight);
 }
 
+const PALETTE_STORAGE_KEY = 'pw_palette_scheme';
+const PALETTE_PRESETS = {
+  default: null,
+  ocean: {
+    label: 'Ocean',
+    description: 'Cool teal tones with a calmer feel.',
+    accent: '#0f766e',
+    accent2: '#14b8a6',
+    accent3: '#2dd4bf'
+  },
+  sky: {
+    label: 'Sky',
+    description: 'Brighter blue accents for a sharper read.',
+    accent: '#2563eb',
+    accent2: '#3b82f6',
+    accent3: '#60a5fa'
+  },
+  violet: {
+    label: 'Violet',
+    description: 'A more premium purple accent without layout changes.',
+    accent: '#6d28d9',
+    accent2: '#8b5cf6',
+    accent3: '#a78bfa'
+  },
+  amber: {
+    label: 'Amber',
+    description: 'Warm industrial tones with a bit more glow.',
+    accent: '#b45309',
+    accent2: '#d97706',
+    accent3: '#f59e0b'
+  },
+  slate: {
+    label: 'Slate',
+    description: 'A calmer neutral scheme if you want less colour.',
+    accent: '#334155',
+    accent2: '#475569',
+    accent3: '#64748b'
+  }
+};
+const PALETTE_VARS = ['--ac','--ac2','--ac3','--acd1','--acd2','--acd3','--acgl','--eac','--green-wash-1','--green-wash-2','--green-wash-3','--green-edge'];
+
+function hexToRgb(hex){
+  const raw = String(hex || '').trim().replace(/^#/, '');
+  if(raw.length === 3){
+    const r = raw[0] + raw[0];
+    const g = raw[1] + raw[1];
+    const b = raw[2] + raw[2];
+    return { r: parseInt(r, 16), g: parseInt(g, 16), b: parseInt(b, 16) };
+  }
+  if(raw.length === 6){
+    return {
+      r: parseInt(raw.slice(0, 2), 16),
+      g: parseInt(raw.slice(2, 4), 16),
+      b: parseInt(raw.slice(4, 6), 16)
+    };
+  }
+  return null;
+}
+
+function rgbaFromHex(hex, alpha){
+  const rgb = hexToRgb(hex);
+  if(!rgb) return '';
+  return `rgba(${rgb.r},${rgb.g},${rgb.b},${alpha})`;
+}
+
+function getStoredPalettePreset(){
+  const key = localStorage.getItem(PALETTE_STORAGE_KEY);
+  if(!key) return 'default';
+  if(!PALETTE_PRESETS[key]){
+    localStorage.removeItem(PALETTE_STORAGE_KEY);
+    return 'default';
+  }
+  return key;
+}
+
+function setPaletteVarMap(vars){
+  const root = document.body || document.documentElement;
+  Object.keys(vars).forEach(function(key){
+    root.style.setProperty(key, vars[key]);
+  });
+  if(document.documentElement && document.documentElement !== root){
+    Object.keys(vars).forEach(function(key){
+      document.documentElement.style.setProperty(key, vars[key]);
+    });
+  }
+}
+
+function clearPaletteVars(){
+  const root = document.body || document.documentElement;
+  PALETTE_VARS.forEach(function(key){
+    root.style.removeProperty(key);
+  });
+  if(document.documentElement && document.documentElement !== root){
+    PALETTE_VARS.forEach(function(key){
+      document.documentElement.style.removeProperty(key);
+    });
+  }
+}
+
+function getPaletteVars(key){
+  const preset = PALETTE_PRESETS[key];
+  if(!preset) return null;
+  const ac = preset.accent;
+  const ac2 = preset.accent2 || preset.accent;
+  const ac3 = preset.accent3 || preset.accent2 || preset.accent;
+  return {
+    '--ac': ac,
+    '--ac2': ac2,
+    '--ac3': ac3,
+    '--acd1': rgbaFromHex(ac, .10),
+    '--acd2': rgbaFromHex(ac, .18),
+    '--acd3': rgbaFromHex(ac, .28),
+    '--acgl': rgbaFromHex(ac3, .38),
+    '--eac': `0 4px 22px ${rgbaFromHex(ac, .35)}`,
+    '--green-wash-1': rgbaFromHex(ac, .08),
+    '--green-wash-2': rgbaFromHex(ac3, .06),
+    '--green-wash-3': rgbaFromHex(ac, .14),
+    '--green-edge': rgbaFromHex(ac3, .18)
+  };
+}
+
+function updatePaletteUi(){
+  const preset = getStoredPalettePreset();
+  const btn = document.getElementById('paletteBtn');
+  if(btn){
+    const label = preset === 'default' ? 'Default Green' : (PALETTE_PRESETS[preset] ? PALETTE_PRESETS[preset].label : 'Default Green');
+    btn.classList.toggle('active', preset !== 'default');
+    btn.title = 'Colour scheme: ' + label;
+    btn.setAttribute('aria-label', 'Colour scheme: ' + label);
+  }
+  document.querySelectorAll('[data-palette]').forEach(function(el){
+    el.classList.toggle('active', el.dataset.palette === preset);
+  });
+}
+
+function applyStoredPalette(){
+  const preset = getStoredPalettePreset();
+  if(preset === 'default'){
+    clearPaletteVars();
+  } else {
+    const vars = getPaletteVars(preset);
+    if(vars) setPaletteVarMap(vars);
+    else clearPaletteVars();
+  }
+  updatePaletteUi();
+}
+
+function setPalettePreset(key){
+  if(key === 'default'){
+    localStorage.removeItem(PALETTE_STORAGE_KEY);
+  } else if(PALETTE_PRESETS[key]){
+    localStorage.setItem(PALETTE_STORAGE_KEY, key);
+  }
+  applyStoredPalette();
+  showToast(key === 'default' ? 'Colour scheme reset to default' : 'Colour scheme updated');
+}
+
+function resetPalettePreset(){
+  setPalettePreset('default');
+  closePaletteModal();
+}
+
+function openPaletteModal(){
+  updatePaletteUi();
+  document.getElementById('paletteModal').classList.add('open');
+}
+
+function closePaletteModal(){
+  document.getElementById('paletteModal').classList.remove('open');
+}
+
+window.addEventListener('storage', function(e){
+  if(e.key === PALETTE_STORAGE_KEY) applyStoredPalette();
+});
+
+window.__kblPaletteReady = true;
+applyStoredPalette();
+
 async function initApp(){
   const sbLists = await sbLoadLists();
   await loadWhiteboardData();
@@ -2901,7 +3349,6 @@ async function _gotoTodayAndSwitch(silent, forceBuild){
     DAYS.forEach(d=>{ if(!state[d]) state[d]=mkDay(); });
     DAYS.forEach(d=>{ ensureSmDayState(d); });
     DAYS.forEach(d=>{ if(!caState[d]) caState[d]=mkCaDay(); });
-    autoSave();
   }
   if(forceBuild || !document.getElementById('dayNav-Monday')) buildTabs();
   const todayIdx=JS_DAY[new Date().getDay()];
@@ -3212,7 +3659,6 @@ document.getElementById('weekDate').addEventListener('change', async function(){
   DAYS.forEach(function(d){ if(!state[d]) state[d]=mkDay(); });
   DAYS.forEach(function(d){ ensureSmDayState(d); });
   DAYS.forEach(function(d){ if(!caState[d]) caState[d]=mkCaDay(); });
-  autoSave();
   buildTabs();
   const dayIdx = JS_DAY[dow];
   currentDay = DAYS[dayIdx] || 'Monday';
@@ -3268,7 +3714,6 @@ async function loadWeekIntoState(iso, selectedDay){
   DAYS.forEach(function(d){ if(!state[d]) state[d] = mkDay(); });
   DAYS.forEach(function(d){ ensureSmDayState(d); });
   DAYS.forEach(function(d){ if(!caState[d]) caState[d] = mkCaDay(); });
-  autoSave();
   const nextDay = DAYS.includes(selectedDay) ? selectedDay : 'Monday';
   currentDay = nextDay;
   currentSmDay = nextDay;
@@ -3311,33 +3756,78 @@ function getOverviewPeriodLabel(period){
   return period === 'month' ? 'Month' : period === 'year' ? 'Year' : 'Week';
 }
 
+let _overviewNavBusy = false;
+
 async function loadOverviewWeekForDate(isoDate){
   const pickedDate = parseLocalDate(isoDate);
+  if(!pickedDate) return null;
   const dow = pickedDate.getDay();
   const monday = new Date(pickedDate);
   monday.setDate(pickedDate.getDate() - (dow === 0 ? 6 : dow - 1));
   monday.setHours(0,0,0,0);
-  await loadWeekIntoState(toISO(monday), getOverviewActiveDay());
+  const mondayIso = toISO(monday);
+  if(weekStart && toISO(weekStart) === mondayIso){
+    window._overviewPickedDate = isoDate;
+    return monday;
+  }
+  await loadWeekIntoState(mondayIso, getOverviewActiveDay());
   window._overviewPickedDate = isoDate;
   return monday;
 }
 
+function sameOverviewWeek(isoDate){
+  if(!weekStart) return false;
+  const pickedDate = parseLocalDate(isoDate);
+  if(!pickedDate) return false;
+  const dow = pickedDate.getDay();
+  const monday = new Date(pickedDate);
+  monday.setDate(pickedDate.getDate() - (dow === 0 ? 6 : dow - 1));
+  monday.setHours(0,0,0,0);
+  return toISO(weekStart) === toISO(monday);
+}
+
 async function setOverviewPeriod(period){
+  if(_overviewNavBusy) return;
+  _overviewNavBusy = true;
+  try{
   window._overviewPeriod = period;
   const anchor = window._overviewPickedDate || toISO(new Date());
+  if(sameOverviewWeek(anchor)){
+    renderOverview();
+    showToast('Showing ' + getOverviewPeriodLabel(period).toLowerCase());
+    return;
+  }
   await loadOverviewWeekForDate(anchor);
   renderOverview();
   showToast('Showing ' + getOverviewPeriodLabel(period).toLowerCase());
+  } finally {
+    _overviewNavBusy = false;
+  }
 }
 
 async function jumpOverviewToDate(isoDate){
   if(!isoDate) return;
+  if(_overviewNavBusy) return;
+  _overviewNavBusy = true;
+  try{
+  if(sameOverviewWeek(isoDate)){
+    window._overviewPickedDate = isoDate;
+    renderOverview();
+    showToast('Showing week of ' + toISO(parseLocalDate(isoDate)));
+    return;
+  }
   await loadOverviewWeekForDate(isoDate);
   renderOverview();
   showToast('Showing week of ' + toISO(parseLocalDate(isoDate)));
+  } finally {
+    _overviewNavBusy = false;
+  }
 }
 
 async function moveOverviewDate(delta){
+  if(_overviewNavBusy) return;
+  _overviewNavBusy = true;
+  try{
   const period = window._overviewPeriod || 'week';
   const base = getOverviewAnchorDate();
   const target = new Date(base);
@@ -3345,21 +3835,43 @@ async function moveOverviewDate(delta){
   else if(period === 'year') target.setFullYear(target.getFullYear() + delta);
   else target.setDate(target.getDate() + (delta * 7));
   const iso = toISO(target);
+  if(sameOverviewWeek(iso)){
+    window._overviewPickedDate = iso;
+    renderOverview();
+    showToast('Showing ' + getOverviewPeriodLabel(period).toLowerCase() + ' of ' + iso);
+    return;
+  }
   await loadOverviewWeekForDate(iso);
   renderOverview();
   showToast('Showing ' + getOverviewPeriodLabel(period).toLowerCase() + ' of ' + iso);
+  } finally {
+    _overviewNavBusy = false;
+  }
 }
 
 async function resetOverviewToCurrentWeek(){
+  if(_overviewNavBusy) return;
+  _overviewNavBusy = true;
+  try{
   const now = new Date();
   const dow = now.getDay();
   const monday = new Date(now);
   monday.setDate(now.getDate() - (dow === 0 ? 6 : dow - 1));
   monday.setHours(0,0,0,0);
+  const mondayIso = toISO(monday);
   window._overviewPeriod = 'week';
-  await loadOverviewWeekForDate(toISO(monday));
+  if(weekStart && toISO(weekStart) === mondayIso){
+    window._overviewPickedDate = mondayIso;
+    renderOverview();
+    showToast('Returned to this week');
+    return;
+  }
+  await loadOverviewWeekForDate(mondayIso);
   renderOverview();
   showToast('Returned to this week');
+  } finally {
+    _overviewNavBusy = false;
+  }
 }
 
 async function openOverview(){
@@ -3695,8 +4207,9 @@ function markElectricianDirty(day, sk){
 
 function canEditElectricianNameField(day, sk, val){
   if(readOnly) return false;
+  if(isShiftManager && !isAdmin) return false;
   if(isAdmin) return true;
-  if(!(isElectrician || isShiftManager)) return false;
+  if(!isElectrician) return false;
   const row = ensureElectricianDayState(day)[sk];
   const current = row.name || '';
   if(current && lockedName && current !== lockedName) return false;
@@ -3706,7 +4219,8 @@ function canEditElectricianNameField(day, sk, val){
 
 function canEditElectricianShift(day, sk){
   if(readOnly) return false;
-  if(isAdmin || isShiftManager) return true;
+  if(isShiftManager && !isAdmin) return false;
+  if(isAdmin) return true;
   if(!isElectrician) return false;
   const row = ensureElectricianDayState(day)[sk];
   const current = row.name || '';
@@ -3766,6 +4280,33 @@ function electricianShiftSummaryParts(row){
     parts.push('Photo attached' + (row.photoName ? ': ' + row.photoName : ''));
   }
   return parts;
+}
+
+function electricianShiftOverviewParts(row){
+  const parts = [];
+  const notes = String(row.notes || '').trim();
+  if(notes) parts.push(notes);
+  ELECTRICIAN_EXTRA_FIELDS.forEach(function(item){
+    const answer = normalizeYesNoValue(row[item.field]);
+    if(answer !== 'yes') return;
+    const details = String(row[item.detailField] || '').trim();
+    parts.push(item.label + ' Yes');
+    if(details) parts.push(item.detailLabel + ': ' + details);
+  });
+  if(String(row.photoPath || '').trim() || String(row.photoName || '').trim()){
+    parts.push('Photo attached' + (row.photoName ? ': ' + row.photoName : ''));
+  }
+  return parts;
+}
+
+function electricianShiftOverviewHtml(row){
+  const parts = electricianShiftOverviewParts(row);
+  if(!parts.length) return '<span style="color:var(--tx3)">No notes recorded</span>';
+  return parts.map(function(part, idx){
+    return idx === 0
+      ? '<div style="white-space:pre-wrap">' + esc(part) + '</div>'
+      : '<div style="margin-top:6px;padding-top:6px;border-top:1px solid var(--bd);white-space:pre-wrap">' + esc(part) + '</div>';
+  }).join('');
 }
 
 function electricianShiftSummaryHtml(row){
@@ -3835,6 +4376,8 @@ async function electricianRemovePhoto(day, sk){
   const row = ensureElectricianDayState(day)[sk];
   const path = (row.photoPath || '').trim();
   if(!path) return;
+  const typed = prompt('Type DELETE PHOTO to remove this image from the log.');
+  if(String(typed || '').trim().toUpperCase() !== 'DELETE PHOTO') return;
   try {
     await sb.storage.from(ELECTRICIAN_PHOTO_BUCKET).remove([path]);
   } catch(e){
@@ -4099,8 +4642,9 @@ function markMechanicalDirty(day, sk){
 
 function canEditMechanicalNameField(day, sk, val){
   if(readOnly) return false;
+  if(isShiftManager && !isAdmin) return false;
   if(isAdmin) return true;
-  if(!(isMechanical || isShiftManager)) return false;
+  if(!isMechanical) return false;
   const row = ensureMechanicalDayState(day)[sk];
   const current = row.name || '';
   if(current && lockedName && current !== lockedName) return false;
@@ -4110,7 +4654,8 @@ function canEditMechanicalNameField(day, sk, val){
 
 function canEditMechanicalShift(day, sk){
   if(readOnly) return false;
-  if(isAdmin || isShiftManager) return true;
+  if(isShiftManager && !isAdmin) return false;
+  if(isAdmin) return true;
   if(!isMechanical) return false;
   const row = ensureMechanicalDayState(day)[sk];
   const current = row.name || '';
@@ -5561,7 +6106,6 @@ function renderReports(){
           <div class="reports-title">AI Reporting</div>
           <div class="reports-sub">Ask anything about the logs</div>
         </div>
-        <button type="button" class="reports-clear-btn" onclick="clearReportHistory()">Clear Chat</button>
       </div>
       <div class="reports-scope-row">
         <span class="reports-scope-label">DATA SCOPE</span>
@@ -5582,6 +6126,9 @@ function renderReports(){
         <button class="reports-send" id="reportSendBtn" onclick="sendReport()">
           <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" style="width:15px;height:15px"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
         </button>
+      </div>
+      <div class="reports-clear-row">
+        <button type="button" class="reports-clear-btn" onclick="clearReportHistory()">Clear Chat</button>
       </div>
       <div style="font-size:10px;color:var(--tx3);font-family:var(--ff-mono);text-align:right">⌘↵ to send</div>
     </div>`;
@@ -7648,15 +8195,15 @@ function renderOverviewBody(){
     }
   }
 
-  if(F.electricians && canViewElectricianLog()){
-    const elRows=[];
-    DAYS.forEach(function(d){
-      if(!electricianState[d]) return;
-      ['shift1','shift2'].forEach(function(sk,si){
-        const sd=electricianState[d][sk]; if(!sd) return;
-        const summaryParts = electricianShiftSummaryParts(sd);
+    if(F.electricians && canViewElectricianLog()){
+      const elRows=[];
+      DAYS.forEach(function(d){
+        if(!electricianState[d]) return;
+        ['shift1','shift2'].forEach(function(sk,si){
+          const sd=electricianState[d][sk]; if(!sd) return;
+        const summaryParts = electricianShiftOverviewParts(sd);
         if(summaryParts.length){
-          const notesHtml = electricianShiftSummaryHtml(sd);
+          const notesHtml = electricianShiftOverviewHtml(sd);
           const name=(sd.name||'').trim();
           elRows.push(row(d,si,[
             esc(name)||'—',
@@ -8160,6 +8707,8 @@ function clearDay(){
   if(!isAdmin){ showToast('Only admins can clear a day'); return; }
   if(!currentDay || currentDay === 'Overview' || currentDay === 'AI Reporting') return;
   if(!confirm('Clear ALL log data for ' + currentDay + ' (Burners, Shift Managers, Electricians, Mechanical & Cement Analysts)? This cannot be undone.')) return;
+  const typed = prompt('Type CLEAR DAY to confirm this deletion.');
+  if(String(typed || '').trim().toUpperCase() !== 'CLEAR DAY') return;
   state[currentDay]   = mkDay();
   smState[currentDay] = mkSmDay();
   _smDirty.add(currentDay + '|shift1');
@@ -8719,6 +9268,10 @@ window.addEventListener("load", async()=>{
   if(wd) wd.addEventListener('click', function(){ try{ this.showPicker(); }catch(e){} });
   checkLicence().then(async function(ok){
     if(!ok) return;
+    if(hasLaunchAccessDenied()){
+      showKilnAccessDenied('You do not have access to Logs. Please contact your administrator.');
+      return;
+    }
     const restored = await restoreKilnSharedSession();
     if(restored) return;
     document.getElementById('splash').style.display = 'flex';
