@@ -330,8 +330,8 @@
   .splash-input:focus::placeholder { color: transparent; }
   .splash-input:focus { border-color: var(--accent2); box-shadow: 0 0 0 3px var(--accent-soft); }
   #stLoginEmailWrap {
-    display: flex;
-    gap: 0;
+    position: relative;
+    display: block;
     border: 1px solid var(--border);
     border-radius: 7px;
     overflow: hidden;
@@ -343,17 +343,22 @@
     box-shadow: 0 0 0 3px var(--accent-soft);
   }
   #stLoginUser {
+    width: 100% !important;
+    padding-right: 196px !important;
     border: none !important;
     border-radius: 0 !important;
-    flex: 1 1 auto;
     min-width: 0;
     background: transparent !important;
     box-shadow: none !important;
   }
   .st-login-domain {
+    position: absolute;
+    top: 0;
+    right: 0;
     height: 40px;
-    min-width: 196px;
-    max-width: 210px;
+    width: 196px;
+    min-width: 0;
+    max-width: none;
     padding: 0 12px;
     border: none;
     border-left: 1px solid var(--border);
@@ -1023,27 +1028,24 @@
       padding: 22px 16px 18px;
     }
     #stLoginEmailWrap {
-      flex-direction: row;
-      gap: 0;
       background: var(--bg3);
       border: 1px solid var(--border2);
       box-shadow: none;
-      overflow: hidden;
     }
     #stLoginUser {
-      width: 100%;
+      width: 100% !important;
       min-height: 40px;
-      padding: 0 12px !important;
+      padding: 0 128px 0 12px !important;
       background: var(--bg3) !important;
       border: none !important;
-      border-radius: 7px 0 0 7px !important;
+      border-radius: 7px !important;
       color: var(--text) !important;
       box-sizing: border-box;
     }
     .st-login-domain {
-      width: auto;
+      width: 128px;
       max-width: none;
-      min-width: 146px;
+      min-width: 0;
       border-left: 1px solid var(--border);
       padding: 0 12px;
       min-height: 40px;
