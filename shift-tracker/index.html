@@ -48,8 +48,8 @@
     --bg3: #222830;
     --bg4: #1c2028;
     --text: #dde4ee;
-    --text2: #6b7a96;
-    --text3: #323d50;
+    --text2: #9aa9be;
+    --text3: #6f8097;
     --border: #2f3a4a;
     --border2: #252c38;
     --shadow: rgba(0,0,0,0.32);
@@ -81,8 +81,8 @@
   body:not(.dark) textarea,
   body:not(.dark) .today-btn,
   body:not(.dark) .ios-banner {
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
   }
   body:not(.dark) .card,
   body:not(.dark) .nav-btn,
@@ -92,26 +92,40 @@
   body:not(.dark) input[type="text"],
   body:not(.dark) textarea,
   body:not(.dark) .ios-banner {
-    box-shadow: 0 8px 24px rgba(15,23,42,.045);
+    box-shadow: 0 16px 38px rgba(15,23,42,.06), inset 0 1px 0 rgba(255,255,255,.7);
   }
   body:not(.dark) .tab {
-    background: rgba(255,255,255,.82);
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.78)),
+      rgba(255,255,255,.82);
+    border-color: rgba(207,219,233,.9);
   }
   body:not(.dark) .tab.active {
-    background: rgba(255,255,255,.98);
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.98), rgba(255,255,255,.9)),
+      rgba(255,255,255,.98);
   }
   body:not(.dark) .nav-btn,
   body:not(.dark) .today-btn,
   body:not(.dark) input[type="date"],
   body:not(.dark) input[type="text"],
   body:not(.dark) textarea {
-    background: rgba(255,255,255,.96);
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.84)),
+      rgba(255,255,255,.96);
+    border-color: rgba(207,219,233,.9);
   }
   body:not(.dark) .card {
-    background: rgba(255,255,255,.98);
+    background:
+      radial-gradient(120% 140% at 0% 0%, rgba(26,122,53,.05), transparent 42%),
+      linear-gradient(180deg, rgba(255,255,255,.98), rgba(255,255,255,.88)),
+      rgba(255,255,255,.98);
+    border-color: rgba(207,219,233,.88);
   }
   body:not(.dark) .ios-banner {
-    background: rgba(255,255,255,.96);
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.84)),
+      rgba(255,255,255,.96);
   }
 
   body {
@@ -185,6 +199,8 @@
     box-shadow: 0 20px 56px rgba(0,0,0,.14);
     position: relative;
     overflow: hidden;
+    animation: trackerCardBreath 6.5s var(--ease-smooth) infinite;
+    transform-origin: center center;
   }
   #splash-login > div::before {
     content: '';
@@ -223,6 +239,29 @@
     cursor: pointer; font-family: var(--ff-head);
     transition: opacity 0.2s, transform 0.15s; letter-spacing: 0.02em;
     box-shadow: 0 4px 22px rgba(26,122,53,.35);
+  }
+  @keyframes trackerCardBreath {
+    0%, 100% {
+      transform: scale(1);
+      box-shadow: 0 20px 56px rgba(0,0,0,.14), 0 0 0 1px rgba(34,168,71,.05), 0 0 0 0 rgba(34,168,71,0);
+    }
+    50% {
+      transform: scale(1.012);
+      box-shadow: 0 24px 62px rgba(0,0,0,.16), 0 0 0 1px rgba(34,168,71,.11), 0 0 34px rgba(34,168,71,.10);
+    }
+  }
+  @keyframes trackerCardGlow {
+    0%, 100% {
+      transform: translateY(0) scale(1);
+      box-shadow: 0 12px 34px rgba(0,0,0,.10), 0 0 0 1px rgba(34,168,71,.06), 0 0 0 0 rgba(34,168,71,0);
+    }
+    50% {
+      transform: translateY(-1px) scale(1.008);
+      box-shadow: 0 16px 42px rgba(0,0,0,.12), 0 0 0 1px rgba(34,168,71,.12), 0 0 22px rgba(34,168,71,.11);
+    }
+  }
+  #splash-login > div:hover {
+    animation-duration: 4.6s;
   }
   .splash-btn:active { transform: scale(0.97); opacity: 0.88; }
   .splash-error {
@@ -317,6 +356,13 @@
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
     overflow: visible;
+  }
+  body:not(.dark) .tracker-shell {
+    background:
+      radial-gradient(130% 170% at 0% 0%, rgba(26,122,53,.06), transparent 40%),
+      linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.8)),
+      var(--glass-1);
+    box-shadow: 0 10px 30px rgba(15,23,42,.055), inset 0 1px 0 rgba(255,255,255,.74);
   }
   .dark .tracker-shell {
     background: var(--glass-1);
@@ -579,8 +625,11 @@
     margin-bottom: 4px;
   }
   @media (max-width: 640px) {
+    #app {
+      padding: 18px 14px 0;
+    }
     .tracker-shell {
-      padding: 8px 12px 10px;
+      padding: 8px 10px 10px;
       flex-direction: row;
       align-items: center;
       gap: 8px;
@@ -639,6 +688,21 @@
       align-items: flex-start;
       padding-left: 12px;
       padding-right: 12px;
+    }
+    .card {
+      padding: 14px;
+    }
+    .nav-btn {
+      padding: 6px 12px;
+      font-size: 18px;
+    }
+    .today-btn {
+      padding: 5px 10px;
+    }
+    .action-btn,
+    .share-btn {
+      padding: 11px;
+      font-size: 13px;
     }
   }
 </style>
@@ -883,7 +947,7 @@ function renderTodayView(active){
   nav.appendChild(h("button",{class:"nav-btn",style:{padding:"6px 14px"},onClick:()=>set({viewOffset:offset+1})},"›"));
   wrap.appendChild(nav);
 
-  const hero=h("div",{class:"card",style:{background:`linear-gradient(135deg,${active.color}20,${active.color}06)`,border:`2px solid ${active.color}33`,textAlign:"center",padding:"28px 20px",marginBottom:"12px",position:"relative",overflow:"hidden"}});
+  const hero=h("div",{class:"card",style:{background:`linear-gradient(135deg,${active.color}20,${active.color}06)`,border:`2px solid ${active.color}33`,textAlign:"center",padding:"28px 20px",marginBottom:"12px",position:"relative",overflow:"hidden",animation:"trackerCardGlow 6.8s var(--ease-smooth) infinite"}});
   hero.appendChild(h("div",{style:{position:"absolute",top:"-30px",right:"-30px",width:"120px",height:"120px",borderRadius:"50%",background:`${active.color}10`,pointerEvents:"none"}}));
   hero.appendChild(h("div",{style:{fontSize:"52px",marginBottom:"10px",lineHeight:"1",animation:"splashPop 0.4s cubic-bezier(0.34,1.56,0.64,1) both"}},tM.emoji));
   hero.appendChild(h("div",{style:{fontSize:"24px",fontWeight:"700",color:"var(--text)",letterSpacing:"-0.02em",marginBottom:"4px"}},tM.label));
@@ -933,7 +997,7 @@ function renderShiftSummaryCard(active){
   const tSt=status(active,TODAY),tM=meta(tSt);
   const nx=getNextStatusChange(active,TODAY),nxM=meta(nx.status);
   const nb=getDaysUntilLongBreak(active);
-  return h("div",{class:"card",style:{border:`1px solid ${active.color}44`,boxShadow:`0 2px 10px ${active.color}12`,padding:"12px 14px",marginBottom:"12px"}},
+  return h("div",{class:"card",style:{border:`1px solid ${active.color}44`,boxShadow:`0 2px 10px ${active.color}12`,padding:"12px 14px",marginBottom:"12px",animation:"trackerCardGlow 6.8s var(--ease-smooth) infinite"}},
     h("div",{style:{display:"flex",gap:"10px",flexWrap:"wrap",alignItems:"center"}},
       h("div",{style:{flex:"1",minWidth:"120px"}},
         h("div",{class:"mono",style:{fontSize:"9px",color:"var(--text3)",textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:"3px"}},`${active.id} Shift · ${formatShortDate(TODAY)}`),
@@ -1147,9 +1211,6 @@ function syncTrackerThemeButton(){
 
 let stCurrentUser = null;
 let stCurrentProfile = null;
-const ST_LEGACY_USER = 'operator';
-const ST_LEGACY_PASS = 'Control';
-const ST_LEGACY_KEY = 'st_legacy_login_v1';
 
 async function stPersistSharedTheme(user, light){
   if(!stSb || !user || !user.id) return;
@@ -1171,36 +1232,6 @@ async function stLoadSharedTheme(user){
     if(data && data.value) return data.value === 'light';
   }catch(e){}
   return null;
-}
-
-function stIsLegacyLogin(user, pass) {
-  return String(user || '').trim().toLowerCase() === ST_LEGACY_USER && String(pass || '') === ST_LEGACY_PASS;
-}
-
-function stSaveLegacyLogin() {
-  try {
-    localStorage.setItem(ST_LEGACY_KEY, JSON.stringify({ user: ST_LEGACY_USER, ts: Date.now() }));
-  } catch (e) {}
-}
-
-function stLoadLegacyLogin() {
-  try {
-    const raw = localStorage.getItem(ST_LEGACY_KEY);
-    if (!raw) return null;
-    const data = JSON.parse(raw);
-    if (!data || data.user !== ST_LEGACY_USER) return null;
-    return {
-      id: 'legacy:' + ST_LEGACY_USER,
-      email: ST_LEGACY_USER,
-      user_metadata: { full_name: 'Legacy Operator' }
-    };
-  } catch (e) {
-    return null;
-  }
-}
-
-function stClearLegacyLogin() {
-  try { localStorage.removeItem(ST_LEGACY_KEY); } catch (e) {}
 }
 
 async function toggleTrackerTheme(){
@@ -1390,24 +1421,9 @@ async function initShiftTrackerSupabaseAuth() {
     const { data } = await sb.auth.getSession();
     const user = data && data.session && data.session.user;
     if (!user) {
-      const legacyUser = stLoadLegacyLogin();
-      if (legacyUser) {
-        stCurrentUser = legacyUser;
-        stCurrentProfile = {
-          role: 'viewer',
-          approved: true,
-          disabled: false,
-          shift_tracker_access: true,
-          full_name: 'Legacy Operator'
-        };
-        stApplyHeaderProfile(legacyUser, stCurrentProfile);
-        stRevealApp();
-        return true;
-      }
       stScheduleLoginScreen();
       return false;
     }
-    stClearLegacyLogin();
     try {
       const profileState = await stProfileAllowed(sb, user);
       if (!profileState.allowed) {
@@ -1434,25 +1450,6 @@ async function initShiftTrackerSupabaseAuth() {
       stShowError('Please enter your login and password.');
       return;
     }
-      if (stIsLegacyLogin(email, password)) {
-      stShowError('');
-      stSaveLegacyLogin();
-      stCurrentUser = {
-        id: 'legacy:' + ST_LEGACY_USER,
-        email: ST_LEGACY_USER,
-        user_metadata: { full_name: 'Legacy Operator' }
-      };
-      stCurrentProfile = {
-        role: 'viewer',
-        approved: true,
-        disabled: false,
-        shift_tracker_access: true,
-        full_name: 'Legacy Operator'
-      };
-      stApplyHeaderProfile(stCurrentUser, stCurrentProfile);
-      stRevealApp();
-      return;
-    }
     stShowError('');
     cleanBtn.disabled = true;
     cleanBtn.textContent = 'Signing In...';
@@ -1472,7 +1469,6 @@ async function initShiftTrackerSupabaseAuth() {
         stShowAccessDenied('Your account is not approved for access.');
         return;
       }
-      stClearLegacyLogin();
       stCurrentUser = user;
       stCurrentProfile = profileState.profile || null;
       stApplyHeaderProfile(user, profileState.profile);
@@ -1502,14 +1498,13 @@ async function initShiftTrackerSupabaseAuth() {
   if (logoutBtn) {
     logoutBtn.addEventListener('click', async function() {
       try {
-        if (!stLoadLegacyLogin()) await sb.auth.signOut();
+        await sb.auth.signOut();
       } catch (e) {}
       try {
         Object.keys(localStorage).forEach(function(key) {
           if (key.startsWith('sb-') || key.startsWith('supabase')) localStorage.removeItem(key);
         });
       } catch (e) {}
-      stClearLegacyLogin();
       stCurrentUser = null;
       stCurrentProfile = null;
       sessionStorage.removeItem('auth');

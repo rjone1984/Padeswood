@@ -39,13 +39,18 @@
   --acgl: rgba(46,204,92,0.38);
 
   --tx:   #dde4ee;
-  --tx2:  #6b7a96;
-  --tx3:  #323d50;
+  --tx2:  #9aa9be;
+  --tx3:  #6f8097;
 
   --red:  #f0524f;  --redd: rgba(240,82,79,.10);  --redb: rgba(240,82,79,.28);
   --grn:  #21c27a;  --grnd: rgba(33,194,122,.10); --grnb: rgba(33,194,122,.28);
   --amb:  #f5a623;  --ambd: rgba(245,166,35,.10); --ambb: rgba(245,166,35,.28);
   --pur:  #9b74e8;  --purd: rgba(155,116,232,.10);--purb: rgba(155,116,232,.28);
+  --role-burner:    #1a7a35;
+  --role-manager:   #7c3aed;
+  --role-electrician:#38bdf8;
+  --role-mechanical:#2563eb;
+  --role-analyst:   #b45309;
 
   --r:   10px;
   --rsm:  7px;
@@ -94,6 +99,11 @@
   --grn:  #15924f;  --grnd: rgba(21,146,79,.07);  --grnb: rgba(21,146,79,.22);
   --amb:  #c97d10;  --ambd: rgba(201,125,16,.07); --ambb: rgba(201,125,16,.22);
   --pur:  #7a50c8;  --purd: rgba(122,80,200,.07); --purb: rgba(122,80,200,.22);
+  --role-burner:    #1a7a35;
+  --role-manager:   #7c3aed;
+  --role-electrician:#38bdf8;
+  --role-mechanical:#2563eb;
+  --role-analyst:   #b45309;
 
   --e1: 0 1px 3px rgba(0,0,0,.05), 0 1px 2px rgba(0,0,0,.03);
   --e2: 0 4px 18px rgba(0,0,0,.07);
@@ -141,7 +151,7 @@ body.light-mode textarea,
 body.light-mode select {
   backdrop-filter: blur(22px);
   -webkit-backdrop-filter: blur(22px);
-  box-shadow: 0 12px 32px rgba(15,23,42,.08);
+  box-shadow: 0 16px 40px rgba(15,23,42,.07), inset 0 1px 0 rgba(255,255,255,.65);
 }
 
 *,*::before,*::after { box-sizing:border-box; margin:0; padding:0 }
@@ -289,7 +299,12 @@ body.app-ready #app {
   backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
   box-shadow: 0 1px 0 var(--bd), var(--e1);
 }
-.light-mode .topbar { background:var(--glass-1) }
+.light-mode .topbar {
+  background:
+    radial-gradient(120% 160% at 0% 0%, rgba(21,92,40,.06), transparent 38%),
+    linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,.8)),
+    var(--glass-1);
+}
 
 .topbar-left { display:flex; align-items:center; gap:11px; flex:0 0 auto; min-width:0 }
 .logo {
@@ -367,7 +382,7 @@ body.app-ready #app {
   background:
     radial-gradient(140% 160% at 0% 0%, var(--green-wash-3), transparent 38%),
     radial-gradient(130% 180% at 100% 0%, var(--green-wash-2), transparent 46%),
-    linear-gradient(180deg, rgba(255,255,255,.82), rgba(255,255,255,.58)),
+    linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.72)),
     var(--glass-1);
 }
 .page-header {
@@ -418,10 +433,10 @@ body.app-ready #app {
   --row-accent-shadow:rgba(180,83,9,.2);
 }
 .dual-nav-row-el {
-  --row-accent:#0f766e;
-  --row-accent-soft:rgba(15,118,110,.14);
-  --row-accent-line:rgba(15,118,110,.34);
-  --row-accent-shadow:rgba(15,118,110,.18);
+  --row-accent:#38bdf8;
+  --row-accent-soft:rgba(56,189,248,.14);
+  --row-accent-line:rgba(56,189,248,.34);
+  --row-accent-shadow:rgba(56,189,248,.18);
 }
 .dual-nav-row-mech {
   --row-accent:#2563eb;
@@ -500,7 +515,10 @@ body.app-ready #app {
 .page-title  { font-family:var(--ff-head); font-size:22px; font-weight:700; color:var(--tx); letter-spacing:-.5px }
 .page-nav-group { display:flex; flex-direction:column; align-items:flex-start; gap:6px; flex-wrap:wrap }
 .overview-period-group,
-.overview-date-group { display:flex; align-items:center; gap:6px; flex-wrap:wrap }
+.overview-date-group,
+.overview-step-group { display:flex; align-items:center; gap:6px; flex-wrap:wrap }
+.overview-step-group { flex-wrap:nowrap }
+.overview-date-picker-wrap { display:flex; align-items:center; gap:6px; flex-wrap:nowrap }
 .page-day-jump {
   width:28px; height:28px;
   border-radius:999px;
@@ -1003,6 +1021,12 @@ body.app-ready #app {
   transition:border-color .18s, box-shadow .18s;
 }
 .dark .shift-panel { background:var(--glass-2); }
+.light-mode .shift-panel {
+  background:
+    radial-gradient(140% 150% at 0% 0%, rgba(21,92,40,.05), transparent 40%),
+    linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.82)),
+    var(--glass-2);
+}
 .shift-panel:hover { border-color:color-mix(in srgb, var(--green-edge) 55%, var(--bd2)); box-shadow:var(--e2), 0 0 0 1px rgba(46,204,92,.05) inset }
 
 .shift-panel-head {
@@ -1090,6 +1114,12 @@ textarea { resize:vertical; line-height:1.55 }
   backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
 }
 .dark .log-section { background:var(--glass-2); }
+.light-mode .log-section {
+  background:
+    radial-gradient(140% 150% at 0% 0%, rgba(21,92,40,.05), transparent 40%),
+    linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.84)),
+    var(--glass-2);
+}
 .log-head {
   padding:9px 15px; background:
     linear-gradient(90deg, var(--green-wash-1), transparent 55%),
@@ -1167,6 +1197,12 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
   backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
 }
 .dark .notes-section { background:var(--glass-2); }
+.light-mode .notes-section {
+  background:
+    radial-gradient(140% 150% at 0% 0%, rgba(21,92,40,.05), transparent 40%),
+    linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.84)),
+    var(--glass-2);
+}
 .notes-body { padding:12px 15px }
 .notes-body textarea {
   width:100%; background:var(--inp); border:1px solid var(--bd);
@@ -1201,6 +1237,12 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
   backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
 }
 .dark .stat-card { background:var(--glass-3); }
+.light-mode .stat-card {
+  background:
+    radial-gradient(140% 150% at 0% 0%, rgba(21,92,40,.05), transparent 42%),
+    linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.84)),
+    var(--glass-3);
+}
 .stat-card::before {
   content:''; position:absolute; left:0; top:0; bottom:0; width:2px;
   background:var(--ac); transform:scaleY(0); transition:transform .2s;
@@ -1512,7 +1554,7 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
 
 @media(max-width:860px){
   .shifts-grid { grid-template-columns:1fr }
-  .main   { padding:8px 8px 12px }
+  .main   { padding:10px 12px 16px }
   .log-section,
   .notes-section,
   .ca-section,
@@ -1520,7 +1562,7 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
     width:100%;
     box-sizing:border-box;
   }
-  .dual-nav { padding:8px 8px 10px; gap:6px; }
+  .dual-nav { padding:8px 10px 10px; gap:6px; }
   .dual-nav-row { gap:8px; }
   .dual-nav-label {
     min-width:76px; width:76px; height:40px;
@@ -1536,7 +1578,7 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
     grid-auto-columns:minmax(84px, 1fr);
   }
   .day-nav::-webkit-scrollbar { display:none }
-  .day-tab  { height:40px; padding:0 10px; font-size:10px; }
+  .day-tab  { height:38px; padding:0 10px; font-size:10px; }
   .stat-grid  { grid-template-columns:repeat(2,1fr) }
   .week-cards { grid-template-columns:repeat(4,1fr) }
 
@@ -1609,7 +1651,7 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
   #searchTopbarBtn { display:inline-flex !important }
   #clearDayBtn { display:none !important }
   .topbar-sub { display:none }
-  .page-header { top:62px; padding-top:10px; }
+  .page-header { top:60px; padding-top:8px; }
   .dual-nav { backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px); }
 
   .btn { padding:5px 8px; font-size:10px; }
@@ -1623,10 +1665,10 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
 
 @media(max-width:480px){
   .week-cards { grid-template-columns:repeat(2,1fr) }
-  .topbar-title { font-size:13px }
+  .topbar-title { font-size:12px }
   .topbar-left { gap:6px }
   .topbar-title {
-    max-width:82px;
+    max-width:76px;
   }
 }
 
@@ -1979,19 +2021,19 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
             Kiln Burners log
           </label>
           <label id="printOptCA" style="display:flex;align-items:center;gap:8px;font-weight:400;cursor:pointer">
-            <input type="checkbox" id="printIncludeCA" checked style="width:15px;height:15px;accent-color:#b45309">
+            <input type="checkbox" id="printIncludeCA" checked style="width:15px;height:15px;accent-color:var(--role-analyst)">
             Cement Analysts log
           </label>
           <label id="printOptSM" style="display:flex;align-items:center;gap:8px;font-weight:400;cursor:pointer">
-            <input type="checkbox" id="printIncludeSM" checked style="width:15px;height:15px;accent-color:#7c3aed">
+            <input type="checkbox" id="printIncludeSM" checked style="width:15px;height:15px;accent-color:var(--role-manager)">
             Shift Managers log
           </label>
           <label id="printOptEL" style="display:flex;align-items:center;gap:8px;font-weight:400;cursor:pointer">
-            <input type="checkbox" id="printIncludeEL" checked style="width:15px;height:15px;accent-color:#0f766e">
+            <input type="checkbox" id="printIncludeEL" checked style="width:15px;height:15px;accent-color:var(--role-electrician)">
             Electricians log
           </label>
           <label id="printOptMECH" style="display:flex;align-items:center;gap:8px;font-weight:400;cursor:pointer">
-            <input type="checkbox" id="printIncludeMECH" checked style="width:15px;height:15px;accent-color:#2563eb">
+            <input type="checkbox" id="printIncludeMECH" checked style="width:15px;height:15px;accent-color:var(--role-mechanical)">
             Mechanical log
           </label>
         </div>
@@ -2257,6 +2299,16 @@ async function restoreKilnSharedSession(){
   const userRows = await userRes.json();
   if(!userRows || !userRows.length) return false;
   const match = pickBestKilnUser(userRows, session.user);
+  if(match.is_locked === true && !match.is_admin){
+    const errEl = document.getElementById('splashErr');
+    if(errEl){
+      errEl.textContent = 'Your account has been disabled. Please contact your administrator.';
+      errEl.style.display = 'block';
+    }
+    setSharedSession(null);
+    sb.auth.signOut().catch(function(){});
+    return false;
+  }
   if(match.shift_log_access === false && !match.is_admin) return false;
   await _applyUserSession(match);
   return true;
@@ -2266,7 +2318,7 @@ const mkIssueEntry = () => ({equipment:'',issue:'',status:'',statusBy:'',statusA
 const mkShift = () => ({burner:'',analyst:'',shiftManager:'',shift:'',notes:'',entries:[mkIssueEntry(),mkIssueEntry(),mkIssueEntry(),mkIssueEntry(),mkIssueEntry()]});
 const mkDay   = () => ({notes:'',shift1:mkShift(),shift2:mkShift()});
 
-const mkSmShift = () => ({ notes: '' });
+const mkSmShift = () => ({ name: '', notes: '' });
 const mkSmDay   = () => ({ shift1: mkSmShift(), shift2: mkSmShift() });
 const mkSmWeek  = () => {
   const week = {};
@@ -2277,7 +2329,9 @@ function ensureSmDayState(day){
   if(!smState[day] || typeof smState[day] !== 'object') smState[day] = mkSmDay();
   if(!smState[day].shift1 || typeof smState[day].shift1 !== 'object') smState[day].shift1 = mkSmShift();
   if(!smState[day].shift2 || typeof smState[day].shift2 !== 'object') smState[day].shift2 = mkSmShift();
+  if(typeof smState[day].shift1.name !== 'string') smState[day].shift1.name = smState[day].shift1.name ? String(smState[day].shift1.name) : '';
   if(typeof smState[day].shift1.notes !== 'string') smState[day].shift1.notes = smState[day].shift1.notes ? String(smState[day].shift1.notes) : '';
+  if(typeof smState[day].shift2.name !== 'string') smState[day].shift2.name = smState[day].shift2.name ? String(smState[day].shift2.name) : '';
   if(typeof smState[day].shift2.notes !== 'string') smState[day].shift2.notes = smState[day].shift2.notes ? String(smState[day].shift2.notes) : '';
   return smState[day];
 }
@@ -2286,7 +2340,58 @@ function resetSmWeekState(){
   DAYS.forEach(function(day){ ensureSmDayState(day); });
   _smDirty = new Set();
 }
-const mkElectricianShift = () => ({ name: '', notes: '' });
+const ELECTRICIAN_EXTRA_FIELDS = [
+  {
+    field: 'openWorkItems',
+    detailField: 'openWorkItemsDetails',
+    label: 'Are there any open work items for the next shift to be aware of?',
+    detailLabel: 'If yes, provide additional details or context',
+    placeholder: 'Add any open work items for the next shift...'
+  },
+  {
+    field: 'issuesChallenges',
+    detailField: 'issuesChallengesDetails',
+    label: 'Is there any issues or challenges the next shift should be aware of?',
+    detailLabel: 'If yes, provide additional details or context',
+    placeholder: 'Add any issues or challenges for the next shift...'
+  },
+  {
+    field: 'deliveriesScheduled',
+    detailField: 'deliveriesScheduledDetails',
+    label: 'Are there any deliveries scheduled during the next shift?',
+    detailLabel: 'If yes, provide additional details or context',
+    placeholder: 'Add any scheduled deliveries or context...'
+  },
+  {
+    field: 'sparePartsUsed',
+    detailField: 'sparePartsUsedDetails',
+    label: 'Have any spare parts been used from the warehouse?',
+    detailLabel: 'If yes, provide additional details or context',
+    placeholder: 'Add any spare parts or warehouse context...'
+  }
+];
+const ELECTRICIAN_EXTRA_FIELDS_SET = new Set(ELECTRICIAN_EXTRA_FIELDS.flatMap(function(item){ return [item.field, item.detailField]; }));
+const ELECTRICIAN_PHOTO_BUCKET = 'kiln-log-photos';
+function normalizeYesNoValue(val){
+  const s = String(val || '').trim().toLowerCase();
+  if(s === 'yes' || s === 'y' || s === 'true' || s === '1') return 'yes';
+  if(s === 'no' || s === 'n' || s === 'false' || s === '0') return 'no';
+  return '';
+}
+const mkElectricianShift = () => ({
+  name: '',
+  notes: '',
+  openWorkItems: '',
+  openWorkItemsDetails: '',
+  issuesChallenges: '',
+  issuesChallengesDetails: '',
+  deliveriesScheduled: '',
+  deliveriesScheduledDetails: '',
+  sparePartsUsed: '',
+  sparePartsUsedDetails: '',
+  photoPath: '',
+  photoName: ''
+});
 const mkElectricianDay = () => ({ shift1: mkElectricianShift(), shift2: mkElectricianShift() });
 function ensureElectricianDayState(day){
   if(!electricianState[day] || typeof electricianState[day] !== 'object') electricianState[day] = mkElectricianDay();
@@ -2296,6 +2401,16 @@ function ensureElectricianDayState(day){
   if(typeof electricianState[day].shift1.notes !== 'string') electricianState[day].shift1.notes = electricianState[day].shift1.notes ? String(electricianState[day].shift1.notes) : '';
   if(typeof electricianState[day].shift2.name !== 'string') electricianState[day].shift2.name = electricianState[day].shift2.name ? String(electricianState[day].shift2.name) : '';
   if(typeof electricianState[day].shift2.notes !== 'string') electricianState[day].shift2.notes = electricianState[day].shift2.notes ? String(electricianState[day].shift2.notes) : '';
+  if(typeof electricianState[day].shift1.photoPath !== 'string') electricianState[day].shift1.photoPath = electricianState[day].shift1.photoPath ? String(electricianState[day].shift1.photoPath) : '';
+  if(typeof electricianState[day].shift1.photoName !== 'string') electricianState[day].shift1.photoName = electricianState[day].shift1.photoName ? String(electricianState[day].shift1.photoName) : '';
+  if(typeof electricianState[day].shift2.photoPath !== 'string') electricianState[day].shift2.photoPath = electricianState[day].shift2.photoPath ? String(electricianState[day].shift2.photoPath) : '';
+  if(typeof electricianState[day].shift2.photoName !== 'string') electricianState[day].shift2.photoName = electricianState[day].shift2.photoName ? String(electricianState[day].shift2.photoName) : '';
+  ELECTRICIAN_EXTRA_FIELDS.forEach(function(item){
+    if(typeof electricianState[day].shift1[item.field] !== 'string') electricianState[day].shift1[item.field] = normalizeYesNoValue(electricianState[day].shift1[item.field]);
+    if(typeof electricianState[day].shift1[item.detailField] !== 'string') electricianState[day].shift1[item.detailField] = electricianState[day].shift1[item.detailField] ? String(electricianState[day].shift1[item.detailField]) : '';
+    if(typeof electricianState[day].shift2[item.field] !== 'string') electricianState[day].shift2[item.field] = normalizeYesNoValue(electricianState[day].shift2[item.field]);
+    if(typeof electricianState[day].shift2[item.detailField] !== 'string') electricianState[day].shift2[item.detailField] = electricianState[day].shift2[item.detailField] ? String(electricianState[day].shift2[item.detailField]) : '';
+  });
   return electricianState[day];
 }
 function resetElectricianWeekState(){
@@ -2442,6 +2557,14 @@ async function doLogin(){
       return;
   }
   const match = pickBestKilnUser(userRows, session.user);
+
+  if(match.is_locked === true && !match.is_admin){
+    errEl.textContent = 'Your account has been disabled. Please contact your administrator.';
+    errEl.style.display = 'block';
+    setSharedSession(null);
+    sb.auth.signOut().catch(function(){});
+      return;
+  }
 
   if(match.shift_log_access === false && !match.is_admin){
     errEl.textContent = 'You do not have access to Logs. Please contact your administrator.';
@@ -3011,7 +3134,7 @@ function renderManageTabs(activeTab){
     btn.className = 'modal-tab';
     btn.dataset.key = key;
     if(key === current) btn.classList.add('active');
-    if(key === 'ai_knowledge') btn.style.color = '#7c3aed';
+    if(key === 'ai_knowledge') btn.style.color = 'var(--role-manager)';
     btn.innerHTML = '<span>'+esc(label)+'</span><span class="modal-tab-badge '+meta.cls+'" title="'+esc(meta.title)+'"></span>';
     btn.onclick = function(){
       currentManageTab = key;
@@ -3476,7 +3599,7 @@ function renderSmDay(day){
   const d = ensureSmDayState(day);
   const canEdit = canEditSmShift();
   const mc = document.getElementById('mainContent');
-  mc.innerHTML = '<div class="page-header">' + buildDayHeader(day, 'Shift Manager Log', '#7c3aed', 'switchSmDay') + '</div></div>'
+  mc.innerHTML = '<div class="page-header">' + buildDayHeader(day, 'Shift Manager Log', 'var(--role-manager)', 'switchSmDay') + '</div></div>'
     + '<div class="search-wrap">'
     + '<button class="btn btn-ghost" onclick="openSearchModal()" style="width:100%;justify-content:flex-start;gap:8px;color:var(--tx3);font-weight:400;font-family:var(--ff-body);font-size:13px;border:1px solid var(--bd);background:var(--sf);padding:9px 14px;border-radius:var(--r)">'
     + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px;flex-shrink:0"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>'
@@ -3496,6 +3619,57 @@ function renderSmDay(day){
     head.innerHTML = '<div class="log-section-title">' + label + '</div>';
     const body = document.createElement('div');
     body.className = 'notes-body';
+
+    const nameLabel = document.createElement('div');
+    nameLabel.style.cssText = 'font-size:11px;font-family:var(--ff-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--tx3);margin-bottom:6px';
+    nameLabel.textContent = 'Shift Manager';
+    body.appendChild(nameLabel);
+
+    const nameSel = document.createElement('select');
+    nameSel.style.cssText = 'width:100%;height:38px;background:var(--inp);border:1px solid var(--bd);border-radius:var(--rxs);color:var(--tx);font-family:var(--ff-body);font-size:13px;padding:0 10px;outline:none;margin-bottom:12px';
+    const blank = document.createElement('option');
+    blank.value = '';
+    blank.textContent = 'Select manager...';
+    if(!sd.name) blank.selected = true;
+    nameSel.appendChild(blank);
+    const managerOptions = getShiftManagerNameOptions(sd.name);
+    if(!isAdmin && lockedName){
+      const lockedOp = document.createElement('option');
+      lockedOp.value = lockedName;
+      lockedOp.textContent = lockedName;
+      lockedOp.selected = sd.name === lockedName;
+      nameSel.appendChild(lockedOp);
+      if(sd.name === lockedName){
+        const removeOp = document.createElement('option');
+        removeOp.value = '';
+        removeOp.textContent = '✕ Remove my name';
+        removeOp.style.color = 'var(--red)';
+        nameSel.appendChild(removeOp);
+      }
+    } else {
+      managerOptions.forEach(function(name){
+        const op = document.createElement('option');
+        op.value = name;
+        op.textContent = name;
+        if(sd.name === name) op.selected = true;
+        nameSel.appendChild(op);
+      });
+    }
+    if(!canEditSmNameField(day, sk, sd.name || '')){
+      nameSel.disabled = true;
+      nameSel.style.opacity = '0.75';
+    } else {
+      nameSel.addEventListener('change', function(){ setSmShift(day, sk, 'name', this.value); });
+      nameSel.addEventListener('focus', function(){ this.style.borderColor='var(--role-manager)'; this.style.boxShadow='0 0 0 3px rgba(124,58,237,.14)'; });
+      nameSel.addEventListener('blur', function(){ this.style.borderColor='var(--bd)'; this.style.boxShadow='none'; });
+    }
+    body.appendChild(nameSel);
+
+    const notesLabel = document.createElement('div');
+    notesLabel.style.cssText = 'font-size:11px;font-family:var(--ff-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--tx3);margin:4px 0 6px';
+    notesLabel.textContent = 'Notes';
+    body.appendChild(notesLabel);
+
     const ta = document.createElement('textarea');
     ta.rows = 4;
     ta.value = sd.notes || '';
@@ -3505,7 +3679,7 @@ function renderSmDay(day){
       ta.placeholder = 'Shift manager notes...';
       ta.addEventListener('focus', function(){ this.style.borderColor='var(--ac)'; this.style.boxShadow='0 0 0 3px var(--acd1)'; });
       ta.addEventListener('blur', function(){ this.style.borderColor='var(--bd)'; this.style.boxShadow='none'; });
-      ta.addEventListener('input', (function(day,sk){ return function(){ smState[day][sk].notes=this.value; _smDirty.add(day+'|'+sk); autoSave(); updateDots(); }; })(day,sk));
+      ta.addEventListener('input', (function(day,sk){ return function(){ setSmShift(day, sk, 'notes', this.value); updateDots(); }; })(day,sk));
     }
     body.appendChild(ta);
     section.appendChild(head);
@@ -3568,9 +3742,113 @@ function setElectricianShift(day, sk, field, val){
     renderElectricianDay(day);
     return;
   }
-  row.notes = val;
+  if(ELECTRICIAN_EXTRA_FIELDS_SET.has(field)){
+    row[field] = field.endsWith('Details') ? String(val || '') : normalizeYesNoValue(val);
+  } else {
+    row.notes = val;
+  }
   markElectricianDirty(day, sk);
   autoSave();
+}
+
+function electricianShiftSummaryParts(row){
+  const parts = [];
+  const notes = String(row.notes || '').trim();
+  if(notes) parts.push(notes);
+  ELECTRICIAN_EXTRA_FIELDS.forEach(function(item){
+    const answer = normalizeYesNoValue(row[item.field]);
+    const details = String(row[item.detailField] || '').trim();
+    if(!answer && !details) return;
+    parts.push(item.label + ' ' + (answer ? answer.toUpperCase() : 'Not set'));
+    if(answer === 'yes' && details) parts.push(item.detailLabel + ': ' + details);
+  });
+  if(String(row.photoPath || '').trim() || String(row.photoName || '').trim()){
+    parts.push('Photo attached' + (row.photoName ? ': ' + row.photoName : ''));
+  }
+  return parts;
+}
+
+function electricianShiftSummaryHtml(row){
+  const parts = electricianShiftSummaryParts(row);
+  if(!parts.length) return '<span style="color:var(--tx3)">No notes recorded</span>';
+  return parts.map(function(part, idx){
+    return idx === 0
+      ? '<div style="white-space:pre-wrap">' + esc(part) + '</div>'
+      : '<div style="margin-top:6px;padding-top:6px;border-top:1px solid var(--bd);white-space:pre-wrap">' + esc(part) + '</div>';
+  }).join('');
+}
+
+function electricianShiftSearchText(row){
+  return [row.name || '', row.notes || ''].concat(
+    ELECTRICIAN_EXTRA_FIELDS.flatMap(function(item){
+      return [
+        row[item.field] || '',
+        row[item.detailField] || '',
+        normalizeYesNoValue(row[item.field]) === 'yes' ? item.label : ''
+      ];
+    })
+  ).concat([row.photoName || '', row.photoPath || '']).join(' ');
+}
+
+function electricianShiftHasContent(row){
+  if(!row) return false;
+  if((row.name||'').trim() || (row.notes||'').trim() || (row.photoPath||'').trim() || (row.photoName||'').trim()) return true;
+  return ELECTRICIAN_EXTRA_FIELDS.some(function(item){
+    return String(row[item.field] || '').trim() || String(row[item.detailField] || '').trim();
+  });
+}
+
+async function electricianUploadPhoto(day, sk, file){
+  if(!file) return;
+  ensureSharedClient();
+  const row = ensureElectricianDayState(day)[sk];
+  const iso = weekStart ? toISO(weekStart) : 'current';
+  const safeName = String(file.name || 'photo').replace(/[^a-zA-Z0-9._-]+/g, '_');
+  const path = ['electrician', iso, day, sk, Date.now() + '_' + safeName].join('/');
+  const { error } = await sb.storage.from(ELECTRICIAN_PHOTO_BUCKET).upload(path, file, {
+    upsert: true,
+    contentType: file.type || 'image/jpeg'
+  });
+  if(error) throw error;
+  row.photoPath = path;
+  row.photoName = file.name || safeName;
+  markElectricianDirty(day, sk);
+  autoSave();
+  renderElectricianDay(day);
+  showToast('Photo added ✓');
+}
+
+async function electricianLoadPhotoUrl(photoPath){
+  if(!photoPath) return '';
+  try {
+    ensureSharedClient();
+    const res = await sb.storage.from(ELECTRICIAN_PHOTO_BUCKET).createSignedUrl(photoPath, 60 * 60 * 24);
+    return res && res.data && res.data.signedUrl ? res.data.signedUrl : '';
+  } catch(e){
+    console.warn('Photo URL load failed:', e);
+    return '';
+  }
+}
+
+async function electricianRemovePhoto(day, sk){
+  ensureSharedClient();
+  const row = ensureElectricianDayState(day)[sk];
+  const path = (row.photoPath || '').trim();
+  if(!path) return;
+  try {
+    await sb.storage.from(ELECTRICIAN_PHOTO_BUCKET).remove([path]);
+  } catch(e){
+    console.warn('Photo delete failed:', e);
+    throw e;
+  }
+  row.photoPath = '';
+  row.photoName = '';
+  markElectricianDirty(day, sk);
+  clearTimeout(_sbSaveTimer);
+  _sbSaveTimer = null;
+  const ok = await sbSaveCloud();
+  renderElectricianDay(day);
+  showToast(ok ? 'Photo removed ✓' : 'Photo removed locally — sync failed');
 }
 
 function renderElectricianDay(day){
@@ -3578,7 +3856,7 @@ function renderElectricianDay(day){
   setDualNavVisibility(true);
   const d = ensureElectricianDayState(day);
   const mc = document.getElementById('mainContent');
-  mc.innerHTML = '<div class="page-header">' + buildDayHeader(day, 'Electrician Log', '#0f766e', 'switchElectricianDay') + '</div></div>'
+  mc.innerHTML = '<div class="page-header">' + buildDayHeader(day, 'Electrician Log', 'var(--role-electrician)', 'switchElectricianDay') + '</div></div>'
     + '<div class="search-wrap">'
     + '<button class="btn btn-ghost" onclick="openSearchModal()" style="width:100%;justify-content:flex-start;gap:8px;color:var(--tx3);font-weight:400;font-family:var(--ff-body);font-size:13px;border:1px solid var(--bd);background:var(--sf);padding:9px 14px;border-radius:var(--r)">'
     + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px;flex-shrink:0"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>'
@@ -3639,13 +3917,13 @@ function renderElectricianDay(day){
       nameSel.style.opacity = '0.75';
     } else {
       nameSel.addEventListener('change', function(){ setElectricianShift(day, sk, 'name', this.value); });
-      nameSel.addEventListener('focus', function(){ this.style.borderColor='#0f766e'; this.style.boxShadow='0 0 0 3px rgba(15,118,110,.14)'; });
+      nameSel.addEventListener('focus', function(){ this.style.borderColor='var(--role-electrician)'; this.style.boxShadow='0 0 0 3px rgba(56,189,248,.14)'; });
       nameSel.addEventListener('blur', function(){ this.style.borderColor='var(--bd)'; this.style.boxShadow='none'; });
     }
     body.appendChild(nameSel);
 
     const notesLabel = document.createElement('div');
-    notesLabel.style.cssText = 'font-size:11px;font-family:var(--ff-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--tx3);margin-bottom:6px';
+    notesLabel.style.cssText = 'font-size:11px;font-family:var(--ff-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--tx3);margin:4px 0 6px';
     notesLabel.textContent = 'Notes';
     body.appendChild(notesLabel);
 
@@ -3660,11 +3938,154 @@ function renderElectricianDay(day){
       ta.style.resize = 'none';
       ta.style.opacity = '0.8';
     } else {
-      ta.addEventListener('focus', function(){ this.style.borderColor='#0f766e'; this.style.boxShadow='0 0 0 3px rgba(15,118,110,.14)'; });
+      ta.addEventListener('focus', function(){ this.style.borderColor='var(--role-electrician)'; this.style.boxShadow='0 0 0 3px rgba(56,189,248,.14)'; });
       ta.addEventListener('blur', function(){ this.style.borderColor='var(--bd)'; this.style.boxShadow='none'; });
       ta.addEventListener('input', function(){ setElectricianShift(day, sk, 'notes', this.value); });
     }
     body.appendChild(ta);
+
+    ELECTRICIAN_EXTRA_FIELDS.forEach(function(item){
+      const fieldWrap = document.createElement('div');
+      fieldWrap.style.marginTop = '14px';
+
+      const fieldLabel = document.createElement('div');
+      fieldLabel.style.cssText = 'font-size:11px;font-family:var(--ff-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--tx3);margin-bottom:6px';
+      fieldLabel.textContent = item.label;
+      fieldWrap.appendChild(fieldLabel);
+
+      const answerSel = document.createElement('select');
+      answerSel.style.cssText = 'width:100%;height:38px;background:var(--inp);border:1px solid var(--bd);border-radius:var(--rxs);color:var(--tx);font-family:var(--ff-body);font-size:13px;padding:0 10px;outline:none';
+      const answerBlank = document.createElement('option');
+      answerBlank.value = '';
+      answerBlank.textContent = 'Select answer...';
+      if(!normalizeYesNoValue(row[item.field])) answerBlank.selected = true;
+      answerSel.appendChild(answerBlank);
+      ['yes', 'no'].forEach(function(answer){
+        const op = document.createElement('option');
+        op.value = answer;
+        op.textContent = answer === 'yes' ? 'Yes' : 'No';
+        if(normalizeYesNoValue(row[item.field]) === answer) op.selected = true;
+        answerSel.appendChild(op);
+      });
+      if(!canEditShift){
+        answerSel.disabled = true;
+        answerSel.style.opacity = '0.75';
+      } else {
+        answerSel.addEventListener('change', function(){ setElectricianShift(day, sk, item.field, this.value); });
+        answerSel.addEventListener('focus', function(){ this.style.borderColor='var(--role-electrician)'; this.style.boxShadow='0 0 0 3px rgba(56,189,248,.14)'; });
+        answerSel.addEventListener('blur', function(){ this.style.borderColor='var(--bd)'; this.style.boxShadow='none'; });
+      }
+      fieldWrap.appendChild(answerSel);
+
+      const detailWrap = document.createElement('div');
+      detailWrap.style.marginTop = '8px';
+      detailWrap.style.display = normalizeYesNoValue(row[item.field]) === 'yes' ? '' : 'none';
+      const detailLabel = document.createElement('div');
+      detailLabel.style.cssText = 'font-size:11px;font-family:var(--ff-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--tx3);margin-bottom:6px';
+      detailLabel.textContent = item.detailLabel;
+      detailWrap.appendChild(detailLabel);
+      const detailTa = document.createElement('textarea');
+      detailTa.rows = 4;
+      detailTa.value = row[item.detailField] || '';
+      detailTa.placeholder = item.placeholder;
+      detailTa.style.cssText = 'width:100%;background:var(--inp);border:1px solid var(--bd);border-radius:var(--rxs);color:var(--tx);font-family:var(--ff-body);font-size:13px;padding:10px 12px;outline:none;resize:vertical;line-height:1.6;transition:border-color .15s,box-shadow .15s';
+      if(!canEditShift){
+        detailTa.readOnly = true;
+        detailTa.style.background = 'transparent';
+        detailTa.style.resize = 'none';
+        detailTa.style.opacity = '0.8';
+      } else {
+        detailTa.addEventListener('focus', function(){ this.style.borderColor='var(--role-electrician)'; this.style.boxShadow='0 0 0 3px rgba(56,189,248,.14)'; });
+        detailTa.addEventListener('blur', function(){ this.style.borderColor='var(--bd)'; this.style.boxShadow='none'; });
+        detailTa.addEventListener('input', function(){ setElectricianShift(day, sk, item.detailField, this.value); });
+      }
+      detailWrap.appendChild(detailTa);
+      answerSel.addEventListener('change', function(){ detailWrap.style.display = this.value === 'yes' ? '' : 'none'; });
+      fieldWrap.appendChild(detailWrap);
+      body.appendChild(fieldWrap);
+    });
+
+    const photoWrap = document.createElement('div');
+    photoWrap.style.marginTop = '16px';
+    photoWrap.style.paddingTop = '14px';
+    photoWrap.style.borderTop = '1px solid var(--bd)';
+
+    const photoLabel = document.createElement('div');
+    photoLabel.style.cssText = 'font-size:11px;font-family:var(--ff-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--tx3);margin-bottom:6px';
+    photoLabel.textContent = 'Photo';
+    photoWrap.appendChild(photoLabel);
+
+    const photoPreview = document.createElement('div');
+    photoPreview.style.marginBottom = '10px';
+    if((row.photoPath || '').trim()){
+      const imgWrap = document.createElement('div');
+      imgWrap.style.cssText = 'display:flex;gap:10px;align-items:flex-start;padding:10px;border:1px solid var(--bd);border-radius:var(--rsm);background:var(--sf2)';
+      const img = document.createElement('img');
+      img.alt = row.photoName || 'Electrician photo';
+      img.style.cssText = 'width:104px;height:78px;object-fit:cover;border-radius:8px;border:1px solid var(--bd2);background:var(--sf)';
+      electricianLoadPhotoUrl(row.photoPath).then(function(url){ if(url) img.src = url; });
+      const meta = document.createElement('div');
+      meta.style.cssText = 'flex:1;min-width:0;font-size:11px;color:var(--tx2);line-height:1.5';
+      meta.innerHTML = '<div style="font-weight:600;color:var(--tx)">'+esc(row.photoName || 'Photo attached')+'</div>';
+      imgWrap.appendChild(img);
+      imgWrap.appendChild(meta);
+      photoPreview.appendChild(imgWrap);
+    }
+    photoWrap.appendChild(photoPreview);
+
+    const photoActions = document.createElement('div');
+    photoActions.style.cssText = 'display:flex;gap:10px;flex-wrap:wrap';
+    const photoBtn = document.createElement('button');
+    photoBtn.type = 'button';
+    photoBtn.className = 'btn btn-ghost';
+    photoBtn.style.cssText = 'padding:9px 12px;border:1px solid var(--bd);background:var(--sf);border-radius:var(--rxs);font-size:12px';
+    photoBtn.textContent = (row.photoPath || '').trim() ? 'Replace photo' : 'Add photo';
+    if(canEditShift){
+      const photoInput = document.createElement('input');
+      photoInput.type = 'file';
+      photoInput.accept = 'image/*';
+      photoInput.capture = 'environment';
+      photoInput.style.display = 'none';
+      photoBtn.addEventListener('click', function(){ photoInput.click(); });
+      photoInput.addEventListener('change', async function(){
+        const file = this.files && this.files[0];
+        if(!file) return;
+        try{
+          photoBtn.disabled = true;
+          photoBtn.textContent = 'Uploading...';
+          await electricianUploadPhoto(day, sk, file);
+        } catch(err){
+          console.warn('Electrician photo upload failed:', err);
+          showToast('Photo upload failed');
+          photoBtn.disabled = false;
+          photoBtn.textContent = (row.photoPath || '').trim() ? 'Replace photo' : 'Add photo';
+        } finally {
+          this.value = '';
+        }
+      });
+      photoActions.appendChild(photoBtn);
+      if((row.photoPath || '').trim()){
+        const removePhotoBtn = document.createElement('button');
+        removePhotoBtn.type = 'button';
+        removePhotoBtn.className = 'btn btn-ghost';
+        removePhotoBtn.style.cssText = 'padding:9px 12px;border:1px solid var(--redb);background:var(--redd);border-radius:var(--rxs);font-size:12px;color:var(--red)';
+        removePhotoBtn.textContent = 'Remove photo';
+        removePhotoBtn.addEventListener('click', async function(){
+          if(!confirm('Remove this photo from the log?')) return;
+          try{
+            removePhotoBtn.disabled = true;
+            await electricianRemovePhoto(day, sk);
+          } catch(err){
+            showToast('Could not remove photo');
+            removePhotoBtn.disabled = false;
+          }
+        });
+        photoActions.appendChild(removePhotoBtn);
+      }
+      photoActions.appendChild(photoInput);
+    }
+    photoWrap.appendChild(photoActions);
+    body.appendChild(photoWrap);
 
     section.appendChild(head);
     section.appendChild(body);
@@ -3735,7 +4156,7 @@ function renderMechanicalDay(day){
   setDualNavVisibility(true);
   const d = ensureMechanicalDayState(day);
   const mc = document.getElementById('mainContent');
-  mc.innerHTML = '<div class="page-header">' + buildDayHeader(day, 'Mechanical Log', '#2563eb', 'switchMechanicalDay') + '</div></div>'
+  mc.innerHTML = '<div class="page-header">' + buildDayHeader(day, 'Mechanical Log', 'var(--role-mechanical)', 'switchMechanicalDay') + '</div></div>'
     + '<div class="search-wrap">'
     + '<button class="btn btn-ghost" onclick="openSearchModal()" style="width:100%;justify-content:flex-start;gap:8px;color:var(--tx3);font-weight:400;font-family:var(--ff-body);font-size:13px;border:1px solid var(--bd);background:var(--sf);padding:9px 14px;border-radius:var(--r)">'
     + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px;flex-shrink:0"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>'
@@ -3796,7 +4217,7 @@ function renderMechanicalDay(day){
       nameSel.style.opacity = '0.75';
     } else {
       nameSel.addEventListener('change', function(){ setMechanicalShift(day, sk, 'name', this.value); });
-      nameSel.addEventListener('focus', function(){ this.style.borderColor='#2563eb'; this.style.boxShadow='0 0 0 3px rgba(37,99,235,.14)'; });
+      nameSel.addEventListener('focus', function(){ this.style.borderColor='var(--role-mechanical)'; this.style.boxShadow='0 0 0 3px rgba(37,99,235,.14)'; });
       nameSel.addEventListener('blur', function(){ this.style.borderColor='var(--bd)'; this.style.boxShadow='none'; });
     }
     body.appendChild(nameSel);
@@ -3817,7 +4238,7 @@ function renderMechanicalDay(day){
       ta.style.resize = 'none';
       ta.style.opacity = '0.8';
     } else {
-      ta.addEventListener('focus', function(){ this.style.borderColor='#2563eb'; this.style.boxShadow='0 0 0 3px rgba(37,99,235,.14)'; });
+      ta.addEventListener('focus', function(){ this.style.borderColor='var(--role-mechanical)'; this.style.boxShadow='0 0 0 3px rgba(37,99,235,.14)'; });
       ta.addEventListener('blur', function(){ this.style.borderColor='var(--bd)'; this.style.boxShadow='none'; });
       ta.addEventListener('input', function(){ setMechanicalShift(day, sk, 'notes', this.value); });
     }
@@ -4118,7 +4539,7 @@ function renderCaDay(day){
     loginWrap.appendChild(loginLbl); loginWrap.appendChild(loginInp);
     blendRow.appendChild(loginWrap);
     sampContent.appendChild(blendRow);
-    body.appendChild(sec('Clinker Operation & Quality Control','#b45309',sampContent));
+    body.appendChild(sec('Clinker Operation & Quality Control','var(--role-analyst)',sampContent));
 
     const cemQContent = document.createElement('div');
     cemQContent.style.cssText='display:flex;flex-direction:column;gap:6px;';
@@ -4174,7 +4595,7 @@ function renderCaDay(day){
     else domeInp.addEventListener('input',function(){ sd.additives.domeChutes=this.value; autoSave(); });
     domeRow.appendChild(domeLbl); domeRow.appendChild(domeInp);
     addContent.appendChild(domeRow);
-    body.appendChild(sec('Additive Checks','#7c3aed',addContent));
+    body.appendChild(sec('Additive Checks','var(--role-manager)',addContent));
 
     const labContent = document.createElement('div');
     labContent.style.cssText='display:flex;flex-direction:column;gap:4px;';
@@ -4293,7 +4714,7 @@ function renderCaDay(day){
       });
       grindContent.appendChild(addBtn);
     }
-    body.appendChild(sec('Cement Grinding Log','#b45309',grindContent));
+    body.appendChild(sec('Cement Grinding Log','var(--role-analyst)',grindContent));
 
     panel.addEventListener('input', function(ev){
       if(ev.target.tagName === 'TEXTAREA' && ev.target.classList.contains('ca-inp')){
@@ -4312,7 +4733,7 @@ function renderCaDay(day){
 
   mc.innerHTML='';
   const header=document.createElement('div'); header.className='page-header';
-  header.innerHTML=buildDayHeader(day, 'Cement Analyst Log', '#b45309', 'switchCaDay') + '</div></div>';
+  header.innerHTML=buildDayHeader(day, 'Cement Analyst Log', 'var(--role-analyst)', 'switchCaDay') + '</div></div>';
   mc.appendChild(header);
   const searchWrap=document.createElement('div');
   searchWrap.className='search-wrap';
@@ -4573,7 +4994,17 @@ function electricianRowsToWeek(rows){
     if(!row || !row.day || !row.shift || !week[row.day] || !week[row.day][row.shift]) return;
     week[row.day][row.shift] = {
       name: row.electrician_name || '',
-      notes: row.notes || ''
+      notes: row.notes || '',
+      openWorkItems: normalizeYesNoValue(row.open_work_items),
+      openWorkItemsDetails: row.open_work_items_details || '',
+      issuesChallenges: normalizeYesNoValue(row.issues_challenges),
+      issuesChallengesDetails: row.issues_challenges_details || '',
+      deliveriesScheduled: normalizeYesNoValue(row.deliveries_scheduled),
+      deliveriesScheduledDetails: row.deliveries_scheduled_details || '',
+      sparePartsUsed: normalizeYesNoValue(row.spare_parts_used),
+      sparePartsUsedDetails: row.spare_parts_used_details || '',
+      photoPath: row.photo_path || '',
+      photoName: row.photo_name || ''
     };
   });
   return week;
@@ -4593,12 +5024,6 @@ function mechanicalRowsToWeek(rows){
 
 const KILN_TRADE_LOG_TABLE = 'kiln_trade_log';
 
-function tradeMeta(trade){
-  return trade === 'electrician'
-    ? { oldTable: 'kiln_electrician_log', oldName: 'electrician_name' }
-    : { oldTable: 'kiln_mechanical_log', oldName: 'mechanical_name' };
-}
-
 function tradeWeekFactory(trade){
   return trade === 'electrician' ? mkElectricianWeek() : mkMechanicalWeek();
 }
@@ -4607,50 +5032,67 @@ function tradeRowsToWeek(trade, rows){
   const week = tradeWeekFactory(trade);
   (rows || []).forEach(function(row){
     if(!row || !row.day || !row.shift || !week[row.day] || !week[row.day][row.shift]) return;
-    week[row.day][row.shift] = {
-      name: row.person_name || row.electrician_name || row.mechanical_name || '',
-      notes: row.notes || ''
-    };
+    week[row.day][row.shift] = trade === 'electrician'
+      ? {
+          name: row.person_name || row.electrician_name || '',
+          notes: row.notes || '',
+          openWorkItems: normalizeYesNoValue(row.open_work_items),
+          openWorkItemsDetails: row.open_work_items_details || '',
+          issuesChallenges: normalizeYesNoValue(row.issues_challenges),
+          issuesChallengesDetails: row.issues_challenges_details || '',
+          deliveriesScheduled: normalizeYesNoValue(row.deliveries_scheduled),
+          deliveriesScheduledDetails: row.deliveries_scheduled_details || '',
+          sparePartsUsed: normalizeYesNoValue(row.spare_parts_used),
+          sparePartsUsedDetails: row.spare_parts_used_details || '',
+          photoPath: row.photo_path || '',
+          photoName: row.photo_name || ''
+        }
+      : {
+          name: row.person_name || row.mechanical_name || '',
+          notes: row.notes || ''
+        };
   });
   return week;
 }
 
 async function loadTradeWeek(trade, isoMonday){
-  const meta = tradeMeta(trade);
   try {
-    const rows = await sbFetch('/rest/v1/' + KILN_TRADE_LOG_TABLE + '?week_key=eq.'+isoMonday+'&trade=eq.'+trade+'&select=day,shift,person_name,notes');
-    if(!rows || !rows.length) throw new Error('No merged trade rows yet');
+    const cols = trade === 'electrician'
+      ? 'day,shift,person_name,notes,open_work_items,open_work_items_details,issues_challenges,issues_challenges_details,deliveries_scheduled,deliveries_scheduled_details,spare_parts_used,spare_parts_used_details,photo_path,photo_name'
+      : 'day,shift,person_name,notes';
+    const rows = await sbFetch('/rest/v1/' + KILN_TRADE_LOG_TABLE + '?week_key=eq.'+isoMonday+'&trade=eq.'+trade+'&select=' + cols);
+    if(!rows || !rows.length) return null;
     const next = tradeWeekFactory(trade);
     (rows || []).forEach(function(row){
       if(!row || !next[row.day] || !next[row.day][row.shift]) return;
-      next[row.day][row.shift] = {
-        name: row.person_name || '',
-        notes: row.notes || ''
-      };
+      next[row.day][row.shift] = trade === 'electrician'
+        ? {
+            name: row.person_name || '',
+            notes: row.notes || '',
+            openWorkItems: normalizeYesNoValue(row.open_work_items),
+            openWorkItemsDetails: row.open_work_items_details || '',
+            issuesChallenges: normalizeYesNoValue(row.issues_challenges),
+            issuesChallengesDetails: row.issues_challenges_details || '',
+            deliveriesScheduled: normalizeYesNoValue(row.deliveries_scheduled),
+            deliveriesScheduledDetails: row.deliveries_scheduled_details || '',
+            sparePartsUsed: normalizeYesNoValue(row.spare_parts_used),
+            sparePartsUsedDetails: row.spare_parts_used_details || '',
+            photoPath: row.photo_path || '',
+            photoName: row.photo_name || ''
+          }
+        : {
+            name: row.person_name || '',
+            notes: row.notes || ''
+          };
     });
     return next;
   } catch(e){
-    try {
-      const rows = await sbFetch('/rest/v1/'+meta.oldTable+'?week_key=eq.'+isoMonday+'&select=day,shift,'+meta.oldName+',notes');
-      if(!rows || !rows.length) throw new Error('No legacy trade rows yet');
-      const next = tradeWeekFactory(trade);
-      (rows || []).forEach(function(row){
-        if(!row || !next[row.day] || !next[row.day][row.shift]) return;
-        next[row.day][row.shift] = {
-          name: row[meta.oldName] || '',
-          notes: row.notes || ''
-        };
-      });
-      return next;
-    } catch(e2){
-      console.warn('Supabase ' + trade + ' load failed:', e2);
-    }
+    console.warn('Supabase ' + trade + ' load failed:', e);
   }
   return null;
 }
 
 async function loadTradeWeeksForScope(trade, scopeMondays){
-  const meta = tradeMeta(trade);
   const rowsForTrade = async function(tableName, selectCols){
     if(scopeMondays){
       const fetches = scopeMondays.map(function(m){
@@ -4663,8 +5105,13 @@ async function loadTradeWeeksForScope(trade, scopeMondays){
   };
 
   try {
-    const rows = await rowsForTrade(KILN_TRADE_LOG_TABLE, 'trade,person_name,notes');
-    if(!rows || !rows.length) throw new Error('No merged trade rows yet');
+    const rows = await rowsForTrade(
+      KILN_TRADE_LOG_TABLE,
+      trade === 'electrician'
+        ? 'trade,person_name,notes,open_work_items,open_work_items_details,issues_challenges,issues_challenges_details,deliveries_scheduled,deliveries_scheduled_details,spare_parts_used,spare_parts_used_details,photo_path,photo_name'
+        : 'trade,person_name,notes'
+    );
+    if(!rows || !rows.length) return [];
     const filtered = (rows || []).filter(function(row){ return row && row.trade === trade && row.week_key && row.week_key !== '__lists__'; });
     const grouped = {};
     filtered.forEach(function(row){
@@ -4678,80 +5125,60 @@ async function loadTradeWeeksForScope(trade, scopeMondays){
       };
     });
   } catch(e){
-    try {
-      const rows = await rowsForTrade(meta.oldTable, meta.oldName + ',notes');
-      if(!rows || !rows.length) throw new Error('No legacy trade rows yet');
-      const grouped = {};
-      (rows || []).forEach(function(row){
-        if(!row || !row.week_key || row.week_key === '__lists__') return;
-        if(!grouped[row.week_key]) grouped[row.week_key] = [];
-        grouped[row.week_key].push(row);
-      });
-      return Object.keys(grouped).sort().map(function(weekKey){
-        return {
-          weekKey: weekKey,
-          [trade === 'electrician' ? 'weekElState' : 'weekMechState']: tradeRowsToWeek(trade, grouped[weekKey])
-        };
-      });
-    } catch(e2){
-      console.warn('Supabase ' + trade + ' load failed:', e2);
-      return [];
-    }
+    console.warn('Supabase ' + trade + ' load failed:', e);
+    return [];
   }
 }
 
 async function saveTradeDirty(trade, dirtySet, shouldShowState){
   const canView = trade === 'electrician' ? canViewElectricianLog() : canViewMechanicalLog();
   const ensureDayState = trade === 'electrician' ? ensureElectricianDayState : ensureMechanicalDayState;
-  const nameField = trade === 'electrician' ? 'electrician_name' : 'mechanical_name';
   if(!weekStart || !canView) return true;
   const showState = shouldShowState !== false;
   const iso = toISO(weekStart);
   const dirtyKeys = Array.from(dirtySet);
   if(!dirtyKeys.length) return true;
-  const meta = tradeMeta(trade);
   try {
     for(const dirtyKey of dirtyKeys){
       const parts = dirtyKey.split('|');
       const day = parts[0];
       const shift = parts[1];
       const row = ensureDayState(day)[shift];
-      const isEmpty = !row || (!row.name && !row.notes);
-      try {
-        if(isEmpty){
-          await sbFetch('/rest/v1/'+KILN_TRADE_LOG_TABLE+'?week_key=eq.'+encodeURIComponent(iso)+'&trade=eq.'+encodeURIComponent(trade)+'&day=eq.'+encodeURIComponent(day)+'&shift=eq.'+encodeURIComponent(shift), { method: 'DELETE' });
-        } else {
-          await sbFetch('/rest/v1/'+KILN_TRADE_LOG_TABLE+'?on_conflict=week_key,day,shift,trade', {
-            method: 'POST',
-            headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
-            body: JSON.stringify({
-              week_key: iso,
-              trade: trade,
-              day: day,
-              shift: shift,
-              person_name: row.name || null,
-              notes: row.notes || '',
-              updated_at: new Date().toISOString()
-            })
-          });
+      const hasElectricianExtras = trade === 'electrician' && ELECTRICIAN_EXTRA_FIELDS.some(function(item){
+        return String(row[item.field] || '').trim() || String(row[item.detailField] || '').trim();
+      });
+      const isEmpty = !row || (trade === 'electrician'
+        ? !electricianShiftHasContent(row)
+        : (!row.name && !row.notes));
+      if(isEmpty){
+        await sbFetch('/rest/v1/'+KILN_TRADE_LOG_TABLE+'?week_key=eq.'+encodeURIComponent(iso)+'&trade=eq.'+encodeURIComponent(trade)+'&day=eq.'+encodeURIComponent(day)+'&shift=eq.'+encodeURIComponent(shift), { method: 'DELETE' });
+      } else {
+        const body = {
+          week_key: iso,
+          trade: trade,
+          day: day,
+          shift: shift,
+          person_name: row.name || null,
+          notes: row.notes || '',
+          updated_at: new Date().toISOString()
+        };
+        if(trade === 'electrician'){
+          body.open_work_items = normalizeYesNoValue(row.openWorkItems);
+          body.open_work_items_details = row.openWorkItemsDetails || '';
+          body.issues_challenges = normalizeYesNoValue(row.issuesChallenges);
+          body.issues_challenges_details = row.issuesChallengesDetails || '';
+          body.deliveries_scheduled = normalizeYesNoValue(row.deliveriesScheduled);
+          body.deliveries_scheduled_details = row.deliveriesScheduledDetails || '';
+          body.spare_parts_used = normalizeYesNoValue(row.sparePartsUsed);
+          body.spare_parts_used_details = row.sparePartsUsedDetails || '';
+          body.photo_path = row.photoPath || '';
+          body.photo_name = row.photoName || '';
         }
-      } catch(inner){
-        if(isEmpty){
-          await sbFetch('/rest/v1/'+meta.oldTable+'?week_key=eq.'+encodeURIComponent(iso)+'&day=eq.'+encodeURIComponent(day)+'&shift=eq.'+encodeURIComponent(shift), { method: 'DELETE' });
-        } else {
-          await sbFetch('/rest/v1/'+meta.oldTable+'?on_conflict=week_key,day,shift', {
-            method: 'POST',
-            headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
-            body: JSON.stringify({
-              week_key: iso,
-              day: day,
-              shift: shift,
-              [nameField]: row.name || null,
-              notes: row.notes || '',
-              updated_at: new Date().toISOString()
-            })
-          });
-        }
+        await sbFetch('/rest/v1/'+KILN_TRADE_LOG_TABLE+'?on_conflict=week_key,day,shift,trade', {
+          method: 'POST',
+          headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+          body: JSON.stringify(body)
+        });
       }
       dirtySet.delete(dirtyKey);
     }
@@ -5006,8 +5433,15 @@ async function runSearch(){
         const d = weekElState[day]; if(!d) return;
         ['shift1','shift2'].forEach(function(sk,si){
           const s = d[sk]; if(!s) return;
-          const haystack = ((s.name||'')+' '+(s.notes||'')).toLowerCase();
-          if(haystack.includes(q)) results.push({ weekKey, day, shift: si===0?'Day':'Night', equipment:'Electrician', issue:(s.name ? s.name+' — ' : '') + (s.notes||''), burner:s.name || '' });
+          const haystack = electricianShiftSearchText(s).toLowerCase();
+          if(haystack.includes(q)) results.push({
+            weekKey,
+            day,
+            shift: si===0?'Day':'Night',
+            equipment:'Electrician',
+            issue: electricianShiftSummaryParts(s).join(' • ') || (s.name ? s.name+' — ' : '') + (s.notes||''),
+            burner:s.name || ''
+          });
         });
       });
     }
@@ -5303,12 +5737,13 @@ async function buildReportContext(){
   let burnerIssues = 0, burnerNotes = 0, managerNotes = 0;
   let electricianNotes = 0;
   let mechanicalNotes = 0;
-  let analystHse = 0, qualityIssues = 0, labIssues = 0, grindingIssues = 0;
+  let analystHse = 0, qualityIssues = 0, labIssues = 0, grindingIssues = 0, blendscanLogins = 0;
   const recentLines = [];
   const managerDetailLines = [];
   const electricianDetailLines = [];
   const mechanicalDetailLines = [];
   const analystDetailLines = [];
+  const analystBlendLines = [];
   const aiKnowledge = Array.isArray(_allLists.ai_knowledge) ? _allLists.ai_knowledge : [];
 
   if (aiKnowledge.length) {
@@ -5343,10 +5778,12 @@ async function buildReportContext(){
         ['shift1','shift2'].forEach(function(sk,si){
           const s = d[sk]; if(!s) return;
           const notes = (s.notes||'').trim();
+          const name = (s.name||'').trim();
           if(!notes) return;
           managerNotes++;
-          if(managerDetailLines.length < 40) managerDetailLines.push('  ' + weekKey + ' | ' + day + ' ' + (si===0?'Day':'Night') + ' | ' + notes);
-          if(recentLines.length < 16) recentLines.push('  Shift manager | '+weekKey+' | '+day+' '+(si===0?'Day':'Night')+' | '+notes.slice(0,110));
+          const noteLine = (name ? name + ' — ' : '') + notes;
+          if(managerDetailLines.length < 40) managerDetailLines.push('  ' + weekKey + ' | ' + day + ' ' + (si===0?'Day':'Night') + ' | ' + noteLine);
+          if(recentLines.length < 16) recentLines.push('  Shift manager | '+weekKey+' | '+day+' '+(si===0?'Day':'Night')+' | '+noteLine.slice(0,110));
         });
       });
     }
@@ -5355,10 +5792,19 @@ async function buildReportContext(){
         const d = weekCaState[day]; if(!d) return;
         ['shift1','shift2'].forEach(function(sk,si){
           const s = d[sk]; if(!s) return;
+          const blendscan = (s.blendscan || '').trim();
+          const blendLogin = (s.blendLogin || '').trim();
           const hseItems = (s.hse||[]).filter(function(h){return h.type||h.details;});
           const grind = (s.cemQuality||[]).filter(function(q){return (q.issues||'').trim();});
           const labBad = Object.entries(s.labEquip||{}).filter(function(x){return x[1].functional==='No'||x[1].functional==='N/A';});
           const grindLog = (s.grindingLog||[]).filter(function(g){return g.equipment||g.problem;});
+          if(blendscan === 'Yes' || blendLogin){
+            blendscanLogins++;
+            if(analystBlendLines.length < 40){
+              analystBlendLines.push('  Blendscan | ' + weekKey + ' | ' + day + ' ' + (si===0?'Day':'Night') + ' | ' + (s.name ? s.name + ' | ' : '') + (blendscan || 'Yes') + ' | ' + (blendLogin || 'No time recorded'));
+            }
+            if(recentLines.length < 16) recentLines.push('  Analyst blendscan | '+weekKey+' | '+day+' '+(si===0?'Day':'Night')+' | '+(s.name ? s.name+' · ' : '')+(blendscan || 'Yes')+' · '+(blendLogin || 'No time recorded'));
+          }
           analystHse += hseItems.length;
           qualityIssues += grind.length;
           labIssues += labBad.length;
@@ -5395,12 +5841,12 @@ async function buildReportContext(){
         const d = weekElState[day]; if(!d) return;
         ['shift1','shift2'].forEach(function(sk,si){
           const s = d[sk]; if(!s) return;
-          const notes = (s.notes||'').trim();
-          const name = (s.name||'').trim();
-          if(!notes && !name) return;
-          if(notes) electricianNotes++;
-          if(electricianDetailLines.length < 40) electricianDetailLines.push('  ' + weekKey + ' | ' + day + ' ' + (si===0?'Day':'Night') + ' | ' + (name ? name + ' — ' : '') + (notes || 'No notes'));
-          if(recentLines.length < 16) recentLines.push('  Electrician | '+weekKey+' | '+day+' '+(si===0?'Day':'Night')+' | '+(name ? name+' — ' : '')+notes.slice(0,110));
+          const summaryParts = electricianShiftSummaryParts(s);
+          if(!summaryParts.length) return;
+          electricianNotes++;
+          const detailLine = (s.name ? s.name + ' | ' : '') + summaryParts.join(' | ');
+          if(electricianDetailLines.length < 40) electricianDetailLines.push('  ' + weekKey + ' | ' + day + ' ' + (si===0?'Day':'Night') + ' | ' + detailLine);
+          if(recentLines.length < 16) recentLines.push('  Electrician | '+weekKey+' | '+day+' '+(si===0?'Day':'Night')+' | '+detailLine);
         });
       });
     }
@@ -5439,6 +5885,7 @@ async function buildReportContext(){
     lines.push('  Analyst quality issues: '+qualityIssues);
     lines.push('  Analyst lab equipment issues: '+labIssues);
     lines.push('  Grinding log issues: '+grindingIssues);
+    lines.push('  Blendscan supervisor log-ins: '+blendscanLogins);
   }
   if(roleScopes.managers){
     lines.push('');
@@ -5459,6 +5906,10 @@ async function buildReportContext(){
     else lines.push('  No mechanical notes recorded for the selected scope.');
   }
   if(roleScopes.analysts){
+    lines.push('');
+    lines.push('BLENDSCAN SUPERVISOR LOG-IN DETAILS:');
+    if(analystBlendLines.length) analystBlendLines.forEach(function(line){ lines.push(line); });
+    else lines.push('  No Blendscan log-ins recorded for the selected scope.');
     lines.push('');
     lines.push('CEMENT ANALYST DETAILS:');
     if(analystDetailLines.length) analystDetailLines.forEach(function(line){ lines.push(line); });
@@ -6569,6 +7020,48 @@ function canEditSmShift(){
   if(isShiftManager) return true;
   return false; // burners without SM role cannot edit
 }
+function canEditSmNameField(day, sk, val){
+  if(readOnly) return false;
+  if(isAdmin) return true;
+  if(!isShiftManager) return false;
+  const row = ensureSmDayState(day)[sk];
+  const current = row.name || '';
+  if(current && lockedName && current !== lockedName) return false;
+  if(!val) return !current || current === lockedName;
+  return !lockedName || val === lockedName;
+}
+function getShiftManagerNameOptions(rowName){
+  if(isAdmin){
+    const names = managers.slice();
+    if(rowName && names.indexOf(rowName) < 0) names.push(rowName);
+    return names.sort(function(a, b){ return String(a).localeCompare(String(b), undefined, { sensitivity: 'base' }); });
+  }
+  return lockedName ? [lockedName] : [];
+}
+function setSmShift(day, sk, field, val){
+  const row = ensureSmDayState(day)[sk];
+  if(field === 'name'){
+    if(!canEditSmNameField(day, sk, val)){
+      showToast('You can only edit your own shift');
+      renderSmDay(day);
+      return;
+    }
+    row.name = val || '';
+    if(!row.name && !row.notes) _smDirty.add(day + '|' + sk);
+    else _smDirty.add(day + '|' + sk);
+    autoSave();
+    renderSmDay(day);
+    return;
+  }
+  if(!canEditSmShift()){
+    showToast('You can only edit your own shift');
+    renderSmDay(day);
+    return;
+  }
+  row.notes = val || '';
+  _smDirty.add(day + '|' + sk);
+  autoSave();
+}
 function canEditCaShift(sk, day){
   if(readOnly) return false;
   if(isAdmin) return true;
@@ -6896,9 +7389,12 @@ function renderOverview(){
     + '<button type="button" class="page-period-jump'+(window._overviewPeriod==='year'?' active':'')+'" onclick="setOverviewPeriod(\'year\')">Year</button>'
     + '</div>'
     + '<div class="overview-date-group">'
+    + '<div class="overview-step-group">'
     + '<button type="button" class="page-period-jump overview-step-jump" onclick="moveOverviewDate(-1)" title="Previous '+getOverviewPeriodLabel(window._overviewPeriod).toLowerCase()+'">−</button>'
-    + '<input type="date" id="overviewDatePicker" class="overview-date-picker" value="'+esc(overviewDateValue)+'" onchange="jumpOverviewToDate(this.value)" title="Jump to a date">'
     + '<button type="button" class="page-period-jump overview-step-jump" onclick="moveOverviewDate(1)" title="Next '+getOverviewPeriodLabel(window._overviewPeriod).toLowerCase()+'">+</button>'
+    + '</div>'
+    + '<div class="overview-date-picker-wrap">'
+    + '<input type="date" id="overviewDatePicker" class="overview-date-picker" value="'+esc(overviewDateValue)+'" onchange="jumpOverviewToDate(this.value)" title="Jump to a date">'
     + '<button type="button" class="page-period-jump" onclick="resetOverviewToCurrentWeek()">This Week</button>'
     + '</div>'
     + '</div>'
@@ -6910,7 +7406,7 @@ function renderOverview(){
     const filterBar = document.createElement('div');
     filterBar.style.cssText = 'display:flex;align-items:center;gap:8px;margin-bottom:18px;flex-wrap:wrap;';
     filterBar.innerHTML = '<span style="font-size:11px;font-weight:600;color:var(--tx3);font-family:var(--ff-mono);letter-spacing:.08em;text-transform:uppercase;margin-right:4px">Include:</span>';
-    [['burners','Kiln Burners','var(--ac)'],['managers','Shift Managers','#7c3aed'],['electricians','Electricians','#0f766e'],['mechanicals','Mechanical','#2563eb'],['analysts','Cement Analysts','#b45309']].forEach(function(t){
+    [['burners','Kiln Burners','var(--role-burner)'],['managers','Shift Managers','var(--role-manager)'],['electricians','Electricians','var(--role-electrician)'],['mechanicals','Mechanical','var(--role-mechanical)'],['analysts','Cement Analysts','var(--role-analyst)']].forEach(function(t){
       const key=t[0],label=t[1],col=t[2];
       const btn=document.createElement('button');
       function refreshBtn(){ if(F[key]){btn.style.cssText='padding:5px 13px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;border:1.5px solid '+col+';background:'+col+'22;color:'+col+';';}else{btn.style.cssText='padding:5px 13px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;border:1.5px solid var(--bd);background:transparent;color:var(--tx3);';} }
@@ -6974,7 +7470,7 @@ function renderOverviewBody(){
       });
     });
     if(smRows.length){
-      add(secHdr('#7c3aed','👤','Shift Managers — Notes',true));
+      add(secHdr('var(--role-manager)','👤','Shift Managers — Notes',true));
       add(table(['Day','Shift','Shift Manager','Notes'],smRows,[92,82,'220px',null]));
     }
   }
@@ -7021,7 +7517,7 @@ function renderOverviewBody(){
       });
     });
     if(sampRows.length){
-      add(secHdr('#b45309','🧪','Cement Analysts — Sampling Plan Non-Compliance',true));
+      add(secHdr('var(--role-analyst)','🧪','Cement Analysts — Sampling Plan Non-Compliance',true));
       add(table(['Day','Shift','Sample','Reason'],sampRows));
     }
 
@@ -7037,7 +7533,7 @@ function renderOverviewBody(){
       });
     });
     if(blendRows.length){
-      add(secHdr('#b45309','🧪','Cement Analysts — Blendscan Supervisor Log-in',false));
+      add(secHdr('var(--role-analyst)','🧪','Cement Analysts — Blendscan Supervisor Log-in',false));
       add(table(['Day','Shift','Logged In','Time / Date'],blendRows));
     }
 
@@ -7052,7 +7548,7 @@ function renderOverviewBody(){
       });
     });
     if(hseRows.length){
-      add(secHdr('#b45309','🧪','Cement Analysts — Health, Safety & Environment',false));
+      add(secHdr('var(--role-analyst)','🧪','Cement Analysts — Health, Safety & Environment',false));
       add(table(['Day','Shift','Type','Details','Actions'],hseRows));
     }
 
@@ -7067,7 +7563,7 @@ function renderOverviewBody(){
       });
     });
     if(qaRows.length){
-      add(secHdr('#b45309','🧪','Cement Analysts — Cement Quality Issues',false));
+      add(secHdr('var(--role-analyst)','🧪','Cement Analysts — Cement Quality Issues',false));
       add(table(['Day','Shift','Issues'],qaRows));
     }
 
@@ -7084,7 +7580,7 @@ function renderOverviewBody(){
       });
     });
     if(outRows.length){
-      add(secHdr('#b45309','🧪','Cement Analysts — Samples Out of Target',false));
+      add(secHdr('var(--role-analyst)','🧪','Cement Analysts — Samples Out of Target',false));
       add(table(['Day','Shift','Sample','Target Details','Reported To'],outRows));
     }
 
@@ -7103,7 +7599,7 @@ function renderOverviewBody(){
       });
     });
     if(addRows.length){
-      add(secHdr('#b45309','🧪','Cement Analysts — Additive Check Results',false));
+      add(secHdr('var(--role-analyst)','🧪','Cement Analysts — Additive Check Results',false));
       add(table(['Day','Shift','Results'],addRows));
     }
 
@@ -7126,7 +7622,7 @@ function renderOverviewBody(){
       });
     });
     if(equipRows.length){
-      add(secHdr('#b45309','🧪','Cement Analysts — Non-Functional Equipment',false));
+      add(secHdr('var(--role-analyst)','🧪','Cement Analysts — Non-Functional Equipment',false));
       add(table(['Day','Shift','Equipment','Status','Details'],equipRows));
     }
 
@@ -7147,7 +7643,7 @@ function renderOverviewBody(){
       });
     });
     if(cfRows.length){
-      add(secHdr('#b45309','🧪','Cement Analysts — Cemfuel Accepted Batches',false));
+      add(secHdr('var(--role-analyst)','🧪','Cement Analysts — Cemfuel Accepted Batches',false));
       add(table(['Day','Shift','Batch Number','Status'],cfRows));
     }
   }
@@ -7158,18 +7654,19 @@ function renderOverviewBody(){
       if(!electricianState[d]) return;
       ['shift1','shift2'].forEach(function(sk,si){
         const sd=electricianState[d][sk]; if(!sd) return;
-        const notes=(sd.notes||'').trim();
-        const name=(sd.name||'').trim();
-        if(name || notes){
+        const summaryParts = electricianShiftSummaryParts(sd);
+        if(summaryParts.length){
+          const notesHtml = electricianShiftSummaryHtml(sd);
+          const name=(sd.name||'').trim();
           elRows.push(row(d,si,[
             esc(name)||'—',
-            notes ? esc(notes) : '<span style="color:var(--tx3)">No notes</span>'
+            notesHtml
           ]));
         }
       });
     });
     if(elRows.length){
-      add(secHdr('#0f766e','⚡','Electricians — Notes',true));
+      add(secHdr('var(--role-electrician)','⚡','Electricians — Notes',true));
       add(table(['Day','Shift','Electrician','Notes'],elRows));
     }
   }
@@ -7181,17 +7678,16 @@ function renderOverviewBody(){
       ['shift1','shift2'].forEach(function(sk,si){
         const sd=mechanicalState[d][sk]; if(!sd) return;
         const notes=(sd.notes||'').trim();
-        const name=(sd.name||'').trim();
-        if(name || notes){
+        if(notes){
           mechRows.push(row(d,si,[
-            esc(name)||'—',
-            notes ? esc(notes) : '<span style="color:var(--tx3)">No notes</span>'
+            esc((sd.name||'').trim())||'—',
+            esc(notes)
           ]));
         }
       });
     });
     if(mechRows.length){
-      add(secHdr('#2563eb','🔧','Mechanical — Notes',true));
+      add(secHdr('var(--role-mechanical)','🔧','Mechanical — Notes',true));
       add(table(['Day','Shift','Mechanical','Notes'],mechRows));
     }
   }
@@ -7278,14 +7774,14 @@ function smRowsToWeek(rows){
   const week = mkSmWeek();
   (rows || []).forEach(function(row){
     if(!row || !row.day || !row.shift || !week[row.day] || !week[row.day][row.shift]) return;
-    week[row.day][row.shift] = { notes: row.notes || '' };
+    week[row.day][row.shift] = { name: row.person_name || '', notes: row.notes || '' };
   });
   return week;
 }
 
 async function sbLoadShiftManagerWeek(isoMonday){
   try {
-    const rows = await sbFetch('/rest/v1/'+KILN_SM_LOG_TABLE+'?week_key=eq.'+isoMonday+'&select=day,shift,notes,updated_at&order=updated_at.desc');
+    const rows = await sbFetch('/rest/v1/'+KILN_SM_LOG_TABLE+'?week_key=eq.'+isoMonday+'&select=day,shift,person_name,notes,updated_at&order=updated_at.desc');
     if(rows && rows.length) return smRowsToWeek(rows);
   } catch(e){ console.warn('Supabase shift manager load failed:', e); }
   return null;
@@ -7400,7 +7896,7 @@ async function sbSaveSmDirty(showState){
       const day = parts[0];
       const shift = parts[1];
       const row = ensureSmDayState(day)[shift];
-      const isEmpty = !row || !String(row.notes || '').trim();
+      const isEmpty = !row || (!String(row.name || '').trim() && !String(row.notes || '').trim());
       try {
         if(isEmpty){
           await sbFetch('/rest/v1/'+KILN_SM_LOG_TABLE+'?week_key=eq.'+encodeURIComponent(toISO(weekStart))+'&day=eq.'+encodeURIComponent(day)+'&shift=eq.'+encodeURIComponent(shift), { method: 'DELETE' });
@@ -7412,6 +7908,7 @@ async function sbSaveSmDirty(showState){
               week_key: toISO(weekStart),
               day: day,
               shift: shift,
+              person_name: row.name || '',
               notes: row.notes || '',
               updated_at: new Date().toISOString()
             })
@@ -7750,6 +8247,9 @@ function doPrint(){
   openPrintWindow(days,note,inclBurners,inclSM,inclEL,inclMECH,inclCA,win);
 }
 
+const PRINT_ROLE_VARS = ':root{--role-burner:#1a7a35;--role-manager:#7c3aed;--role-electrician:#38bdf8;--role-mechanical:#2563eb;--role-analyst:#b45309;}';
+const PRINT_PAGE_STYLE = '<style>@page{margin:1.5cm}'+PRINT_ROLE_VARS+'body{margin:0;padding:20px;font-family:Arial,sans-serif}</style>';
+
 function openPrintWindow(days, note, inclBurners, inclSM, inclEL, inclMECH, inclCA, win){
   const printedBy = lockedName || currentUserLogon || currentUser || 'Unknown user';
   const tally = {};
@@ -7819,12 +8319,12 @@ function openPrintWindow(days, note, inclBurners, inclSM, inclEL, inclMECH, incl
         var s = sd[sk] || mkSmShift();
         var label = si===0?'Day Shift':'Night Shift';
         var notes = s.notes
-          ? '<div style="padding:9px 12px;background:#fff;border:1px solid #c4b5fd;border-left:4px solid #7c3aed;border-radius:4px;font-size:11px;line-height:1.6">'+esc(s.notes)+'</div>'
+          ? '<div style="padding:9px 12px;background:#fff;border:1px solid #ddd;border-radius:4px;font-size:11px;line-height:1.6">'+esc(s.notes)+'</div>'
           : '<div style="padding:9px 12px;background:#f8f8f8;border:1px solid #e8e8e8;border-radius:4px;color:#999;font-size:10px">No notes recorded</div>';
         return '<div style="margin-bottom:10px"><div style="font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:5px;color:#555">'+label+'</div>'+notes+'</div>';
       }).join('');
       smHtml = '<div style="margin-bottom:14px">'
-        +'<div style="font-size:13px;font-weight:800;color:#7c3aed;margin-bottom:10px">SHIFT MANAGERS</div>'
+        +'<div style="font-size:13px;font-weight:800;color:var(--role-manager);margin-bottom:10px">SHIFT MANAGERS</div>'
         +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">'+smShifts+'</div>'
         +'</div>';
     }
@@ -7834,19 +8334,19 @@ function openPrintWindow(days, note, inclBurners, inclSM, inclEL, inclMECH, incl
       var elShifts = ['shift1','shift2'].map(function(sk,si){
         var s = ed[sk] || mkElectricianShift();
         var label = si===0?'Day Shift':'Night Shift';
-        var notes = (s.notes || '').trim();
         var name = (s.name || '').trim();
+        var summary = electricianShiftSummaryParts(s);
         return '<div style="margin-bottom:10px"><div style="font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:5px;color:#555">'+label+'</div>'
           + '<table style="width:100%;font-size:11px;border-collapse:collapse;margin-bottom:6px">'
           + '<tr style="border-bottom:1px solid #eee"><td style="padding:5px 12px;color:#666;width:110px">Electrician</td><td style="padding:5px 12px;font-weight:600">'+esc(name||'—')+'</td></tr>'
           + '</table>'
-          + (notes
-            ? '<div style="padding:9px 12px;background:#fff;border:1px solid #ddd;border-radius:4px;font-size:11px;line-height:1.6">'+esc(notes)+'</div>'
+          + (summary.length
+            ? '<div style="padding:9px 12px;background:#fff;border:1px solid #ddd;border-radius:4px;font-size:11px;line-height:1.6">'+electricianShiftSummaryHtml(s)+'</div>'
             : '<div style="padding:9px 12px;background:#f8f8f8;border:1px solid #e8e8e8;border-radius:4px;color:#999;font-size:10px">No notes recorded</div>')
           + '</div>';
       }).join('');
       elHtml = '<div style="margin-bottom:14px">'
-        +'<div style="font-size:13px;font-weight:800;color:#0f766e;margin-bottom:10px">ELECTRICIANS</div>'
+        +'<div style="font-size:13px;font-weight:800;color:var(--role-electrician);margin-bottom:10px">ELECTRICIANS</div>'
         +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">'+elShifts+'</div>'
         +'</div>';
     }
@@ -7868,7 +8368,7 @@ function openPrintWindow(days, note, inclBurners, inclSM, inclEL, inclMECH, incl
           + '</div>';
       }).join('');
       mechHtml = '<div style="margin-bottom:14px">'
-        +'<div style="font-size:13px;font-weight:800;color:#2563eb;margin-bottom:10px">MECHANICAL</div>'
+        +'<div style="font-size:13px;font-weight:800;color:var(--role-mechanical);margin-bottom:10px">MECHANICAL</div>'
         +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">'+mechShifts+'</div>'
         +'</div>';
     }
@@ -7896,8 +8396,8 @@ function openPrintWindow(days, note, inclBurners, inclSM, inclEL, inclMECH, incl
         }
         return html2 + '</div>';
       }).join('');
-      caHtml = '<div style="margin-top:14px;border-top:2px solid #b45309;padding-top:10px">'
-        +'<div style="font-size:13px;font-weight:800;color:#b45309;margin-bottom:10px">CEMENT ANALYSTS</div>'
+      caHtml = '<div style="margin-top:14px;border-top:2px solid var(--role-analyst);padding-top:10px">'
+        +'<div style="font-size:13px;font-weight:800;color:var(--role-analyst);margin-bottom:10px">CEMENT ANALYSTS</div>'
         +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">'+caShifts+'</div>'
         +'</div>';
     }
@@ -7914,7 +8414,7 @@ function openPrintWindow(days, note, inclBurners, inclSM, inclEL, inclMECH, incl
 
   if(!win) win = window.open('', '_blank');
   if(!win){ showToast('Please allow popups for this page to print'); return; }
-  var fullHtml = '<!DOCTYPE html><html><head><title>Padeswood Works</title><style>@page{margin:1.5cm}body{margin:0;padding:20px;font-family:Arial,sans-serif}</style></head><body>' + pages + '</body></html>';
+  var fullHtml = '<!DOCTYPE html><html><head><title>Padeswood Works</title>'+PRINT_PAGE_STYLE+'</head><body>' + pages + '</body></html>';
   var blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8' });
   var url = URL.createObjectURL(blob);
   win.location.href = url;
@@ -7956,7 +8456,7 @@ function openPrintOverview(note, win, inclBurners, inclSM, inclEL, inclMECH, inc
       var me = mechanicalState[d] && mechanicalState[d][sk];
       var ca = caState[d] && caState[d][sk];
       if(inclSM && sm && (sm.notes||'').trim()) shiftManagerNoteCount++;
-      if(inclEL && el && ((el.name||'').trim() || (el.notes||'').trim())) electricianNoteCount++;
+      if(inclEL && el && electricianShiftSummaryParts(el).length) electricianNoteCount++;
       if(inclMECH && me && ((me.name||'').trim() || (me.notes||'').trim())) mechanicalNoteCount++;
       if(inclCA && ca){
         analystEntryCount += (ca.hse||[]).filter(function(h){ return h.type||h.details; }).length;
@@ -8058,12 +8558,17 @@ function openPrintOverview(note, win, inclBurners, inclSM, inclEL, inclMECH, inc
         if(!s) return;
         var name = (s.name||'').trim();
         var notes = (s.notes||'').trim();
-        if(!name && !notes) return;
+        var summary = label.name === 'Electrician' ? electricianShiftSummaryParts(s) : [];
+        if(label.name === 'Electrician'){
+          if(!name && !summary.length) return;
+        } else if(!notes){
+          return;
+        }
         rows.push('<tr>'
           +'<td style="padding:7px 10px;border:1px solid #ddd;font-weight:700">'+d+'</td>'
           +'<td style="padding:7px 10px;border:1px solid #ddd">'+(si===0?'Day':'Night')+'</td>'
           +'<td style="padding:7px 10px;border:1px solid #ddd">'+esc(name||'—')+'</td>'
-          +'<td style="padding:7px 10px;border:1px solid #ddd">'+(notes ? esc(notes) : '<span style="color:#999">No notes</span>')+'</td>'
+          +'<td style="padding:7px 10px;border:1px solid #ddd">'+(label.name === 'Electrician' ? (summary.length ? electricianShiftSummaryHtml(s) : '<span style="color:#999">No notes</span>') : (notes ? esc(notes) : '<span style="color:#999">No notes</span>'))+'</td>'
           +'</tr>');
       });
     });
@@ -8104,8 +8609,8 @@ function openPrintOverview(note, win, inclBurners, inclSM, inclEL, inclMECH, inc
         +'<table style="width:100%;border-collapse:collapse;font-size:11px">'
         +'<thead><tr style="background:#fff">'
         +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Day</th>'
-        +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left;color:#b45309">Analyst</th>'
-        +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left;color:#b45309">Recorded Details</th>'
+        +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left;color:var(--role-analyst)">Analyst</th>'
+        +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left;color:var(--role-analyst)">Recorded Details</th>'
         +'</tr></thead><tbody>'+rows.join('')+'</tbody></table></div>';
     }).join('');
     return '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">'+cards+'</div>';
@@ -8148,12 +8653,12 @@ function openPrintOverview(note, win, inclBurners, inclSM, inclEL, inclMECH, inc
     ? '<table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:20px"><thead><tr style="background:#fff">'
       +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Day</th>'
       +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left">Shift</th>'
-      +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left;color:#7c3aed">Notes</th>'
+      +'<th style="padding:7px 10px;border:1px solid #ddd;text-align:left;color:var(--role-manager)">Notes</th>'
       +'</tr></thead><tbody>'+shiftManagerRows.join('')+'</tbody></table>'
     : '<div style="padding:9px 12px;background:#f8f8f8;border:1px solid #e8e8e8;border-radius:4px;color:#999;font-size:10px;margin-bottom:20px">No shift manager notes recorded this week</div>';
 
-  var electricianTable = inclEL ? buildRoleNoteRows(electricianState, { name:'Electrician', color:'#0f766e' }) : '';
-  var mechanicalTable = inclMECH ? buildRoleNoteRows(mechanicalState, { name:'Mechanical', color:'#2563eb' }) : '';
+  var electricianTable = inclEL ? buildRoleNoteRows(electricianState, { name:'Electrician', color:'var(--role-electrician)' }) : '';
+  var mechanicalTable = inclMECH ? buildRoleNoteRows(mechanicalState, { name:'Mechanical', color:'var(--role-mechanical)' }) : '';
   var analystTable = inclCA
     ? buildAnalystShiftCards()
     : '';
@@ -8187,15 +8692,15 @@ function openPrintOverview(note, win, inclBurners, inclSM, inclEL, inclMECH, inc
     +'</tr></thead><tbody>'+personnelRows+'</tbody></table>'
     +(inclBurners ? '<div style="font-weight:700;font-size:10px;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:6px;color:#1a7a35">Equipment Mentions</div>'+tallyTable : '')
     +(inclBurners ? '<div style="font-weight:700;font-size:10px;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:6px;color:#1a7a35">All Equipment Issues</div>'+issueTable : '')
-    +(inclCA ? '<div style="font-weight:700;font-size:10px;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:6px;color:#b45309">Cement Analyst Details</div>'+analystTable : '')
-    +(inclSM ? '<div style="font-weight:700;font-size:10px;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:6px;color:#7c3aed">Shift Manager Notes</div>'+shiftManagerTable : '')
-    +(inclEL ? '<div style="font-weight:700;font-size:10px;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:6px;color:#0f766e">Electrician Log</div>'+electricianTable : '')
-    +(inclMECH ? '<div style="font-weight:700;font-size:10px;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:6px;color:#2563eb">Mechanical Log</div>'+mechanicalTable : '')
+    +(inclCA ? '<div style="font-weight:700;font-size:10px;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:6px;color:var(--role-analyst)">Cement Analyst Details</div>'+analystTable : '')
+    +(inclSM ? '<div style="font-weight:700;font-size:10px;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:6px;color:var(--role-manager)">Shift Manager Notes</div>'+shiftManagerTable : '')
+    +(inclEL ? '<div style="font-weight:700;font-size:10px;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:6px;color:var(--role-electrician)">Electrician Log</div>'+electricianTable : '')
+    +(inclMECH ? '<div style="font-weight:700;font-size:10px;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:6px;color:var(--role-mechanical)">Mechanical Log</div>'+mechanicalTable : '')
     +'</div>';
 
   if(!win) win=window.open('','_blank');
   if(!win){ showToast('Please allow popups for this page to print'); return; }
-  var blob = new Blob(['<!DOCTYPE html><html><head><title>Padeswood Works — Week Overview</title><style>@page{margin:1.5cm}body{margin:0;padding:20px;font-family:Arial,sans-serif}</style></head><body>'+html+'</body></html>'], { type: 'text/html;charset=utf-8' });
+  var blob = new Blob(['<!DOCTYPE html><html><head><title>Padeswood Works — Week Overview</title>'+PRINT_PAGE_STYLE+'</head><body>'+html+'</body></html>'], { type: 'text/html;charset=utf-8' });
   var url = URL.createObjectURL(blob);
   win.location.href = url;
   setTimeout(function(){ URL.revokeObjectURL(url); }, 60000);

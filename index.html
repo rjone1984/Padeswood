@@ -17,11 +17,16 @@
   --bd:#252c38; --bd2:#2f3a4a; --bd3:#3d4e62;
   --ac:#1a7a35; --ac2:#22a847; --ac3:#2ecc5c;
   --acd1:rgba(26,122,53,.10); --acd2:rgba(26,122,53,.18); --acd3:rgba(26,122,53,.28);
-  --tx:#dde4ee; --tx2:#6b7a96; --tx3:#323d50;
+  --tx:#dde4ee; --tx2:#9aa9be; --tx3:#6f8097;
   --red:#f0524f; --redd:rgba(240,82,79,.10); --redb:rgba(240,82,79,.28);
   --grn:#21c27a; --grnd:rgba(33,194,122,.10); --grnb:rgba(33,194,122,.28);
   --amb:#f5a623; --ambd:rgba(245,166,35,.10); --ambb:rgba(245,166,35,.28);
   --pur:#9b74e8; --purd:rgba(155,116,232,.10); --purb:rgba(155,116,232,.28);
+  --role-burner:#1a7a35;
+  --role-manager:#7c3aed;
+  --role-electrician:#38bdf8;
+  --role-mechanical:#2563eb;
+  --role-analyst:#b45309;
   --r:10px; --rsm:7px; --rxs:5px;
   --e1:0 1px 3px rgba(0,0,0,.55),0 1px 2px rgba(0,0,0,.4);
   --e2:0 4px 18px rgba(0,0,0,.6); --e3:0 20px 56px rgba(0,0,0,.72);
@@ -41,6 +46,11 @@
   --grn:#15924f; --grnd:rgba(21,146,79,.07); --grnb:rgba(21,146,79,.22);
   --amb:#c97d10; --ambd:rgba(201,125,16,.07); --ambb:rgba(201,125,16,.22);
   --pur:#7a50c8; --purd:rgba(122,80,200,.07); --purb:rgba(122,80,200,.22);
+  --role-burner:#1a7a35;
+  --role-manager:#7c3aed;
+  --role-electrician:#38bdf8;
+  --role-mechanical:#2563eb;
+  --role-analyst:#b45309;
   --e1:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
   --e2:0 4px 18px rgba(0,0,0,.07); --e3:0 20px 56px rgba(0,0,0,.10);
   --eac:0 4px 22px rgba(10,138,134,.16);
@@ -51,8 +61,9 @@
 }
 body.light-mode{
   background:
-    radial-gradient(1200px 620px at 18% -6%, rgba(255,255,255,.96), transparent 58%),
-    radial-gradient(900px 480px at 100% 0%, rgba(34,168,71,.035), transparent 54%),
+    radial-gradient(1200px 620px at 18% -6%, rgba(255,255,255,.98), transparent 58%),
+    radial-gradient(960px 520px at 100% 0%, rgba(34,168,71,.045), transparent 54%),
+    linear-gradient(180deg, rgba(255,255,255,.2), rgba(255,255,255,0)),
     var(--bg);
 }
 body.light-mode .lic-inner,
@@ -75,10 +86,25 @@ body.light-mode .login-card,
 body.light-mode .lic-inner,
 body.light-mode .panel,
 body.light-mode .modal{
-  box-shadow:0 12px 36px rgba(15,23,42,.08);
+  box-shadow:0 18px 44px rgba(15,23,42,.08), inset 0 1px 0 rgba(255,255,255,.62);
 }
 body.light-mode .app-card::after{
-  opacity:.18;
+  opacity:.16;
+}
+body.light-mode #mainHeader,
+body.light-mode .login-card,
+body.light-mode .lic-inner,
+body.light-mode .panel,
+body.light-mode .modal{
+  background:
+    radial-gradient(130% 170% at 0% 0%, rgba(21,92,40,.05), transparent 42%),
+    linear-gradient(180deg, rgba(255,255,255,.94), rgba(255,255,255,.8)),
+    var(--glass-1);
+}
+body.light-mode .coming-card{
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.8), rgba(255,255,255,.62)),
+    var(--glass-4);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -95,7 +121,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important}
   body{animation:none !important}
 }
-body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.card-arrow,#mainHeader,#adminPanel,#aiPanel,#roleEditPanel,#loginScreen,#licenceOverlay,.toast,.modal,.panel,.tab-btn,.section-label,.header-user){transition-timing-function:var(--ease-smooth);}
+body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.card-arrow,#mainHeader,#adminPanel,#roleEditPanel,#loginScreen,#licenceOverlay,.toast,.modal,.panel,.tab-btn,.section-label,.header-user){transition-timing-function:var(--ease-smooth);}
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:var(--sf)}
 ::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:3px}
@@ -103,43 +129,21 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes appBorderPulse{
   0%,100%{
-    opacity:.08;
-    box-shadow:0 0 0 1px rgba(46,204,92,.08),0 0 8px rgba(46,204,92,.04),0 0 16px rgba(46,204,92,.02);
-  }
-  50%{
     opacity:.14;
-    box-shadow:0 0 0 1px rgba(46,204,92,.14),0 0 12px rgba(46,204,92,.06),0 0 24px rgba(46,204,92,.03);
-  }
-}
-@keyframes appIconPulse{
-  0%,100%{transform:scale(1);filter:saturate(1)}
-  50%{transform:scale(1.02);filter:saturate(1.03)}
-}
-@keyframes fireIconFlicker{
-  0%,100%{transform:translateY(0) scale(1) rotate(-.4deg) skewX(0deg);filter:hue-rotate(0deg) saturate(1)}
-  10%{transform:translateY(-.5px) scale(1.008) rotate(.4deg) skewX(.2deg);filter:hue-rotate(-.5deg) saturate(1.02)}
-  22%{transform:translateY(-1px) scale(1.015) rotate(-.5deg) skewX(-.2deg);filter:hue-rotate(.5deg) saturate(1.04)}
-  34%{transform:translateY(-.5px) scale(1.006) rotate(.5deg) skewX(.25deg);filter:hue-rotate(-.3deg) saturate(1.015)}
-  48%{transform:translateY(-1.5px) scale(1.02) rotate(-.45deg) skewX(-.25deg);filter:hue-rotate(.7deg) saturate(1.05)}
-  62%{transform:translateY(-.5px) scale(1.008) rotate(.35deg) skewX(.15deg);filter:hue-rotate(-.5deg) saturate(1.02)}
-  78%{transform:translateY(-1px) scale(1.012) rotate(-.5deg) skewX(-.15deg);filter:hue-rotate(.5deg) saturate(1.04)}
-  90%{transform:translateY(-.5px) scale(1.006) rotate(.35deg) skewX(.1deg);filter:hue-rotate(-.25deg) saturate(1.015)}
-}
-@keyframes calendarIconDrift{
-  0%,100%{transform:translateX(0) translateY(0) rotate(0deg) scale(1);filter:saturate(1)}
-  20%{transform:translateX(-.5px) translateY(-.5px) rotate(-.2deg) scale(1.005);filter:saturate(1.01)}
-  50%{transform:translateX(1px) translateY(-1px) rotate(.4deg) scale(1.015);filter:saturate(1.03)}
-  75%{transform:translateX(-.25px) translateY(-.5px) rotate(-.1deg) scale(1.007);filter:saturate(1.01)}
-}
-@keyframes appBorderPulse{
-  0%,100%{
-    opacity:.18;
-    box-shadow:0 0 0 1px rgba(46,204,92,.14),0 0 18px rgba(46,204,92,.08),0 0 36px rgba(46,204,92,.04);
+    box-shadow:0 0 0 1px rgba(46,204,92,.12),0 0 14px rgba(46,204,92,.06),0 0 28px rgba(46,204,92,.03);
   }
   50%{
-    opacity:.5;
-    box-shadow:0 0 0 1px rgba(46,204,92,.34),0 0 26px rgba(46,204,92,.18),0 0 54px rgba(46,204,92,.10);
+    opacity:.3;
+    box-shadow:0 0 0 1px rgba(46,204,92,.24),0 0 20px rgba(46,204,92,.10),0 0 42px rgba(46,204,92,.05);
   }
+}
+@keyframes appIconFloat{
+  0%,100%{transform:translateY(0) scale(1)}
+  50%{transform:translateY(-1.5px) scale(1.02)}
+}
+@keyframes iconHaloPulse{
+  0%,100%{opacity:.5;transform:scale(.94)}
+  50%{opacity:.9;transform:scale(1.05)}
 }
 
 #licenceOverlay{position:fixed;inset:0;background:var(--bg);z-index:10000;
@@ -271,10 +275,13 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
   display:flex;align-items:center;gap:10px;}
 .section-label::after{content:'';flex:1;height:1px;background:var(--bd);}
 .app-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;margin-bottom:40px;}
-.app-card{background:var(--glass-3);border:1px solid var(--bd2);border-radius:14px;padding:24px;
+.app-card{background:
+  radial-gradient(130% 150% at 0% 0%, rgba(46,204,92,.08), transparent 38%),
+  linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,0)),
+  var(--glass-3);border:1px solid var(--bd2);border-radius:16px;padding:24px;
   position:relative;overflow:hidden;transition:border-color .22s,box-shadow .22s,transform .18s;
   cursor:pointer;text-decoration:none;display:block;color:inherit;
-  box-shadow:0 16px 42px rgba(0,0,0,.14);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  box-shadow:0 18px 46px rgba(0,0,0,.14), inset 0 1px 0 rgba(255,255,255,.04);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
   will-change:transform,box-shadow;}
 .app-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
   background:linear-gradient(90deg,transparent,var(--ac3),transparent);opacity:0;transition:opacity .22s;}
@@ -282,13 +289,13 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
 .app-card::after{pointer-events:none}
 .app-card::after{content:'';position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;opacity:.2;
   background:
-    radial-gradient(circle at 18% 0%, rgba(46,204,92,.22), transparent 42%),
-    radial-gradient(circle at 82% 100%, rgba(46,204,92,.14), transparent 44%);
-  box-shadow:0 0 0 1px rgba(46,204,92,.14),0 0 18px rgba(46,204,92,.08),0 0 36px rgba(46,204,92,.04);
+    radial-gradient(circle at 18% 0%, rgba(46,204,92,.18), transparent 42%),
+    radial-gradient(circle at 82% 100%, rgba(46,204,92,.10), transparent 44%);
+  box-shadow:0 0 0 1px rgba(46,204,92,.12),0 0 18px rgba(46,204,92,.08),0 0 36px rgba(46,204,92,.04);
   transform:scale(1);
   transition:opacity 1s ease, box-shadow 1s ease, transform 1s ease, filter 1s ease;
   animation:appBorderPulse 12s ease-in-out infinite;}
-.app-card:hover{border-color:var(--ac);box-shadow:0 18px 48px rgba(0,0,0,.16),0 0 0 1px rgba(46,204,92,.12),0 0 10px rgba(46,204,92,.08);transform:translateY(-1px);}
+.app-card:hover{border-color:color-mix(in srgb, var(--ac3) 58%, var(--bd2));box-shadow:0 20px 52px rgba(0,0,0,.16),0 0 0 1px rgba(46,204,92,.12),0 0 14px rgba(46,204,92,.08);transform:translateY(-2px);}
 .app-card:hover::before{opacity:1;}
 .app-card:hover::after{
   opacity:.42;
@@ -297,16 +304,26 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
   filter:brightness(1.01);
 }
 .app-card:nth-child(2)::after{animation-delay:-4.6s;}
-.card-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;
-  justify-content:center;font-size:20px;flex-shrink:0;animation:appIconPulse 12s ease-in-out infinite;}
-.app-card:nth-child(2) .card-icon{animation-delay:-4.2s;}
-.card-icon.fire-icon{animation:fireIconFlicker 6.5s ease-in-out infinite;transform-origin:50% 72%;}
-.card-icon.calendar-icon{animation:calendarIconDrift 8.8s ease-in-out infinite;transform-origin:50% 55%;}
+.card-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;
+  justify-content:center;flex-shrink:0;position:relative;overflow:hidden;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22), 0 14px 26px rgba(15,23,42,.10);
+  animation:appIconFloat 8.4s ease-in-out infinite;}
+.card-icon::before{content:'';position:absolute;inset:0;background:
+  linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,0)),
+  radial-gradient(circle at 20% 16%, rgba(255,255,255,.26), transparent 34%);
+  opacity:.9}
+.card-icon::after{content:'';position:absolute;inset:8px;border-radius:12px;border:1px solid rgba(255,255,255,.16);opacity:.62;animation:iconHaloPulse 7.5s ease-in-out infinite}
+.card-icon svg{position:relative;z-index:1;width:23px;height:23px;stroke-linecap:round;stroke-linejoin:round;color:var(--tx)}
+.app-card:nth-child(2) .card-icon{animation-delay:-3.2s;}
+.app-card:nth-child(2) .card-icon::after{animation-delay:-2.6s;}
+.card-icon.fire-icon svg{filter:drop-shadow(0 3px 8px rgba(249,115,22,.18));}
+.card-icon.calendar-icon svg{filter:drop-shadow(0 3px 8px rgba(14,165,160,.15));}
+.app-card:hover .card-icon::after{opacity:.9;transform:scale(1.05);}
 .card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;}
 .card-title{font-family:var(--ff-head);font-weight:700;font-size:16px;
   color:var(--tx);letter-spacing:-.3px;margin-bottom:5px;}
 .card-desc{font-size:12.5px;color:var(--tx2);line-height:1.55;margin-bottom:16px;}
-.card-arrow{position:absolute;bottom:20px;right:20px;width:28px;height:28px;border-radius:6px;
+.card-arrow{position:absolute;bottom:20px;right:20px;width:28px;height:28px;border-radius:8px;
   background:var(--acd1);border:1px solid var(--acd3);color:var(--ac3);
   display:flex;align-items:center;justify-content:center;font-size:14px;
   transition:background .18s,transform .18s;}
@@ -506,7 +523,19 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
 
       <a href="kiln-log/index.html" class="app-card">
         <div class="card-top">
-          <div class="card-icon fire-icon" style="background:rgba(26,122,53,.15);border:1px solid rgba(46,204,92,.25)">🔥</div>
+          <div class="card-icon fire-icon" style="background:linear-gradient(180deg, rgba(34,168,71,.24), rgba(21,92,40,.12));border:1px solid rgba(46,204,92,.24)">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <defs>
+                <linearGradient id="cardFlameGrad" x1="7" y1="3" x2="17" y2="21" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#ffd166"/>
+                  <stop offset="55%" stop-color="#ff9f1c"/>
+                  <stop offset="100%" stop-color="#f97316"/>
+                </linearGradient>
+              </defs>
+              <path d="M12 3c1.5 2.2 3.4 4 4 6.1.7 2.2 0 4.1-1.2 5.4 1.9-.2 3.6 1.2 3.6 3.5 0 2.7-2.3 4.9-5.8 4.9-3.9 0-6.5-2.3-6.5-5.5 0-2.2 1.2-4 3-5.1-.2 1.2.1 2.3 1 3.2-.2-2.7.8-4.3 2.4-5.8C13.8 7.9 14.1 5.6 12 3Z" fill="url(#cardFlameGrad)"/>
+              <path d="M11.4 9.1c.7 1 1.5 1.8 1.8 2.8.3 1 0 1.8-.7 2.5.9-.1 1.8.6 1.8 1.7 0 1.2-1 2.2-2.7 2.2-1.8 0-3-1-3-2.5 0-1 .5-1.9 1.4-2.5-.1.6 0 1.2.4 1.6-.1-1.2.3-2 1.1-2.8.3-.3.5-.7.6-1Z" fill="#fff8eb" opacity=".88"/>
+            </svg>
+          </div>
         </div>
         <div class="card-title">Padeswood Logs</div>
         <div class="card-desc">Role-based shift logging for burners, shift managers, electricians, mechanical teams and cement analysts, with overview reporting, search, AI summaries, feedback tracking and print-ready handovers.</div>
@@ -515,7 +544,19 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
 
       <a href="shift-tracker/index.html" class="app-card">
         <div class="card-top">
-          <div class="card-icon calendar-icon" style="background:rgba(14,165,160,.12);border:1px solid rgba(14,165,160,.28)">📆</div>
+          <div class="card-icon calendar-icon" style="background:linear-gradient(180deg, rgba(14,165,160,.18), rgba(8,145,178,.10));border:1px solid rgba(14,165,160,.24)">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <defs>
+                <linearGradient id="cardCalGrad" x1="4" y1="3" x2="20" y2="21" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#5eead4"/>
+                  <stop offset="100%" stop-color="#0ea5a0"/>
+                </linearGradient>
+              </defs>
+              <rect x="3.5" y="5" width="17" height="15" rx="3" fill="url(#cardCalGrad)"/>
+              <path d="M7 3.5v4M17 3.5v4M3.5 9.5h17" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+              <path d="M8 13h3M13 13h3M8 17h3" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
         </div>
         <div class="card-title">Shift Tracker</div>
         <div class="card-desc">Shift rotation lookup for A, B, C, D and E teams, with date search, calendar view and quick shift summaries.</div>
@@ -598,6 +639,19 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
         All Users <span id="userCount" style="font-weight:400"></span>
         <span style="flex:1;height:1px;background:var(--bd)"></span>
       </div>
+      <div id="userBulkControls" style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px;padding:12px 14px;background:var(--sf2);border:1px solid var(--bd);border-radius:var(--rsm)">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <div style="min-width:0">
+            <div style="font-family:var(--ff-mono);font-size:9px;letter-spacing:1.8px;text-transform:uppercase;color:var(--tx3);margin-bottom:4px">Account Lockdown</div>
+            <div id="userBulkSummary" style="font-size:12px;color:var(--tx2);line-height:1.5">Loading account status…</div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button id="bulkDisableAllBtn" onclick="bulkToggleAllUsers(true)" style="height:30px;padding:0 12px;font-size:11px;font-family:var(--ff-head);font-weight:600;background:var(--redd);border:1px solid var(--redb);border-radius:var(--rsm);color:var(--red);cursor:pointer;white-space:nowrap">Lockdown Non-Admins</button>
+            <button id="bulkEnableAllBtn" onclick="bulkToggleAllUsers(false)" style="height:30px;padding:0 12px;font-size:11px;font-family:var(--ff-head);font-weight:600;background:var(--grnd);border:1px solid var(--grnb);border-radius:var(--rsm);color:var(--grn);cursor:pointer;white-space:nowrap">Enable Non-Admins</button>
+          </div>
+        </div>
+        <div style="font-size:10px;color:var(--tx3);font-family:var(--ff-mono);line-height:1.5">Bulk actions exclude admin accounts and apply across Platform, Shift Tracker, and Logs.</div>
+      </div>
       <div id="userList" style="display:flex;flex-direction:column;gap:10px">
         <div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);padding:12px 0">Loading users…</div>
       </div>
@@ -657,11 +711,11 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
           <span style="font-size:12px;color:var(--tx)">Shift Manager</span>
         </label>
         <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--bd2);border-radius:var(--rsm);background:var(--sf);cursor:pointer">
-          <input type="checkbox" id="roleEditKilnElectrician" style="accent-color:#0f766e">
+          <input type="checkbox" id="roleEditKilnElectrician" style="accent-color:var(--role-electrician)">
           <span style="font-size:12px;color:var(--tx)">Electrician</span>
         </label>
         <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--bd2);border-radius:var(--rsm);background:var(--sf);cursor:pointer">
-          <input type="checkbox" id="roleEditKilnMechanical" style="accent-color:#2563eb">
+          <input type="checkbox" id="roleEditKilnMechanical" style="accent-color:var(--role-mechanical)">
           <span style="font-size:12px;color:var(--tx)">Mechanical</span>
         </label>
         <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--bd2);border-radius:var(--rsm);background:var(--sf);cursor:pointer">
@@ -766,61 +820,21 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
 .user-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}
 .role-select{height:28px;padding:0 8px;font-size:11px;font-family:var(--ff-mono);background:var(--sf);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--tx);cursor:pointer}
 .btn-danger{height:28px;padding:0 10px;font-size:11px;font-family:var(--ff-mono);background:var(--redd);border:1px solid var(--redb);border-radius:var(--rxs);color:var(--red);cursor:pointer}
-.ai-scope-btn{padding:4px 12px;font-size:11px;font-family:var(--ff-mono);background:var(--sf3);border:1px solid var(--bd);border-radius:var(--rxs);color:var(--tx2);cursor:pointer;transition:all .15s}
-.ai-scope-btn.active{background:var(--acd2);border-color:var(--ac);color:var(--ac3)}
-.ai-bubble-user{background:var(--acd2);border:1px solid var(--acd3);border-radius:10px 10px 2px 10px;padding:10px 14px;font-size:13px;color:var(--tx);align-self:flex-end;max-width:85%}
-.ai-bubble-ai{background:var(--sf3);border:1px solid var(--bd);border-radius:2px 10px 10px 10px;padding:10px 14px;font-size:13px;color:var(--tx);align-self:flex-start;max-width:85%;white-space:pre-wrap}
-.ai-thinking{display:flex;align-items:center;gap:4px;padding:10px 14px;background:var(--sf3);border:1px solid var(--bd);border-radius:2px 10px 10px 10px}
-@keyframes blink{0%,80%,100%{opacity:.2}40%{opacity:1}}
-.ai-dot{width:6px;height:6px;border-radius:50%;background:var(--tx3);animation:blink 1.4s infinite;display:inline-block}
-.ai-dot:nth-child(2){animation-delay:.2s}
-.ai-dot:nth-child(3){animation-delay:.4s}
-#aiPanel{
-  background:
-    radial-gradient(120% 90% at 100% 0%, rgba(139,92,246,.14), transparent 48%),
-    linear-gradient(180deg, rgba(255,255,255,.03), transparent 24%),
-    var(--sf) !important;
-  box-shadow:-24px 0 70px rgba(0,0,0,.22);
-  backdrop-filter:blur(22px);
-  -webkit-backdrop-filter:blur(22px);
-}
-#aiPanel > div:first-child,
-#aiPanel > div:nth-child(2),
-#aiPanel > div:last-child{
-  background:color-mix(in srgb, var(--tx) 2%, transparent);
-}
-#aiPanel > div:first-child{
-  background:linear-gradient(180deg, color-mix(in srgb, var(--tx) 4%, transparent), transparent);
-}
-#aiHistory{
-  scrollbar-gutter:stable;
-}
-#aiPanel textarea{
-  background:var(--sf2) !important;
-  border-color:var(--bd) !important;
-  border-radius:16px !important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
-}
-#aiPanel button[id="aiSendBtn"]{
-  box-shadow:0 10px 20px rgba(139,92,246,.24);
-}
-#aiScopeRow .ai-scope-btn:hover{border-color:var(--ac3);color:var(--ac3);transform:translateY(-1px);}
-#aiScopeRow .ai-scope-btn.active{box-shadow:0 10px 20px rgba(139,92,246,.12);}
 
 @media(max-width:640px){
   #loginScreen{
-    padding:12px 0 18px;
+    padding:10px 0 16px;
   }
   .login-inner{
-    width:calc(100vw - 20px);
-    max-width:calc(100vw - 20px);
+    width:calc(100vw - 18px);
+    max-width:calc(100vw - 18px);
     padding:0 0 8px;
   }
   .login-card{
-    padding:22px 14px 20px;
+    padding:20px 14px 18px;
   }
   .login-field{
-    margin-bottom:14px;
+    margin-bottom:12px;
   }
   .login-input{
     font-size:14px;
@@ -882,41 +896,10 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
   .header-actions::-webkit-scrollbar,.header-right::-webkit-scrollbar{display:none;}
   .header-user{display:inline-flex;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .icon-btn{width:30px;height:30px;flex-shrink:0;}
-  #mainContent{padding:28px 14px 48px;}
+  #mainContent{padding:24px 12px 44px;}
   .platform-hero h1{font-size:20px;}
-  .apps-grid{grid-template-columns:1fr;gap:12px;}
-  .card{padding:20px 16px;}
-  #aiPanel{
-    left:0 !important;
-    right:0 !important;
-    width:100vw !important;
-    max-width:none !important;
-    border-left:none !important;
-    border-top:1px solid var(--bd);
-    box-shadow:none;
-  }
-  #aiPanel > div{padding-left:14px !important;padding-right:14px !important;}
-  #aiHistory{padding:12px 14px !important;}
-  #aiScopeRow{
-    flex-wrap:nowrap !important;
-    overflow-x:auto !important;
-    -webkit-overflow-scrolling:touch;
-    scrollbar-width:none;
-    padding-bottom:2px !important;
-  }
-  #aiScopeRow::-webkit-scrollbar{display:none;}
-  #aiScopeRow > *{flex:0 0 auto;}
-  #aiPanel textarea{
-    font-size:16px !important;
-    line-height:1.4;
-  }
-  button[onclick*="openAiPanel"],
-  button[title="AI"],
-  button[aria-label="AI"],
-  .ai-launch-btn,
-  .ai-trigger-btn{
-    display:none !important;
-  }
+  .apps-grid{grid-template-columns:1fr;gap:10px;}
+  .card{padding:18px 14px;}
 }
 @media(max-width:400px){
   .header-logo{width:28px;height:28px;font-size:11px;}
@@ -1189,7 +1172,6 @@ async function showAppSelector(user, opts) {
         .eq('auth_user_id', user.id)
         .maybeSingle();
       _platformKilnUser = ku || null;
-      _platformAiScopeLabels = computePlatformAiScopeLabels(_platformProfile, _platformKilnUser);
       if (ku) {
         if ((!data || !data.full_name) && ku.locked_name) {
           document.getElementById('headerEmail').textContent = ku.locked_name;
@@ -1220,13 +1202,11 @@ async function showAppSelector(user, opts) {
     const fallback = user.email || '—';
     document.getElementById('headerEmail').textContent = fallback;
     _platformKilnUser = null;
-    _platformAiScopeLabels = computePlatformAiScopeLabels(_platformProfile, null);
     return false;
   }
   await loadUserTheme();
   document.getElementById('mainWrapper').style.display = 'block';
   checkAppStatus();
-  refreshPlatformAiScopeLabels();
   return true;
 }
 
@@ -1239,7 +1219,6 @@ async function doLogout() {
   sessionStorage.removeItem('kbl_refresh');
   _pwPostResetSkipUid = null;
   _platformKilnUser = null;
-  _platformAiScopeLabels = null;
   window.location.reload();
 }
 
@@ -1338,7 +1317,7 @@ async function denyAccessRequest(reqId) {
     return;
   }
   if (!confirm('Deny and remove this access request?')) return;
-  const req = _accessRequestsCache.find(function(x){ return String(x.id) === String(reqId); }) || { id: reqId, requestType: 'access', requestTable: PW_ACCESS_REQUESTS_TABLE };
+  const req = _accessRequestsCache.find(function(x){ return String(x.id) === String(reqId); }) || { id: reqId, requestType: 'access', requestTable: PW_REQUESTS_TABLE };
   try { await updateRequestRow(req, { status:'denied' }); } catch(e) {}
   _accessRequestsCache = _accessRequestsCache.filter(function(x){ return String(x.id) !== String(reqId); });
   renderAllUsers(); loadPendingBadge(); showPlatformToast('Request denied');
@@ -1364,15 +1343,19 @@ async function toggleDisableUser(userId, currentlyDisabled) {
     showPlatformToast('Admin only');
     return;
   }
-  const u = _usersCache.find(x => x.id === userId);
-  const name = (u && (u.full_name || u.email)) || 'this user';
-  const action = currentlyDisabled ? 'enable' : 'disable';
-  if (!confirm((currentlyDisabled ? 'Re-enable ' : 'Disable ') + name + '?\n\n' + (currentlyDisabled ? 'They will be able to log in again.' : 'They will be immediately blocked from logging in.'))) return;
-  const { error } = await sb.from('pw_profiles').update({ disabled: !currentlyDisabled }).eq('id', userId);
-  if (error) { showPlatformToast('Failed: ' + error.message); return; }
-  if (u) u.disabled = !currentlyDisabled;
-  renderAllUsers();
-  showPlatformToast(currentlyDisabled ? 'User enabled ✓' : 'User disabled ✓');
+  const mergedUser = getMergedPlatformUsers().find(function(entry){
+    return !!(entry.prof && entry.prof.id === userId);
+  });
+  const u = mergedUser ? mergedUser.prof : (_usersCache.find(function(x){ return x.id === userId; }) || null);
+  const name = mergedUser ? getManagedUserDisplayName(mergedUser) : ((u && (u.full_name || u.email)) || 'this user');
+  if (!confirm((currentlyDisabled ? 'Re-enable ' : 'Disable ') + name + '?\n\n' + (currentlyDisabled ? 'They will be able to sign in across the suite again.' : 'They will be immediately blocked from Platform, Shift Tracker, and Logs.'))) return;
+  try {
+    await setManagedUsersDisabled([mergedUser ? toManagedUserTarget(mergedUser) : { profileId: userId, authUserId: null, username: null, displayName: name }], !currentlyDisabled);
+    renderAllUsers();
+    showPlatformToast(currentlyDisabled ? 'User enabled ✓' : 'User disabled ✓');
+  } catch (error) {
+    showPlatformToast('Failed: ' + (error && error.message ? error.message : String(error)));
+  }
 }
 
 document.addEventListener('keydown', function(e) {
@@ -1506,11 +1489,8 @@ async function handleEmailConfirmation() {
 // ---------------------------------------------------------------------------
 let _usersCache = [];
 let _kilnUsersCache = [];
-let _aiHistory = [];
-let _aiScope = 'week';
 let _platformProfile = null;
 let _platformKilnUser = null;
-let _platformAiScopeLabels = null;
 const SB_URL_PLATFORM = 'https://xnkwrkoxvgptobnmekgv.supabase.co';
 const SB_KEY_PLATFORM = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhua3dya294dmdwdG9ibm1la2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NjAxNTQsImV4cCI6MjA4ODIzNjE1NH0.PrmnJ4eGepac41bQuNPG7TcBaunrfTWdjLtkGLr_2LY';
 
@@ -1525,12 +1505,6 @@ function canManagePlatformUsers() {
 }
 
 const PW_REQUESTS_TABLE = 'pw_requests';
-const PW_ACCESS_REQUESTS_TABLE = 'pw_access_requests';
-const PW_RESET_REQUESTS_TABLE = 'pw_reset_requests';
-
-function legacyRequestTable(requestType) {
-  return requestType === 'reset' ? PW_RESET_REQUESTS_TABLE : PW_ACCESS_REQUESTS_TABLE;
-}
 
 function normalizeRequestRow(row, requestType, requestTable) {
   if (!row) return null;
@@ -1546,17 +1520,15 @@ async function loadRequestRows(requestType, opts) {
   const emailFilter = options.email ? String(options.email).toLowerCase() : '';
   const orderBy = options.orderBy || 'requested_at';
   const ascending = !!options.ascending;
-  const legacyTable = legacyRequestTable(requestType);
 
-  async function runQuery(tableName, includeRequestType) {
-    let q = sb.from(tableName).select('*');
-    if (includeRequestType) q = q.eq('request_type', requestType);
+  async function runQuery() {
+    let q = sb.from(PW_REQUESTS_TABLE).select('*').eq('request_type', requestType);
     if (status !== undefined && status !== null) q = q.eq('status', status);
     q = q.order(orderBy, { ascending: ascending });
     const { data, error } = await q;
     if (error) throw error;
     let rows = (data || []).map(function(row) {
-      return normalizeRequestRow(row, requestType, tableName);
+      return normalizeRequestRow(row, requestType, PW_REQUESTS_TABLE);
     });
     if (emailFilter) {
       rows = rows.filter(function(row) {
@@ -1567,63 +1539,34 @@ async function loadRequestRows(requestType, opts) {
   }
 
   try {
-    return await runQuery(PW_REQUESTS_TABLE, true);
+    return await runQuery();
   } catch(e) {
-    try {
-      return await runQuery(legacyTable, false);
-    } catch(e2) {
-      console.warn('Request load failed:', e2);
-      return [];
-    }
+    console.warn('Request load failed:', e);
+    return [];
   }
 }
 
 async function saveRequestRow(requestType, payload) {
-  const legacyTable = legacyRequestTable(requestType);
   const unifiedPayload = Object.assign({ request_type: requestType }, payload);
-  try {
-    const { error } = await sb.from(PW_REQUESTS_TABLE).insert(unifiedPayload);
-    if (error) throw error;
-    return PW_REQUESTS_TABLE;
-  } catch(e) {
-    const legacyPayload = Object.assign({}, payload);
-    delete legacyPayload.request_type;
-    delete legacyPayload.resolved_at;
-    delete legacyPayload.resolved_by;
-    const { error } = await sb.from(legacyTable).insert(legacyPayload);
-    if (error) throw error;
-    return legacyTable;
-  }
+  const { error } = await sb.from(PW_REQUESTS_TABLE).insert(unifiedPayload);
+  if (error) throw error;
+  return PW_REQUESTS_TABLE;
 }
 
 async function updateRequestRow(row, updates) {
   if (!row || !row.id) throw new Error('Missing request row');
   const requestType = row.requestType || row.request_type || 'access';
-  const tableName = row.requestTable || PW_REQUESTS_TABLE;
-  if (tableName === PW_REQUESTS_TABLE) {
-    const { error } = await sb.from(PW_REQUESTS_TABLE).update(updates).eq('id', row.id).eq('request_type', requestType);
-    if (error) throw error;
-    return PW_REQUESTS_TABLE;
-  }
-  const legacyTable = legacyRequestTable(requestType);
-  const { error } = await sb.from(legacyTable).update(updates).eq('id', row.id);
+  const { error } = await sb.from(PW_REQUESTS_TABLE).update(updates).eq('id', row.id).eq('request_type', requestType);
   if (error) throw error;
-  return legacyTable;
+  return PW_REQUESTS_TABLE;
 }
 
 async function deleteRequestRow(row) {
   if (!row || !row.id) throw new Error('Missing request row');
   const requestType = row.requestType || row.request_type || 'access';
-  const tableName = row.requestTable || PW_REQUESTS_TABLE;
-  if (tableName === PW_REQUESTS_TABLE) {
-    const { error } = await sb.from(PW_REQUESTS_TABLE).delete().eq('id', row.id).eq('request_type', requestType);
-    if (error) throw error;
-    return PW_REQUESTS_TABLE;
-  }
-  const legacyTable = legacyRequestTable(requestType);
-  const { error } = await sb.from(legacyTable).delete().eq('id', row.id);
+  const { error } = await sb.from(PW_REQUESTS_TABLE).delete().eq('id', row.id).eq('request_type', requestType);
   if (error) throw error;
-  return legacyTable;
+  return PW_REQUESTS_TABLE;
 }
 
 async function hasPendingRequestByEmail(requestType, email) {
@@ -1808,7 +1751,7 @@ async function submitPlatformForceReset() {
           });
           if (kilnErr) throw new Error(kilnErr.message || 'Failed to save kiln account');
         }
-        const accessReqRow = _accessRequestsCache.find(function(x){ return String(x.id) === String(target.reqId); }) || { id: target.reqId, requestType: 'access', requestTable: PW_ACCESS_REQUESTS_TABLE };
+        const accessReqRow = _accessRequestsCache.find(function(x){ return String(x.id) === String(target.reqId); }) || { id: target.reqId, requestType: 'access', requestTable: PW_REQUESTS_TABLE };
         await updateRequestRow(accessReqRow, { status:'approved' });
         _accessRequestsCache = _accessRequestsCache.filter(function(x){ return String(x.id) !== String(target.reqId); });
         showForcePwMsg('ok', target.fullName + ' activated ✓ — they can now log in');
@@ -1850,7 +1793,7 @@ async function submitPlatformForceReset() {
         btn.disabled = false; btn.textContent = 'Set Password';
         if (_pendingResetReqId) {
           try {
-            const pendingReq = _resetRequestsCache.find(function(x){ return String(x.id) === String(_pendingResetReqId); }) || { id: _pendingResetReqId, requestType: 'reset', requestTable: _pendingResetReqTable || PW_RESET_REQUESTS_TABLE };
+            const pendingReq = _resetRequestsCache.find(function(x){ return String(x.id) === String(_pendingResetReqId); }) || { id: _pendingResetReqId, requestType: 'reset', requestTable: _pendingResetReqTable || PW_REQUESTS_TABLE };
             await updateRequestRow(pendingReq, { status:'done' });
           } catch(e) {}
           _pendingResetReqId = null;
@@ -1980,11 +1923,191 @@ function closeAdminPanel() {
 
 let _accessRequestsCache = [];
 let _resetRequestsCache = [];
+const PLATFORM_PROTECTED_USERNAME = 'rjone';
 function _umShowErr(list, msg) {
   list.innerHTML = '<div style="color:var(--red);font-size:12px;padding:12px 0;line-height:1.8">'
     + msg + '<br><button onclick="loadAllUsers()" style="margin-top:8px;height:28px;padding:0 14px;'
     + 'font-size:11px;font-family:var(--ff-mono);background:var(--sf3);border:1px solid var(--bd);'
     + 'border-radius:var(--rsm);color:var(--tx2);cursor:pointer">↺ Retry</button></div>';
+}
+
+function getPlatformRoleGroups() {
+  return [
+    { label:'Admins',           key:'admin',          color:'#16a34a', bg:'linear-gradient(90deg, rgba(22,163,74,.16), rgba(22,163,74,.08))', border:'rgba(22,163,74,.34)', test: function(m){ const ku=m.kiln; const p=m.prof; return (ku&&ku.is_admin)||(p&&p.role==='admin'); } },
+    { label:'Shift Managers',   key:'shift_manager',  color:'var(--role-manager)',  bg:'rgba(124,58,237,.10)',  border:'rgba(124,58,237,.26)',  test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_shift_manager); } },
+    { label:'Electricians',     key:'electrician',    color:'var(--role-electrician)', bg:'rgba(56,189,248,.10)',  border:'rgba(56,189,248,.26)',  test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_electrician); } },
+    { label:'Mechanical',       key:'mechanical',     color:'var(--role-mechanical)', bg:'rgba(37,99,235,.10)',   border:'rgba(37,99,235,.26)',   test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_mechanical); } },
+    { label:'Cement Analysts',  key:'cement_analyst', color:'var(--role-analyst)', bg:'rgba(180,83,9,.10)',    border:'rgba(180,83,9,.26)',    test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_cement_analyst); } },
+    { label:'Day Staff',        key:'day_staff',      color:'#0891b2', bg:'rgba(8,145,178,.10)',   border:'rgba(8,145,178,.26)',   test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_day_staff); } },
+    { label:'Burners',          key:'burner',         color:'#d97706', bg:'rgba(217,119,6,.10)',   border:'rgba(217,119,6,.26)',   test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_burner); } },
+    { label:'Read Only',        key:'readonly',       color:'#64748b', bg:'rgba(100,116,139,.10)', border:'rgba(100,116,139,.24)', test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_readonly); } },
+    { label:'Platform Only',    key:'platform',       color:'#94a3b8', bg:'rgba(148,163,184,.10)', border:'rgba(148,163,184,.24)', test: function(m){ return !!(m.prof && !m.kiln); } },
+  ];
+}
+
+function getMergedPlatformUsers() {
+  const merged = _usersCache.map(function(p) {
+    return { prof: p, kiln: _kilnUsersCache.find(function(k){ return k.auth_user_id === p.id; }) || null };
+  });
+  _kilnUsersCache.forEach(function(ku) {
+    if (!ku.auth_user_id || !_usersCache.find(function(p){ return p.id === ku.auth_user_id; })) {
+      merged.push({ prof: null, kiln: ku });
+    }
+  });
+  return merged;
+}
+
+function isPlatformManagedAdmin(m) {
+  const ku = m && m.kiln;
+  const p = m && m.prof;
+  return !!((ku && ku.is_admin) || (p && p.role === 'admin'));
+}
+
+function isPlatformManagedDisabled(m) {
+  const p = m && m.prof;
+  const ku = m && m.kiln;
+  return !!((p && p.disabled === true) || (ku && ku.is_locked === true));
+}
+
+function isPlatformManagedProtected(m) {
+  const ku = m && m.kiln;
+  return isPlatformManagedAdmin(m) || !!(ku && ku.username === PLATFORM_PROTECTED_USERNAME);
+}
+
+function isBulkEligibleManagedUser(m) {
+  const p = m && m.prof;
+  const ku = m && m.kiln;
+  return !!(((p && p.id) || (ku && (ku.auth_user_id || ku.username))) && !isPlatformManagedProtected(m));
+}
+
+function getManagedUserDisplayName(m) {
+  const p = m && m.prof;
+  const ku = m && m.kiln;
+  return (p && (p.full_name || p.email)) || (ku && (ku.locked_name || ku.email || ku.username)) || 'User';
+}
+
+function toManagedUserTarget(m) {
+  const p = m && m.prof;
+  const ku = m && m.kiln;
+  return {
+    profileId: p && p.id ? p.id : null,
+    authUserId: ku && ku.auth_user_id ? ku.auth_user_id : null,
+    username: ku && ku.username ? ku.username : null,
+    displayName: getManagedUserDisplayName(m)
+  };
+}
+
+function setBulkButtonState(id, disabled) {
+  const btn = document.getElementById(id);
+  if (!btn) return;
+  btn.disabled = !!disabled;
+  btn.style.opacity = disabled ? '0.45' : '1';
+  btn.style.cursor = disabled ? 'not-allowed' : 'pointer';
+}
+
+function updateBulkControlsSummary(merged) {
+  const summaryEl = document.getElementById('userBulkSummary');
+  if (!summaryEl) return;
+  const eligible = (merged || []).filter(isBulkEligibleManagedUser);
+  const disabledCount = eligible.filter(isPlatformManagedDisabled).length;
+  const activeCount = eligible.length - disabledCount;
+  summaryEl.textContent = eligible.length
+    ? (activeCount + ' active · ' + disabledCount + ' disabled · ' + eligible.length + ' non-admin account' + (eligible.length !== 1 ? 's' : '') + ' in scope')
+    : 'No non-admin accounts available for bulk actions.';
+  setBulkButtonState('bulkDisableAllBtn', !eligible.length || activeCount === 0);
+  setBulkButtonState('bulkEnableAllBtn', !eligible.length || disabledCount === 0);
+}
+
+async function setManagedUsersDisabled(targets, shouldDisable) {
+  const profileIds = Array.from(new Set((targets || []).map(function(t){ return t && t.profileId; }).filter(Boolean)));
+  const authIds = Array.from(new Set((targets || []).map(function(t){ return t && t.authUserId; }).filter(Boolean)));
+  const usernames = Array.from(new Set((targets || []).map(function(t){ return t && t.username; }).filter(Boolean))).filter(function(username){
+    return !authIds.some(function(authId){
+      const ku = _kilnUsersCache.find(function(x){ return x.auth_user_id === authId; });
+      return ku && ku.username === username;
+    });
+  });
+
+  if (profileIds.length) {
+    const { error } = await sb.from('pw_profiles').update({ disabled: shouldDisable }).in('id', profileIds);
+    if (error) throw error;
+  }
+  if (authIds.length) {
+    const { error } = await sb.from('kiln_users').update({ is_locked: shouldDisable }).in('auth_user_id', authIds);
+    if (error) throw error;
+  }
+  if (usernames.length) {
+    const { error } = await sb.from('kiln_users').update({ is_locked: shouldDisable }).in('username', usernames);
+    if (error) throw error;
+  }
+
+  _usersCache.forEach(function(user) {
+    if (profileIds.indexOf(user.id) >= 0) user.disabled = shouldDisable;
+  });
+  _kilnUsersCache.forEach(function(user) {
+    if ((user.auth_user_id && authIds.indexOf(user.auth_user_id) >= 0) || (!user.auth_user_id && usernames.indexOf(user.username) >= 0)) {
+      user.is_locked = shouldDisable;
+    }
+  });
+}
+
+async function bulkToggleAllUsers(shouldDisable) {
+  if (!canManagePlatformUsers()) {
+    showPlatformToast('Admin only');
+    return;
+  }
+  const merged = getMergedPlatformUsers();
+  const members = merged.filter(isBulkEligibleManagedUser);
+  const targets = members
+    .filter(function(m){ return shouldDisable ? !isPlatformManagedDisabled(m) : isPlatformManagedDisabled(m); })
+    .map(toManagedUserTarget);
+  if (!targets.length) {
+    showPlatformToast(shouldDisable ? 'All non-admin users are already disabled' : 'No disabled non-admin users to enable');
+    return;
+  }
+  const message = shouldDisable
+    ? 'Lock down ' + targets.length + ' non-admin account' + (targets.length !== 1 ? 's' : '') + '?\n\nThis will immediately block them from Platform, Shift Tracker, and Logs.'
+    : 'Enable ' + targets.length + ' non-admin account' + (targets.length !== 1 ? 's' : '') + '?\n\nThey will be able to sign in again across the suite.';
+  if (!confirm(message)) return;
+  try {
+    await setManagedUsersDisabled(targets, shouldDisable);
+    renderAllUsers();
+    showPlatformToast(shouldDisable ? 'Suite lockdown applied ✓' : 'Suite lockdown lifted ✓');
+  } catch (e) {
+    showPlatformToast('Failed: ' + (e && e.message ? e.message : String(e)));
+  }
+}
+
+async function bulkSetRoleDisabled(groupKey, shouldDisable) {
+  if (!canManagePlatformUsers()) {
+    showPlatformToast('Admin only');
+    return;
+  }
+  const group = getPlatformRoleGroups().find(function(item){ return item.key === groupKey; });
+  if (!group || group.key === 'admin') {
+    showPlatformToast('This role cannot be bulk updated');
+    return;
+  }
+  const merged = getMergedPlatformUsers();
+  const members = merged.filter(group.test).filter(isBulkEligibleManagedUser);
+  const targets = members
+    .filter(function(m){ return shouldDisable ? !isPlatformManagedDisabled(m) : isPlatformManagedDisabled(m); })
+    .map(toManagedUserTarget);
+  if (!targets.length) {
+    showPlatformToast((shouldDisable ? 'No active ' : 'No disabled ') + group.label.toLowerCase() + ' users to update');
+    return;
+  }
+  const message = shouldDisable
+    ? 'Disable ' + targets.length + ' user' + (targets.length !== 1 ? 's' : '') + ' in ' + group.label + '?\n\nThis will block them across Platform, Shift Tracker, and Logs.'
+    : 'Enable ' + targets.length + ' user' + (targets.length !== 1 ? 's' : '') + ' in ' + group.label + '?\n\nThey will be able to sign in again across the suite.';
+  if (!confirm(message)) return;
+  try {
+    await setManagedUsersDisabled(targets, shouldDisable);
+    renderAllUsers();
+    showPlatformToast(group.label + ' ' + (shouldDisable ? 'disabled' : 'enabled') + ' ✓');
+  } catch (e) {
+    showPlatformToast('Failed: ' + (e && e.message ? e.message : String(e)));
+  }
 }
 
 async function loadAllUsers() {
@@ -2038,13 +2161,8 @@ function renderAllUsers() {
   const list = document.getElementById('userList');
   if (!list) return;
   try {
-  const merged = _usersCache.map(function(p) {
-    return { prof: p, kiln: _kilnUsersCache.find(function(k){ return k.auth_user_id === p.id; }) || null };
-  });
-  _kilnUsersCache.forEach(function(ku) {
-    if (!ku.auth_user_id || !_usersCache.find(function(p){ return p.id === ku.auth_user_id; }))
-      merged.push({ prof: null, kiln: ku });
-  });
+  const merged = getMergedPlatformUsers();
+  updateBulkControlsSummary(merged);
   if (!merged.length) { list.innerHTML = '<div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);padding:12px 0">No users found.</div>'; return; }
 
   const DS = 'height:30px;padding:0 8px;font-size:11px;font-family:var(--ff-mono);background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--tx);outline:none;cursor:pointer;flex:1;min-width:0';
@@ -2052,17 +2170,7 @@ function renderAllUsers() {
   const RS = 'display:flex;align-items:center;gap:8px;margin-bottom:7px';
   const rc = {admin:'var(--ac3)',reviewer:'var(--pur)',editor:'var(--amb)',viewer:'var(--tx3)',none:'var(--tx3)'};
 
-  const ROLE_GROUPS = [
-    { label:'Admins',           key:'admin',          color:'#16a34a', bg:'linear-gradient(90deg, rgba(22,163,74,.16), rgba(22,163,74,.08))', border:'rgba(22,163,74,.34)', test: function(m){ const ku=m.kiln; const p=m.prof; return (ku&&ku.is_admin)||(p&&p.role==='admin'); } },
-    { label:'Shift Managers',   key:'shift_manager',  color:'#7c3aed', bg:'rgba(124,58,237,.10)',  border:'rgba(124,58,237,.26)',  test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_shift_manager); } },
-    { label:'Electricians',     key:'electrician',    color:'#0f766e', bg:'rgba(15,118,110,.10)',  border:'rgba(15,118,110,.26)',  test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_electrician); } },
-    { label:'Mechanical',       key:'mechanical',     color:'#2563eb', bg:'rgba(37,99,235,.10)',   border:'rgba(37,99,235,.26)',   test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_mechanical); } },
-    { label:'Cement Analysts',  key:'cement_analyst', color:'#b45309', bg:'rgba(180,83,9,.10)',    border:'rgba(180,83,9,.26)',    test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_cement_analyst); } },
-    { label:'Day Staff',        key:'day_staff',      color:'#0891b2', bg:'rgba(8,145,178,.10)',   border:'rgba(8,145,178,.26)',   test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_day_staff); } },
-    { label:'Burners',          key:'burner',         color:'#d97706', bg:'rgba(217,119,6,.10)',   border:'rgba(217,119,6,.26)',   test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_burner); } },
-    { label:'Read Only',        key:'readonly',       color:'#64748b', bg:'rgba(100,116,139,.10)', border:'rgba(100,116,139,.24)', test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_readonly); } },
-    { label:'Platform Only',    key:'platform',       color:'#94a3b8', bg:'rgba(148,163,184,.10)', border:'rgba(148,163,184,.24)', test: function(m){ return !!(m.prof && !m.kiln); } },
-  ];
+  const ROLE_GROUPS = getPlatformRoleGroups();
 
   const _platCollapsed = window._platCollapsed = window._platCollapsed || {};
   ROLE_GROUPS.forEach(function(grp) {
@@ -2089,18 +2197,31 @@ function renderAllUsers() {
 
   ROLE_GROUPS.forEach(function(grp) {
     const members = merged.filter(grp.test);
-    if (!members.length) return;
     const collapsed = !!_platCollapsed[grp.key];
+    const eligibleMembers = members.filter(isBulkEligibleManagedUser);
+    const disabledCount = eligibleMembers.filter(isPlatformManagedDisabled).length;
+    const activeCount = eligibleMembers.length - disabledCount;
+    const bulkActions = grp.key === 'admin' ? '' : (
+      '<div onclick="event.stopPropagation()" style="display:flex;align-items:center;gap:6px;flex:0 0 auto">'
+      + '<button type="button" onclick="event.stopPropagation();bulkSetRoleDisabled(\''+grp.key+'\',true)" '+(!activeCount ? 'disabled' : '')+' style="height:24px;padding:0 8px;font-size:10px;font-family:var(--ff-head);font-weight:600;background:var(--redd);border:1px solid var(--redb);border-radius:var(--rxs);color:var(--red);cursor:'+(!activeCount ? 'not-allowed' : 'pointer')+';opacity:'+(!activeCount ? '.45' : '1')+';white-space:nowrap">Disable</button>'
+      + '<button type="button" onclick="event.stopPropagation();bulkSetRoleDisabled(\''+grp.key+'\',false)" '+(!disabledCount ? 'disabled' : '')+' style="height:24px;padding:0 8px;font-size:10px;font-family:var(--ff-head);font-weight:600;background:var(--grnd);border:1px solid var(--grnb);border-radius:var(--rxs);color:var(--grn);cursor:'+(!disabledCount ? 'not-allowed' : 'pointer')+';opacity:'+(!disabledCount ? '.45' : '1')+';white-space:nowrap">Enable</button>'
+      + '</div>'
+    );
     html += '<div style="margin-bottom:4px">';
     html += '<div onclick="window._platCollapsed[\''+grp.key+'\']=!window._platCollapsed[\''+grp.key+'\'];renderAllUsers()" style="display:flex;align-items:center;gap:8px;padding:7px 12px;background:'+grp.bg+';border:1px solid '+grp.border+';border-radius:var(--rsm);cursor:pointer;user-select:none;margin-bottom:4px">'
       +'<span style="flex:1;font-size:11px;font-weight:700;font-family:var(--ff-mono);color:'+grp.color+'">'+grp.label+'</span>'
       +'<span style="font-size:10px;font-family:var(--ff-mono);color:'+grp.color+';opacity:.7">'+members.length+' user'+(members.length!==1?'s':'')+'</span>'
+      + bulkActions
       +'<svg viewBox="0 0 24 24" fill="none" stroke="'+grp.color+'" stroke-width="2.5" style="width:12px;height:12px;transition:transform .15s;transform:rotate('+(collapsed?'-90deg':'0deg')+')"><polyline points="6 9 12 15 18 9"/></svg>'
       +'</div>';
     if (!collapsed) {
-      members.forEach(function(m) {
-        html += renderUserCard(m, DS, LS, RS, rc);
-      });
+      if (members.length) {
+        members.forEach(function(m) {
+          html += renderUserCard(m, DS, LS, RS, rc);
+        });
+      } else {
+        html += '<div style="padding:12px 14px;margin-bottom:6px;background:var(--sf2);border:1px dashed var(--bd2);border-radius:var(--rsm);color:var(--tx3);font-size:11px;font-family:var(--ff-mono)">No users in this role yet.</div>';
+      }
     }
     html += '</div>';
   });
@@ -2113,11 +2234,11 @@ function renderAllUsers() {
 
 function renderUserCard(m, DS, LS, RS, rc) {
   const p = m.prof, ku = m.kiln;
-  const PROTECTED_USERNAME = 'rjone';
   const canManageUsers = _platformProfile && _platformProfile.role === 'admin';
   const profileId = p ? p.id : (ku && ku.auth_user_id ? ku.auth_user_id : null);
   const isSelf = _platformProfile && profileId && profileId === _platformProfile.id;
-  const isProtectedKiln = ku && ku.username === PROTECTED_USERNAME;
+  const isProtectedKiln = ku && ku.username === PLATFORM_PROTECTED_USERNAME;
+  const isDisabledEverywhere = isPlatformManagedDisabled(m);
   const displayName = (p&&(p.full_name||p.email))||(ku&&(ku.locked_name||ku.username))||'?';
   const email = (p&&p.email)||(ku&&ku.email)||'\u2014';
   const initials = displayName.split(' ').map(function(w){return w[0]||'';}).join('').slice(0,2).toUpperCase()||'?';
@@ -2140,9 +2261,9 @@ function renderUserCard(m, DS, LS, RS, rc) {
     +'<div style="width:36px;height:36px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--ff-head);font-weight:700;font-size:13px;color:'+col+';border:1px solid '+col+'33;background:'+col+'18">'+esc(initials)+'</div>'
     +'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:var(--tx);font-family:var(--ff-head);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(displayName)+'</div>'
     +'<div style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(email)+'</div></div>'
-    +(p&&p.disabled===true?'<span style="font-size:9px;font-family:var(--ff-mono);color:var(--red);border:1px solid var(--redb);background:var(--redd);padding:2px 6px;border-radius:4px;flex-shrink:0;white-space:nowrap">DISABLED</span>':p&&p.approved===false?'<span style="font-size:9px;font-family:var(--ff-mono);color:var(--amb);border:1px solid var(--ambb);background:var(--ambd);padding:2px 6px;border-radius:4px;flex-shrink:0;white-space:nowrap">PENDING</span>':'')
+    +(isDisabledEverywhere?'<span style="font-size:9px;font-family:var(--ff-mono);color:var(--red);border:1px solid var(--redb);background:var(--redd);padding:2px 6px;border-radius:4px;flex-shrink:0;white-space:nowrap">DISABLED</span>':p&&p.approved===false?'<span style="font-size:9px;font-family:var(--ff-mono);color:var(--amb);border:1px solid var(--ambb);background:var(--ambd);padding:2px 6px;border-radius:4px;flex-shrink:0;white-space:nowrap">PENDING</span>':'')
     +(ku&&ku.must_reset_password?'<span style="font-size:9px;font-family:var(--ff-mono);color:var(--amb);border:1px solid var(--ambb);background:var(--ambd);padding:2px 6px;border-radius:4px;flex-shrink:0;white-space:nowrap">PW RESET</span>':'')
-    +(ku&&ku.is_locked?'<span style="font-size:9px;font-family:var(--ff-mono);color:var(--red);border:1px solid var(--redb);background:var(--redd);padding:2px 6px;border-radius:4px;flex-shrink:0">LOCKED</span>':'')
+    +(!isDisabledEverywhere&&ku&&ku.is_locked?'<span style="font-size:9px;font-family:var(--ff-mono);color:var(--red);border:1px solid var(--redb);background:var(--redd);padding:2px 6px;border-radius:4px;flex-shrink:0">LOCKED</span>':'')
     +'</div>';
   h += '<div style="'+RS+'"><span style="'+LS+'">Access Levels</span>';
   if(ku){
@@ -2175,7 +2296,7 @@ function renderUserCard(m, DS, LS, RS, rc) {
   }
   if((p || ku) && !isSelf && !isProtectedKiln){
     const removeId = p ? p.id : (ku && ku.auth_user_id ? ku.auth_user_id : '');
-    const isDisabled = p && p.disabled === true;
+    const isDisabled = isDisabledEverywhere;
     if(p){
       h+='<button onclick="toggleDisableUser(\''+esc(p.id)+'\','+(isDisabled?'true':'false')+')" style="height:26px;padding:0 10px;font-size:11px;font-family:var(--ff-body);background:'+(isDisabled?'var(--grnd)':'var(--redd)')+';border:1px solid '+(isDisabled?'var(--grnb)':'var(--redb)')+';border-radius:var(--rsm);color:'+(isDisabled?'var(--grn)':'var(--red)')+';cursor:pointer">'+(isDisabled?'&#10003; Enable':'&#9646; Disable')+'</button>';
     }
@@ -2506,341 +2627,6 @@ function showInviteMsg(type, text) {
 }
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-// ---------------------------------------------------------------------------
-// Platform AI panel and cross-app summary helpers
-// ---------------------------------------------------------------------------
-
-function openAiPanel() {
-  const overlay = document.getElementById('aiOverlay');
-  const panel = document.getElementById('aiPanel');
-  if (!overlay || !panel) return;
-  overlay.style.display = 'block';
-  panel.style.transform = 'translateX(0)';
-  renderAiHistory();
-  const prompt = document.getElementById('aiPrompt');
-  if (prompt) prompt.focus();
-}
-function closeAiPanel() {
-  const overlay = document.getElementById('aiOverlay');
-  const panel = document.getElementById('aiPanel');
-  if (!overlay || !panel) return;
-  overlay.style.display = 'none';
-  panel.style.transform = 'translateX(100%)';
-}
-const AI_PROXY_URL = 'https://xnkwrkoxvgptobnmekgv.supabase.co/functions/v1/hyper-task';
-async function callAiProxy(question, summary) {
-  const sessionResult = await sb.auth.getSession();
-  const token = sessionResult && sessionResult.data && sessionResult.data.session && sessionResult.data.session.access_token;
-  if (!token) throw new Error('Please sign in again.');
-  const res = await fetch(AI_PROXY_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + token
-    },
-    body: JSON.stringify({ app: 'platform', question: question, summary: summary })
-  });
-  const raw = await res.text();
-  let data = {};
-  try { data = raw ? JSON.parse(raw) : {}; } catch (e) {}
-  if (!res.ok) throw new Error((data && data.error) || ('AI request failed (' + res.status + ')'));
-  return data.reply || 'No response received.';
-}
-function derivePlatformRoleScopes(ku) {
-  if (!ku || (ku.shift_log_access === false && !ku.is_admin)) {
-    return { burners:false, managers:false, analysts:false, electricians:false, mechanicals:false };
-  }
-  if (ku.is_admin || ku.is_shift_manager) {
-    return { burners:true, managers:true, analysts:true, electricians:true, mechanicals:true };
-  }
-  return {
-    burners: !!(ku.is_burner || ku.is_readonly || ku.is_day_staff),
-    managers: !!ku.is_readonly,
-    analysts: !!(ku.is_cement_analyst || ku.is_day_staff || ku.is_readonly),
-    electricians: !!(ku.is_electrician || ku.is_readonly),
-    mechanicals: !!(ku.is_mechanical || ku.is_readonly)
-  };
-}
-function computePlatformAiScopeLabels(profile, ku) {
-  const labels = [];
-  if (profile && profile.approved !== false && profile.disabled !== true && profile.shift_tracker_access !== false) {
-    labels.push('Shift Tracker');
-  }
-  const roleScopes = derivePlatformRoleScopes(ku);
-  if (roleScopes.burners) labels.push('Burners');
-  if (roleScopes.managers) labels.push('Shift Managers');
-  if (roleScopes.electricians) labels.push('Electricians');
-  if (roleScopes.mechanicals) labels.push('Mechanical');
-  if (roleScopes.analysts) labels.push('Cement Analysts');
-  return labels;
-}
-function getPlatformAiScopeLabels() {
-  return _platformAiScopeLabels || computePlatformAiScopeLabels(_platformProfile, _platformKilnUser);
-}
-async function refreshPlatformAiScopeLabels() {
-  try {
-    const sessionData = await sb.auth.getSession();
-    const sessionUser = sessionData && sessionData.data && sessionData.data.session && sessionData.data.session.user;
-    if (!sessionUser) {
-      _platformKilnUser = null;
-      _platformAiScopeLabels = computePlatformAiScopeLabels(_platformProfile, null);
-      renderAiHistory();
-      return;
-    }
-    const kilnRes = await sb.from('kiln_users')
-      .select('shift_log_access,is_admin,is_shift_manager,is_electrician,is_mechanical,is_cement_analyst,is_day_staff,is_burner,is_readonly')
-      .eq('auth_user_id', sessionUser.id)
-      .maybeSingle();
-    _platformKilnUser = kilnRes.data || null;
-    _platformAiScopeLabels = computePlatformAiScopeLabels(_platformProfile, _platformKilnUser);
-    renderAiHistory();
-  } catch(e) {}
-}
-function setAiScope(btn, scope) {
-  document.querySelectorAll('.ai-scope-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  _aiScope = scope;
-  _aiHistory = [];
-  renderAiHistory();
-}
-function renderAiHistory() {
-  const el = document.getElementById('aiHistory');
-  const clr = document.getElementById('aiClearBtn');
-  if (!el) return;
-  if (!_aiHistory.length) {
-    el.innerHTML = '<div style="color:var(--tx3);font-size:11px;font-family:var(--ff-mono);text-align:center;padding:8px 0 10px">Using: '
-      + esc(getPlatformAiScopeLabels().join(', ') || 'No accessible app data')
-      + '</div><div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);text-align:center;padding:28px 0">Ask about platform data and kiln log</div>';
-    if (clr) clr.style.display = 'none';
-    return;
-  }
-  el.innerHTML = '<div style="color:var(--tx3);font-size:11px;font-family:var(--ff-mono);padding:0 0 8px">Using: '
-    + esc(getPlatformAiScopeLabels().join(', ') || 'No accessible app data')
-    + '</div>' + _aiHistory.map(function(msg) {
-    if (msg.role==='user') return '<div style="display:flex;justify-content:flex-end"><div class="ai-bubble-user">'+esc(msg.content)+'</div></div>';
-    return '<div style="display:flex"><div class="ai-bubble-ai">'+esc(msg.content).replace(/\n/g,'<br>')+'</div></div>';
-  }).join('');
-  el.scrollTop = el.scrollHeight;
-  if (clr) clr.style.display = 'flex';
-}
-function clearAiHistory() {
-  _aiHistory = [];
-  renderAiHistory();
-}
-async function loadPlatformTradeRows(trade, sinceDate) {
-  const meta = trade === 'electrician'
-    ? { table: 'kiln_trade_log', oldTable: 'kiln_electrician_log', nameField: 'electrician_name' }
-    : { table: 'kiln_trade_log', oldTable: 'kiln_mechanical_log', nameField: 'mechanical_name' };
-  try {
-    let q = sb.from(meta.table).select('week_key,day,shift,person_name,notes').eq('trade', trade).order('week_key', { ascending: false }).limit(400);
-    if (sinceDate) q = q.gte('week_key', sinceDate);
-    const { data, error } = await q;
-    if (error) throw error;
-    if (data && data.length) return data;
-    throw new Error('No merged trade rows yet');
-  } catch (e) {
-    try {
-      let q = sb.from(meta.oldTable).select('week_key,day,shift,' + meta.nameField + ',notes').order('week_key', { ascending: false }).limit(400);
-      if (sinceDate) q = q.gte('week_key', sinceDate);
-      const { data, error } = await q;
-      if (error) throw error;
-      return data || [];
-    } catch (e2) {
-      return [];
-    }
-  }
-}
-async function buildPlatformContext() {
-  const now = new Date();
-  let sinceDate = null;
-  if (_aiScope==='week')  { const d=new Date(now); d.setDate(d.getDate()-7);       sinceDate=d.toISOString().slice(0,10); }
-  if (_aiScope==='month') { const d=new Date(now); d.setMonth(d.getMonth()-1);     sinceDate=d.toISOString().slice(0,10); }
-  if (_aiScope==='year')  { const d=new Date(now); d.setFullYear(d.getFullYear()-1);sinceDate=d.toISOString().slice(0,10); }
-  try {
-    const sessionData = await sb.auth.getSession();
-    const sessionUser = sessionData && sessionData.data && sessionData.data.session && sessionData.data.session.user;
-    const profile = _platformProfile || null;
-    const trackerAllowed = !!(profile && profile.approved !== false && profile.disabled !== true && profile.shift_tracker_access !== false);
-    let kilnAllowed = false;
-    let kilnUser = null;
-    if (sessionUser) {
-      const kilnRes = await sb.from('kiln_users')
-        .select('shift_log_access,is_admin,is_shift_manager,is_electrician,is_mechanical,is_cement_analyst,is_day_staff,is_burner,is_readonly')
-        .eq('auth_user_id', sessionUser.id)
-        .maybeSingle();
-      kilnUser = kilnRes.data || null;
-      kilnAllowed = !!(kilnUser && (kilnUser.shift_log_access !== false || kilnUser.is_admin));
-    }
-
-    const roleScopes = kilnAllowed ? derivePlatformRoleScopes(kilnUser) : { burners:false, managers:false, analysts:false, electricians:false, mechanicals:false };
-    _platformKilnUser = kilnUser;
-    _platformAiScopeLabels = computePlatformAiScopeLabels(profile, kilnUser);
-
-    const needsMainLogData = roleScopes.burners || roleScopes.managers || roleScopes.analysts;
-
-    let kilnQuery = sb.from('kiln_log').select('week_key,data').order('week_key',{ascending:false}).limit(200).neq('week_key','__lists__');
-    if (sinceDate) kilnQuery = kilnQuery.gte('week_key', sinceDate);
-
-    const [kilnRes, electricianRes, mechanicalRes] = await Promise.all([
-      (kilnAllowed && needsMainLogData) ? kilnQuery : Promise.resolve({ data: [] }),
-      (kilnAllowed && roleScopes.electricians) ? loadPlatformTradeRows('electrician', sinceDate) : Promise.resolve([]),
-      (kilnAllowed && roleScopes.mechanicals) ? loadPlatformTradeRows('mechanical', sinceDate) : Promise.resolve([])
-    ]);
-
-    const lines = ['PADESWOOD WORKS — PLATFORM SUMMARY — scope: '+_aiScope,'='.repeat(60)];
-
-    const accessLine = [
-      'Accessible apps:',
-      trackerAllowed ? 'Shift Tracker' : null,
-      kilnAllowed ? 'Kiln Log' : null
-    ].filter(Boolean).join(', ') || 'Accessible apps: none';
-    lines.push(accessLine);
-
-    const rows = kilnRes.data || [];
-    const electricianRows = electricianRes.data || electricianRes || [];
-    const mechanicalRows = mechanicalRes.data || mechanicalRes || [];
-    const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-    let burnerIssues = 0, burnerNotes = 0, managerNotes = 0, analystIssues = 0, electricianNotes = 0, mechanicalNotes = 0;
-    const recentItems = [];
-    let aiKnowledge = [];
-    try {
-      const aiRes = await sb.from('kiln_lists').select('items').eq('list_name', 'ai_knowledge').maybeSingle();
-      aiKnowledge = Array.isArray(aiRes && aiRes.data && aiRes.data.items) ? aiRes.data.items : [];
-    } catch (e) {
-      console.warn('AI knowledge load failed:', e);
-    }
-
-    if (aiKnowledge.length) {
-      lines.push('');
-      lines.push('AI KNOWLEDGE BASE:');
-      aiKnowledge.slice(0, 24).forEach(function(entry, i) {
-        lines.push('  ' + (i + 1) + '. ' + String(entry || '').replace(/\s+/g, ' ').trim());
-      });
-    }
-
-    if (kilnAllowed) {
-      rows.forEach(function(r) {
-        if (!r.data) return;
-        const weekState   = r.data.state   || r.data;
-        const weekSmState = r.data.smState || null;
-        const weekCaState = r.data.caState || null;
-        if (roleScopes.burners && weekState) {
-          DAYS.forEach(function(day) {
-            const d = weekState[day]; if (!d) return;
-            ['shift1','shift2'].forEach(function(sk,si) {
-              const s = d[sk]; if (!s) return;
-              const entries = (s.entries||[]).filter(function(e){ return e.equipment || e.issue; });
-              const hasNotes = (s.notes||'').trim();
-              burnerIssues += entries.length;
-              if (hasNotes) burnerNotes++;
-              entries.slice(0,2).forEach(function(e){
-                if (recentItems.length < 12) recentItems.push('  Kiln '+r.week_key+' '+day+' '+(si===0?'Day':'Night')+': '+(e.equipment||'?')+' — '+(e.issue||'no detail'));
-              });
-            });
-          });
-        }
-        if (roleScopes.managers && weekSmState) {
-          DAYS.forEach(function(day) {
-            const d = weekSmState[day]; if (!d) return;
-            ['shift1','shift2'].forEach(function(sk,si) {
-              const s = d[sk]; if (!s) return;
-              const notes = (s.notes||'').trim();
-              if (!notes) return;
-              managerNotes++;
-              if (recentItems.length < 12) recentItems.push('  Shift manager '+r.week_key+' '+day+' '+(si===0?'Day':'Night')+': '+notes.slice(0,110));
-            });
-          });
-        }
-        if (roleScopes.analysts && weekCaState) {
-          DAYS.forEach(function(day) {
-            const d = weekCaState[day]; if (!d) return;
-            ['shift1','shift2'].forEach(function(sk,si) {
-              const s = d[sk]; if (!s) return;
-              const hseItems = (s.hse||[]).filter(function(h){ return h.type || h.details; });
-              const grind = (s.cemQuality||[]).filter(function(q){ return (q.issues||'').trim(); });
-              analystIssues += hseItems.length + grind.length;
-              hseItems.slice(0,1).forEach(function(h){
-                if (recentItems.length < 12) recentItems.push('  Analyst '+r.week_key+' '+day+' '+(si===0?'Day':'Night')+': HSE '+(h.type||'?')+(h.details?' — '+h.details:''));
-              });
-              grind.slice(0,1).forEach(function(q){
-                if (recentItems.length < 12) recentItems.push('  Analyst '+r.week_key+' '+day+' '+(si===0?'Day':'Night')+': Mill '+(q.mill||'?')+' — '+q.issues);
-              });
-            });
-          });
-        }
-      });
-      if (roleScopes.electricians) {
-        electricianRows.forEach(function(r){
-          if (!r || (!r.electrician_name && !r.notes)) return;
-          electricianNotes++;
-          if (recentItems.length < 12) {
-            recentItems.push('  Electrician '+r.week_key+' '+(r.day||'')+' '+((r.shift||'')==='shift1'?'Day':'Night')+': '+((r.electrician_name||'') ? (r.electrician_name+' — ') : '')+(r.notes||'').slice(0,110));
-          }
-        });
-      }
-      if (roleScopes.mechanicals) {
-        mechanicalRows.forEach(function(r){
-          if (!r || (!r.mechanical_name && !r.notes)) return;
-          mechanicalNotes++;
-          if (recentItems.length < 12) {
-            recentItems.push('  Mechanical '+r.week_key+' '+(r.day||'')+' '+((r.shift||'')==='shift1'?'Day':'Night')+': '+((r.mechanical_name||'') ? (r.mechanical_name+' — ') : '')+(r.notes||'').slice(0,110));
-          }
-        });
-      }
-      lines.push('');
-      lines.push('KILN LOG APP:');
-      lines.push('  Visible role scopes: '
-        + [
-          roleScopes.burners ? 'Burners' : null,
-          roleScopes.managers ? 'Shift Managers' : null,
-          roleScopes.electricians ? 'Electricians' : null,
-          roleScopes.mechanicals ? 'Mechanical' : null,
-          roleScopes.analysts ? 'Cement Analysts' : null
-        ].filter(Boolean).join(', '));
-      lines.push('  Burner issue entries: '+burnerIssues
-        +' | Burner note entries: '+burnerNotes
-        +' | Shift manager note entries: '+managerNotes
-        +' | Electrician note entries: '+electricianNotes
-        +' | Mechanical note entries: '+mechanicalNotes
-        +' | Analyst issue entries: '+analystIssues);
-      if (recentItems.length) {
-        lines.push('  Recent recorded items:');
-        recentItems.forEach(function(line){ lines.push(line); });
-      } else {
-        lines.push('  No recent recorded items found for the selected scope.');
-      }
-    }
-    return lines.join('\n');
-  } catch(e) { return 'Error loading shift data: '+e.message; }
-}
-async function sendAiReport() {
-  const promptEl = document.getElementById('aiPrompt');
-  const sendBtn  = document.getElementById('aiSendBtn');
-  if (!promptEl || !sendBtn) return;
-  const q = promptEl.value.trim();
-  if (!q) return;
-  promptEl.value = '';
-  sendBtn.disabled = true;
-  _aiHistory.push({role:'user',content:q});
-  renderAiHistory();
-  const hist = document.getElementById('aiHistory');
-  hist.innerHTML += '<div style="display:flex" id="aiThinking"><div class="ai-thinking"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div><span style="margin-left:6px;font-size:12px;color:var(--tx3);font-family:var(--ff-mono)">Analysing...</span></div></div>';
-  hist.scrollTop = hist.scrollHeight;
-  try {
-    const context = await buildPlatformContext();
-    const reply = await callAiProxy(q, context);
-    document.getElementById('aiThinking')?.remove();
-    _aiHistory.push({role:'assistant',content:reply});
-    renderAiHistory();
-  } catch(e) {
-    document.getElementById('aiThinking')?.remove();
-    _aiHistory.push({role:'assistant',content:'Error: ' + (e && e.message ? e.message : 'AI failure')});
-    renderAiHistory();
-  } finally {
-    sendBtn.disabled = false;
-  }
-}
-
 function showPlatformToast(msg) {
   let t = document.getElementById('platformToast');
   if (!t) { t=document.createElement('div'); t.id='platformToast'; t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:10px 18px;font-size:13px;color:var(--tx);z-index:9999;box-shadow:var(--e2);transition:opacity .3s'; document.body.appendChild(t); }
@@ -2897,12 +2683,12 @@ async function renderResetRequests() {
 async function handleResetReq(btnOrId, email) {
   try {
     const id = btnOrId && btnOrId.dataset ? btnOrId.dataset.reqId : btnOrId;
-    const req = _resetRequestsCache.find(function(x){ return String(x.id) === String(id); }) || { id: id, requestType: 'reset', requestTable: btnOrId && btnOrId.dataset ? btnOrId.dataset.reqTable : PW_RESET_REQUESTS_TABLE };
+    const req = _resetRequestsCache.find(function(x){ return String(x.id) === String(id); }) || { id: id, requestType: 'reset', requestTable: btnOrId && btnOrId.dataset ? btnOrId.dataset.reqTable : PW_REQUESTS_TABLE };
     const emailToUse = email || req.email;
     const {data:profile} = await sb.from('pw_profiles').select('id,full_name').eq('email', emailToUse).maybeSingle();
     if (!profile) { showPlatformToast('No account found for ' + emailToUse); return; }
     _pendingResetReqId = id; // store so we can mark done after password is set
-    _pendingResetReqTable = req.requestTable || PW_RESET_REQUESTS_TABLE;
+    _pendingResetReqTable = req.requestTable || PW_REQUESTS_TABLE;
     openAdminSetPwModal(profile.id, null, profile.full_name || emailToUse, id);
   } catch(e) { showPlatformToast('Failed: ' + e.message); }
 }
@@ -2910,7 +2696,7 @@ async function handleResetReq(btnOrId, email) {
 async function deleteResetReq(btnOrId) {
   try {
     const id = btnOrId && btnOrId.dataset ? btnOrId.dataset.reqId : btnOrId;
-    const req = _resetRequestsCache.find(function(x){ return String(x.id) === String(id); }) || { id: id, requestType: 'reset', requestTable: btnOrId && btnOrId.dataset ? btnOrId.dataset.reqTable : PW_RESET_REQUESTS_TABLE };
+    const req = _resetRequestsCache.find(function(x){ return String(x.id) === String(id); }) || { id: id, requestType: 'reset', requestTable: btnOrId && btnOrId.dataset ? btnOrId.dataset.reqTable : PW_REQUESTS_TABLE };
     await deleteRequestRow(req);
     renderResetRequests();
     loadResetReqBadge();
