@@ -1530,8 +1530,6 @@ async function toggleDisableUser(userId, currentlyDisabled) {
   const u = mergedUser ? mergedUser.prof : (_usersCache.find(function(x){ return x.id === userId; }) || null);
   const name = mergedUser ? getManagedUserDisplayName(mergedUser) : ((u && (u.full_name || u.email)) || 'this user');
   if (!confirm((currentlyDisabled ? 'Re-enable ' : 'Disable ') + name + '?\n\n' + (currentlyDisabled ? 'They will be able to sign in across the suite again.' : 'They will be immediately blocked from Platform, Shift Tracker, and Logs.'))) return;
-  const typed = prompt(currentlyDisabled ? 'Type ENABLE USER to confirm.' : 'Type DISABLE USER to confirm.');
-  if(String(typed || '').trim().toUpperCase() !== (currentlyDisabled ? 'ENABLE USER' : 'DISABLE USER')) return;
   try {
     await setManagedUsersDisabled([mergedUser ? toManagedUserTarget(mergedUser) : { profileId: userId, authUserId: null, username: null, displayName: name }], !currentlyDisabled);
     renderAllUsers();
@@ -2435,8 +2433,6 @@ async function bulkToggleAllUsers(shouldDisable) {
     ? 'Lock down ' + targets.length + ' non-admin account' + (targets.length !== 1 ? 's' : '') + '?\n\nThis will immediately block them from Platform, Shift Tracker, and Logs.'
     : 'Enable ' + targets.length + ' non-admin account' + (targets.length !== 1 ? 's' : '') + '?\n\nThey will be able to sign in again across the suite.';
   if (!confirm(message)) return;
-  const typed = prompt(shouldDisable ? 'Type LOCKDOWN to confirm.' : 'Type ENABLE to confirm.');
-  if(String(typed || '').trim().toUpperCase() !== (shouldDisable ? 'LOCKDOWN' : 'ENABLE')) return;
   try {
     await setManagedUsersDisabled(targets, shouldDisable);
     renderAllUsers();
@@ -2469,8 +2465,6 @@ async function bulkSetRoleDisabled(groupKey, shouldDisable) {
     ? 'Disable ' + targets.length + ' user' + (targets.length !== 1 ? 's' : '') + ' in ' + group.label + '?\n\nThis will block them across Platform, Shift Tracker, and Logs.'
     : 'Enable ' + targets.length + ' user' + (targets.length !== 1 ? 's' : '') + ' in ' + group.label + '?\n\nThey will be able to sign in again across the suite.';
   if (!confirm(message)) return;
-  const typed = prompt(shouldDisable ? 'Type DISABLE ROLE to confirm.' : 'Type ENABLE ROLE to confirm.');
-  if(String(typed || '').trim().toUpperCase() !== (shouldDisable ? 'DISABLE ROLE' : 'ENABLE ROLE')) return;
   try {
     await setManagedUsersDisabled(targets, shouldDisable);
     renderAllUsers();
