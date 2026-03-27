@@ -68,39 +68,15 @@
   --glass-5: rgba(22,25,31,.66);
   --glass-6: rgba(22,25,31,.56);
 }
-function setEntryStatus(sk,i,val){
-  const entry=state[currentDay][sk].entries[i];
-
-  if(!entry)return;
-  entry.status=val;
-  if(val){
-    const now=new Date();
-    const ts=now.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})+' '+now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-    const actor=lockedName||currentUserLogon||currentUser||'';
-    entry.statusBy=actor;
-    entry.statusAt=ts;
-    if(actor && !entry.flaggedBy) entry.flaggedBy=actor;
-    if(ts && !entry.flaggedAt) entry.flaggedAt=ts;
-  } else {
-    entry.statusBy=''; entry.statusAt='';
-  }
-  localStorage.setItem('kbl_v5', JSON.stringify(state));
-  if(weekStart){ localStorage.setItem('kbl_week_'+toISO(weekStart), JSON.stringify(state)); }
-  showSyncDot('syncing');
-  clearTimeout(_sbSaveTimer);
-  sbSaveCloud();
-}
-
-
 .light-mode {
-  --bg:   #f0f3f8;
+  --bg:   #fbfdff;
   --sf:   #ffffff;
-  --sf2:  #f5f7fc;
-  --sf3:  #eaeef6;
-  --sf4:  #e0e6f2;
-  --bd:   #d0d8ea;
-  --bd2:  #b8c4db;
-  --bd3:  #98a8c4;
+  --sf2:  #f8fbff;
+  --sf3:  #f2f7fd;
+  --sf4:  #edf3fa;
+  --bd:   #dce5f0;
+  --bd2:  #cdd8e6;
+  --bd3:  #a9bbd3;
 
   --ac:   #155c28;
   --ac2:  #1a7a35;
@@ -111,29 +87,61 @@ function setEntryStatus(sk,i,val){
   --acgl: rgba(21,92,40,.32);
 
   --tx:   #0d1526;
-  --tx2:  #4a5870;
-  --tx3:  #9aaabf;
+  --tx2:  #405063;
+  --tx3:  #74839a;
 
   --red:  #d93f3c;  --redd: rgba(217,63,60,.07);  --redb: rgba(217,63,60,.22);
   --grn:  #15924f;  --grnd: rgba(21,146,79,.07);  --grnb: rgba(21,146,79,.22);
   --amb:  #c97d10;  --ambd: rgba(201,125,16,.07); --ambb: rgba(201,125,16,.22);
   --pur:  #7a50c8;  --purd: rgba(122,80,200,.07); --purb: rgba(122,80,200,.22);
 
-  --e1: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
-  --e2: 0 4px 18px rgba(0,0,0,.08);
-  --e3: 0 20px 56px rgba(0,0,0,.12);
-  --eac: 0 4px 22px rgba(10,138,134,.20);
-  --green-wash-1: rgba(21,92,40,.05);
-  --green-wash-2: rgba(34,168,71,.04);
-  --green-wash-3: rgba(21,92,40,.09);
-  --green-edge: rgba(34,168,71,.14);
-  --inp: #edf0f8;
-  --glass-1: rgba(255,255,255,.72);
-  --glass-2: rgba(255,255,255,.66);
-  --glass-3: rgba(255,255,255,.68);
-  --glass-4: rgba(255,255,255,.62);
-  --glass-5: rgba(255,255,255,.54);
-  --glass-6: rgba(255,255,255,.46);
+  --e1: 0 1px 3px rgba(0,0,0,.05), 0 1px 2px rgba(0,0,0,.03);
+  --e2: 0 4px 18px rgba(0,0,0,.07);
+  --e3: 0 20px 56px rgba(0,0,0,.10);
+  --eac: 0 4px 22px rgba(10,138,134,.16);
+  --green-wash-1: rgba(21,92,40,.04);
+  --green-wash-2: rgba(34,168,71,.03);
+  --green-wash-3: rgba(21,92,40,.08);
+  --green-edge: rgba(34,168,71,.12);
+  --inp: #f7f9fd;
+  --glass-1: rgba(255,255,255,.96);
+  --glass-2: rgba(255,255,255,.88);
+  --glass-3: rgba(255,255,255,.94);
+  --glass-4: rgba(255,255,255,.84);
+  --glass-5: rgba(255,255,255,.76);
+  --glass-6: rgba(255,255,255,.70);
+}
+
+body.light-mode {
+  background:
+    radial-gradient(1200px 620px at 18% -6%, rgba(255,255,255,.96), transparent 58%),
+    radial-gradient(900px 480px at 100% 0%, rgba(34,168,71,.03), transparent 54%),
+    var(--bg);
+}
+body.light-mode .topbar,
+body.light-mode .dual-nav,
+body.light-mode .shift-panel,
+body.light-mode .log-section,
+body.light-mode .notes-section,
+body.light-mode .stat-card,
+body.light-mode .modal,
+body.light-mode .reports-card,
+body.light-mode .reports-send,
+body.light-mode .reports-input,
+body.light-mode .field-cell,
+body.light-mode .nav-btn,
+body.light-mode .card,
+body.light-mode .panel,
+body.light-mode .matrix-card,
+body.light-mode .user-row,
+body.light-mode .alert-row,
+body.light-mode .ai-scope-btn,
+body.light-mode .search-wrap input,
+body.light-mode textarea,
+body.light-mode select {
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  box-shadow: 0 12px 32px rgba(15,23,42,.08);
 }
 
 *,*::before,*::after { box-sizing:border-box; margin:0; padding:0 }
@@ -538,6 +546,31 @@ body.app-ready #app {
 }
 .page-period-jump:active { transform:translateY(0) scale(.98) }
 .page-date   { font-family:var(--ff-mono); font-size:10px; color:var(--tx2); margin-top:4px; letter-spacing:.3px }
+.overview-date-picker {
+  height:28px;
+  padding:0 10px;
+  border-radius:999px;
+  border:1px solid var(--bd);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,0)),
+    var(--sf2);
+  color:var(--tx2);
+  font-family:var(--ff-mono);
+  font-size:9px;
+  letter-spacing:.04em;
+  cursor:pointer;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+  transition:transform .14s, border-color .14s, background .14s, color .14s, box-shadow .14s;
+}
+.overview-date-picker:hover {
+  color:var(--tx);
+  border-color:var(--bd2);
+  transform:translateY(-1px);
+  box-shadow:0 10px 22px -18px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.05);
+}
+.overview-date-picker:active { transform:translateY(0) scale(.98) }
+.overview-date-picker:focus { outline:none; border-color:var(--ac); box-shadow:0 0 0 3px var(--acd1) }
+.overview-date-picker::-webkit-calendar-picker-indicator { cursor:pointer; opacity:.7; }
 .page-status { display:flex; align-items:center; gap:8px; margin-top:7px }
 
 .search-wrap { position:relative; margin-bottom:18px }
@@ -1956,7 +1989,7 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
 </div>
 
 <footer style="position:relative;z-index:1;border-top:1px solid var(--bd);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;flex-shrink:0;font-family:var(--ff-mono);font-size:10px;color:var(--tx3);letter-spacing:.5px">
-  <span>Padeswood Works · Shift Log · HeidelbergMaterials</span>
+  <span>Padeswood Works · Logs · HeidelbergMaterials</span>
 </footer>
 
 <div class="overlay" id="searchModal" style="align-items:flex-start;justify-content:center;padding-top:6vh">
@@ -1984,6 +2017,9 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
 </div>
 
 <script>
+// ---------------------------------------------------------------------------
+// Kiln log application bootstrap, theme, and session wiring
+// ---------------------------------------------------------------------------
 const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
 const JS_DAY = {1:0,2:1,3:2,4:3,5:4,6:5,0:6};
 
@@ -2362,7 +2398,7 @@ async function doLogin(){
   const match = pickBestKilnUser(userRows, session.user);
 
   if(match.shift_log_access === false && !match.is_admin){
-    errEl.textContent = 'You do not have access to Shift Log. Please contact your administrator.';
+    errEl.textContent = 'You do not have access to Logs. Please contact your administrator.';
     errEl.style.display = 'block';
     setSharedSession(null);
     sb.auth.signOut().catch(function(){});
@@ -2388,7 +2424,7 @@ async function _applyUserSession(match){
   readOnly        = match.is_readonly || false;
   const hasShiftLogAccess = match.shift_log_access !== false || isAdmin;
   if(!hasShiftLogAccess){
-    errEl.textContent = 'You do not have access to Shift Log. Please contact your administrator.';
+    errEl.textContent = 'You do not have access to Logs. Please contact your administrator.';
     errEl.style.display = 'block';
     document.getElementById('splash').style.display = 'flex';
     document.getElementById('app').style.display = 'none';
@@ -2737,6 +2773,9 @@ function syncWeekDateInput(day){
 function canUseLocalCache(){
   return navigator.onLine === false;
 }
+// ---------------------------------------------------------------------------
+// Access helpers and shared week navigation
+// ---------------------------------------------------------------------------
 function canViewElectricianLog(){
   return !!(isAdmin || isShiftManager || isElectrician || readOnly);
 }
@@ -3049,6 +3088,7 @@ async function jumpOverviewPeriod(unit, delta){
   const monday = new Date(target);
   monday.setDate(target.getDate() - (dow === 0 ? 6 : dow - 1));
   const activeDay = DAYS.includes(currentDay) ? currentDay : (DAYS.includes(currentSmDay) ? currentSmDay : 'Monday');
+  window._overviewPickedDate = toISO(monday);
   await loadWeekIntoState(toISO(monday), activeDay);
   renderOverview();
   showToast((delta < 0 ? 'Moved to ' : 'Jumped to ') + 'week of ' + toISO(monday));
@@ -3060,9 +3100,23 @@ async function jumpOverviewToCurrentWeek(){
   const monday = new Date(now);
   monday.setDate(now.getDate() - (dow === 0 ? 6 : dow - 1));
   const activeDay = DAYS.includes(currentDay) ? currentDay : (DAYS.includes(currentSmDay) ? currentSmDay : 'Monday');
+  window._overviewPickedDate = toISO(monday);
   await loadWeekIntoState(toISO(monday), activeDay);
   renderOverview();
   showToast('Returned to this week');
+}
+
+async function jumpOverviewToDate(isoDate){
+  if(!isoDate) return;
+  const pickedDate = parseLocalDate(isoDate);
+  const dow = pickedDate.getDay();
+  const monday = new Date(pickedDate);
+  monday.setDate(pickedDate.getDate() - (dow === 0 ? 6 : dow - 1));
+  const activeDay = DAYS.includes(currentDay) ? currentDay : (DAYS.includes(currentSmDay) ? currentSmDay : 'Monday');
+  window._overviewPickedDate = isoDate;
+  await loadWeekIntoState(toISO(monday), activeDay);
+  renderOverview();
+  showToast('Showing week of ' + toISO(monday));
 }
 
 function dayDate(day){
@@ -3210,6 +3264,9 @@ function animateContent(){
   mc.classList.add('page-enter');
 }
 
+// ---------------------------------------------------------------------------
+// Main view renderers
+// ---------------------------------------------------------------------------
 function renderDay(day){
   if(day==='Overview'){renderOverview();return;}
   if(day==='AI Reporting'){renderReports();return;}
@@ -4298,6 +4355,9 @@ function renderRows(sk,entries){
 let _searchScope = 'week';
 let _searchTimer = null;
 
+// ---------------------------------------------------------------------------
+// Search, role-scoped history, and specialist trade logs
+// ---------------------------------------------------------------------------
 function openSearchModal(){
   document.getElementById('searchModal').classList.add('open');
   setTimeout(()=>document.getElementById('searchModalInput').focus(), 80);
@@ -4381,62 +4441,185 @@ function mechanicalRowsToWeek(rows){
   return week;
 }
 
-async function loadElectricianWeeksForScope(scopeMondays){
-  if(scopeMondays){
-    const fetches = scopeMondays.map(function(m){
-      return sbFetch('/rest/v1/kiln_electrician_log?week_key=eq.'+m+'&select=week_key,day,shift,electrician_name,notes').catch(function(){ return []; });
+const KILN_TRADE_LOG_TABLE = 'kiln_trade_log';
+
+function tradeMeta(trade){
+  return trade === 'electrician'
+    ? { oldTable: 'kiln_electrician_log', oldName: 'electrician_name' }
+    : { oldTable: 'kiln_mechanical_log', oldName: 'mechanical_name' };
+}
+
+function tradeWeekFactory(trade){
+  return trade === 'electrician' ? mkElectricianWeek() : mkMechanicalWeek();
+}
+
+function tradeRowsToWeek(trade, rows){
+  const week = tradeWeekFactory(trade);
+  (rows || []).forEach(function(row){
+    if(!row || !row.day || !row.shift || !week[row.day] || !week[row.day][row.shift]) return;
+    week[row.day][row.shift] = {
+      name: row.person_name || row.electrician_name || row.mechanical_name || '',
+      notes: row.notes || ''
+    };
+  });
+  return week;
+}
+
+async function loadTradeWeek(trade, isoMonday){
+  const meta = tradeMeta(trade);
+  try {
+    const rows = await sbFetch('/rest/v1/' + KILN_TRADE_LOG_TABLE + '?week_key=eq.'+isoMonday+'&trade=eq.'+trade+'&select=day,shift,person_name,notes');
+    if(!rows || !rows.length) throw new Error('No merged trade rows yet');
+    const next = tradeWeekFactory(trade);
+    (rows || []).forEach(function(row){
+      if(!row || !next[row.day] || !next[row.day][row.shift]) return;
+      next[row.day][row.shift] = {
+        name: row.person_name || '',
+        notes: row.notes || ''
+      };
     });
-    const results = await Promise.all(fetches);
-    const rows = results.flat().filter(Boolean);
+    return next;
+  } catch(e){
+    try {
+      const rows = await sbFetch('/rest/v1/'+meta.oldTable+'?week_key=eq.'+isoMonday+'&select=day,shift,'+meta.oldName+',notes');
+      if(!rows || !rows.length) throw new Error('No legacy trade rows yet');
+      const next = tradeWeekFactory(trade);
+      (rows || []).forEach(function(row){
+        if(!row || !next[row.day] || !next[row.day][row.shift]) return;
+        next[row.day][row.shift] = {
+          name: row[meta.oldName] || '',
+          notes: row.notes || ''
+        };
+      });
+      return next;
+    } catch(e2){
+      console.warn('Supabase ' + trade + ' load failed:', e2);
+    }
+  }
+  return null;
+}
+
+async function loadTradeWeeksForScope(trade, scopeMondays){
+  const meta = tradeMeta(trade);
+  const rowsForTrade = async function(tableName, selectCols){
+    if(scopeMondays){
+      const fetches = scopeMondays.map(function(m){
+        return sbFetch('/rest/v1/'+tableName+'?week_key=eq.'+m+'&select=week_key,day,shift,'+selectCols).catch(function(){ return []; });
+      });
+      const results = await Promise.all(fetches);
+      return results.flat().filter(Boolean);
+    }
+    return await sbFetch('/rest/v1/'+tableName+'?select=week_key,day,shift,'+selectCols+'&order=week_key.desc&limit=200');
+  };
+
+  try {
+    const rows = await rowsForTrade(KILN_TRADE_LOG_TABLE, 'trade,person_name,notes');
+    if(!rows || !rows.length) throw new Error('No merged trade rows yet');
+    const filtered = (rows || []).filter(function(row){ return row && row.trade === trade && row.week_key && row.week_key !== '__lists__'; });
     const grouped = {};
-    rows.forEach(function(row){
-      if(!row || !row.week_key || row.week_key === '__lists__') return;
+    filtered.forEach(function(row){
       if(!grouped[row.week_key]) grouped[row.week_key] = [];
       grouped[row.week_key].push(row);
     });
     return Object.keys(grouped).sort().map(function(weekKey){
-      return { weekKey: weekKey, weekElState: electricianRowsToWeek(grouped[weekKey]) };
+      return {
+        weekKey: weekKey,
+        [trade === 'electrician' ? 'weekElState' : 'weekMechState']: tradeRowsToWeek(trade, grouped[weekKey])
+      };
     });
+  } catch(e){
+    try {
+      const rows = await rowsForTrade(meta.oldTable, meta.oldName + ',notes');
+      if(!rows || !rows.length) throw new Error('No legacy trade rows yet');
+      const grouped = {};
+      (rows || []).forEach(function(row){
+        if(!row || !row.week_key || row.week_key === '__lists__') return;
+        if(!grouped[row.week_key]) grouped[row.week_key] = [];
+        grouped[row.week_key].push(row);
+      });
+      return Object.keys(grouped).sort().map(function(weekKey){
+        return {
+          weekKey: weekKey,
+          [trade === 'electrician' ? 'weekElState' : 'weekMechState']: tradeRowsToWeek(trade, grouped[weekKey])
+        };
+      });
+    } catch(e2){
+      console.warn('Supabase ' + trade + ' load failed:', e2);
+      return [];
+    }
   }
-  const rows = await sbFetch('/rest/v1/kiln_electrician_log?select=week_key,day,shift,electrician_name,notes&order=week_key.desc&limit=200');
-  const grouped = {};
-  (rows || []).forEach(function(row){
-    if(!row || !row.week_key || row.week_key === '__lists__') return;
-    if(!grouped[row.week_key]) grouped[row.week_key] = [];
-    grouped[row.week_key].push(row);
-  });
-  return Object.keys(grouped).sort().map(function(weekKey){
-    return { weekKey: weekKey, weekElState: electricianRowsToWeek(grouped[weekKey]) };
-  });
+}
+
+async function saveTradeDirty(trade, dirtySet, shouldShowState){
+  const canView = trade === 'electrician' ? canViewElectricianLog() : canViewMechanicalLog();
+  const ensureDayState = trade === 'electrician' ? ensureElectricianDayState : ensureMechanicalDayState;
+  const nameField = trade === 'electrician' ? 'electrician_name' : 'mechanical_name';
+  if(!weekStart || !canView) return true;
+  const showState = shouldShowState !== false;
+  const iso = toISO(weekStart);
+  const dirtyKeys = Array.from(dirtySet);
+  if(!dirtyKeys.length) return true;
+  const meta = tradeMeta(trade);
+  try {
+    for(const dirtyKey of dirtyKeys){
+      const parts = dirtyKey.split('|');
+      const day = parts[0];
+      const shift = parts[1];
+      const row = ensureDayState(day)[shift];
+      const isEmpty = !row || (!row.name && !row.notes);
+      try {
+        if(isEmpty){
+          await sbFetch('/rest/v1/'+KILN_TRADE_LOG_TABLE+'?week_key=eq.'+encodeURIComponent(iso)+'&trade=eq.'+encodeURIComponent(trade)+'&day=eq.'+encodeURIComponent(day)+'&shift=eq.'+encodeURIComponent(shift), { method: 'DELETE' });
+        } else {
+          await sbFetch('/rest/v1/'+KILN_TRADE_LOG_TABLE+'?on_conflict=week_key,day,shift,trade', {
+            method: 'POST',
+            headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+            body: JSON.stringify({
+              week_key: iso,
+              trade: trade,
+              day: day,
+              shift: shift,
+              person_name: row.name || null,
+              notes: row.notes || '',
+              updated_at: new Date().toISOString()
+            })
+          });
+        }
+      } catch(inner){
+        if(isEmpty){
+          await sbFetch('/rest/v1/'+meta.oldTable+'?week_key=eq.'+encodeURIComponent(iso)+'&day=eq.'+encodeURIComponent(day)+'&shift=eq.'+encodeURIComponent(shift), { method: 'DELETE' });
+        } else {
+          await sbFetch('/rest/v1/'+meta.oldTable+'?on_conflict=week_key,day,shift', {
+            method: 'POST',
+            headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+            body: JSON.stringify({
+              week_key: iso,
+              day: day,
+              shift: shift,
+              [nameField]: row.name || null,
+              notes: row.notes || '',
+              updated_at: new Date().toISOString()
+            })
+          });
+        }
+      }
+      dirtySet.delete(dirtyKey);
+    }
+    if(showState) showSyncDot('ok');
+    return true;
+  } catch(e){
+    console.warn('Supabase ' + trade + ' save failed:', e);
+    if(showState) showSyncDot('warn');
+    return false;
+  }
+}
+
+async function loadElectricianWeeksForScope(scopeMondays){
+  return loadTradeWeeksForScope('electrician', scopeMondays);
 }
 
 async function loadMechanicalWeeksForScope(scopeMondays){
-  if(scopeMondays){
-    const fetches = scopeMondays.map(function(m){
-      return sbFetch('/rest/v1/kiln_mechanical_log?week_key=eq.'+m+'&select=week_key,day,shift,mechanical_name,notes').catch(function(){ return []; });
-    });
-    const results = await Promise.all(fetches);
-    const rows = results.flat().filter(Boolean);
-    const grouped = {};
-    rows.forEach(function(row){
-      if(!row || !row.week_key || row.week_key === '__lists__') return;
-      if(!grouped[row.week_key]) grouped[row.week_key] = [];
-      grouped[row.week_key].push(row);
-    });
-    return Object.keys(grouped).sort().map(function(weekKey){
-      return { weekKey: weekKey, weekMechState: mechanicalRowsToWeek(grouped[weekKey]) };
-    });
-  }
-  const rows = await sbFetch('/rest/v1/kiln_mechanical_log?select=week_key,day,shift,mechanical_name,notes&order=week_key.desc&limit=200');
-  const grouped = {};
-  (rows || []).forEach(function(row){
-    if(!row || !row.week_key || row.week_key === '__lists__') return;
-    if(!grouped[row.week_key]) grouped[row.week_key] = [];
-    grouped[row.week_key].push(row);
-  });
-  return Object.keys(grouped).sort().map(function(weekKey){
-    return { weekKey: weekKey, weekMechState: mechanicalRowsToWeek(grouped[weekKey]) };
-  });
+  return loadTradeWeeksForScope('mechanical', scopeMondays);
 }
 
 async function runSearch(){
@@ -4657,6 +4840,9 @@ async function navigateToResult(weekKey, day){
 }
 
 const AI_PROXY_URL = 'https://xnkwrkoxvgptobnmekgv.supabase.co/functions/v1/hyper-task';
+// ---------------------------------------------------------------------------
+// AI reporting, whiteboard, and feedback flows
+// ---------------------------------------------------------------------------
 async function callKilnAiProxy(question, summary) {
   if (!_sbSession) throw new Error('Please sign in again.');
   const res = await fetch(AI_PROXY_URL, {
@@ -4698,7 +4884,7 @@ function renderReports(){
       <div class="reports-header">
         <div>
           <div class="reports-title">AI Reporting</div>
-          <div class="reports-sub">Ask anything about the shift log</div>
+          <div class="reports-sub">Ask anything about the logs</div>
         </div>
         <button type="button" class="reports-clear-btn" onclick="clearReportHistory()">Clear Chat</button>
       </div>
@@ -6037,6 +6223,9 @@ function closeSearchOnOutside(e){}
 
 
 
+// ---------------------------------------------------------------------------
+// Burner entry editing
+// ---------------------------------------------------------------------------
 function canEditBurnerField(sk, val){
   if(readOnly) return false;
   if(isAdmin) return true;
@@ -6074,6 +6263,28 @@ function setShift(sk,field,val){
 function setEntry(sk,idx,field,val){
   if(!canEditShift(sk)){showToast('You can only edit your own shift');return;}
   state[currentDay][sk].entries[idx][field]=val;updatePills();updateDots();autoSave();
+}
+function setEntryStatus(sk,i,val){
+  const entry=state[currentDay][sk].entries[i];
+  if(!entry)return;
+  entry.status=val;
+  if(val){
+    const now=new Date();
+    const ts=now.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})+' '+now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+    const actor=lockedName||currentUserLogon||currentUser||'';
+    entry.statusBy=actor;
+    entry.statusAt=ts;
+    if(actor && !entry.flaggedBy) entry.flaggedBy=actor;
+    if(ts && !entry.flaggedAt) entry.flaggedAt=ts;
+  } else {
+    entry.statusBy='';
+    entry.statusAt='';
+  }
+  localStorage.setItem('kbl_v5', JSON.stringify(state));
+  if(weekStart){ localStorage.setItem('kbl_week_'+toISO(weekStart), JSON.stringify(state)); }
+  showSyncDot('syncing');
+  clearTimeout(_sbSaveTimer);
+  sbSaveCloud();
 }
 function canEditShift(sk){
   if(readOnly) return false;
@@ -6207,7 +6418,7 @@ function renderManageTab(tab){
     let html = '<div style="margin-bottom:14px">'
       + '<p style="font-size:12px;color:var(--tx3);margin-bottom:12px;line-height:1.6">'
       + 'Add facts about your plant that the AI should always know — equipment specs, quality targets, shift patterns, anything relevant. '
-      + 'Each entry is a single piece of information. The AI will only use what is recorded here and in the shift logs — it will not guess.</p>'
+      + 'Each entry is a single piece of information. The AI will only use what is recorded here and in the logs — it will not guess.</p>'
       + '<div id="aiKnowledgeList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px">';
     if(entries.length === 0){
       html += '<div style="padding:12px;background:var(--sf2);border:1px solid var(--bd);border-radius:6px;color:var(--tx3);font-size:12px;text-align:center">No knowledge entries yet. Add your first one below.</div>';
@@ -6399,6 +6610,7 @@ function renderOverview(){
   mc.innerHTML = '';
   const hdr = document.createElement('div');
   hdr.className = 'page-header';
+  const overviewDateValue = window._overviewPickedDate || (weekStart ? toISO(weekStart) : '');
   hdr.innerHTML = '<div>'
     + '<div class="page-title-wrap">'
     + '<div class="page-title">Overview</div>'
@@ -6408,6 +6620,7 @@ function renderOverview(){
     + '<button type="button" class="page-period-jump" onclick="jumpOverviewToCurrentWeek()">This Week</button>'
     + '<button type="button" class="page-period-jump" onclick="jumpOverviewPeriod(\'week\',1)">+ Week</button>'
     + '<button type="button" class="page-period-jump" onclick="jumpOverviewPeriod(\'month\',1)">+ Month</button>'
+    + '<input type="date" id="overviewDatePicker" class="overview-date-picker" value="'+esc(overviewDateValue)+'" onchange="jumpOverviewToDate(this.value)" title="Jump to week by date">'
     + '</div>'
     + '</div>'
     + '<div class="page-date">'+weekRange()+'</div>'
@@ -6743,6 +6956,9 @@ function buildPayload(){
   };
 }
 
+// ---------------------------------------------------------------------------
+// Supabase persistence
+// ---------------------------------------------------------------------------
 const SB_URL = 'https://xnkwrkoxvgptobnmekgv.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhua3dya294dmdwdG9ibm1la2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NjAxNTQsImV4cCI6MjA4ODIzNjE1NH0.PrmnJ4eGepac41bQuNPG7TcBaunrfTWdjLtkGLr_2LY';
 
@@ -6775,54 +6991,21 @@ async function sbLoadWeek(isoMonday){
 }
 
 async function sbLoadElectricianWeek(isoMonday){
-  try {
-    const rows = await sbFetch('/rest/v1/kiln_electrician_log?week_key=eq.'+isoMonday+'&select=day,shift,electrician_name,notes');
-    const next = {};
-    DAYS.forEach(function(day){
-      next[day] = mkElectricianDay();
-    });
-    (rows || []).forEach(function(row){
-      if(!row || !next[row.day] || !next[row.day][row.shift]) return;
-      next[row.day][row.shift] = {
-        name: row.electrician_name || '',
-        notes: row.notes || ''
-      };
-    });
-    _electricianDirty = new Set();
-    return next;
-  } catch(e){
-    console.warn('Supabase electrician load failed:', e);
-  }
-  return null;
+  return loadTradeWeek('electrician', isoMonday);
 }
 
 async function sbLoadMechanicalWeek(isoMonday){
-  try {
-    const rows = await sbFetch('/rest/v1/kiln_mechanical_log?week_key=eq.'+isoMonday+'&select=day,shift,mechanical_name,notes');
-    const next = {};
-    DAYS.forEach(function(day){
-      next[day] = mkMechanicalDay();
-    });
-    (rows || []).forEach(function(row){
-      if(!row || !next[row.day] || !next[row.day][row.shift]) return;
-      next[row.day][row.shift] = {
-        name: row.mechanical_name || '',
-        notes: row.notes || ''
-      };
-    });
-    _mechanicalDirty = new Set();
-    return next;
-  } catch(e){
-    console.warn('Supabase mechanical load failed:', e);
-  }
-  return null;
+  return loadTradeWeek('mechanical', isoMonday);
 }
 
 async function loadElectricianWeekIfAllowed(isoMonday){
   resetElectricianWeekState();
   if(!canViewElectricianLog()) return;
   const rows = await sbLoadElectricianWeek(isoMonday);
-  if(rows) electricianState = rows;
+  if(rows) {
+    electricianState = rows;
+    _electricianDirty = new Set();
+  }
   DAYS.forEach(function(day){ ensureElectricianDayState(day); });
 }
 
@@ -6830,7 +7013,10 @@ async function loadMechanicalWeekIfAllowed(isoMonday){
   resetMechanicalWeekState();
   if(!canViewMechanicalLog()) return;
   const rows = await sbLoadMechanicalWeek(isoMonday);
-  if(rows) mechanicalState = rows;
+  if(rows) {
+    mechanicalState = rows;
+    _mechanicalDirty = new Set();
+  }
   DAYS.forEach(function(day){ ensureMechanicalDayState(day); });
 }
 
@@ -6873,87 +7059,11 @@ async function sbSaveWeek(showState){
 }
 
 async function sbSaveElectricianDirty(showState){
-  if(!weekStart || !canViewElectricianLog()) return true;
-  const shouldShowState = showState !== false;
-  const iso = toISO(weekStart);
-  const dirtyKeys = Array.from(_electricianDirty);
-  if(!dirtyKeys.length) return true;
-  try {
-    for(const dirtyKey of dirtyKeys){
-      const parts = dirtyKey.split('|');
-      const day = parts[0];
-      const shift = parts[1];
-      const row = ensureElectricianDayState(day)[shift];
-      if(!row || (!row.name && !row.notes)){
-        await sbFetch('/rest/v1/kiln_electrician_log?week_key=eq.'+encodeURIComponent(iso)+'&day=eq.'+encodeURIComponent(day)+'&shift=eq.'+encodeURIComponent(shift), {
-          method: 'DELETE'
-        });
-        _electricianDirty.delete(dirtyKey);
-        continue;
-      }
-      await sbFetch('/rest/v1/kiln_electrician_log?on_conflict=week_key,day,shift', {
-        method: 'POST',
-        headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
-        body: JSON.stringify({
-          week_key: iso,
-          day: day,
-          shift: shift,
-          electrician_name: row.name || null,
-          notes: row.notes || '',
-          updated_at: new Date().toISOString()
-        })
-      });
-      _electricianDirty.delete(dirtyKey);
-    }
-    if(shouldShowState) showSyncDot('ok');
-    return true;
-  } catch(e){
-    console.warn('Supabase electrician save failed:', e);
-    if(shouldShowState) showSyncDot('warn');
-    return false;
-  }
+  return saveTradeDirty('electrician', _electricianDirty, showState);
 }
 
 async function sbSaveMechanicalDirty(showState){
-  if(!weekStart || !canViewMechanicalLog()) return true;
-  const shouldShowState = showState !== false;
-  const iso = toISO(weekStart);
-  const dirtyKeys = Array.from(_mechanicalDirty);
-  if(!dirtyKeys.length) return true;
-  try {
-    for(const dirtyKey of dirtyKeys){
-      const parts = dirtyKey.split('|');
-      const day = parts[0];
-      const shift = parts[1];
-      const row = ensureMechanicalDayState(day)[shift];
-      if(!row || (!row.name && !row.notes)){
-        await sbFetch('/rest/v1/kiln_mechanical_log?week_key=eq.'+encodeURIComponent(iso)+'&day=eq.'+encodeURIComponent(day)+'&shift=eq.'+encodeURIComponent(shift), {
-          method: 'DELETE'
-        });
-        _mechanicalDirty.delete(dirtyKey);
-        continue;
-      }
-      await sbFetch('/rest/v1/kiln_mechanical_log?on_conflict=week_key,day,shift', {
-        method: 'POST',
-        headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
-        body: JSON.stringify({
-          week_key: iso,
-          day: day,
-          shift: shift,
-          mechanical_name: row.name || null,
-          notes: row.notes || '',
-          updated_at: new Date().toISOString()
-        })
-      });
-      _mechanicalDirty.delete(dirtyKey);
-    }
-    if(shouldShowState) showSyncDot('ok');
-    return true;
-  } catch(e){
-    console.warn('Supabase mechanical save failed:', e);
-    if(shouldShowState) showSyncDot('warn');
-    return false;
-  }
+  return saveTradeDirty('mechanical', _mechanicalDirty, showState);
 }
 
 async function sbSaveCloud(){

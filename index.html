@@ -32,22 +32,53 @@
   --glass-4: rgba(22,25,31,.56);
 }
 .light-mode {
-  --bg:#f0f3f8; --sf:#ffffff; --sf2:#f5f7fc; --sf3:#eaeef6; --sf4:#e0e6f2;
-  --bd:#d0d8ea; --bd2:#b8c4db; --bd3:#98a8c4;
+  --bg:#fbfdff; --sf:#ffffff; --sf2:#f8fbff; --sf3:#f2f7fd; --sf4:#edf3fa;
+  --bd:#dce5f0; --bd2:#cdd8e6; --bd3:#a9bbd3;
   --ac:#155c28; --ac2:#1a7a35; --ac3:#22a847;
   --acd1:rgba(21,92,40,.07); --acd2:rgba(21,92,40,.14); --acd3:rgba(21,92,40,.24);
-  --tx:#0d1526; --tx2:#4a5870; --tx3:#9aaabf;
+  --tx:#0d1526; --tx2:#405063; --tx3:#74839a;
   --red:#d93f3c; --redd:rgba(217,63,60,.07); --redb:rgba(217,63,60,.22);
   --grn:#15924f; --grnd:rgba(21,146,79,.07); --grnb:rgba(21,146,79,.22);
   --amb:#c97d10; --ambd:rgba(201,125,16,.07); --ambb:rgba(201,125,16,.22);
   --pur:#7a50c8; --purd:rgba(122,80,200,.07); --purb:rgba(122,80,200,.22);
-  --e1:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
-  --e2:0 4px 18px rgba(0,0,0,.08); --e3:0 20px 56px rgba(0,0,0,.12);
-  --eac:0 4px 22px rgba(10,138,134,.20);
-  --glass-1: rgba(255,255,255,.84);
-  --glass-2: rgba(255,255,255,.72);
-  --glass-3: rgba(255,255,255,.68);
-  --glass-4: rgba(255,255,255,.56);
+  --e1:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --e2:0 4px 18px rgba(0,0,0,.07); --e3:0 20px 56px rgba(0,0,0,.10);
+  --eac:0 4px 22px rgba(10,138,134,.16);
+  --glass-1: rgba(255,255,255,.96);
+  --glass-2: rgba(255,255,255,.82);
+  --glass-3: rgba(255,255,255,.92);
+  --glass-4: rgba(255,255,255,.78);
+}
+body.light-mode{
+  background:
+    radial-gradient(1200px 620px at 18% -6%, rgba(255,255,255,.96), transparent 58%),
+    radial-gradient(900px 480px at 100% 0%, rgba(34,168,71,.035), transparent 54%),
+    var(--bg);
+}
+body.light-mode .lic-inner,
+body.light-mode #loginScreen .login-card,
+body.light-mode .app-card,
+body.light-mode .coming-card,
+body.light-mode #mainHeader,
+body.light-mode .section-label,
+body.light-mode .header-user,
+body.light-mode .toast,
+body.light-mode .modal,
+body.light-mode .panel{
+  backdrop-filter:blur(22px);
+  -webkit-backdrop-filter:blur(22px);
+}
+body.light-mode .app-card,
+body.light-mode .coming-card,
+body.light-mode #mainHeader,
+body.light-mode .login-card,
+body.light-mode .lic-inner,
+body.light-mode .panel,
+body.light-mode .modal{
+  box-shadow:0 12px 36px rgba(15,23,42,.08);
+}
+body.light-mode .app-card::after{
+  opacity:.18;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -477,7 +508,7 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
         <div class="card-top">
           <div class="card-icon fire-icon" style="background:rgba(26,122,53,.15);border:1px solid rgba(46,204,92,.25)">🔥</div>
         </div>
-        <div class="card-title">Padeswood Shift Logs</div>
+        <div class="card-title">Padeswood Logs</div>
         <div class="card-desc">Role-based shift logging for burners, shift managers, electricians, mechanical teams and cement analysts, with overview reporting, search, AI summaries, feedback tracking and print-ready handovers.</div>
         <div class="card-arrow">→</div>
       </a>
@@ -788,18 +819,42 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
   .login-card{
     padding:22px 14px 20px;
   }
+  .login-field{
+    margin-bottom:14px;
+  }
+  .login-input{
+    font-size:14px;
+  }
   #emailWrap,
   #regEmailWrap{
     flex-direction:column;
+    gap:8px;
+    background:transparent;
+    border:none;
+    box-shadow:none;
+    overflow:visible;
+  }
+  #loginEmailUser,
+  #regEmailUser{
+    width:100% !important;
+    min-height:40px;
+    padding:0 12px !important;
+    background:var(--sf3) !important;
+    border:1px solid var(--bd2) !important;
+    border-radius:var(--rsm) !important;
+    color:var(--tx) !important;
+    box-sizing:border-box;
   }
   .email-domain-select,
   #regDomain{
     width:100%;
     max-width:none;
     min-width:0;
-    border-left:none;
+    border-left:1px solid var(--bd2);
     border-top:1px solid var(--bd2);
     padding:0 12px;
+    min-height:40px;
+    border-radius:var(--rsm);
     text-align:left;
   }
   #mainHeader{
@@ -868,6 +923,9 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
 }
 </style>
 <script>
+// ---------------------------------------------------------------------------
+// Platform bootstrap: licence gate, auth, and landing shell
+// ---------------------------------------------------------------------------
 const SUPABASE_URL      = 'https://xnkwrkoxvgptobnmekgv.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhua3dya294dmdwdG9ibm1la2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NjAxNTQsImV4cCI6MjA4ODIzNjE1NH0.PrmnJ4eGepac41bQuNPG7TcBaunrfTWdjLtkGLr_2LY';
 const LICENCE_KEY = 'KBL-HEIDELBERG-PADESWOOD-2026';
@@ -1036,10 +1094,12 @@ async function submitResetRequest() {
   if (!email || !email.includes('@')) { msg.style.color='var(--red)'; msg.textContent='Please enter your full email address for this account.'; return; }
   msg.textContent = 'Submitting…';
   try {
-    const {data:existing} = await sb.from('pw_reset_requests').select('id').eq('email', email).eq('status','pending').maybeSingle();
-    if (existing) { msg.style.color='var(--amb)'; msg.textContent='A request is already pending for this address.'; return; }
-    const {error} = await sb.from('pw_reset_requests').insert({email, status:'pending', requested_at: new Date().toISOString()});
-    if (error) throw error;
+    if (await hasPendingRequestByEmail('reset', email)) {
+      msg.style.color='var(--amb)';
+      msg.textContent='A request is already pending for this address.';
+      return;
+    }
+    await saveRequestRow('reset', { email, status:'pending', requested_at: new Date().toISOString() });
     msg.style.color = 'var(--grn)';
     msg.textContent = '✓ Request submitted — an admin will reset your password shortly.';
   } catch(e) {
@@ -1221,13 +1281,11 @@ async function doRegister() {
   if (pass !== pass2) { showRegMsg('err', 'Passwords do not match.'); return; }
   btn.disabled = true; btn.textContent = 'Sending…';
   try {
-    const {data:existing} = await sb.from('pw_access_requests').select('id').eq('email',normalizedEmail).eq('status','pending');
-    if (existing && existing.length) { showRegMsg('err', 'A request for this email is already pending approval.'); btn.disabled=false; btn.textContent='Request Access'; return; }
-    const {error} = await sb.from('pw_access_requests').insert({
+    if (await hasPendingRequestByEmail('access', normalizedEmail)) { showRegMsg('err', 'A request for this email is already pending approval.'); btn.disabled=false; btn.textContent='Request Access'; return; }
+    await saveRequestRow('access', {
       email: normalizedEmail, full_name: name, role: 'viewer',
       kiln_role: 'read_only', status: 'pending', requested_at: new Date().toISOString()
     });
-    if (error) throw error;
     showRegMsg('ok', 'Request submitted! An administrator will review your request and set up your account.');
     document.getElementById('regName').value = '';
     document.getElementById('regEmail').value = '';
@@ -1249,11 +1307,11 @@ function showRegMsg(type, text) {
 async function loadPendingBadge() {
   try {
     const profRes = await sb.from('pw_profiles').select('id', { count: 'exact', head: true }).eq('approved', false);
-    let reqCount = 0;
-    try {
-      const reqRes = await sb.from('pw_access_requests').select('id', { count: 'exact', head: true }).eq('status', 'pending');
-      reqCount = reqRes.count || 0;
-    } catch(e) {}
+    const [accessReqs, resetReqs] = await Promise.all([
+      loadRequestRows('access', { status: 'pending', ascending: false }),
+      loadRequestRows('reset', { status: 'pending', ascending: false })
+    ]);
+    const reqCount = (accessReqs ? accessReqs.length : 0) + (resetReqs ? resetReqs.length : 0);
     const total = (profRes.count || 0) + reqCount;
     const badge = document.getElementById('pendingBadge');
     if (badge) { badge.textContent = total; badge.style.display = total > 0 ? 'block' : 'none'; }
@@ -1280,8 +1338,9 @@ async function denyAccessRequest(reqId) {
     return;
   }
   if (!confirm('Deny and remove this access request?')) return;
-  await sb.from('pw_access_requests').update({status:'denied'}).eq('id',reqId);
-  _accessRequestsCache = _accessRequestsCache.filter(x=>x.id!==reqId);
+  const req = _accessRequestsCache.find(function(x){ return String(x.id) === String(reqId); }) || { id: reqId, requestType: 'access', requestTable: PW_ACCESS_REQUESTS_TABLE };
+  try { await updateRequestRow(req, { status:'denied' }); } catch(e) {}
+  _accessRequestsCache = _accessRequestsCache.filter(function(x){ return String(x.id) !== String(reqId); });
   renderAllUsers(); loadPendingBadge(); showPlatformToast('Request denied');
 }
 
@@ -1442,6 +1501,9 @@ async function handleEmailConfirmation() {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Platform admin state and merged request queue helpers
+// ---------------------------------------------------------------------------
 let _usersCache = [];
 let _kilnUsersCache = [];
 let _aiHistory = [];
@@ -1456,9 +1518,117 @@ let _forcePwUsername = null;
 let _adminSetPwTarget = null; // { authUserId, kilnUsername, displayName } when admin is setting
 let _accessRequestTarget = null; // { reqId, email, fullName, role, kilnRole } when creating a new account
 let _pendingResetReqId = null;  // set when opened from reset request queue
+let _pendingResetReqTable = null;
 let _pwPostResetSkipUid = null;
 function canManagePlatformUsers() {
   return !!(_platformProfile && _platformProfile.role === 'admin');
+}
+
+const PW_REQUESTS_TABLE = 'pw_requests';
+const PW_ACCESS_REQUESTS_TABLE = 'pw_access_requests';
+const PW_RESET_REQUESTS_TABLE = 'pw_reset_requests';
+
+function legacyRequestTable(requestType) {
+  return requestType === 'reset' ? PW_RESET_REQUESTS_TABLE : PW_ACCESS_REQUESTS_TABLE;
+}
+
+function normalizeRequestRow(row, requestType, requestTable) {
+  if (!row) return null;
+  return Object.assign({}, row, {
+    requestType: row.request_type || requestType,
+    requestTable: requestTable
+  });
+}
+
+async function loadRequestRows(requestType, opts) {
+  const options = opts || {};
+  const status = options.status;
+  const emailFilter = options.email ? String(options.email).toLowerCase() : '';
+  const orderBy = options.orderBy || 'requested_at';
+  const ascending = !!options.ascending;
+  const legacyTable = legacyRequestTable(requestType);
+
+  async function runQuery(tableName, includeRequestType) {
+    let q = sb.from(tableName).select('*');
+    if (includeRequestType) q = q.eq('request_type', requestType);
+    if (status !== undefined && status !== null) q = q.eq('status', status);
+    q = q.order(orderBy, { ascending: ascending });
+    const { data, error } = await q;
+    if (error) throw error;
+    let rows = (data || []).map(function(row) {
+      return normalizeRequestRow(row, requestType, tableName);
+    });
+    if (emailFilter) {
+      rows = rows.filter(function(row) {
+        return String(row.email || '').toLowerCase() === emailFilter;
+      });
+    }
+    return rows;
+  }
+
+  try {
+    return await runQuery(PW_REQUESTS_TABLE, true);
+  } catch(e) {
+    try {
+      return await runQuery(legacyTable, false);
+    } catch(e2) {
+      console.warn('Request load failed:', e2);
+      return [];
+    }
+  }
+}
+
+async function saveRequestRow(requestType, payload) {
+  const legacyTable = legacyRequestTable(requestType);
+  const unifiedPayload = Object.assign({ request_type: requestType }, payload);
+  try {
+    const { error } = await sb.from(PW_REQUESTS_TABLE).insert(unifiedPayload);
+    if (error) throw error;
+    return PW_REQUESTS_TABLE;
+  } catch(e) {
+    const legacyPayload = Object.assign({}, payload);
+    delete legacyPayload.request_type;
+    delete legacyPayload.resolved_at;
+    delete legacyPayload.resolved_by;
+    const { error } = await sb.from(legacyTable).insert(legacyPayload);
+    if (error) throw error;
+    return legacyTable;
+  }
+}
+
+async function updateRequestRow(row, updates) {
+  if (!row || !row.id) throw new Error('Missing request row');
+  const requestType = row.requestType || row.request_type || 'access';
+  const tableName = row.requestTable || PW_REQUESTS_TABLE;
+  if (tableName === PW_REQUESTS_TABLE) {
+    const { error } = await sb.from(PW_REQUESTS_TABLE).update(updates).eq('id', row.id).eq('request_type', requestType);
+    if (error) throw error;
+    return PW_REQUESTS_TABLE;
+  }
+  const legacyTable = legacyRequestTable(requestType);
+  const { error } = await sb.from(legacyTable).update(updates).eq('id', row.id);
+  if (error) throw error;
+  return legacyTable;
+}
+
+async function deleteRequestRow(row) {
+  if (!row || !row.id) throw new Error('Missing request row');
+  const requestType = row.requestType || row.request_type || 'access';
+  const tableName = row.requestTable || PW_REQUESTS_TABLE;
+  if (tableName === PW_REQUESTS_TABLE) {
+    const { error } = await sb.from(PW_REQUESTS_TABLE).delete().eq('id', row.id).eq('request_type', requestType);
+    if (error) throw error;
+    return PW_REQUESTS_TABLE;
+  }
+  const legacyTable = legacyRequestTable(requestType);
+  const { error } = await sb.from(legacyTable).delete().eq('id', row.id);
+  if (error) throw error;
+  return legacyTable;
+}
+
+async function hasPendingRequestByEmail(requestType, email) {
+  const rows = await loadRequestRows(requestType, { status: 'pending', email: email, ascending: false });
+  return !!(rows && rows.length);
 }
 
 async function callAdminPwFunction(body) {
@@ -1613,8 +1783,8 @@ async function submitPlatformForceReset() {
         });
         const userId = createRes && createRes.userId ? createRes.userId : null;
         if (!userId) throw new Error('Failed to create auth user');
-        const req = _accessRequestsCache.find(function(x){ return x.id === target.reqId; }) || null;
-        const trackerAllowed = req ? req.shift_tracker_access !== false : true;
+        const accessReq = _accessRequestsCache.find(function(x){ return x.id === target.reqId; }) || null;
+        const trackerAllowed = accessReq ? accessReq.shift_tracker_access !== false : true;
         const { error: profErr } = await sb.from('pw_profiles').upsert({
           id: userId, email: target.email, full_name: target.fullName,
           role: target.role || 'viewer',
@@ -1638,9 +1808,9 @@ async function submitPlatformForceReset() {
           });
           if (kilnErr) throw new Error(kilnErr.message || 'Failed to save kiln account');
         }
-        const { error: reqErr } = await sb.from('pw_access_requests').update({status:'approved'}).eq('id', target.reqId);
-        if (reqErr) throw new Error(reqErr.message || 'Failed to clear access request');
-        _accessRequestsCache = _accessRequestsCache.filter(function(x){ return x.id !== target.reqId; });
+        const accessReqRow = _accessRequestsCache.find(function(x){ return String(x.id) === String(target.reqId); }) || { id: target.reqId, requestType: 'access', requestTable: PW_ACCESS_REQUESTS_TABLE };
+        await updateRequestRow(accessReqRow, { status:'approved' });
+        _accessRequestsCache = _accessRequestsCache.filter(function(x){ return String(x.id) !== String(target.reqId); });
         showForcePwMsg('ok', target.fullName + ' activated ✓ — they can now log in');
         showPlatformToast(target.fullName + ' activated ✓ — they can now log in');
         btn.disabled = false; btn.textContent = 'Create Account';
@@ -1680,9 +1850,11 @@ async function submitPlatformForceReset() {
         btn.disabled = false; btn.textContent = 'Set Password';
         if (_pendingResetReqId) {
           try {
-            await sb.from('pw_reset_requests').update({status:'done'}).eq('id',_pendingResetReqId);
+            const pendingReq = _resetRequestsCache.find(function(x){ return String(x.id) === String(_pendingResetReqId); }) || { id: _pendingResetReqId, requestType: 'reset', requestTable: _pendingResetReqTable || PW_RESET_REQUESTS_TABLE };
+            await updateRequestRow(pendingReq, { status:'done' });
           } catch(e) {}
           _pendingResetReqId = null;
+          _pendingResetReqTable = null;
           loadResetReqBadge();
           if (document.getElementById('resetReqOverlay') && document.getElementById('resetReqOverlay').style.display !== 'none') renderResetRequests();
         }
@@ -1807,6 +1979,7 @@ function closeAdminPanel() {
 }
 
 let _accessRequestsCache = [];
+let _resetRequestsCache = [];
 function _umShowErr(list, msg) {
   list.innerHTML = '<div style="color:var(--red);font-size:12px;padding:12px 0;line-height:1.8">'
     + msg + '<br><button onclick="loadAllUsers()" style="margin-top:8px;height:28px;padding:0 14px;'
@@ -1843,10 +2016,7 @@ async function loadAllUsers() {
     _usersCache = profRes.data || [];
     _kilnUsersCache = (kilnRes.error ? [] : kilnRes.data) || [];
 
-    try {
-      const reqRes = await sb.from('pw_access_requests').select('*').eq('status','pending').order('requested_at');
-      _accessRequestsCache = reqRes.data || [];
-    } catch(e) { _accessRequestsCache = []; }
+    _accessRequestsCache = await loadRequestRows('access', { status: 'pending', ascending: false });
 
     const emailFixes = [];
     _kilnUsersCache.forEach(function(ku) {
@@ -2291,7 +2461,7 @@ async function inviteUser() {
     const [profileRes, kilnRes, pendingRes] = await Promise.all([
       sb.from('pw_profiles').select('id').eq('email', email).maybeSingle(),
       sb.from('kiln_users').select('username').eq('email', email).maybeSingle(),
-      sb.from('pw_access_requests').select('id').eq('email', email).eq('status', 'pending').maybeSingle()
+      loadRequestRows('access', { email: email, status: 'pending', ascending: false })
     ]);
     if (profileRes.data || kilnRes.data) {
       showInviteMsg('err','A user with this email already has a logon.');
@@ -2299,17 +2469,21 @@ async function inviteUser() {
       btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add User';
       return;
     }
-    if (pendingRes.data) {
+    if (pendingRes && pendingRes.length) {
       showInviteMsg('err','A request for this email is already pending approval.');
       btn.disabled = false;
       btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add User';
       return;
     }
-    const {error} = await sb.from('pw_access_requests').insert({
-      email, full_name: name, role: platformAccess ? 'viewer' : 'none', kiln_role: kilnRoleVal, shift_tracker_access: trackerAccessVal,
-      status: 'pending', requested_at: new Date().toISOString()
+    await saveRequestRow('access', {
+      email,
+      full_name: name,
+      role: platformAccess ? 'viewer' : 'none',
+      kiln_role: kilnRoleVal,
+      shift_tracker_access: trackerAccessVal,
+      status: 'pending',
+      requested_at: new Date().toISOString()
     });
-    if (error) throw new Error(error.message);
     document.getElementById('inviteEmail').value = '';
     document.getElementById('inviteName').value = '';
     document.getElementById('inviteRole').value='true';
@@ -2332,6 +2506,9 @@ function showInviteMsg(type, text) {
 }
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
+// ---------------------------------------------------------------------------
+// Platform AI panel and cross-app summary helpers
+// ---------------------------------------------------------------------------
 
 function openAiPanel() {
   const overlay = document.getElementById('aiOverlay');
@@ -2450,6 +2627,29 @@ function clearAiHistory() {
   _aiHistory = [];
   renderAiHistory();
 }
+async function loadPlatformTradeRows(trade, sinceDate) {
+  const meta = trade === 'electrician'
+    ? { table: 'kiln_trade_log', oldTable: 'kiln_electrician_log', nameField: 'electrician_name' }
+    : { table: 'kiln_trade_log', oldTable: 'kiln_mechanical_log', nameField: 'mechanical_name' };
+  try {
+    let q = sb.from(meta.table).select('week_key,day,shift,person_name,notes').eq('trade', trade).order('week_key', { ascending: false }).limit(400);
+    if (sinceDate) q = q.gte('week_key', sinceDate);
+    const { data, error } = await q;
+    if (error) throw error;
+    if (data && data.length) return data;
+    throw new Error('No merged trade rows yet');
+  } catch (e) {
+    try {
+      let q = sb.from(meta.oldTable).select('week_key,day,shift,' + meta.nameField + ',notes').order('week_key', { ascending: false }).limit(400);
+      if (sinceDate) q = q.gte('week_key', sinceDate);
+      const { data, error } = await q;
+      if (error) throw error;
+      return data || [];
+    } catch (e2) {
+      return [];
+    }
+  }
+}
 async function buildPlatformContext() {
   const now = new Date();
   let sinceDate = null;
@@ -2480,15 +2680,11 @@ async function buildPlatformContext() {
 
     let kilnQuery = sb.from('kiln_log').select('week_key,data').order('week_key',{ascending:false}).limit(200).neq('week_key','__lists__');
     if (sinceDate) kilnQuery = kilnQuery.gte('week_key', sinceDate);
-    let electricianQuery = sb.from('kiln_electrician_log').select('week_key,day,shift,electrician_name,notes').order('week_key',{ascending:false}).limit(400);
-    if (sinceDate) electricianQuery = electricianQuery.gte('week_key', sinceDate);
-    let mechanicalQuery = sb.from('kiln_mechanical_log').select('week_key,day,shift,mechanical_name,notes').order('week_key',{ascending:false}).limit(400);
-    if (sinceDate) mechanicalQuery = mechanicalQuery.gte('week_key', sinceDate);
 
     const [kilnRes, electricianRes, mechanicalRes] = await Promise.all([
       (kilnAllowed && needsMainLogData) ? kilnQuery : Promise.resolve({ data: [] }),
-      (kilnAllowed && roleScopes.electricians) ? electricianQuery : Promise.resolve({ data: [] }),
-      (kilnAllowed && roleScopes.mechanicals) ? mechanicalQuery : Promise.resolve({ data: [] })
+      (kilnAllowed && roleScopes.electricians) ? loadPlatformTradeRows('electrician', sinceDate) : Promise.resolve([]),
+      (kilnAllowed && roleScopes.mechanicals) ? loadPlatformTradeRows('mechanical', sinceDate) : Promise.resolve([])
     ]);
 
     const lines = ['PADESWOOD WORKS — PLATFORM SUMMARY — scope: '+_aiScope,'='.repeat(60)];
@@ -2501,8 +2697,8 @@ async function buildPlatformContext() {
     lines.push(accessLine);
 
     const rows = kilnRes.data || [];
-    const electricianRows = electricianRes.data || [];
-    const mechanicalRows = mechanicalRes.data || [];
+    const electricianRows = electricianRes.data || electricianRes || [];
+    const mechanicalRows = mechanicalRes.data || mechanicalRes || [];
     const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
     let burnerIssues = 0, burnerNotes = 0, managerNotes = 0, analystIssues = 0, electricianNotes = 0, mechanicalNotes = 0;
     const recentItems = [];
@@ -2654,8 +2850,8 @@ function showPlatformToast(msg) {
 
 async function loadResetReqBadge() {
   try {
-    const {data} = await sb.from('pw_reset_requests').select('id').eq('status','pending');
-    const count = data ? data.length : 0;
+    const rows = await loadRequestRows('reset', { status: 'pending', ascending: false });
+    const count = rows ? rows.length : 0;
     const badge = document.getElementById('resetReqBadge');
     if (badge) { badge.textContent = count; badge.style.display = count > 0 ? 'block' : 'none'; }
   } catch(e) {}
@@ -2673,7 +2869,8 @@ async function renderResetRequests() {
   const list = document.getElementById('resetReqList');
   list.innerHTML = '<div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);padding:12px 0">Loading…</div>';
   try {
-    const {data:rows} = await sb.from('pw_reset_requests').select('*').order('requested_at',{ascending:false});
+    const rows = await loadRequestRows('reset', { ascending: false });
+    _resetRequestsCache = rows || [];
     if (!rows || !rows.length) {
       list.innerHTML = '<div style="text-align:center;padding:24px;color:var(--tx3);font-size:13px">No password reset requests.</div>';
       return;
@@ -2688,8 +2885,8 @@ async function renderResetRequests() {
           <div style="font-size:10px;color:var(--tx3);font-family:var(--ff-mono);margin-top:2px">${date}</div>
         </div>
         <span style="font-size:10px;font-weight:600;font-family:var(--ff-mono);padding:2px 8px;border-radius:4px;background:${col}22;color:${col};border:1px solid ${col}">${r.status.toUpperCase()}</span>
-        ${isPending ? `<button onclick="handleResetReq('${r.id}','${r.email}')" style="padding:5px 12px;background:linear-gradient(135deg,var(--ac),var(--ac3));color:#fff;border:none;border-radius:var(--rsm);font-size:12px;font-weight:600;cursor:pointer">Reset Password</button>` : ''}
-        <button onclick="deleteResetReq('${r.id}')" style="padding:5px 10px;background:transparent;color:var(--tx3);border:1px solid var(--bd);border-radius:var(--rsm);font-size:11px;cursor:pointer">Remove</button>
+        ${isPending ? `<button data-req-id="${esc(r.id)}" data-req-table="${esc(r.requestTable||PW_REQUESTS_TABLE)}" onclick="handleResetReq(this)" style="padding:5px 12px;background:linear-gradient(135deg,var(--ac),var(--ac3));color:#fff;border:none;border-radius:var(--rsm);font-size:12px;font-weight:600;cursor:pointer">Reset Password</button>` : ''}
+        <button data-req-id="${esc(r.id)}" data-req-table="${esc(r.requestTable||PW_REQUESTS_TABLE)}" onclick="deleteResetReq(this)" style="padding:5px 10px;background:transparent;color:var(--tx3);border:1px solid var(--bd);border-radius:var(--rsm);font-size:11px;cursor:pointer">Remove</button>
       </div>`;
     }).join('');
   } catch(e) {
@@ -2697,18 +2894,24 @@ async function renderResetRequests() {
   }
 }
 
-async function handleResetReq(id, email) {
+async function handleResetReq(btnOrId, email) {
   try {
-    const {data:profile} = await sb.from('pw_profiles').select('id,full_name').eq('email', email).maybeSingle();
-    if (!profile) { showPlatformToast('No account found for ' + email); return; }
+    const id = btnOrId && btnOrId.dataset ? btnOrId.dataset.reqId : btnOrId;
+    const req = _resetRequestsCache.find(function(x){ return String(x.id) === String(id); }) || { id: id, requestType: 'reset', requestTable: btnOrId && btnOrId.dataset ? btnOrId.dataset.reqTable : PW_RESET_REQUESTS_TABLE };
+    const emailToUse = email || req.email;
+    const {data:profile} = await sb.from('pw_profiles').select('id,full_name').eq('email', emailToUse).maybeSingle();
+    if (!profile) { showPlatformToast('No account found for ' + emailToUse); return; }
     _pendingResetReqId = id; // store so we can mark done after password is set
-    openAdminSetPwModal(profile.id, null, profile.full_name || email, id);
+    _pendingResetReqTable = req.requestTable || PW_RESET_REQUESTS_TABLE;
+    openAdminSetPwModal(profile.id, null, profile.full_name || emailToUse, id);
   } catch(e) { showPlatformToast('Failed: ' + e.message); }
 }
 
-async function deleteResetReq(id) {
+async function deleteResetReq(btnOrId) {
   try {
-    await sb.from('pw_reset_requests').delete().eq('id',id);
+    const id = btnOrId && btnOrId.dataset ? btnOrId.dataset.reqId : btnOrId;
+    const req = _resetRequestsCache.find(function(x){ return String(x.id) === String(id); }) || { id: id, requestType: 'reset', requestTable: btnOrId && btnOrId.dataset ? btnOrId.dataset.reqTable : PW_RESET_REQUESTS_TABLE };
+    await deleteRequestRow(req);
     renderResetRequests();
     loadResetReqBadge();
   } catch(e) {}
