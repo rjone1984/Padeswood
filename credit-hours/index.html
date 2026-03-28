@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Holiday Requests">
+<meta name="apple-mobile-web-app-title" content="Credit Hours">
 <meta name="theme-color" content="#111418">
-<title>Padeswood Works — Holiday Requests</title>
+<title>Padeswood Works — Credit Hours</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Figtree:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -285,7 +285,8 @@ body::before{
 .pill.pending{color:var(--amb);border-color:var(--ambb);background:var(--ambd)}
 .pill.approved{color:var(--grn);border-color:var(--grnb);background:var(--grnd)}
 .pill.denied,.pill.cancelled{color:var(--red);border-color:var(--redb);background:var(--redd)}
-.pill.kind-holiday{color:var(--grn);border-color:var(--grnb);background:var(--grnd)}
+.pill.kind-credit{color:var(--grn);border-color:var(--grnb);background:var(--grnd)}
+.pill.kind-overtime{color:var(--amb);border-color:var(--ambb);background:var(--ambd)}
 .pill.kind-unpaid{color:var(--pur);border-color:var(--purb);background:var(--purd)}
 .pill.kind-other{color:var(--amb);border-color:var(--ambb);background:var(--ambd)}
 .pill.balance-red{color:var(--red);border-color:var(--redb);background:var(--redd);--balance-glow: rgba(240,82,79,.28)}
@@ -497,23 +498,13 @@ body::before{
   cursor:pointer;
   display:flex;
   justify-content:space-between;
-  align-items:center;
+  align-items:flex-start;
   gap:12px;
   padding:12px 14px;
 }
 .staff-card summary::-webkit-details-marker{display:none}
 .staff-card .staff-summary-left{min-width:0;display:grid;gap:3px}
-.staff-card .staff-summary-right{
-  display:grid;
-  gap:5px;
-  justify-items:end;
-  align-content:center;
-  min-width:0;
-}
-.staff-card .staff-summary-right .pill{
-  width:max-content;
-  white-space:nowrap;
-}
+.staff-card .staff-summary-right{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
 .staff-card .staff-body{
   border-top:1px solid var(--bd);
   padding:12px 14px 14px;
@@ -780,15 +771,15 @@ body::before{
       <div class="splash-hero-mark" aria-hidden="true"><img data-suite-logo alt="Padeswood Works"></div>
       <div class="splash-hero-copy">
         <div class="splash-hero-title">Padeswood Works</div>
-        <div class="splash-hero-sub">HeidelbergMaterials · Holiday Requests</div>
+        <div class="splash-hero-sub">HeidelbergMaterials · Credit Hours</div>
       </div>
     </div>
     <div class="login-card">
       <div class="brand-row">
         <div class="brand-mark logo-mark lg" aria-hidden="true"><img data-suite-logo alt="Padeswood Works"></div>
         <div>
-          <h1 class="brand-title">Holiday and leave</h1>
-          <div class="brand-sub">Balance, approvals and audit trail for the suite</div>
+          <h1 class="brand-title">Credit hours</h1>
+          <div class="brand-sub">Worked hours, claimed hours, approvals and audit trail for the suite</div>
         </div>
       </div>
       <div class="login-grid">
@@ -813,7 +804,7 @@ body::before{
       <div class="splash-hero-mark" aria-hidden="true"><img data-suite-logo alt="Padeswood Works"></div>
       <div class="splash-hero-copy">
         <div class="splash-hero-title">Padeswood Works</div>
-        <div class="splash-hero-sub">HeidelbergMaterials · Holiday Requests</div>
+        <div class="splash-hero-sub">HeidelbergMaterials · Credit Hours</div>
       </div>
     </div>
     <div class="login-card">
@@ -821,7 +812,7 @@ body::before{
         <div class="brand-mark logo-mark lg" aria-hidden="true"><img data-suite-logo alt="Padeswood Works"></div>
         <div>
           <h1 class="brand-title">Access denied</h1>
-          <div class="brand-sub">Your account is not allowed to use Holiday Requests.</div>
+          <div class="brand-sub">Your account is not allowed to use Credit Hours.</div>
         </div>
       </div>
       <div class="small">Please contact an administrator if you think this is wrong.</div>
@@ -861,8 +852,8 @@ body::before{
       </button>
       <div class="brand-mark logo-mark md" aria-hidden="true"><img data-suite-logo alt="Padeswood Works"></div>
       <div class="topbar-title">
-        <div class="kicker">Holiday and leave management</div>
-        <h1>Holiday Requests</h1>
+        <div class="kicker">Credit hours and overtime</div>
+        <h1>Credit Hours</h1>
       </div>
     </div>
     <div class="topbar-right">
@@ -890,9 +881,9 @@ body::before{
   <main class="page">
     <section class="hero">
       <div>
-        <div class="eyebrow">Personal leave tracking</div>
-        <h2>Holiday requests in one place</h2>
-        <p>Request time off, keep an eye on what is left this year and leave a proper approval trail for each request.</p>
+        <div class="eyebrow">Hours, claims and approvals</div>
+        <h2>Credit hours and overtime in one place</h2>
+        <p>Log hours worked, choose whether they count as credit hours or paid overtime, and keep a clean approval trail for each entry.</p>
       </div>
       <div class="field" style="min-width:180px">
         <label for="yearSelect">View year</label>
@@ -904,84 +895,94 @@ body::before{
 
     <section class="summary-grid" id="personalSummarySection">
       <div class="stat">
-        <div class="label">Entitlement</div>
+        <div class="label">Allowance</div>
         <div class="value" id="statEntitlement">0.0</div>
-      <div class="sub" id="statEntitlementSub">Hours allowance + carryover</div>
+      <div class="sub" id="statEntitlementSub">Annual credit-hours allowance</div>
       </div>
       <div class="stat">
-        <div class="label">Used</div>
+        <div class="label">Credit Used</div>
         <div class="value" id="statUsed">0.0</div>
-        <div class="sub">Approved leave this year</div>
+        <div class="sub">Approved credit claimed this year</div>
       </div>
       <div class="stat">
         <div class="label">Pending</div>
         <div class="value" id="statPending">0.0</div>
-        <div class="sub">Waiting for a decision</div>
+        <div class="sub">Claimed hours waiting for a decision</div>
       </div>
       <div class="stat">
-        <div class="label">Remaining</div>
+        <div class="label">Credit Left</div>
         <div class="value" id="statRemaining">0.0</div>
-        <div class="sub">Entitlement minus approved</div>
+        <div class="sub">Allowance minus approved credit</div>
       </div>
       <div class="stat">
-        <div class="label">Projected</div>
+        <div class="label">Overtime</div>
         <div class="value" id="statProjected">0.0</div>
-        <div class="sub">If all pending are approved</div>
+        <div class="sub">Approved paid overtime this year</div>
+      </div>
+      <div class="stat">
+        <div class="label">Quarter Used</div>
+        <div class="value" id="statQuarterUsed">0.0</div>
+        <div class="sub">Approved credit claimed in the rolling quarter</div>
+      </div>
+      <div class="stat">
+        <div class="label">Quarter Left</div>
+        <div class="value" id="statQuarterRemaining">48.0</div>
+        <div class="sub">Maximum credit hours still available this quarter</div>
       </div>
     </section>
 
     <section class="panel" id="requestPanel">
       <div class="panel-head">
         <div>
-          <div class="panel-title">Request leave</div>
-          <div class="panel-sub">Holiday requests only. Pick a start date, then choose how much time off you need and the end date will calculate itself.</div>
+          <div class="panel-title">Log worked hours</div>
+          <div class="panel-sub">Record the date worked, why it was worked, the hours worked, the hours to be claimed, and whether it should count as credit hours or paid overtime. Credit hours are capped at 48 in any rolling quarter.</div>
         </div>
       </div>
       <div class="form-grid">
         <div class="field form-card">
-          <label for="reqStart">Start date</label>
-          <input id="reqStart" class="input" type="date" onchange="syncRequestedDays()">
+          <label for="reqStart">Date worked</label>
+          <input id="reqStart" class="input" type="date">
         </div>
         <div class="field form-card">
-          <label for="reqEnd">End date</label>
-          <input id="reqEnd" class="input" type="date" readonly>
+          <label for="reqWorkedHours">Hours worked</label>
+          <input id="reqWorkedHours" class="input" type="number" min="0.5" step="0.5" value="0">
         </div>
         <div class="field form-card">
-          <label for="reqUnit">Request as</label>
+          <label for="reqUnit">Claim type</label>
           <select id="reqUnit" class="select" onchange="syncRequestedDays()">
-            <option value="days">Days</option>
-            <option value="hours">Hours</option>
+            <option value="credit">Credit hours</option>
+            <option value="overtime">Paid overtime</option>
           </select>
         </div>
         <div class="field form-card">
-          <label for="reqDays">Amount</label>
-          <input id="reqDays" class="input" type="number" min="0.5" step="0.5" value="0" onchange="syncRequestedDays()">
+          <label for="reqDays">Hours to claim</label>
+          <input id="reqDays" class="input" type="number" min="0.5" step="0.5" value="0">
         </div>
         <div class="field full form-card">
           <label for="reqReason">Reason / notes</label>
-          <textarea id="reqReason" class="textarea" placeholder="Add any context that helps the manager approve the request."></textarea>
+          <textarea id="reqReason" class="textarea" placeholder="Why were these hours worked, and is there anything the manager should know before approving them?"></textarea>
         </div>
       </div>
       <div class="card-box request-target-box">
-        <div class="box-label">Request sent to</div>
+        <div class="box-label">Submitted to</div>
         <div id="holidayManagerConfirm" class="target-row">
           <strong id="holidayManagerConfirmName">—</strong>
-          <span class="small" id="holidayManagerConfirmNote">Holiday requests will go to your assigned manager.</span>
+          <span class="small" id="holidayManagerConfirmNote">This credit-hours entry will go to your assigned manager for sign-off.</span>
         </div>
       </div>
       <div class="form-actions">
-        <button class="btn btn-primary" type="button" onclick="submitHolidayRequest()">Submit request</button>
+        <button class="btn btn-primary" type="button" onclick="submitHolidayRequest()">Submit entry</button>
       </div>
     </section>
 
     <section class="panel" id="myRequestsPanel">
       <div class="panel-head">
         <div>
-          <div class="panel-title">My requests</div>
-          <div class="panel-sub">History, approvals and the audit trail for your own leave requests.</div>
+          <div class="panel-title">My entries</div>
+          <div class="panel-sub">Your worked-hours entries, manager decisions, and the audit trail for your own records.</div>
         </div>
         <div class="queue-controls">
-          <span class="pill" id="myRequestCount">0 requests</span>
+          <span class="pill" id="myRequestCount">0 entries</span>
         </div>
       </div>
       <div id="myRequests" class="list"></div>
@@ -1000,13 +1001,13 @@ body::before{
       <div class="panel-head">
         <div>
           <div class="panel-title">Team approvals</div>
-          <div class="panel-sub">Pending requests for the team, with a live decision note.</div>
+          <div class="panel-sub">Pending credit-hours and overtime claims for your assigned staff.</div>
         </div>
         <div class="queue-controls">
           <label class="small" for="managerFilter">Show</label>
           <select id="managerFilter" class="select" onchange="renderHolidayApp()">
             <option value="pending">Pending only</option>
-            <option value="all">All requests</option>
+            <option value="all">All entries</option>
             <option value="approved">Approved</option>
             <option value="denied">Denied</option>
             <option value="cancelled">Cancelled</option>
@@ -1016,21 +1017,38 @@ body::before{
       <div id="approvalQueue" class="list"></div>
     </section>
 
-    <section class="panel" id="allowancePanel" style="display:none">
+    <section class="panel hidden" id="allowancePanel">
+      <div id="allowanceList" class="list"></div>
+    </section>
+
+    <section class="panel hidden" id="bankHolidayPanel">
       <div class="panel-head">
         <div>
-          <div class="panel-title">Holiday allowances</div>
-          <div class="panel-sub">Set annual allowance in hours per person. Carryover can only be added after 31 December at manager discretion.</div>
+          <div class="panel-title">Bank holidays</div>
+          <div class="panel-sub">Add dates that should count at the enhanced credit-hours rate.</div>
         </div>
       </div>
-      <div id="allowanceList" class="list"></div>
+      <div class="form-grid" style="margin-bottom:12px">
+        <div class="field form-card">
+          <label for="bankHolidayDate">Date</label>
+          <input id="bankHolidayDate" class="input" type="date">
+        </div>
+        <div class="field form-card">
+          <label for="bankHolidayLabel">Label</label>
+          <input id="bankHolidayLabel" class="input" type="text" placeholder="e.g. Christmas Day">
+        </div>
+        <div class="field form-card" style="display:flex;align-items:end">
+          <button class="btn btn-primary" type="button" onclick="addBankHoliday()">Add date</button>
+        </div>
+      </div>
+      <div id="bankHolidayList" class="list"></div>
     </section>
 
     <section class="panel" id="activityPanel">
       <div class="panel-head">
         <div>
           <div class="panel-title">Activity</div>
-          <div class="panel-sub">A simple audit trail showing when requests were made and actioned.</div>
+          <div class="panel-sub">A simple audit trail showing when entries were submitted and actioned.</div>
         </div>
       </div>
       <div id="teamOverviewCards" class="list" style="margin-bottom:12px"></div>
@@ -1185,6 +1203,7 @@ let allHolidayProfiles = [];
 let allHolidayRequests = [];
 let allHolidayEvents = [];
 let allHolidayProfileEvents = [];
+let allCreditBankHolidays = [];
 let selectedYear = new Date().getFullYear();
 let loginReady = false;
 let focusApprovalsOnRender = new URLSearchParams(window.location.search).get('focus') === 'approvals';
@@ -1349,6 +1368,111 @@ function isWeekend(date){
   const d = date.getDay();
   return d === 0 || d === 6;
 }
+function parseDateKey(value){
+  if (!value) return null;
+  const key = String(value).slice(0, 10);
+  if (!key) return null;
+  const d = new Date(key + 'T00:00:00');
+  return isNaN(d) ? null : d;
+}
+function dateKeyFrom(value){
+  const d = parseDateKey(value);
+  return d ? toLocalDateString(d) : '';
+}
+function addDaysToDateKey(value, days){
+  const d = parseDateKey(value);
+  if (!d) return '';
+  d.setDate(d.getDate() + num(days, 0));
+  return toLocalDateString(d);
+}
+function addMonthsToDateKey(value, months){
+  const d = parseDateKey(value);
+  if (!d) return '';
+  d.setMonth(d.getMonth() + num(months, 0));
+  return toLocalDateString(d);
+}
+function normalizeCreditHours(hours){
+  return Math.round(num(hours, 0) * 100) / 100;
+}
+function bankHolidayDateSet(){
+  return new Set((allCreditBankHolidays || []).map(function(row){
+    return String(row.holiday_date || '').slice(0, 10);
+  }).filter(Boolean));
+}
+function isBankHolidayDate(value){
+  const key = String(value || '').slice(0, 10);
+  return !!(key && bankHolidayDateSet().has(key));
+}
+function isWeekendOrBankHoliday(value){
+  const d = parseDateKey(value);
+  return !!(d && (isWeekend(d) || isBankHolidayDate(value)));
+}
+function previousDayCreditEntry(req){
+  if (!req || !req.auth_user_id || !req.work_date) return null;
+  const prevKey = addDaysToDateKey(req.work_date, -1);
+  if (!prevKey) return null;
+  return allHolidayRequests.find(function(r){
+    return String(r.auth_user_id || '') === String(req.auth_user_id || '')
+      && String(r.work_date || '').slice(0, 10) === prevKey
+      && requestConsumesBalance(r)
+      && num(r.hours_worked, 0) >= SHIFT_HOURS
+      && r.status !== 'cancelled'
+      && r.status !== 'denied';
+  }) || null;
+}
+function requestCreditMultiplier(req){
+  if (!req || !requestConsumesBalance(req)) return 1;
+  if (isWeekendOrBankHoliday(req.work_date)) return 4 / 3;
+  const prev = previousDayCreditEntry(req);
+  if (prev && num(prev.hours_worked, 0) >= SHIFT_HOURS && num(req.hours_worked, 0) >= SHIFT_HOURS) return 4 / 3;
+  return 1;
+}
+function requestCreditMultiplierReason(req){
+  if (!req || !requestConsumesBalance(req)) return '';
+  if (isWeekendOrBankHoliday(req.work_date)) return 'weekend/bank holiday';
+  const prev = previousDayCreditEntry(req);
+  if (prev && num(prev.hours_worked, 0) >= SHIFT_HOURS && num(req.hours_worked, 0) >= SHIFT_HOURS) return 'back-to-back 12-hour shift';
+  return '';
+}
+function requestCreditHoursEarned(req){
+  if (!requestConsumesBalance(req)) return 0;
+  return normalizeCreditHours(num(req.hours_claimed, 0) * requestCreditMultiplier(req));
+}
+function requestCreditMultiplierLabel(req){
+  const m = requestCreditMultiplier(req);
+  return m > 1 ? 'x' + (Math.round(m * 100) / 100).toFixed(2).replace(/0+$/,'').replace(/\.$/,'') : 'x1';
+}
+function quarterStartForDate(value){
+  const d = parseDateKey(value);
+  if (!d) return '';
+  d.setMonth(d.getMonth() - 3);
+  return toLocalDateString(d);
+}
+function rollingQuarterStatsForUser(userId, pivotDate){
+  const pivot = dateKeyFrom(pivotDate || new Date());
+  const start = quarterStartForDate(pivot);
+  const approved = allHolidayRequests.filter(function(r){
+    const workKey = String(r.work_date || '').slice(0, 10);
+    return String(r.auth_user_id || '') === String(userId || '')
+      && requestConsumesBalance(r)
+      && r.status === 'approved'
+      && workKey >= start
+      && workKey <= pivot;
+  });
+  const pending = allHolidayRequests.filter(function(r){
+    const workKey = String(r.work_date || '').slice(0, 10);
+    return String(r.auth_user_id || '') === String(userId || '')
+      && requestConsumesBalance(r)
+      && r.status === 'pending'
+      && workKey >= start
+      && workKey <= pivot;
+  });
+  const used = approved.reduce(function(sum, r){ return sum + requestCreditHoursEarned(r); }, 0);
+  const pendingHours = pending.reduce(function(sum, r){ return sum + requestCreditHoursEarned(r); }, 0);
+  const remaining = Math.max(0, 48 - used);
+  const projected = Math.max(0, 48 - used - pendingHours);
+  return { used: used, pending: pendingHours, remaining: remaining, projected: projected, start: start, end: pivot };
+}
 function countWeekdays(startStr, endStr){
   if (!startStr || !endStr) return 0;
   const start = new Date(startStr + 'T00:00:00');
@@ -1383,19 +1507,34 @@ function calcRequestedWeekdayEquivalent(){
   return unit === 'hours' ? amount / SHIFT_HOURS : amount;
 }
 function syncRequestedEndDate(){
-  const start = $('reqStart').value;
-  const amount = calcRequestedWeekdayEquivalent();
-  const endField = $('reqEnd');
-  if (!endField) return;
-  if (!start || amount <= 0) {
-    endField.value = '';
-    return;
+  syncRequestedDays();
+}
+function creditPreviewText(){
+  const start = $('reqStart') ? $('reqStart').value : '';
+  const worked = num($('reqWorkedHours') && $('reqWorkedHours').value, 0);
+  const claimed = num($('reqDays') && $('reqDays').value, 0);
+  const type = $('reqUnit') && $('reqUnit').value === 'overtime' ? 'overtime' : 'credit';
+  if (type !== 'credit') {
+    return 'Paid overtime does not use the credit-hours cap.';
   }
-  endField.value = addWeekdays(start, amount);
+  if (!start || worked <= 0 || claimed <= 0) return 'Estimated credit: 0.0 hours';
+  const previewReq = {
+    auth_user_id: currentUser && currentUser.id ? currentUser.id : '',
+    work_date: start,
+    hours_worked: worked,
+    hours_claimed: claimed,
+    claim_type: type,
+    status: 'pending'
+  };
+  const estimated = requestCreditHoursEarned(previewReq);
+  const quarterStats = rollingQuarterStatsForUser(currentUser && currentUser.id ? currentUser.id : '', start);
+  const capRemaining = Math.max(0, quarterStats.projected - estimated);
+  const reason = requestCreditMultiplierReason(previewReq);
+  return 'Estimated credit: ' + requestHoursText(estimated) + ' (' + requestCreditMultiplierLabel(previewReq) + ')' + (reason ? ' · ' + reason : '') + ' · rolling quarter left after this entry: ' + requestHoursText(capRemaining);
 }
 function requestYear(request){
   if (!request) return selectedYear;
-  const source = request.start_date || request.requested_at || request.created_at || '';
+  const source = request.work_date || request.requested_at || request.created_at || '';
   const d = new Date(String(source).slice(0,10) + 'T00:00:00');
   return isNaN(d) ? selectedYear : d.getFullYear();
 }
@@ -1413,37 +1552,40 @@ function requestHoursText(hours){
   const n = num(hours, 0);
   return n.toFixed(n % 1 === 0 ? 0 : 1) + ' hour' + (n === 1 ? '' : 's');
 }
-function allowanceExtrasText(days){
-  const n = num(days, 0);
-  return requestDaysText(n) + ' / ' + requestHoursText(n * SHIFT_HOURS);
+function allowanceExtrasText(hours){
+  return requestHoursText(hours);
+}
+function creditHoursAllowanceFromProfile(profile){
+  const raw = num(profile && profile.annual_allowance_hours, 0);
+  return raw > 0 ? raw : 100;
 }
 function requestKindFromReason(reason){
-  return 'holiday';
+  return /overtime/i.test(String(reason || '')) ? 'overtime' : 'credit';
 }
 function requestKindLabel(kind){
-  return 'Holiday';
+  return kind === 'overtime' ? 'Paid overtime' : 'Credit hours';
 }
 function requestKindClass(kind){
-  return 'holiday';
+  return kind === 'overtime' ? 'overtime' : 'credit';
 }
 function requestDisplayReason(reason){
   return String(reason ?? '').replace(/^\[[^\]]+\]\s*/, '').trim();
 }
 function requestAmountText(req){
-  const unit = req && req.requested_unit === 'hours' ? 'hours' : 'days';
-  const amount = num(req && req.requested_amount, 0) || num(req && req.requested_days, 0);
-  return unit === 'hours'
-    ? requestHoursText(amount) + ' (' + requestDaysText(amount / SHIFT_HOURS) + ')'
-    : requestDaysText(amount) + ' (' + requestHoursText(amount * SHIFT_HOURS) + ')';
+  const worked = requestHoursText(num(req && req.hours_worked, 0));
+  const claimed = requestHoursText(num(req && req.hours_claimed, 0));
+  if (requestConsumesBalance(req)) {
+    const earned = requestCreditHoursEarned(req);
+    const multiplier = requestCreditMultiplier(req);
+    return worked + ' worked · ' + claimed + ' claimed · ' + requestHoursText(earned) + ' credit' + (multiplier > 1 ? ' (' + requestCreditMultiplierLabel(req) + ')' : '');
+  }
+  return worked + ' worked · ' + claimed + ' paid overtime';
 }
 function requestKindFromRequest(req){
-  return requestKindFromReason(req && req.reason);
+  return req && req.claim_type === 'overtime' ? 'overtime' : 'credit';
 }
 function requestHours(req){
-  const unit = req && req.requested_unit === 'hours' ? 'hours' : 'days';
-  const amount = num(req && req.requested_amount, 0) || num(req && req.requested_days, 0);
-  if (unit === 'hours') return amount;
-  return amount * SHIFT_HOURS;
+  return requestConsumesBalance(req) ? requestCreditHoursEarned(req) : num(req && req.hours_claimed, 0);
 }
 function balanceTrafficLightClass(days){
   const n = num(days, 0);
@@ -1452,7 +1594,7 @@ function balanceTrafficLightClass(days){
   return 'balance-green';
 }
 function requestConsumesBalance(req){
-  return true;
+  return requestKindFromRequest(req) === 'credit';
 }
 function requestBalanceHours(req){
   return requestConsumesBalance(req) ? requestHours(req) : 0;
@@ -1464,7 +1606,7 @@ function makeKindPill(req){
 function requestSummaryText(req){
   const amountText = requestAmountText(req);
   const kind = requestKindLabel(requestKindFromRequest(req));
-  return kind === 'Holiday' ? amountText : kind + ' · ' + amountText;
+  return kind + ' · ' + amountText;
 }
 function setToast(msg, ms){
   const t = $('toast');
@@ -1650,7 +1792,7 @@ function showAccessDenied(message){
   $('appShell').classList.add('hidden');
   $('accessDenied').classList.remove('hidden');
   const small = $('accessDenied').querySelector('.small');
-  if (small) small.textContent = message || 'Your account is not allowed to use Holiday Requests.';
+  if (small) small.textContent = message || 'Your account is not allowed to use Credit Hours.';
 }
 function showLoginScreen(){
   $('appShell').classList.add('hidden');
@@ -1696,14 +1838,11 @@ function setSelectedYear(value){
   renderHolidayApp();
 }
 function syncRequestedDays(){
-  const start = $('reqStart').value;
-  const unit = $('reqUnit').value;
   const amountField = $('reqDays');
   if (amountField) {
-    amountField.min = unit === 'hours' ? '1' : '0.5';
-    amountField.step = unit === 'hours' ? '1' : '0.5';
+    amountField.min = '0.5';
+    amountField.step = '0.5';
   }
-  syncRequestedEndDate();
 }
 function syncExtrasUnit(unitInputId, amountInputId){
   const unitEl = $(unitInputId);
@@ -1792,11 +1931,11 @@ function renderRequestAuditItem(req){
   const latestNote = events.length ? (events[events.length - 1].note || req.manager_note || '—') : (req.manager_note || '—');
   return '<div class="staff-request-item">'+
     '<div class="top">'+
-      '<div class="title">'+esc(formatDateOnly(req.start_date))+' → '+esc(formatDateOnly(req.end_date))+'</div>'+
+      '<div class="title">'+esc(formatDateOnly(req.work_date))+'</div>'+
       makeStatusPill(req.status)+
     '</div>'+
     '<div class="meta">'+makeKindPill(req)+' <span style="margin-left:6px">'+esc(requestSummaryText(req))+'</span></div>'+
-    '<div class="meta">Requested '+esc(formatDateTime(req.requested_at))+(req.decided_at ? ' · decided '+esc(formatDateTime(req.decided_at)) : '')+'</div>'+
+    '<div class="meta">Submitted '+esc(formatDateTime(req.requested_at))+(req.decided_at ? ' · decided '+esc(formatDateTime(req.decided_at)) : '')+'</div>'+
     '<div class="meta">'+esc(requestDisplayReason(latestNote || '—'))+'</div>'+
     '<div class="timeline">'+
       (events.length ? events.map(ev => '<div class="timeline-item"><div class="t-left"><span class="pill '+requestStatusClass(ev.new_status || ev.action.toLowerCase())+'">'+esc(ev.action)+'</span><strong>'+esc(actorDisplayNameForEvent(ev))+'</strong><span class="t-time">'+esc(formatDateTime(ev.created_at))+'</span></div><div class="t-note">'+esc(requestDisplayReason(ev.note || '—'))+'</div></div>').join('') : '<div class="small">No audit trail recorded yet.</div>')+
@@ -1805,23 +1944,33 @@ function renderRequestAuditItem(req){
 }
 function statsForUser(userId, year){
   const profile = holidayProfileFor(userId);
-  const allowance = num(profile && profile.annual_allowance_days, 72);
-  const carryover = num(profile && profile.carryover_days, 0);
-  const extras = num(profile && profile.entitlement_extras_days, 0);
-  const entitlement = allowance + carryover + extras;
+  const allowance = creditHoursAllowanceFromProfile(profile);
   const yearRequests = allHolidayRequests.filter(r => r.auth_user_id === userId && requestMatchesYear(r, year));
-  const countable = yearRequests.filter(r => requestConsumesBalance(r));
-  const used = countable.filter(r => r.status === 'approved').reduce((sum, r) => sum + requestBalanceHours(r), 0);
-  const pending = countable.filter(r => r.status === 'pending').reduce((sum, r) => sum + requestBalanceHours(r), 0);
+  const approvedCredit = yearRequests
+    .filter(r => r.status === 'approved' && requestConsumesBalance(r))
+    .reduce((sum, r) => sum + requestBalanceHours(r), 0);
+  const approvedOvertime = yearRequests
+    .filter(r => r.status === 'approved' && !requestConsumesBalance(r))
+    .reduce((sum, r) => sum + requestHours(r), 0);
+  const pending = yearRequests
+    .filter(r => r.status === 'pending')
+    .reduce((sum, r) => sum + requestHours(r), 0);
+  const pendingCredit = yearRequests
+    .filter(r => r.status === 'pending' && requestConsumesBalance(r))
+    .reduce((sum, r) => sum + requestBalanceHours(r), 0);
+  const quarterStats = rollingQuarterStatsForUser(userId, new Date());
   return {
     allowance,
-    carryover,
-    extras,
-    entitlement,
-    used,
+    entitlement: allowance,
+    used: approvedCredit,
+    overtime: approvedOvertime,
     pending,
-    remaining: entitlement - used,
-    projected: entitlement - used - pending
+    remaining: allowance - approvedCredit,
+    projected: allowance - approvedCredit - pendingCredit,
+    quarterUsed: quarterStats.used,
+    quarterPending: quarterStats.pending,
+    quarterRemaining: quarterStats.remaining,
+    quarterProjected: quarterStats.projected
   };
 }
 function makeStatusPill(status){
@@ -1831,9 +1980,9 @@ function makeStatusPill(status){
 function renderMyRequests(){
   const box = $('myRequests');
   const rows = requestsForUser(currentUser.id).filter(r => requestMatchesYear(r, selectedYear));
-  $('myRequestCount').textContent = rows.length + ' request' + (rows.length === 1 ? '' : 's');
+  $('myRequestCount').textContent = rows.length + ' entr' + (rows.length === 1 ? 'y' : 'ies');
   if (!rows.length) {
-    box.innerHTML = '<div class="empty">No leave requests found for '+selectedYear+'.</div>';
+    box.innerHTML = '<div class="empty">No credit-hours entries found for '+selectedYear+'.</div>';
     return;
   }
   box.innerHTML = rows.map(renderRequestCard).join('');
@@ -1842,19 +1991,19 @@ function renderRequestCard(req){
   const events = eventsForRequest(req.id);
   const own = req.auth_user_id === currentUser.id;
   const canCancel = own && req.status !== 'cancelled' && req.status !== 'denied';
-  const cancelLabel = req.status === 'approved' ? 'Cancel request' : 'Withdraw request';
+  const cancelLabel = req.status === 'approved' ? 'Cancel entry' : 'Withdraw entry';
   const actionBtn = canCancel ? '<button class="btn btn-danger" type="button" onclick="cancelRequest(\''+esc(req.id)+'\')">'+esc(cancelLabel)+'</button>' : '';
   return '<article class="request-card">'+
     '<div class="request-head">'+
       '<div>'+
-        '<div class="request-title">'+esc(formatDateOnly(req.start_date))+' → '+esc(formatDateOnly(req.end_date))+'</div>'+
-        '<div class="request-meta">'+makeKindPill(req)+' <span style="margin-left:6px">'+esc(requestSummaryText(req))+'</span> · requested '+esc(formatDateTime(req.requested_at))+(req.decided_at ? ' · '+esc(req.status)+' '+esc(formatDateTime(req.decided_at)) : '')+'</div>'+
+        '<div class="request-title">'+esc(formatDateOnly(req.work_date))+'</div>'+
+        '<div class="request-meta">'+makeKindPill(req)+' <span style="margin-left:6px">'+esc(requestSummaryText(req))+'</span> · submitted '+esc(formatDateTime(req.requested_at))+(req.decided_at ? ' · '+esc(req.status)+' '+esc(formatDateTime(req.decided_at)) : '')+'</div>'+
       '</div>'+
       makeStatusPill(req.status)+
     '</div>'+
     '<div class="request-grid">'+
       '<div class="card-box"><div class="box-label">Reason</div><div>'+esc(requestDisplayReason(req.reason) || '—')+'</div></div>'+
-    '<div class="card-box"><div class="box-label">Decision note</div><div>'+esc(req.manager_note || '—')+'</div></div>'+
+    '<div class="card-box"><div class="box-label">Sign-off</div><div>Employee: '+esc(req.requester_name || req.requester_email || '—')+(req.decided_by_name ? '<br>Manager: '+esc(req.decided_by_name) : '')+'</div></div>'+
     '</div>'+
     '<div class="card-box"><div class="box-label">Audit trail</div><div class="timeline">'+
       (events.length ? events.map(ev => '<div class="timeline-item"><div class="t-left"><span class="pill '+requestStatusClass(ev.new_status || ev.action.toLowerCase())+'">'+esc(ev.action)+'</span><strong>'+esc(actorDisplayNameForEvent(ev))+'</strong><span class="t-time">'+esc(formatDateTime(ev.created_at))+'</span></div><div class="t-note" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap"><span>'+esc(requestDisplayReason(ev.note || '—'))+'</span>'+(isHolidayAdmin ? '<button class="btn btn-ghost" type="button" onclick="deleteAuditEvent(\''+esc(ev.id)+'\',\''+esc(req.id)+'\')" style="height:24px;padding:0 8px;font-size:10px;font-family:var(--ff-head);font-weight:600;color:var(--red);border-color:var(--redb);background:var(--redd)">Delete</button>' : '')+'</div></div>').join('') : '<div class="small">No audit trail recorded yet.</div>')+
@@ -1867,7 +2016,7 @@ async function deleteAuditEvent(eventId, requestId){
   if (!isHolidayAdmin) return;
   if (!confirm('Delete this audit trail entry?')) return;
   $('syncLabel').textContent = 'Saving…';
-  const { error } = await sb.from('holiday_request_events').delete().eq('id', eventId);
+  const { error } = await sb.from('credit_hour_events').delete().eq('id', eventId);
   $('syncLabel').textContent = 'Synced';
   if (error) {
     setToast('Could not delete audit trail entry: ' + error.message);
@@ -1887,12 +2036,12 @@ function renderActivityFeed(){
     return !!(req && canCurrentUserSeeHolidayRequest(req));
   }).sort((a,b) => String(b.created_at || '').localeCompare(String(a.created_at || ''))).slice(0,40);
   if (!events.length) {
-    feed.innerHTML = '<div class="empty">No leave activity yet for '+selectedYear+'.</div>';
+    feed.innerHTML = '<div class="empty">No credit-hours activity yet for '+selectedYear+'.</div>';
     return;
   }
   feed.innerHTML = events.map(ev => {
     const req = allHolidayRequests.find(r => r.id === ev.request_id);
-    const title = req ? (formatDateOnly(req.start_date) + ' → ' + formatDateOnly(req.end_date) + ' · ' + requestSummaryText(req)) : 'Request';
+    const title = req ? (formatDateOnly(req.work_date) + ' · ' + requestSummaryText(req)) : 'Entry';
     return '<div class="activity-card" style="padding:10px 12px">'+
       '<div class="row-top"><div><span class="pill '+requestStatusClass(ev.new_status || ev.action.toLowerCase())+'">'+esc(ev.action)+'</span> '+(req ? makeKindPill(req) : '')+' <span class="actor">'+esc(actorDisplayNameForEvent(ev))+'</span></div><div class="when">'+esc(formatDateTime(ev.created_at))+'</div></div>'+
       '<div class="detail" style="font-size:12px">'+esc(title)+'</div>'+
@@ -1909,95 +2058,39 @@ function renderTeamOverviewCards(){
     return;
   }
   const activeProfiles = isHolidayAdmin ? allPwProfiles.filter(p => p && p.approved !== false && p.disabled !== true && p.role !== 'none') : assignedHolidayStaffForCurrentUser();
-  const carryoverOpen = canEditCarryoverNow();
-  const canEditAllowanceFor = function(p){
-    return isHolidayAdmin || String(p.holiday_manager_auth_user_id || '') === String(currentUser.id || '');
-  };
   if (!activeProfiles.length) {
     box.innerHTML = '<div class="empty">No staff assigned yet.</div>';
     return;
   }
-  box.innerHTML = activeProfiles.map(p => {
-    const hp = holidayProfileFor(p.id);
+  box.innerHTML = activeProfiles.map(function(p) {
     const ku = kilnUserFor(p.id);
     const stats = statsForUser(p.id, selectedYear);
     const displayName = personDisplayNameFromRecords(p, ku, 'Unknown');
-    const managerName = holidayManagerDisplayNameForUser(p.id);
-    const editable = canEditAllowanceFor(p);
-    const entitlementValue = num(hp && hp.annual_allowance_days, 72);
-    const carryoverValue = num(hp && hp.carryover_days, 0);
-    const extrasValue = num(hp && hp.entitlement_extras_days, 0);
-    const remainingDays = stats.remaining / SHIFT_HOURS;
-    const remainingClass = balanceTrafficLightClass(remainingDays);
-    const allowanceHistory = profileEventsForUser(p.id)
-      .filter(function(e){ return e && requestMatchesYear({ start_date: e.created_at }, selectedYear); })
-      .slice(0, 3);
-    const requestHistory = requestsForUser(p.id)
-      .filter(function(r){ return requestMatchesYear(r, selectedYear); })
-      .slice(0, 4);
-    const showManagerLabel = isHolidayAdmin;
+    const quarterRemaining = stats.quarterRemaining;
+    const requestHistory = requestsForUser(p.id).filter(function(r){ return requestMatchesYear(r, selectedYear); }).slice(0, 6);
     return '<details class="staff-card">'+
       '<summary>'+
         '<div class="staff-summary-left">'+
           '<div class="name" style="font-size:13px">'+esc(displayName)+'</div>'+
         '</div>'+
         '<div class="staff-summary-right">'+
-          '<span class="pill">'+esc(requestDaysText(stats.used / SHIFT_HOURS))+' taken</span>'+
-          '<span class="pill '+remainingClass+'">'+esc(requestDaysText(remainingDays))+' left</span>'+
-          '<span class="pill">'+esc(requestDaysText(stats.pending / SHIFT_HOURS))+' pending</span>'+
-          '<span class="pill">'+esc(requestDaysText(stats.projected / SHIFT_HOURS))+' projected</span>'+
-          (showManagerLabel ? '<span class="pill">'+esc(managerName)+'</span>' : '')+
+          '<span class="pill">'+esc(requestHoursText(stats.used))+' credit used</span>'+
+          '<span class="pill">'+esc(requestHoursText(quarterRemaining))+' quarter left</span>'+
+          '<span class="pill">'+esc(requestHoursText(stats.pending))+' pending</span>'+
+          '<span class="pill">'+esc(requestHoursText(stats.overtime))+' overtime</span>'+
         '</div>'+
       '</summary>'+
       '<div class="staff-body">'+
-        '<div class="meta" style="font-size:10px">Entitlement '+esc(requestHoursText(stats.entitlement))+' / '+esc(requestDaysText(stats.entitlement / SHIFT_HOURS))+'</div>'+
-        '<div class="meta" style="font-size:10px">Used '+esc(requestHoursText(stats.used))+' / '+esc(requestDaysText(stats.used / SHIFT_HOURS))+'</div>'+
-        '<div class="meta" style="font-size:10px">Pending '+esc(requestHoursText(stats.pending))+' / '+esc(requestDaysText(stats.pending / SHIFT_HOURS))+'</div>'+
-        '<div class="meta" style="font-size:10px">Remaining '+esc(requestHoursText(stats.remaining))+' / '+esc(requestDaysText(stats.remaining / SHIFT_HOURS))+'</div>'+
-        '<div class="meta" style="font-size:10px">Projected '+esc(requestHoursText(stats.projected))+' / '+esc(requestDaysText(stats.projected / SHIFT_HOURS))+'</div>'+
-        '<div class="meta" style="font-size:10px">Carryover '+esc(requestHoursText(carryoverValue))+'</div>'+
-        '<div class="meta" style="font-size:10px">Extras '+esc(allowanceExtrasText(extrasValue))+'</div>'+
-        '<div class="staff-section">'+
-          '<div class="staff-section-title">Entitlement adjustment</div>'+
-          '<div class="staff-section-sub">Add or remove holiday entitlement and carryover for this staff member. Every save is written to the audit trail.</div>'+
-          '<div class="field"><label class="small" style="margin-bottom:4px">Annual entitlement</label><input class="input" style="height:34px;font-size:11px" type="number" min="0" step="0.5" id="teamAllow_'+esc(p.id)+'" value="'+esc(entitlementValue)+'"'+(editable ? '' : ' disabled')+'><div class="field-note">Set the base holiday allowance for this year.</div></div>'+
-          '<div class="field"><label class="small" style="margin-bottom:4px">Carryover after 31 Dec</label><input class="input" style="height:34px;font-size:11px" type="number" min="0" step="0.5" id="teamCarry_'+esc(p.id)+'" value="'+esc(carryoverValue)+'"'+((editable && carryoverOpen) ? '' : ' disabled')+' title="'+esc(carryoverOpen ? 'Carryover can be adjusted now' : 'Carryover can only be adjusted after 31 December')+'"><div class="field-note">'+esc(carryoverOpen ? 'Adjust carried-over holiday for the new year.' : 'Carryover can only be changed after 31 December.')+'</div></div>'+
-          '<div class="field"><label class="small" style="margin-bottom:4px">Extras</label><div class="row" style="gap:8px;align-items:flex-end">'+
-            '<select class="select" id="teamExtrasUnit_'+esc(p.id)+'" style="width:120px;height:34px;font-size:11px" onchange="syncExtrasUnit(\'teamExtrasUnit_'+esc(p.id)+'\', \'teamExtras_'+esc(p.id)+'\')"'+(editable ? '' : ' disabled')+'>'+
-              '<option value="days">Days</option>'+
-              '<option value="hours">Hours</option>'+
-            '</select>'+
-            '<input class="input" style="height:34px;font-size:11px;flex:1" type="number" min="-999" max="999" step="0.5" id="teamExtras_'+esc(p.id)+'" value="'+esc(extrasValue)+'"'+(editable ? '' : ' disabled')+'>'+
-          '</div><div class="field-note">Positive numbers add entitlement. Negative numbers take it away.</div></div>'+
-          '<div class="field"><label class="small" style="margin-bottom:4px">Reason / note for entitlement change</label><textarea class="textarea allowance-reason" id="teamReason_'+esc(p.id)+'" placeholder="Explain why this allowance or carryover is being changed."'+(editable ? '' : ' disabled')+'></textarea><div class="field-note">This is stored in the allowance audit trail.</div></div>'+
-        '</div>'+
-        '<div style="display:flex;justify-content:flex-end"><button class="btn btn-ghost" style="height:32px;padding:0 10px;font-size:10px" type="button" onclick="saveTeamAllowance(\''+esc(p.id)+'\')"'+(editable ? '' : ' disabled')+'>Save entitlements</button></div>'+
-        '<div class="staff-history">'+
-          '<div class="staff-history-title">Allowance audit</div>'+
-          (allowanceHistory.length ? allowanceHistory.map(function(ev){
-            const allowanceText = typeof ev.new_annual_allowance_days !== 'undefined'
-              ? requestHoursText(num(ev.old_annual_allowance_days, 0)) + ' → ' + requestHoursText(num(ev.new_annual_allowance_days, 0)) + ' allowance'
-              : '';
-            const carryText = typeof ev.new_carryover_days !== 'undefined'
-              ? requestHoursText(num(ev.old_carryover_days, 0)) + ' → ' + requestHoursText(num(ev.new_carryover_days, 0)) + ' carryover'
-              : '';
-            const extrasText = typeof ev.new_extras_days !== 'undefined'
-              ? allowanceExtrasText(num(ev.old_extras_days, 0)) + ' → ' + allowanceExtrasText(num(ev.new_extras_days, 0)) + ' extras'
-              : '';
-            const changeText = [allowanceText, carryText, extrasText].filter(Boolean).join(' · ') || 'Allowance updated';
-            return '<div class="staff-history-item">'+
-              '<div class="left">'+
-                '<div class="title">'+esc(changeText)+'</div>'+
-                '<div class="meta">'+esc(ev.actor_name || 'Unknown')+' · '+esc(formatDateTime(ev.created_at))+'</div>'+
-                '<div class="meta">'+esc(requestDisplayReason(ev.note || '—'))+'</div>'+
-              '</div>'+
-              '<span class="pill approved">Logged</span>'+
-            '</div>';
-          }).join('') : '<div class="small">No allowance changes logged yet.</div>')+
-        '</div>'+
+        '<div class="meta" style="font-size:10px">Annual allowance '+esc(requestHoursText(stats.entitlement))+'</div>'+
+        '<div class="meta" style="font-size:10px">Credit used '+esc(requestHoursText(stats.used))+'</div>'+
+        '<div class="meta" style="font-size:10px">Quarter used '+esc(requestHoursText(stats.quarterUsed))+'</div>'+
+        '<div class="meta" style="font-size:10px">Quarter left '+esc(requestHoursText(stats.quarterRemaining))+'</div>'+
+        '<div class="meta" style="font-size:10px">Credit left '+esc(requestHoursText(stats.remaining))+'</div>'+
+        '<div class="meta" style="font-size:10px">Approved overtime '+esc(requestHoursText(stats.overtime))+'</div>'+
+        '<div class="meta" style="font-size:10px">Pending claimed '+esc(requestHoursText(stats.pending))+'</div>'+
         '<div class="staff-request-audit">'+
-          '<div class="staff-request-audit-title">Request audit</div>'+
-          (requestHistory.length ? requestHistory.map(renderRequestAuditItem).join('') : '<div class="small">No leave requests logged yet.</div>')+
+          '<div class="staff-request-audit-title">Claim audit</div>'+
+          (requestHistory.length ? requestHistory.map(renderRequestAuditItem).join('') : '<div class="small">No credit-hours entries logged yet.</div>')+
         '</div>'+
       '</div>'+
     '</details>';
@@ -2009,7 +2102,7 @@ function renderApproverQueue(){
   const managerViewEnabled = isHolidayAdmin || isApprover;
   if (!managerViewEnabled) {
     panel.style.display = 'none';
-    allowancePanel.style.display = 'none';
+    if (allowancePanel) allowancePanel.style.display = 'none';
     return;
   }
   panel.style.display = '';
@@ -2018,36 +2111,37 @@ function renderApproverQueue(){
     .filter(req => requestMatchesYear(req, selectedYear) && (isHolidayAdmin || isAssignedHolidayManagerForRequest(req)))
     .sort((a,b) => String(b.requested_at || '').localeCompare(String(a.requested_at || '')));
   if (!rows.length) {
-    box.innerHTML = '<div class="empty">No leave requests found for '+selectedYear+'.</div>';
+    box.innerHTML = '<div class="empty">No credit-hours entries found for '+selectedYear+'.</div>';
     return;
   }
   if (isHolidayAdmin) {
-    $('approverQueuePanel').querySelector('.panel-title').textContent = 'Leave overview';
-    $('approverQueuePanel').querySelector('.panel-sub').textContent = 'Requests grouped into users and shift managers.';
+    $('approverQueuePanel').querySelector('.panel-title').textContent = 'Credit-hours overview';
+    $('approverQueuePanel').querySelector('.panel-sub').textContent = 'Entries grouped into users and shift managers.';
     $('managerFilter').closest('.queue-controls').style.display = 'none';
-    allowancePanel.style.display = '';
+    if (allowancePanel) allowancePanel.style.display = 'none';
     const grouped = { users: [], managers: [] };
     rows.forEach(function(req) {
       const ku = allKilnUsers.find(function(x){ return String(x.auth_user_id) === String(req.auth_user_id); }) || null;
       (ku && ku.is_shift_manager ? grouped.managers : grouped.users).push(req);
     });
     const groupBlock = function(title, list) {
-      if (!list.length) return '<div class="empty">'+title+' requests are empty for '+selectedYear+'.</div>';
+      if (!list.length) return '<div class="empty">'+title+' entries are empty for '+selectedYear+'.</div>';
       return '<div style="display:flex;flex-direction:column;gap:12px;margin-bottom:18px"><div style="font-family:var(--ff-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--tx3)">'+esc(title)+'</div>'+list.map(function(req){
         const person = personDisplayNameFromRecords(profileFor(req.auth_user_id), kilnUserFor(req.auth_user_id), req.requester_name || req.requester_email || 'Unknown');
         const stats = statsForUser(req.auth_user_id, selectedYear);
+        const quarterStats = rollingQuarterStatsForUser(req.auth_user_id, req.work_date);
         const needsBalance = requestConsumesBalance(req);
         return '<article class="queue-card">'+
           '<div class="request-head">'+
             '<div>'+
               '<div class="request-title">'+esc(person)+'</div>'+
-              '<div class="request-meta">'+makeKindPill(req)+' <span style="margin-left:6px">'+esc(requestSummaryText(req))+'</span> · requested '+esc(formatDateTime(req.requested_at))+'</div>'+
+              '<div class="request-meta">'+makeKindPill(req)+' <span style="margin-left:6px">'+esc(requestSummaryText(req))+'</span> · submitted '+esc(formatDateTime(req.requested_at))+'</div>'+
             '</div>'+
             makeStatusPill(req.status)+
           '</div>'+
           '<div class="request-grid">'+
             '<div class="card-box"><div class="box-label">Reason</div><div>'+esc(requestDisplayReason(req.reason) || '—')+'</div></div>'+
-            '<div class="card-box"><div class="box-label">Balance</div><div>'+(needsBalance ? esc(stats.remaining.toFixed(1))+' hours remaining' : 'No holiday balance required')+'</div></div>'+
+            '<div class="card-box"><div class="box-label">Balance</div><div>'+(needsBalance ? esc(requestHoursText(quarterStats.remaining))+' quarter left' : 'Paid overtime entry')+'<div class="small" style="margin-top:4px">'+esc(requestHoursText(stats.remaining))+' annual left</div></div></div>'+
           '</div>'+
           '<div class="card-box"><div class="box-label">Decision note</div><div>'+esc(req.manager_note || '—')+'</div></div>'+
         '</article>';
@@ -2056,42 +2150,38 @@ function renderApproverQueue(){
     box.innerHTML = groupBlock('Users', grouped.users) + groupBlock('Shift Managers', grouped.managers);
     return;
   }
-  allowancePanel.style.display = isHolidayAdmin ? '' : 'none';
-  if (isHolidayAdmin) {
-    allowancePanel.querySelector('.panel-title').textContent = 'Entitlements & carryover';
-    allowancePanel.querySelector('.panel-sub').textContent = 'Add or remove annual entitlement and carryover for your assigned staff. Carryover can only be changed after 31 December.';
-  }
+  if (allowancePanel) allowancePanel.style.display = 'none';
   $('approverQueuePanel').querySelector('.panel-title').textContent = 'Team approvals';
-  $('approverQueuePanel').querySelector('.panel-sub').textContent = 'Requests for your assigned staff, with remaining balance shown on each card. Expand the staff cards above to edit entitlements.';
+  $('approverQueuePanel').querySelector('.panel-sub').textContent = 'Claims for your assigned staff, with remaining credit shown on each card.';
   $('managerFilter').closest('.queue-controls').style.display = 'none';
   const rowsFiltered = rows.filter(req => req.status === 'pending');
   if (!rowsFiltered.length) {
-    box.innerHTML = '<div class="empty">No pending requests for '+selectedYear+'.</div>';
+    box.innerHTML = '<div class="empty">No pending entries for '+selectedYear+'.</div>';
     return;
   }
   box.innerHTML = rowsFiltered.map(req => {
     const person = personDisplayNameFromRecords(profileFor(req.auth_user_id), kilnUserFor(req.auth_user_id), req.requester_name || req.requester_email || 'Unknown');
     const stats = statsForUser(req.auth_user_id, selectedYear);
     const needsBalance = requestConsumesBalance(req);
-    const enoughBalance = !needsBalance || stats.remaining >= requestBalanceHours(req);
+    const enoughBalance = !needsBalance || (stats.quarterRemaining >= requestBalanceHours(req) && stats.remaining >= requestBalanceHours(req));
     const isPending = req.status === 'pending';
     return '<article class="queue-card">'+
       '<div class="request-head">'+
         '<div>'+
           '<div class="request-title">'+esc(person)+'</div>'+
-          '<div class="request-meta">'+makeKindPill(req)+' <span style="margin-left:6px">'+esc(requestSummaryText(req))+'</span> · requested '+esc(formatDateTime(req.requested_at))+'</div>'+
+          '<div class="request-meta">'+makeKindPill(req)+' <span style="margin-left:6px">'+esc(requestSummaryText(req))+'</span> · submitted '+esc(formatDateTime(req.requested_at))+'</div>'+
         '</div>'+
         makeStatusPill(req.status)+
       '</div>'+
       '<div class="request-grid">'+
         '<div class="card-box"><div class="box-label">Reason</div><div>'+esc(requestDisplayReason(req.reason) || '—')+'</div></div>'+
-        '<div class="card-box"><div class="box-label">Balance</div><div>'+(needsBalance ? esc(stats.remaining.toFixed(1))+' hours remaining' : 'No holiday balance required')+'</div></div>'+
+        '<div class="card-box"><div class="box-label">Balance</div><div>'+(needsBalance ? esc(requestHoursText(stats.quarterRemaining))+' quarter left' : 'Paid overtime entry')+'<div class="small" style="margin-top:4px">'+esc(requestHoursText(stats.remaining))+' annual left</div></div></div>'+
       '</div>'+
       '<div class="field full"><label class="help-label" for="mgrNote_'+esc(req.id)+'">Manager note / denial or cancellation reason</label><textarea id="mgrNote_'+esc(req.id)+'" class="textarea" placeholder="Required for denials and cancellations."></textarea></div>'+
       '<div class="actions">'+
         '<button class="btn btn-primary" type="button" onclick="decideRequest(\''+esc(req.id)+'\',\'approved\')"'+(enoughBalance ? '' : ' disabled')+'>Approve</button>'+
         '<button class="btn btn-danger" type="button" onclick="decideRequest(\''+esc(req.id)+'\',\'denied\')">Deny</button>'+
-        (req.status !== 'cancelled' && req.status !== 'denied' ? '<button class="btn btn-ghost" type="button" onclick="cancelManagedRequest(\''+esc(req.id)+'\')">Cancel holiday</button>' : '')+
+        (req.status !== 'cancelled' && req.status !== 'denied' ? '<button class="btn btn-ghost" type="button" onclick="cancelManagedRequest(\''+esc(req.id)+'\')">Cancel entry</button>' : '')+
       '</div>'+
     '</article>';
   }).join('');
@@ -2191,12 +2281,16 @@ function renderAllowanceList(){
 }
 function renderSummary(){
   const stats = statsForUser(currentUser.id, selectedYear);
-  $('statEntitlement').textContent = requestHoursText(stats.entitlement) + ' / ' + requestDaysText(stats.entitlement / SHIFT_HOURS);
-  $('statUsed').textContent = requestHoursText(stats.used) + ' / ' + requestDaysText(stats.used / SHIFT_HOURS);
-  $('statPending').textContent = requestHoursText(stats.pending) + ' / ' + requestDaysText(stats.pending / SHIFT_HOURS);
-  $('statRemaining').textContent = requestHoursText(stats.remaining) + ' / ' + requestDaysText(stats.remaining / SHIFT_HOURS);
-  $('statProjected').textContent = requestHoursText(stats.projected) + ' / ' + requestDaysText(stats.projected / SHIFT_HOURS);
-  $('statEntitlementSub').textContent = requestHoursText(stats.allowance) + ' allowance + ' + requestHoursText(stats.carryover) + ' carryover + ' + requestHoursText(stats.extras) + ' extras';
+  $('statEntitlement').textContent = requestHoursText(stats.entitlement);
+  $('statUsed').textContent = requestHoursText(stats.used);
+  $('statPending').textContent = requestHoursText(stats.pending);
+  $('statRemaining').textContent = requestHoursText(stats.remaining);
+  $('statProjected').textContent = requestHoursText(stats.overtime);
+  $('statEntitlementSub').textContent = 'Default annual credit-hours allowance';
+  const quarterUsed = $('statQuarterUsed');
+  const quarterRemaining = $('statQuarterRemaining');
+  if (quarterUsed) quarterUsed.textContent = requestHoursText(stats.quarterUsed);
+  if (quarterRemaining) quarterRemaining.textContent = requestHoursText(stats.quarterRemaining);
 }
 function renderHolidayApp(){
   $('yearSelect').value = String(selectedYear);
@@ -2217,8 +2311,8 @@ function renderHolidayApp(){
   if (confirmName) confirmName.textContent = requestTarget;
   if (confirmNote) {
     confirmNote.textContent = requestTarget && requestTarget !== 'No manager assigned'
-      ? 'Holiday requests will be sent to ' + requestTarget + '.'
-      : 'No manager is assigned yet. An admin can still see your request.';
+      ? 'Credit-hours entries will be sent to ' + requestTarget + '.'
+      : 'No manager is assigned yet. An admin can still see your entry.';
   }
   renderSummary();
   renderMyRequests();
@@ -2226,6 +2320,7 @@ function renderHolidayApp(){
   renderTeamOverviewCards();
   renderActivityFeed();
   renderAllowanceList();
+  renderBankHolidayList();
   if (activityPanel && managerViewEnabled) {
     const title = activityPanel.querySelector('.panel-title');
     const sub = activityPanel.querySelector('.panel-sub');
@@ -2240,17 +2335,24 @@ function renderHolidayApp(){
   const page = document.querySelector('.page');
   const approvalsPanel = $('approverQueuePanel');
   const allowancePanel = $('allowancePanel');
+  const bankHolidayPanel = $('bankHolidayPanel');
   if (!isApprover && !isHolidayAdmin && myRequestsPanel) {
     const title = myRequestsPanel.querySelector('.panel-title');
     const sub = myRequestsPanel.querySelector('.panel-sub');
-    if (title) title.textContent = 'My requests & activity';
-    if (sub) sub.textContent = 'Your request history first, followed by recent activity on those requests.';
+    if (title) title.textContent = 'My entries & activity';
+    if (sub) sub.textContent = 'Your worked-hours history first, followed by recent activity on those entries.';
   }
   if (page && activityPanel && approvalsPanel && managerViewEnabled) {
     page.insertBefore(activityPanel, approvalsPanel);
   }
   if (page && allowancePanel && isHolidayAdmin) {
     page.appendChild(allowancePanel);
+  }
+  if (page && bankHolidayPanel && isHolidayAdmin) {
+    page.appendChild(bankHolidayPanel);
+  }
+  if (bankHolidayPanel) {
+    bankHolidayPanel.style.display = isHolidayAdmin ? '' : 'none';
   }
   if (focusApprovalsOnRender && (isApprover || isHolidayAdmin)) {
     const filter = $('managerFilter');
@@ -2264,20 +2366,27 @@ function renderHolidayApp(){
 }
 
 async function ensureHolidayProfile(){
-  const { data } = await sb.from('holiday_profiles').select('auth_user_id,annual_allowance_days,carryover_days,entitlement_extras_days').eq('auth_user_id', currentUser.id).maybeSingle();
+  const { data } = await sb.from('credit_hour_profiles').select('auth_user_id,annual_allowance_hours').eq('auth_user_id', currentUser.id).maybeSingle();
   if (!data) {
-    const { error } = await sb.from('holiday_profiles').insert({ auth_user_id: currentUser.id });
+    const { error } = await sb.from('credit_hour_profiles').insert({ auth_user_id: currentUser.id });
     if (error) throw error;
-    currentHolidayProfile = { auth_user_id: currentUser.id, annual_allowance_days: 72, carryover_days: 0, entitlement_extras_days: 0 };
+    currentHolidayProfile = { auth_user_id: currentUser.id, annual_allowance_hours: 100 };
   } else {
-    currentHolidayProfile = data;
+    currentHolidayProfile = {
+      ...data,
+      annual_allowance_hours: creditHoursAllowanceFromProfile(data)
+    };
+    if (creditHoursAllowanceFromProfile(data) !== num(data.annual_allowance_hours, 0)) {
+      await sb.from('credit_hour_profiles').update({ annual_allowance_hours: 100 }).eq('auth_user_id', currentUser.id);
+    }
   }
 }
 async function loadHolidayData(){
-  const requestPromise = sb.from('holiday_requests').select('*');
-  const eventPromise = sb.from('holiday_request_events').select('*');
-  const profilePromise = sb.from('holiday_profiles').select('*');
-  const profileEventPromise = sb.from('holiday_profile_events').select('*');
+  const requestPromise = sb.from('credit_hour_entries').select('*');
+  const eventPromise = sb.from('credit_hour_events').select('*');
+  const profilePromise = sb.from('credit_hour_profiles').select('*');
+  const profileEventPromise = sb.from('credit_hour_profile_events').select('*');
+  const bankHolidayPromise = sb.from('credit_hour_bank_holidays').select('*').order('holiday_date', { ascending: true });
   const currentManagerId = currentProfile && currentProfile.holiday_manager_auth_user_id ? currentProfile.holiday_manager_auth_user_id : null;
   const currentManagerProfilePromise = currentManagerId
     ? sb.from('pw_profiles').select('id,full_name,email').eq('id', currentManagerId).maybeSingle()
@@ -2285,20 +2394,19 @@ async function loadHolidayData(){
   const currentManagerKilnPromise = currentManagerId
     ? sb.from('kiln_users').select('auth_user_id,locked_name,email,username').eq('auth_user_id', currentManagerId).maybeSingle()
     : Promise.resolve({ data: null });
-  const extraProfilePromise = sb.from('pw_profiles').select('id,full_name,email,approved,disabled,role,holiday_requests_access,holiday_manager_auth_user_id').order('full_name', { ascending: true });
+  const extraProfilePromise = sb.from('pw_profiles').select('id,full_name,email,approved,disabled,role,credit_hours_access,holiday_manager_auth_user_id').order('full_name', { ascending: true });
   const kilnUserPromise = sb.from('kiln_users').select('auth_user_id,is_admin,is_shift_manager,is_locked,locked_name,email,username').order('username', { ascending: true });
-  const results = await Promise.all([requestPromise, eventPromise, profilePromise, profileEventPromise, currentManagerProfilePromise, currentManagerKilnPromise, extraProfilePromise, kilnUserPromise]);
-  const [reqRes, evRes, hpRes, hpEventRes, currentManagerProfRes, currentManagerKilnRes, extraRes, kilnRes] = results;
+  const results = await Promise.all([requestPromise, eventPromise, profilePromise, profileEventPromise, bankHolidayPromise, currentManagerProfilePromise, currentManagerKilnPromise, extraProfilePromise, kilnUserPromise]);
+  const [reqRes, evRes, hpRes, hpEventRes, bankHolidayRes, currentManagerProfRes, currentManagerKilnRes, extraRes, kilnRes] = results;
   if (reqRes.error) throw reqRes.error;
   if (evRes.error) throw evRes.error;
   if (hpRes.error) throw hpRes.error;
-  allHolidayRequests = (reqRes.data || []).map(r => ({
-    ...r,
-    requested_days: num(r.requested_days, 0),
-  }));
+  if (bankHolidayRes.error) throw bankHolidayRes.error;
+  allHolidayRequests = (reqRes.data || []).map(r => ({ ...r }));
   allHolidayEvents = evRes.data || [];
   allHolidayProfiles = hpRes.data || [];
   allHolidayProfileEvents = hpEventRes.data || [];
+  allCreditBankHolidays = bankHolidayRes.data || [];
   if (currentManagerId) {
     currentHolidayManagerProfile = currentManagerProfRes.data || null;
     currentHolidayManagerKilnUser = currentManagerKilnRes.data || null;
@@ -2325,6 +2433,12 @@ async function initHolidayApp(){
   $('loginBtn').addEventListener('click', doLogin);
   $('loginPass').addEventListener('keydown', function(e){ if (e.key === 'Enter') doLogin(); });
   $('loginEmail').addEventListener('keydown', function(e){ if (e.key === 'Enter') doLogin(); });
+  ['reqStart','reqWorkedHours','reqUnit','reqDays'].forEach(function(id){
+    const el = $(id);
+    if (!el) return;
+    el.addEventListener('input', syncRequestedDays);
+    el.addEventListener('change', syncRequestedDays);
+  });
   async function tryHydrateSession(retries) {
     const session = await sb.auth.getSession();
     if (session && session.data && session.data.session) {
@@ -2350,10 +2464,10 @@ async function hydrateFromSession(){
     currentUser = data.session.user;
     const { data: prof, error: profErr } = await sb.from('pw_profiles').select('*').eq('id', currentUser.id).maybeSingle();
     if (profErr) throw profErr;
-    if (!prof || prof.approved === false || prof.disabled === true || prof.role === 'none' || prof.holiday_requests_access === false) {
+    if (!prof || prof.approved === false || prof.disabled === true || prof.role === 'none' || prof.credit_hours_access === false) {
       await sb.auth.signOut();
       currentProfile = null;
-      showAccessDenied(!prof ? 'This account does not have Platform access yet.' : prof.disabled === true ? 'Your account has been disabled. Please contact an administrator.' : prof.holiday_requests_access === false ? 'You do not have Holiday Requests access.' : 'You do not have Platform access.');
+      showAccessDenied(!prof ? 'This account does not have Platform access yet.' : prof.disabled === true ? 'Your account has been disabled. Please contact an administrator.' : prof.credit_hours_access === false ? 'You do not have Credit Hours access.' : 'You do not have Platform access.');
       return false;
     }
     currentProfile = prof;
@@ -2425,60 +2539,80 @@ async function doLogin(){
 
 async function submitHolidayRequest(){
   if (!currentUser) return;
-  const start = $('reqStart').value;
-  const end = $('reqEnd').value;
-  const daysRaw = num($('reqDays').value, 0);
-  const unit = $('reqUnit').value === 'hours' ? 'hours' : 'days';
+  const workDate = $('reqStart').value;
+  const hoursWorked = num($('reqWorkedHours').value, 0);
+  const hoursClaimed = num($('reqDays').value, 0);
+  const claimType = $('reqUnit').value === 'overtime' ? 'overtime' : 'credit';
   const reason = $('reqReason').value.trim();
-  if (!start || !end) { setToast('Please choose both dates.'); return; }
-  if (new Date(start) > new Date(end)) { setToast('The end date must be after the start date.'); return; }
+  if (!workDate) { setToast('Please choose the date worked.'); return; }
+  if (hoursWorked <= 0) { setToast('Please enter the hours worked.'); return; }
+  if (hoursClaimed <= 0) { setToast('Please enter the hours to be claimed.'); return; }
+  if (hoursClaimed > hoursWorked) { setToast('Claimed hours cannot be greater than hours worked.'); return; }
   if (!reason) { setToast('Please add a reason or note.'); return; }
   const managerName = holidayManagerDisplayNameForUser(currentUser.id);
+  const previewReq = {
+    auth_user_id: currentUser.id,
+    work_date: workDate,
+    hours_worked: hoursWorked,
+    hours_claimed: hoursClaimed,
+    claim_type: claimType,
+    status: 'pending'
+  };
+  if (claimType === 'credit') {
+    const effectiveClaim = requestCreditHoursEarned(previewReq);
+    const quarterStats = rollingQuarterStatsForUser(currentUser.id, workDate);
+    if (effectiveClaim > quarterStats.projected) {
+      setToast('This entry would exceed the 48-hour rolling quarter limit.');
+      return;
+    }
+    const annualStats = statsForUser(currentUser.id, requestYear(previewReq));
+    if (effectiveClaim > annualStats.remaining) {
+      setToast('This entry would exceed your annual credit-hours allowance.');
+      return;
+    }
+  }
   const confirmText = managerName === 'No manager assigned'
-    ? 'No manager is assigned yet. Submit this holiday request for admin review?'
-    : 'Submit this holiday request to ' + managerName + '?';
+    ? 'No manager is assigned yet. Submit this credit-hours entry for admin review?'
+    : 'Submit this credit-hours entry to ' + managerName + '?';
   if (!confirm(confirmText)) return;
-  const fallbackAmount = unit === 'hours' ? countWeekdays(start, end) * SHIFT_HOURS : countWeekdays(start, end);
-  const amount = daysRaw > 0 ? daysRaw : fallbackAmount;
-  if (amount <= 0) { setToast('Please enter at least one day or hour.'); return; }
-  const days = unit === 'hours' ? amount / SHIFT_HOURS : amount;
   $('syncLabel').textContent = 'Saving…';
   const payload = {
     auth_user_id: currentUser.id,
     requester_name: currentDisplayName(),
     requester_email: currentProfile.email || currentUser.email,
-    start_date: start,
-    end_date: end,
-    requested_unit: unit,
-    requested_amount: amount,
-    requested_days: days,
+    work_date: workDate,
+    hours_worked: hoursWorked,
+    hours_claimed: hoursClaimed,
+    claim_type: claimType,
     reason,
+    employee_signed_at: new Date().toISOString(),
+    employee_signed_name: currentDisplayName(),
     status: 'pending'
   };
-  const { error } = await sb.from('holiday_requests').insert(payload);
+  const { error } = await sb.from('credit_hour_entries').insert(payload);
   if (error) {
     $('syncLabel').textContent = 'Synced';
-    setToast('Could not save request: ' + error.message);
+    setToast('Could not save entry: ' + error.message);
     return;
   }
   $('reqReason').value = '';
   $('reqDays').value = '0';
+  $('reqWorkedHours').value = '0';
   $('reqStart').value = '';
-  $('reqEnd').value = '';
-  $('reqUnit').value = 'days';
+  $('reqUnit').value = 'credit';
   await loadHolidayData();
   renderHolidayApp();
   $('syncLabel').textContent = 'Synced';
-  setToast('Leave request submitted ✓');
+  setToast('Credit-hours entry submitted ✓');
 }
 
 async function cancelRequest(id){
   const req = allHolidayRequests.find(r => r.id === id);
   if (!req || req.auth_user_id !== currentUser.id || req.status === 'cancelled' || req.status === 'denied') return;
-  const confirmText = req.status === 'approved' ? 'Cancel this approved leave request?' : 'Withdraw this leave request?';
+  const confirmText = req.status === 'approved' ? 'Cancel this approved entry?' : 'Withdraw this entry?';
   if (!confirm(confirmText)) return;
   $('syncLabel').textContent = 'Saving…';
-  const { error } = await sb.from('holiday_requests').update({
+  const { error } = await sb.from('credit_hour_entries').update({
     status: 'cancelled',
     manager_note: 'Cancelled by requester',
     decided_by: currentUser.id,
@@ -2486,10 +2620,10 @@ async function cancelRequest(id){
     decided_at: new Date().toISOString()
   }).eq('id', id);
   $('syncLabel').textContent = 'Synced';
-  if (error) { setToast('Could not withdraw request: ' + error.message); return; }
+  if (error) { setToast('Could not withdraw entry: ' + error.message); return; }
   await loadHolidayData();
   renderHolidayApp();
-  setToast('Request withdrawn ✓');
+  setToast('Entry withdrawn ✓');
 }
 
 async function cancelManagedRequest(id){
@@ -2500,12 +2634,12 @@ async function cancelManagedRequest(id){
   const noteEl = $('mgrNote_' + id);
   const note = noteEl ? noteEl.value.trim() : '';
   if (!note) {
-    setToast('Please add a reason before cancelling this holiday.');
+    setToast('Please add a reason before cancelling this entry.');
     return;
   }
-  if (!confirm('Cancel this holiday request?')) return;
+  if (!confirm('Cancel this entry?')) return;
   $('syncLabel').textContent = 'Saving…';
-  const { error } = await sb.from('holiday_requests').update({
+  const { error } = await sb.from('credit_hour_entries').update({
     status: 'cancelled',
     manager_note: note,
     decided_by: currentUser.id,
@@ -2513,10 +2647,10 @@ async function cancelManagedRequest(id){
     decided_at: new Date().toISOString()
   }).eq('id', id);
   $('syncLabel').textContent = 'Synced';
-  if (error) { setToast('Could not cancel request: ' + error.message); return; }
+  if (error) { setToast('Could not cancel entry: ' + error.message); return; }
   await loadHolidayData();
   renderHolidayApp();
-  setToast('Holiday cancelled ✓');
+  setToast('Entry cancelled ✓');
 }
 
 async function decideRequest(id, decision){
@@ -2527,20 +2661,25 @@ async function decideRequest(id, decision){
   const noteEl = $('mgrNote_' + id);
   const note = noteEl ? noteEl.value.trim() : '';
   if (decision === 'approved' && requestConsumesBalance(req)) {
-    const stats = statsForUser(req.auth_user_id, selectedYear);
+    const stats = rollingQuarterStatsForUser(req.auth_user_id, req.work_date);
+    const annualStats = statsForUser(req.auth_user_id, requestYear(req));
     const needed = requestBalanceHours(req);
-    if (stats.remaining < needed) {
-      setToast('Not enough holiday balance remaining to approve this request.');
+    if (stats.quarterRemaining < needed) {
+      setToast('Not enough credit-hours room remains in the rolling quarter to approve this claim.');
+      return;
+    }
+    if (annualStats.remaining < needed) {
+      setToast('Not enough annual credit-hours allowance remains to approve this claim.');
       return;
     }
   }
   if ((decision === 'denied' || decision === 'cancelled') && !note) {
-    setToast(decision === 'denied' ? 'Please add a denial reason.' : 'Please add a reason before cancelling this holiday.');
+    setToast(decision === 'denied' ? 'Please add a denial reason.' : 'Please add a reason before cancelling this entry.');
     return;
   }
-  if (!confirm((decision === 'approved' ? 'Approve' : 'Deny') + ' this request?')) return;
+  if (!confirm((decision === 'approved' ? 'Approve' : 'Deny') + ' this entry?')) return;
   $('syncLabel').textContent = 'Saving…';
-  const { error } = await sb.from('holiday_requests').update({
+  const { error } = await sb.from('credit_hour_entries').update({
     status: decision,
     manager_note: note || null,
     decided_by: currentUser.id,
@@ -2551,7 +2690,7 @@ async function decideRequest(id, decision){
   if (error) { setToast('Could not update request: ' + error.message); return; }
   await loadHolidayData();
   renderHolidayApp();
-  setToast(decision === 'approved' ? 'Request approved ✓' : 'Request denied ✓');
+  setToast(decision === 'approved' ? 'Entry approved ✓' : 'Entry denied ✓');
 }
 
 async function persistAllowance(userId, allowanceInputId, carryoverInputId, extrasUnitInputId, extrasInputId, reasonInputId){
@@ -2596,6 +2735,67 @@ async function saveAllowance(userId){
 
 async function saveTeamAllowance(userId){
   return persistAllowance(userId, 'teamAllow_' + userId, 'teamCarry_' + userId, 'teamExtrasUnit_' + userId, 'teamExtras_' + userId, 'teamReason_' + userId);
+}
+
+function renderBankHolidayList(){
+  const box = $('bankHolidayList');
+  if (!box) return;
+  if (!isHolidayAdmin) {
+    box.innerHTML = '';
+    return;
+  }
+  if (!allCreditBankHolidays.length) {
+    box.innerHTML = '<div class="empty">No bank holidays saved yet.</div>';
+    return;
+  }
+  box.innerHTML = allCreditBankHolidays.map(function(row){
+    return '<div class="staff-history-item">'+
+      '<div class="left">'+
+        '<div class="title">'+esc(formatDateOnly(String(row.holiday_date || '').slice(0,10)))+'</div>'+
+        '<div class="meta">'+esc(row.label || 'Bank holiday')+'</div>'+
+      '</div>'+
+      '<button class="btn btn-ghost" type="button" style="height:24px;padding:0 8px;font-size:10px;color:var(--red);border-color:var(--redb);background:var(--redd)" onclick="deleteBankHoliday(\''+esc(String(row.holiday_date || '').slice(0,10))+'\')">Delete</button>'+
+    '</div>';
+  }).join('');
+}
+
+async function addBankHoliday(){
+  if (!isHolidayAdmin) return;
+  const date = $('bankHolidayDate') && $('bankHolidayDate').value;
+  const label = $('bankHolidayLabel') && $('bankHolidayLabel').value.trim();
+  if (!date) {
+    setToast('Please choose a bank holiday date.');
+    return;
+  }
+  $('syncLabel').textContent = 'Saving…';
+  const { error } = await sb.from('credit_hour_bank_holidays').upsert({
+    holiday_date: date,
+    label: label || 'Bank holiday'
+  });
+  $('syncLabel').textContent = 'Synced';
+  if (error) {
+    setToast('Could not save bank holiday: ' + error.message);
+    return;
+  }
+  if ($('bankHolidayLabel')) $('bankHolidayLabel').value = '';
+  await loadHolidayData();
+  renderHolidayApp();
+  setToast('Bank holiday saved ✓');
+}
+
+async function deleteBankHoliday(date){
+  if (!isHolidayAdmin) return;
+  if (!confirm('Delete this bank holiday?')) return;
+  $('syncLabel').textContent = 'Saving…';
+  const { error } = await sb.from('credit_hour_bank_holidays').delete().eq('holiday_date', date);
+  $('syncLabel').textContent = 'Synced';
+  if (error) {
+    setToast('Could not delete bank holiday: ' + error.message);
+    return;
+  }
+  await loadHolidayData();
+  renderHolidayApp();
+  setToast('Bank holiday deleted ✓');
 }
 
 window.addEventListener('load', function(){

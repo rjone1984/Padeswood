@@ -748,6 +748,28 @@ body :where(.app-card,.coming-card,.icon-btn,.login-btn,.card-arrow,.palette-opt
         <div class="card-arrow">→</div>
       </a>
 
+      <a href="credit-hours/index.html" class="app-card">
+        <div class="card-top">
+          <div class="card-icon tracker-icon">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <defs>
+                <linearGradient id="cardCreditGrad" x1="4" y1="3" x2="20" y2="21" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#60a5fa"/>
+                  <stop offset="100%" stop-color="#2563eb"/>
+                </linearGradient>
+              </defs>
+              <rect x="4" y="4" width="16" height="16" rx="4" fill="url(#cardCreditGrad)"/>
+              <path d="M8 9.5h8M8 13.5h5.5M15.2 7.2v3.1M13.65 8.75h3.1" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+              <circle class="dial-mark" cx="15.2" cy="15.6" r="1.2" fill="#fff"/>
+              <path class="dial-hand" d="M15.2 15.6l2-1.8" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+        <div class="card-title">Credit Hours</div>
+        <div class="card-desc">Submit credit-hours and overtime claims, route them to the assigned shift manager, and keep a per-person approval and audit trail.</div>
+        <div class="card-arrow">→</div>
+      </a>
+
       <a href="shift-tracker/index.html" class="app-card">
         <div class="card-top">
           <div class="card-icon tracker-icon">
@@ -789,7 +811,7 @@ body :where(.app-card,.coming-card,.icon-btn,.login-btn,.card-arrow,.palette-opt
       <button class="palette-close" type="button" onclick="closePaletteModal()">Close</button>
     </div>
     <div class="palette-body">
-      <div class="palette-help">Choose a general colour scheme for this browser only. It will carry across the Platform, Shift Tracker and Logs apps, and you can reset it at any time.</div>
+      <div class="palette-help">Choose a general colour scheme for this browser only. It will carry across the Platform, Shift Tracker, Logs, Holiday Requests, and Credit Hours apps, and you can reset it at any time.</div>
       <div class="palette-grid" id="paletteGrid">
         <button type="button" class="palette-option" data-palette="default" onclick="setPalettePreset('default')">
           <span class="palette-sample"><span style="background:#1a7a35"></span><span style="background:#22a847"></span><span style="background:#2ecc5c"></span><span style="background:#155c28"></span></span>
@@ -855,9 +877,15 @@ body :where(.app-card,.coming-card,.icon-btn,.login-btn,.card-arrow,.palette-opt
             <input type="hidden" id="inviteEmail" value="">
           </div>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px">
+        <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px">
           <div><label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Platform Access</label>
             <select id="inviteRole" style="width:100%;height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
+              <option value="true">Allow Access</option>
+              <option value="false">No Access</option>
+            </select>
+          </div>
+          <div><label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Credit Hours</label>
+            <select id="inviteCreditHoursAccess" style="width:100%;height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
               <option value="true">Allow Access</option>
               <option value="false">No Access</option>
             </select>
@@ -921,7 +949,7 @@ body :where(.app-card,.coming-card,.icon-btn,.login-btn,.card-arrow,.palette-opt
             <button id="bulkEnableAllBtn" onclick="bulkToggleAllUsers(false)" style="height:30px;padding:0 12px;font-size:11px;font-family:var(--ff-head);font-weight:600;background:var(--grnd);border:1px solid var(--grnb);border-radius:var(--rsm);color:var(--grn);cursor:pointer;white-space:nowrap">Enable Non-Admins</button>
           </div>
         </div>
-        <div style="font-size:10px;color:var(--tx3);font-family:var(--ff-mono);line-height:1.5">Bulk actions exclude admin accounts and apply across Platform, Shift Tracker, and Logs.</div>
+        <div style="font-size:10px;color:var(--tx3);font-family:var(--ff-mono);line-height:1.5">Bulk actions exclude admin accounts and apply across Platform, Shift Tracker, Logs, Holiday Requests, and Credit Hours.</div>
       </div>
       <div id="userList" style="display:flex;flex-direction:column;gap:10px">
         <div style="color:var(--tx3);font-size:12px;font-family:var(--ff-mono);padding:12px 0">Loading users…</div>
@@ -955,10 +983,17 @@ body :where(.app-card,.coming-card,.icon-btn,.login-btn,.card-arrow,.palette-opt
         <div style="font-size:10px;color:var(--tx3);line-height:1.45;font-family:var(--ff-mono)">This updates the suite profile email and kiln record. It does not change the Supabase login email.</div>
       </label>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px">
+    <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px">
       <label style="display:flex;flex-direction:column;gap:6px">
         <div style="font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3)">Platform Access</div>
         <select id="roleEditDocs" style="height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
+          <option value="true">Allow Access</option>
+          <option value="false">No Access</option>
+        </select>
+      </label>
+      <label style="display:flex;flex-direction:column;gap:6px">
+        <div style="font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3)">Credit Hours</div>
+        <select id="roleEditCreditHours" style="height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
           <option value="true">Allow Access</option>
           <option value="false">No Access</option>
         </select>
@@ -2466,12 +2501,14 @@ async function submitPlatformForceReset() {
         if (!userId) throw new Error('Failed to create auth user');
         const accessReq = _accessRequestsCache.find(function(x){ return x.id === target.reqId; }) || null;
         const trackerAllowed = accessReq ? accessReq.shift_tracker_access !== false : true;
+        const creditHoursAllowed = accessReq ? accessReq.credit_hours_access !== false : true;
         const holidayAllowed = accessReq ? accessReq.holiday_requests_access !== false : true;
         const holidayManagerAuthUserId = accessReq ? (accessReq.holiday_manager_auth_user_id || null) : null;
         const holidayManagerValue = holidayManagerAuthUserId && getActiveHolidayManagerProfiles(null).some(function(m) { return String(m.id) === String(holidayManagerAuthUserId); }) ? holidayManagerAuthUserId : null;
         const { error: profErr } = await sb.from('pw_profiles').upsert({
           id: userId, email: target.email, full_name: target.fullName,
           role: target.role || 'viewer',
+          credit_hours_access: creditHoursAllowed,
           shift_tracker_access: trackerAllowed,
           holiday_requests_access: holidayAllowed,
           holiday_manager_auth_user_id: (target.kilnRole === 'admin') ? null : holidayManagerValue,
@@ -3054,6 +3091,7 @@ function renderUserCard(m, DS, LS, RS, rc) {
   if (p) {
     h += '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">'
       +'<span style="font-size:9px;font-family:var(--ff-mono);letter-spacing:1px;text-transform:uppercase;border:1px solid var(--bd2);border-radius:999px;padding:3px 7px;color:var(--tx3);background:var(--sf3)">Platform: '+(p.role === 'none' ? 'No Access' : 'Allow')+'</span>'
+      +'<span style="font-size:9px;font-family:var(--ff-mono);letter-spacing:1px;text-transform:uppercase;border:1px solid var(--bd2);border-radius:999px;padding:3px 7px;color:var(--tx3);background:var(--sf3)">Credit Hours: '+(p.credit_hours_access === false ? 'No Access' : 'Allow')+'</span>'
       +'<span style="font-size:9px;font-family:var(--ff-mono);letter-spacing:1px;text-transform:uppercase;border:1px solid var(--bd2);border-radius:999px;padding:3px 7px;color:var(--tx3);background:var(--sf3)">Tracker: '+(p.shift_tracker_access === false ? 'No Access' : 'Allow')+'</span>'
       +'<span style="font-size:9px;font-family:var(--ff-mono);letter-spacing:1px;text-transform:uppercase;border:1px solid var(--bd2);border-radius:999px;padding:3px 7px;color:var(--tx3);background:var(--sf3)">Holiday: '+(p.holiday_requests_access === false ? 'No Access' : 'Allow')+'</span>'
       +'<span style="font-size:9px;font-family:var(--ff-mono);letter-spacing:1px;text-transform:uppercase;border:1px solid var(--bd2);border-radius:999px;padding:3px 7px;color:var(--tx3);background:var(--sf3);max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Holiday Manager: '+esc(holidayManagerLabel(holidayManagerId) || 'None')+'</span>'
@@ -3176,6 +3214,7 @@ function openRoleEditor(profileId) {
   document.getElementById('roleEditFullName').value = p && p.full_name ? p.full_name : '';
   document.getElementById('roleEditEmail').value = p && p.email ? p.email : (ku && ku.email ? ku.email : '');
   document.getElementById('roleEditDocs').value = p.role === 'none' ? 'false' : 'true';
+  document.getElementById('roleEditCreditHours').value = p.credit_hours_access === false ? 'false' : 'true';
   document.getElementById('roleEditTracker').value = p.shift_tracker_access === false ? 'false' : 'true';
   document.getElementById('roleEditHoliday').value = p.holiday_requests_access === false ? 'false' : 'true';
   const access = !ku ? false : ((ku.shift_log_access !== false) || hasAnyKilnRole(ku));
@@ -3227,6 +3266,7 @@ async function saveRoleEditor() {
   const fullNameInput = document.getElementById('roleEditFullName').value.trim();
   const emailInput = document.getElementById('roleEditEmail').value.trim().toLowerCase();
   const platformAccess = document.getElementById('roleEditDocs').value !== 'false';
+  const creditHoursAccess = document.getElementById('roleEditCreditHours').value !== 'false';
   const trackerAccess = document.getElementById('roleEditTracker').value !== 'false';
   const holidayAccess = document.getElementById('roleEditHoliday').value !== 'false';
   const kilnAccess = document.getElementById('roleEditKilnAccess').value !== 'false';
@@ -3300,6 +3340,7 @@ async function saveRoleEditor() {
       full_name: fullNameInput,
       email: emailInput,
       role: platformAccess ? (p.role && p.role !== 'none' ? p.role : 'viewer') : 'none',
+      credit_hours_access: creditHoursAccess,
       shift_tracker_access: trackerAccess,
       holiday_requests_access: holidayAccess,
       holiday_manager_auth_user_id: holidayManagerAuthUserId
@@ -3339,6 +3380,7 @@ async function saveRoleEditor() {
     p.full_name = fullNameInput;
     p.email = emailInput;
     p.role = platformAccess ? (p.role && p.role !== 'none' ? p.role : 'viewer') : 'none';
+    p.credit_hours_access = creditHoursAccess;
     p.shift_tracker_access = trackerAccess;
     p.holiday_requests_access = holidayAccess;
     p.holiday_manager_auth_user_id = holidayManagerAuthUserId;
@@ -3428,6 +3470,7 @@ async function inviteUser() {
   const email = document.getElementById('inviteEmail').value.trim().toLowerCase();
   const name  = document.getElementById('inviteName').value.trim();
   const platformAccess = document.getElementById('inviteRole').value !== 'false';
+  const creditHoursAccessVal = document.getElementById('inviteCreditHoursAccess').value !== 'false';
   const holidayAccessVal = document.getElementById('inviteHolidayAccess').value !== 'false';
   const kilnRoleVal = document.getElementById('inviteKilnRole').value;
   const trackerAccessVal = document.getElementById('inviteTrackerAccess').value === 'true';
@@ -3463,6 +3506,7 @@ async function inviteUser() {
       email,
       full_name: name,
       role: platformAccess ? 'viewer' : 'none',
+      credit_hours_access: creditHoursAccessVal,
       holiday_requests_access: holidayAccessVal,
       holiday_manager_auth_user_id: (kilnRoleVal === 'admin') ? null : holidayManagerValue,
       kiln_role: kilnRoleVal,
@@ -3475,6 +3519,7 @@ async function inviteUser() {
     document.getElementById('inviteName').value = '';
     document.getElementById('inviteDomain').value='@heidelbergmaterials.com';
     document.getElementById('inviteRole').value='true';
+    document.getElementById('inviteCreditHoursAccess').value='true';
     document.getElementById('inviteHolidayAccess').value='true';
     document.getElementById('inviteHolidayManager').value='';
     document.getElementById('inviteKilnRole').value='none';

@@ -1,2 +1,2 @@
 # Padeswood
-HeidelbergMaterials platform shell with shift logs, shift tracker and holiday requests.
+HeidelbergMaterials platform shell with logs, shift tracker, credit hours and holiday requests.
