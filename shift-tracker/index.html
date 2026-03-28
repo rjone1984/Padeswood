@@ -133,8 +133,8 @@
     font-family: var(--ff-body);
     min-height: 100vh; min-height: 100dvh;
     overflow-x: hidden;
-    transition: background-color 0.35s var(--ease-smooth), color 0.35s var(--ease-smooth);
-    animation: pageEnter 0.45s var(--ease-smooth) both;
+    transition: background-color 0.35s var(--ease-smooth), color 0.35s var(--ease-smooth), transform 0.28s var(--ease-smooth), box-shadow 0.28s var(--ease-smooth);
+    animation: pageEnter 0.62s cubic-bezier(.16,1,.3,1) both;
     -webkit-font-smoothing: antialiased;
     position: relative;
   }
@@ -251,7 +251,7 @@
     box-shadow: 0 20px 56px rgba(0,0,0,.14);
     position: relative;
     overflow: hidden;
-    animation: trackerCardBreath 6.5s var(--ease-smooth) infinite;
+    animation: trackerCardBreath 8.4s cubic-bezier(.22,1,.36,1) infinite;
     transform-origin: center center;
   }
   .splash-brand {
@@ -323,7 +323,7 @@
     border-radius: 7px; border: 1px solid var(--border);
     background: var(--bg3); color: var(--text);
     font-size: 13.5px; font-family: var(--ff-body);
-    outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none; transition: border-color 0.28s var(--ease-smooth), box-shadow 0.28s var(--ease-smooth), transform 0.28s var(--ease-smooth);
     text-align: left;
   }
   .splash-input::placeholder { color: var(--text3); opacity: 1; }
@@ -336,7 +336,7 @@
     border-radius: 7px;
     overflow: hidden;
     background: var(--bg3);
-    transition: border-color 0.2s, box-shadow 0.2s;
+    transition: border-color 0.28s var(--ease-smooth), box-shadow 0.28s var(--ease-smooth), transform 0.28s var(--ease-smooth);
   }
   #stLoginEmailWrap:focus-within {
     border-color: var(--accent2);
@@ -386,7 +386,7 @@
     background: linear-gradient(135deg, var(--accent), var(--accent2));
     color: #fff; border: none; font-weight: 700; font-size: 14px;
     cursor: pointer; font-family: var(--ff-head);
-    transition: opacity 0.2s, transform 0.15s; letter-spacing: 0.02em;
+    transition: opacity 0.28s var(--ease-smooth), transform 0.28s var(--ease-smooth); letter-spacing: 0.02em;
     box-shadow: 0 4px 22px rgba(26,122,53,.35);
   }
   @keyframes trackerCardBreath {
@@ -427,19 +427,19 @@
     will-change: transform, filter, opacity;
   }
   .hero-emoji-wrap.sun .hero-emoji {
-    animation: heroSunSizzle 1.35s ease-in-out infinite;
+    animation: heroSunSizzle 1.7s ease-in-out infinite;
     filter: drop-shadow(0 0 10px rgba(253,186,116,.30)) drop-shadow(0 0 18px rgba(249,115,22,.18));
     transform-origin: 50% 60%;
   }
   .hero-emoji-wrap.moon .hero-emoji {
-    animation: heroMoonBreath 4.8s ease-in-out infinite;
+    animation: heroMoonBreath 5.8s ease-in-out infinite;
     filter: drop-shadow(0 0 10px rgba(99,102,241,.22));
   }
   .hero-emoji-wrap.bed .hero-emoji {
-    animation: heroBedBreathe 4.6s ease-in-out infinite;
+    animation: heroBedBreathe 5.6s ease-in-out infinite;
   }
   .hero-emoji-wrap.plane .hero-emoji {
-    animation: heroPlaneGlide 4.4s ease-in-out infinite;
+    animation: heroPlaneGlide 5.5s ease-in-out infinite;
   }
   .hero-emoji-wrap.sun::before,
   .hero-emoji-wrap.sun::after {
@@ -965,9 +965,9 @@
   .mono { font-family: var(--ff-mono); }
   .pill { transition: all 0.18s cubic-bezier(0.34,1.56,0.64,1); cursor: pointer; user-select: none; -webkit-user-select: none; }
   .pill:active { transform: scale(0.9); }
-  .nav-btn { background: var(--glass-1); border: 1px solid var(--border2); color: var(--text2); border-radius: 7px; padding: 7px 16px; cursor: pointer; font-size: 20px; line-height: 1; font-family: var(--ff-body); transition: all 0.15s; box-shadow: 0 1px 3px var(--shadow); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
+  .nav-btn { background: var(--glass-1); border: 1px solid var(--border2); color: var(--text2); border-radius: 7px; padding: 7px 16px; cursor: pointer; font-size: 20px; line-height: 1; font-family: var(--ff-body); transition: all 0.28s var(--ease-smooth); box-shadow: 0 1px 3px var(--shadow); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
   .nav-btn:active { background: var(--bg3); transform: scale(0.95); }
-  .tab { cursor: pointer; padding: 8px 13px; border-radius: 8px; font-size: 12px; font-weight: 600; transition: all 0.2s; white-space: nowrap; border: 1px solid transparent; background: var(--glass-2); font-family: var(--ff-body); color: var(--text2); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
+  .tab { cursor: pointer; padding: 8px 13px; border-radius: 8px; font-size: 12px; font-weight: 600; transition: all 0.28s var(--ease-smooth); white-space: nowrap; border: 1px solid transparent; background: var(--glass-2); font-family: var(--ff-body); color: var(--text2); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
   .dark .tab { background: var(--glass-2); }
   .tab.active { background: var(--glass-3); color: var(--accent2); box-shadow: 0 1px 3px var(--shadow); border-color: var(--border2); }
   .dark .tab.active { background: var(--glass-3); }
@@ -979,12 +979,12 @@
   .dark .card { background: var(--glass-5); }
   .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--accent2), transparent); opacity: .85; }
   .badge { display: inline-flex; align-items: center; gap: 3px; padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: 600; letter-spacing: 0.05em; }
-  .today-btn { background: var(--glass-6); border: 1px solid var(--border2); border-radius: 7px; padding: 5px 12px; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--text2); font-family: var(--ff-body); transition: all 0.15s; backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
+  .today-btn { background: var(--glass-6); border: 1px solid var(--border2); border-radius: 7px; padding: 5px 12px; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--text2); font-family: var(--ff-body); transition: all 0.28s var(--ease-smooth); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
   .dark .today-btn { background: var(--glass-6); }
   .today-btn:active { background: var(--bg3); }
-  .action-btn { width: 100%; padding: 12px; border-radius: 7px; background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; border: none; font-weight: 600; font-size: 14px; cursor: pointer; font-family: var(--ff-head); transition: all 0.2s; box-shadow: 0 4px 22px rgba(26,122,53,.24); }
+  .action-btn { width: 100%; padding: 12px; border-radius: 7px; background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; border: none; font-weight: 600; font-size: 14px; cursor: pointer; font-family: var(--ff-head); transition: all 0.28s var(--ease-smooth); box-shadow: 0 4px 22px rgba(26,122,53,.24); }
   .action-btn:active { transform: scale(0.98); opacity: 0.85; }
-  .share-btn { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; border: none; border-radius: 7px; padding: 12px; width: 100%; font-size: 14px; font-weight: 600; cursor: pointer; font-family: var(--ff-head); margin-top: 8px; transition: all 0.2s; box-shadow: 0 4px 22px rgba(26,122,53,.24); }
+  .share-btn { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; border: none; border-radius: 7px; padding: 12px; width: 100%; font-size: 14px; font-weight: 600; cursor: pointer; font-family: var(--ff-head); margin-top: 8px; transition: all 0.28s var(--ease-smooth); box-shadow: 0 4px 22px rgba(26,122,53,.24); }
   .dark .share-btn { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; }
   .share-btn:active { transform: scale(0.98); }
   .ios-banner { background: var(--glass-7); border: 1px solid var(--danger-border); border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px; box-shadow: 0 12px 36px rgba(0,0,0,.12); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); }

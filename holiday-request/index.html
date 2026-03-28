@@ -95,9 +95,9 @@ body{
   font-size:13.5px;
   line-height:1.55;
   -webkit-font-smoothing:antialiased;
-  transition:background .35s var(--ease-smooth),color .35s var(--ease-smooth);
+  transition:background .35s var(--ease-smooth),color .35s var(--ease-smooth),transform .28s var(--ease-smooth),box-shadow .28s var(--ease-smooth);
   overflow-x:hidden;
-  animation:pageEnter .45s var(--ease-smooth) both;
+  animation:pageEnter .62s cubic-bezier(.16,1,.3,1) both;
 }
 body::before{
   content:'';
@@ -160,7 +160,7 @@ body::before{
   border:1px solid var(--border2);
   box-shadow:0 12px 28px rgba(0,0,0,.10), inset 0 1px 0 rgba(255,255,255,.48);
   overflow:hidden;
-  animation:holidayLogoFloat 6.8s var(--ease-smooth) infinite;
+  animation:holidayLogoFloat 8.8s cubic-bezier(.22,1,.36,1) infinite;
 }
 .splash-hero-mark img{
   width:100%;
@@ -194,7 +194,7 @@ body::before{
   padding:22px;
 }
 .auth-screen .login-card{
-  animation:holidayCardBreath 7.6s var(--ease-smooth) infinite;
+  animation:holidayCardBreath 9.2s cubic-bezier(.22,1,.36,1) infinite;
 }
 .brand-row{display:flex;align-items:center;gap:14px;margin-bottom:18px}
 .brand-mark{
@@ -220,7 +220,7 @@ body::before{
 .brand-mark.logo-mark.lg{width:54px;height:54px}
 .brand-mark.logo-mark.md{width:32px;height:32px}
 .brand-mark.logo-mark.lg{
-  animation:holidayLogoFloat 6.8s var(--ease-smooth) infinite;
+  animation:holidayLogoFloat 8.8s cubic-bezier(.22,1,.36,1) infinite;
 }
 .brand-title{font-family:var(--ff-head);font-weight:800;font-size:24px;line-height:1.1;margin:0;color:var(--tx)}
 .brand-sub{margin:3px 0 0;color:var(--tx2);font-size:13px}
@@ -247,7 +247,7 @@ body::before{
   padding:12px 14px;
   font:inherit;
   outline:none;
-  transition:border-color .16s ease, box-shadow .16s ease, background .16s ease;
+  transition:border-color .28s var(--ease-smooth), box-shadow .28s var(--ease-smooth), background .28s var(--ease-smooth), transform .28s var(--ease-smooth);
 }
 .input,.select{
   min-height:44px;
@@ -269,7 +269,7 @@ body::before{
   display:inline-flex;align-items:center;justify-content:center;gap:8px;
   border:1px solid var(--bd);border-radius:12px;
   background:var(--sf2);color:var(--tx);text-decoration:none;
-  transition:all .18s var(--ease-smooth);cursor:pointer;
+  transition:all .28s var(--ease-smooth);cursor:pointer;
 }
 .btn{padding:12px 16px;font-weight:700}
 .btn:hover,.icon-btn:hover,.tab-btn:hover,.chip:hover{transform:translateY(-1px);border-color:var(--bd3)}
@@ -647,7 +647,7 @@ body::before{
 .toast{
   position:fixed;left:50%;bottom:22px;transform:translateX(-50%);
   padding:10px 16px;border-radius:12px;background:var(--sf);border:1px solid var(--bd);
-  box-shadow:var(--e2);z-index:1000;color:var(--tx);font-size:13px;opacity:0;pointer-events:none;transition:opacity .22s ease, transform .22s ease;
+  box-shadow:var(--e2);z-index:1000;color:var(--tx);font-size:13px;opacity:0;pointer-events:none;transition:opacity .28s var(--ease-smooth), transform .28s var(--ease-smooth);
 }
 .toast.show{opacity:1;transform:translateX(-50%) translateY(-3px)}
 .palette-overlay{
@@ -1495,8 +1495,30 @@ function applyTheme(isLight){
   localStorage.setItem('kbl_theme', isLight ? 'light' : 'dark');
   localStorage.setItem('dark', isLight ? '0' : '1');
 }
+async function persistSharedThemePreference(isLight){
+  if (!sb || !currentUser || !currentUser.id) return;
+  try {
+    await sb.from('kiln_config').upsert({
+      key: 'theme_uid_' + currentUser.id,
+      value: isLight ? 'light' : 'dark'
+    });
+  } catch (e) {}
+}
+async function loadSharedThemePreference(){
+  if (!sb || !currentUser || !currentUser.id) return null;
+  try {
+    const { data } = await sb.from('kiln_config')
+      .select('value')
+      .eq('key', 'theme_uid_' + currentUser.id)
+      .maybeSingle();
+    if (data && (data.value === 'light' || data.value === 'dark')) return data.value;
+  } catch (e) {}
+  return null;
+}
 function toggleTheme(){
-  applyTheme(!document.body.classList.contains('light-mode'));
+  const nextIsLight = !document.body.classList.contains('light-mode');
+  applyTheme(nextIsLight);
+  persistSharedThemePreference(nextIsLight);
 }
 function setPaletteVars(vars){
   const targets = [document.documentElement, document.body].filter(Boolean);
@@ -1514,6 +1536,43 @@ function getStoredPalettePreset(){
   const key = localStorage.getItem(PALETTE_STORAGE_KEY);
   return PALETTE_PRESETS[key] ? key : 'default';
 }
+async function persistSharedPalettePreference(key){
+  if (!sb || !currentUser || !currentUser.id) return;
+  try {
+    const themeKey = 'palette_uid_' + currentUser.id;
+    if (key === 'default') {
+      await sb.from('kiln_config').upsert({
+        key: themeKey,
+        value: 'default'
+      });
+      return;
+    }
+    await sb.from('kiln_config').upsert({
+      key: themeKey,
+      value: key
+    });
+  } catch (e) {}
+}
+async function loadSharedPalettePreference(){
+  if (!sb || !currentUser || !currentUser.id) return null;
+  try {
+    const { data } = await sb.from('kiln_config')
+      .select('value')
+      .eq('key', 'palette_uid_' + currentUser.id)
+      .maybeSingle();
+    if (data && data.value && PALETTE_PRESETS[data.value]) return data.value;
+  } catch (e) {}
+  return null;
+}
+async function applySharedPalettePreference(){
+  const sharedPalette = await loadSharedPalettePreference();
+  if (sharedPalette) {
+    localStorage.setItem(PALETTE_STORAGE_KEY, sharedPalette);
+  } else {
+    localStorage.removeItem(PALETTE_STORAGE_KEY);
+  }
+  applyStoredPalette();
+}
 function updatePaletteUi(){
   const preset = getStoredPalettePreset();
   document.querySelectorAll('[data-palette]').forEach(el => el.classList.toggle('active', el.dataset.palette === preset));
@@ -1530,6 +1589,7 @@ function setPalettePreset(key){
   if (key === 'default') localStorage.removeItem(PALETTE_STORAGE_KEY);
   else if (PALETTE_PRESETS[key]) localStorage.setItem(PALETTE_STORAGE_KEY, key);
   applyStoredPalette();
+  persistSharedPalettePreference(key);
 }
 function resetPalettePreset(){
   setPalettePreset('default');
@@ -1833,7 +1893,7 @@ function renderActivityFeed(){
 function renderTeamOverviewCards(){
   const box = $('teamOverviewCards');
   if (!box) return;
-  const managerViewEnabled = isHolidayAdmin || isApprover || hasAssignedHolidayStaff();
+  const managerViewEnabled = isHolidayAdmin || isApprover;
   if (!managerViewEnabled) {
     box.innerHTML = '';
     return;
@@ -1936,7 +1996,7 @@ function renderTeamOverviewCards(){
 function renderApproverQueue(){
   const panel = $('approverQueuePanel');
   const allowancePanel = $('allowancePanel');
-  const managerViewEnabled = isHolidayAdmin || isApprover || hasAssignedHolidayStaff();
+  const managerViewEnabled = isHolidayAdmin || isApprover;
   if (!managerViewEnabled) {
     panel.style.display = 'none';
     allowancePanel.style.display = 'none';
@@ -2028,7 +2088,7 @@ function renderApproverQueue(){
 }
 function renderAllowanceList(){
   const box = $('allowanceList');
-  const managerViewEnabled = isHolidayAdmin || isApprover || hasAssignedHolidayStaff();
+  const managerViewEnabled = isHolidayAdmin || isApprover;
   if (!managerViewEnabled) { box.innerHTML = ''; return; }
   const activeProfiles = isHolidayAdmin ? allPwProfiles.filter(p => p && p.approved !== false && p.disabled !== true && p.role !== 'none') : assignedHolidayStaffForCurrentUser();
   const carryoverOpen = canEditCarryoverNow();
@@ -2136,7 +2196,7 @@ function renderHolidayApp(){
   const myRequestsPanel = $('myRequestsPanel');
   const myRequestsActivityWrap = $('myRequestsActivityWrap');
   const activityPanel = $('activityPanel');
-  const managerViewEnabled = isHolidayAdmin || isApprover || hasAssignedHolidayStaff();
+  const managerViewEnabled = isHolidayAdmin || isApprover;
   if (personalSummary) personalSummary.style.display = isApprover ? 'none' : '';
   if (myRequestsPanel) myRequestsPanel.style.display = isApprover ? 'none' : '';
   if (myRequestsActivityWrap) myRequestsActivityWrap.style.display = isApprover ? 'none' : '';
@@ -2301,13 +2361,16 @@ async function hydrateFromSession(){
     const { data: kilnRow, error: kilnErr } = await sb.from('kiln_users').select('auth_user_id,is_admin,is_shift_manager,is_locked,shift_log_access,locked_name,email,username').eq('auth_user_id', currentUser.id).maybeSingle();
     if (kilnErr) throw kilnErr;
     currentKilnUser = kilnRow || null;
-    isApprover = !!(currentKilnUser && currentKilnUser.is_shift_manager);
+    isApprover = !!(currentKilnUser && currentKilnUser.is_shift_manager && !(currentProfile && currentProfile.holiday_manager_auth_user_id));
     const sessionFullName = currentUser && currentUser.user_metadata && currentUser.user_metadata.full_name
       ? String(currentUser.user_metadata.full_name).trim()
       : '';
     $('userChip').textContent = (sessionFullName && !looksLikeShortLoginName(sessionFullName, currentUser.email || (prof && prof.email) || '', currentKilnUser && currentKilnUser.username))
       ? sessionFullName
       : personDisplayNameFromRecords(prof, currentKilnUser, currentUser.email || (currentUser.user_metadata && currentUser.user_metadata.full_name) || '—');
+    const sharedTheme = await loadSharedThemePreference();
+    if (sharedTheme) applyTheme(sharedTheme === 'light');
+    await applySharedPalettePreference();
     await ensureHolidayProfile();
     await loadHolidayData();
     refreshYearOptions();

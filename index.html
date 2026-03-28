@@ -123,7 +123,7 @@ html{scroll-behavior:smooth}
 body{font-family:var(--ff-body);background:var(--bg);color:var(--tx);
   min-height:100vh;font-size:13.5px;line-height:1.55;-webkit-font-smoothing:antialiased;
   transition:background .35s var(--ease-smooth),color .35s var(--ease-smooth);
-  animation:pageEnter .45s var(--ease-smooth) both;overflow-x:hidden;}
+  animation:pageEnter .62s cubic-bezier(.16,1,.3,1) both;overflow-x:hidden;}
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   background-image:radial-gradient(circle,var(--palette-card-glow-2) 1px,transparent 1px);
   background-size:28px 28px;}
@@ -134,6 +134,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   body{animation:none !important}
 }
 body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.card-arrow,#mainHeader,#adminPanel,#roleEditPanel,#loginScreen,#licenceOverlay,.toast,.modal,.panel,.tab-btn,.section-label,.header-user){transition-timing-function:var(--ease-smooth);}
+body :where(.app-card,.coming-card,.icon-btn,.login-btn,.card-arrow,.palette-option,.palette-close,.btn,.select,.input,.textarea,.modal,.panel,.toast){transition-property:transform,box-shadow,background-color,border-color,color,opacity,filter,background;transition-duration:.28s;transition-timing-function:var(--ease-smooth);}
 #roleEditPanel{
   width:min(560px, calc(100vw - 48px));
   max-width:min(560px, calc(100vw - 48px));
@@ -157,12 +158,45 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
 }
 @keyframes appIconFloat{
   0%,100%{transform:translateY(0) scale(1)}
-  50%{transform:translateY(-1.5px) scale(1.02)}
+  50%{transform:translateY(-2.5px) scale(1.03)}
 }
 @keyframes iconHaloPulse{
-  0%,100%{opacity:.5;transform:scale(.94)}
-  50%{opacity:.9;transform:scale(1.05)}
+  0%,100%{opacity:.45;transform:scale(.94)}
+  50%{opacity:.96;transform:scale(1.08)}
 }
+@keyframes flameFlicker{
+  0%,100%{transform:translateY(0) scale(1)}
+  20%{transform:translateY(-.3px) scale(1.02)}
+  45%{transform:translateY(.2px) scale(.98)}
+  70%{transform:translateY(-.15px) scale(1.03)}
+}
+@keyframes sparkFloat{
+  0%{transform:translate(0,0) scale(.95);opacity:.35}
+  50%{transform:translate(.8px,-1.2px) scale(1.08);opacity:.95}
+  100%{transform:translate(1.4px,-2px) scale(.88);opacity:0}
+}
+@keyframes sunPulse{
+  0%,100%{transform:scale(1);opacity:.76}
+  50%{transform:scale(1.08);opacity:1}
+}
+@keyframes orbitSweep{
+  0%{transform:rotate(0deg) translateX(8px) rotate(0deg)}
+  100%{transform:rotate(360deg) translateX(8px) rotate(-360deg)}
+}
+@keyframes orbitGlow{
+  0%,100%{opacity:.55}
+  50%{opacity:1}
+}
+.card-icon.fire-icon .flame-core{animation:flameFlicker 1.7s ease-in-out infinite;}
+.card-icon.fire-icon .spark-1{animation:sparkFloat 2.9s ease-in-out infinite;}
+.card-icon.fire-icon .spark-2{animation:sparkFloat 3.4s ease-in-out infinite .55s;}
+.card-icon.fire-icon .spark-3{animation:sparkFloat 3.1s ease-in-out infinite 1.1s;}
+.card-icon.holiday-icon .sun-core{animation:sunPulse 3.1s ease-in-out infinite;}
+.card-icon.holiday-icon .orbit-ring{animation:orbitGlow 2.8s ease-in-out infinite;}
+.card-icon.holiday-icon .orbit-dot{animation:orbitSweep 5.8s linear infinite;}
+.card-icon.tracker-icon .dial-ring{animation:orbitGlow 3.2s ease-in-out infinite;}
+.card-icon.tracker-icon .dial-hand{animation:orbitSweep 8.6s linear infinite;transform-origin:50% 50%;}
+.card-icon.tracker-icon .dial-mark{animation:orbitGlow 3.1s ease-in-out infinite;}
 
 #licenceOverlay{position:fixed;inset:0;background:var(--bg);z-index:10000;
   display:none;align-items:center;justify-content:center;}
@@ -405,7 +439,7 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
   radial-gradient(130% 150% at 0% 0%, var(--palette-card-glow-1), transparent 38%),
   linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,0)),
   var(--glass-3);border:1px solid var(--bd2);border-radius:16px;padding:24px;
-  position:relative;overflow:hidden;transition:border-color .22s,box-shadow .22s,transform .18s;
+  position:relative;overflow:hidden;transition:border-color .28s,box-shadow .28s,transform .28s,filter .28s;
   cursor:pointer;text-decoration:none;display:block;color:inherit;
   box-shadow:0 18px 46px rgba(0,0,0,.14), inset 0 1px 0 rgba(255,255,255,.04);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
   will-change:transform,box-shadow;}
@@ -421,19 +455,19 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
   transform:scale(1);
   transition:opacity 1s ease, box-shadow 1s ease, transform 1s ease, filter 1s ease;
   animation:appBorderPulse 12s ease-in-out infinite;}
-.app-card:hover{border-color:color-mix(in srgb, var(--ac3) 58%, var(--bd2));box-shadow:0 20px 52px rgba(0,0,0,.16),0 0 0 1px var(--palette-card-border),0 0 14px var(--palette-card-glow-2);transform:translateY(-2px);}
+.app-card:hover{border-color:color-mix(in srgb, var(--ac3) 58%, var(--bd2));box-shadow:0 20px 52px rgba(0,0,0,.16),0 0 0 1px var(--palette-card-border),0 0 14px var(--palette-card-glow-2);transform:translateY(-4px) scale(1.01);}
 .app-card:hover::before{opacity:1;}
 .app-card:hover::after{
   opacity:.42;
-  transform:scale(1.008);
+  transform:scale(1.016);
   box-shadow:0 0 0 1px var(--palette-card-border),0 0 12px var(--palette-card-glow-2),0 0 28px var(--palette-card-glow-1);
-  filter:brightness(1.01);
+  filter:brightness(1.03);
 }
 .app-card:nth-child(2)::after{animation-delay:-4.6s;}
 .card-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;
   justify-content:center;flex-shrink:0;position:relative;overflow:hidden;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.22), 0 14px 26px rgba(15,23,42,.10);
-  animation:appIconFloat 8.4s ease-in-out infinite;}
+  animation:appIconFloat 9.8s cubic-bezier(.22,1,.36,1) infinite;}
 .card-icon.fire-icon,
 .card-icon.calendar-icon{
   background:linear-gradient(180deg,var(--palette-card-bg-1),var(--palette-card-bg-2));
@@ -445,6 +479,7 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
   opacity:.9}
 .card-icon::after{content:'';position:absolute;inset:8px;border-radius:12px;border:1px solid color-mix(in srgb, var(--palette-card-border) 60%, #fff 40%);opacity:.62;animation:iconHaloPulse 7.5s ease-in-out infinite}
 .card-icon svg{position:relative;z-index:1;width:23px;height:23px;stroke-linecap:round;stroke-linejoin:round;color:var(--tx)}
+.card-icon svg *{transform-box:fill-box;transform-origin:center}
 .app-card:nth-child(2) .card-icon{animation-delay:-3.2s;}
 .app-card:nth-child(2) .card-icon::after{animation-delay:-2.6s;}
 .card-icon.fire-icon svg{filter:drop-shadow(0 3px 8px var(--palette-card-glow-1));}
@@ -458,7 +493,7 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
   background:var(--acd1);border:1px solid var(--acd3);color:var(--ac3);
   display:flex;align-items:center;justify-content:center;font-size:14px;
   transition:background .18s,transform .18s;}
-.app-card:hover .card-arrow{background:var(--acd2);transform:translate(2px,-2px);}
+.app-card:hover .card-arrow{background:var(--acd2);transform:translate(4px,-3px) scale(1.03);}
 .coming-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;}
 .coming-card{background:var(--glass-4);border:1px dashed var(--bd2);border-radius:12px;
   padding:20px 18px;display:flex;align-items:center;gap:14px;opacity:.45;}
@@ -676,8 +711,11 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
                   <stop offset="100%" stop-color="#f97316"/>
                 </linearGradient>
               </defs>
-              <path d="M12 3c1.5 2.2 3.4 4 4 6.1.7 2.2 0 4.1-1.2 5.4 1.9-.2 3.6 1.2 3.6 3.5 0 2.7-2.3 4.9-5.8 4.9-3.9 0-6.5-2.3-6.5-5.5 0-2.2 1.2-4 3-5.1-.2 1.2.1 2.3 1 3.2-.2-2.7.8-4.3 2.4-5.8C13.8 7.9 14.1 5.6 12 3Z" fill="url(#cardFlameGrad)"/>
-              <path d="M11.4 9.1c.7 1 1.5 1.8 1.8 2.8.3 1 0 1.8-.7 2.5.9-.1 1.8.6 1.8 1.7 0 1.2-1 2.2-2.7 2.2-1.8 0-3-1-3-2.5 0-1 .5-1.9 1.4-2.5-.1.6 0 1.2.4 1.6-.1-1.2.3-2 1.1-2.8.3-.3.5-.7.6-1Z" fill="#fff8eb" opacity=".88"/>
+              <path class="flame-core" d="M12 3c1.5 2.2 3.4 4 4 6.1.7 2.2 0 4.1-1.2 5.4 1.9-.2 3.6 1.2 3.6 3.5 0 2.7-2.3 4.9-5.8 4.9-3.9 0-6.5-2.3-6.5-5.5 0-2.2 1.2-4 3-5.1-.2 1.2.1 2.3 1 3.2-.2-2.7.8-4.3 2.4-5.8C13.8 7.9 14.1 5.6 12 3Z" fill="url(#cardFlameGrad)"/>
+              <path class="flame-core" d="M11.4 9.1c.7 1 1.5 1.8 1.8 2.8.3 1 0 1.8-.7 2.5.9-.1 1.8.6 1.8 1.7 0 1.2-1 2.2-2.7 2.2-1.8 0-3-1-3-2.5 0-1 .5-1.9 1.4-2.5-.1.6 0 1.2.4 1.6-.1-1.2.3-2 1.1-2.8.3-.3.5-.7.6-1Z" fill="#fff8eb" opacity=".88"/>
+              <circle class="spark-1" cx="7.2" cy="6.2" r="1.1" fill="#ffe7b0"/>
+              <circle class="spark-2" cx="17.4" cy="8.1" r=".85" fill="#fff5d8"/>
+              <circle class="spark-3" cx="15.7" cy="17.2" r=".95" fill="#ffd07a"/>
             </svg>
           </div>
         </div>
@@ -688,7 +726,7 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
 
       <a href="holiday-request/index.html" class="app-card">
         <div class="card-top">
-          <div class="card-icon calendar-icon">
+          <div class="card-icon holiday-icon">
             <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <defs>
                 <linearGradient id="cardHolidayGrad" x1="4" y1="3" x2="20" y2="21" gradientUnits="userSpaceOnUse">
@@ -698,7 +736,10 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
               </defs>
               <rect x="3.5" y="5" width="17" height="15" rx="3" fill="url(#cardHolidayGrad)"/>
               <path d="M7 3.5v4M17 3.5v4M3.5 9.5h17" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
-              <path d="M8.5 14.8l1.8 1.9 4.8-5.2" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle class="sun-core" cx="15.9" cy="14" r="2.1" fill="#fff8d6"/>
+              <path class="orbit-ring" d="M10.5 14.4c1.2-2.1 4.5-3.3 6.7-2.3 1.5.7 2.4 2 2.5 3.6" stroke="#fff" stroke-width="1.3" stroke-linecap="round" opacity=".8"/>
+              <circle class="orbit-dot" cx="18.2" cy="14.7" r=".7" fill="#fff"/>
+              <path d="M8.3 14.8l1.8 1.9 3.2-3.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </div>
         </div>
@@ -709,7 +750,7 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
 
       <a href="shift-tracker/index.html" class="app-card">
         <div class="card-top">
-          <div class="card-icon calendar-icon">
+          <div class="card-icon tracker-icon">
             <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <defs>
                 <linearGradient id="cardCalGrad" x1="4" y1="3" x2="20" y2="21" gradientUnits="userSpaceOnUse">
@@ -719,7 +760,10 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
               </defs>
               <rect x="3.5" y="5" width="17" height="15" rx="3" fill="url(#cardCalGrad)"/>
               <path d="M7 3.5v4M17 3.5v4M3.5 9.5h17" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
-              <path d="M8 13h3M13 13h3M8 17h3" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+              <circle class="dial-ring" cx="12" cy="14.5" r="4.2" fill="none" stroke="#fff" stroke-width="1.3" opacity=".72"/>
+              <path class="dial-hand" d="M12 14.5l2.5-2.3" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+              <circle class="dial-mark" cx="12" cy="14.5" r="1.1" fill="#fff"/>
+              <path d="M8.1 13h1.9M8.1 17h1.9M14 13h1.9M14 17h1.9" stroke="#fff" stroke-width="1.8" stroke-linecap="round" opacity=".85"/>
             </svg>
           </div>
         </div>
@@ -1598,6 +1642,7 @@ async function showAppSelector(user, opts) {
     return false;
   }
   await loadUserTheme();
+  await loadUserPalette();
   loadHolidayReqBadge();
   document.getElementById('mainWrapper').style.display = 'block';
   checkAppStatus();
@@ -1954,6 +1999,28 @@ function applyStoredPalette(){
   }
   updatePaletteUi();
 }
+async function persistSharedPalettePreference(key){
+  const r = await sb?.auth?.getSession?.().catch(() => null);
+  const uid = r && r.data && r.data.session && r.data.session.user && r.data.session.user.id;
+  if (!uid) return;
+  try {
+    if (key === 'default') {
+      await fetch(SUPABASE_URL + '/rest/v1/kiln_config', {
+        method: 'POST',
+        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + r.data.session.access_token,
+          'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+        body: JSON.stringify({ key: 'palette_uid_' + uid, value: 'default' })
+      });
+      return;
+    }
+    await fetch(SUPABASE_URL + '/rest/v1/kiln_config', {
+      method: 'POST',
+      headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + r.data.session.access_token,
+        'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+      body: JSON.stringify({ key: 'palette_uid_' + uid, value: key })
+    });
+  } catch(e){}
+}
 
 function setPalettePreset(key){
   if(key === 'default'){
@@ -1962,6 +2029,21 @@ function setPalettePreset(key){
     localStorage.setItem(PALETTE_STORAGE_KEY, key);
   }
   applyStoredPalette();
+  persistSharedPalettePreference(key);
+}
+async function loadSharedPalettePreference(){
+  try {
+    const r = await sb?.auth?.getSession?.();
+    const uid = r && r.data && r.data.session && r.data.session.user && r.data.session.user.id;
+    const token = r && r.data && r.data.session && r.data.session.access_token;
+    if (!uid || !token) return null;
+    const res = await fetch(SUPABASE_URL + '/rest/v1/kiln_config?key=eq.palette_uid_' + uid + '&select=value', {
+      headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + token }
+    });
+    const rows = await res.json();
+    if (rows && rows.length && rows[0].value && PALETTE_PRESETS[rows[0].value]) return rows[0].value;
+  } catch(e){}
+  return null;
 }
 
 function resetPalettePreset(){
@@ -2000,6 +2082,16 @@ async function loadUserTheme() {
       applyTheme(rows[0].value === 'light');
     }
   } catch(e) {}
+}
+async function loadUserPalette() {
+  const shared = await loadSharedPalettePreference();
+  if (shared) {
+    localStorage.setItem(PALETTE_STORAGE_KEY, shared);
+    applyStoredPalette();
+    return;
+  }
+  localStorage.removeItem(PALETTE_STORAGE_KEY);
+  applyStoredPalette();
 }
 (function() {
   const s = readStoredThemePref();
@@ -2382,7 +2474,7 @@ async function submitPlatformForceReset() {
           role: target.role || 'viewer',
           shift_tracker_access: trackerAllowed,
           holiday_requests_access: holidayAllowed,
-          holiday_manager_auth_user_id: (target.kilnRole === 'admin' || target.kilnRole === 'shift_manager') ? null : holidayManagerValue,
+          holiday_manager_auth_user_id: (target.kilnRole === 'admin') ? null : holidayManagerValue,
           approved: true
         });
         if (profErr) throw new Error(profErr.message || 'Failed to save platform profile');
@@ -3196,7 +3288,7 @@ async function saveRoleEditor() {
   if (kilnFlags.shift_log_access && !kilnFlags.is_admin && !kilnFlags.is_shift_manager && !kilnFlags.is_electrician && !kilnFlags.is_mechanical && !kilnFlags.is_process_operator && !kilnFlags.is_cement_analyst && !kilnFlags.is_day_staff && !kilnFlags.is_burner && !kilnFlags.is_readonly) {
     kilnFlags.is_readonly = true;
   }
-  if (kilnFlags.is_admin || kilnFlags.is_shift_manager) {
+  if (kilnFlags.is_admin) {
     holidayManagerAuthUserId = null;
   }
   if (holidayManagerAuthUserId && !getActiveHolidayManagerProfiles(profileId).some(function(m) { return String(m.id) === String(holidayManagerAuthUserId); })) {
@@ -3372,7 +3464,7 @@ async function inviteUser() {
       full_name: name,
       role: platformAccess ? 'viewer' : 'none',
       holiday_requests_access: holidayAccessVal,
-      holiday_manager_auth_user_id: (kilnRoleVal === 'shift_manager' || kilnRoleVal === 'admin') ? null : holidayManagerValue,
+      holiday_manager_auth_user_id: (kilnRoleVal === 'admin') ? null : holidayManagerValue,
       kiln_role: kilnRoleVal,
       shift_tracker_access: trackerAccessVal,
       status: 'pending',
