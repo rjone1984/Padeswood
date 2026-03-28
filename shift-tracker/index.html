@@ -1151,6 +1151,27 @@
 </head>
 <body>
 
+<div id="licenceOverlay" style="position:fixed;inset:0;background:var(--bg);z-index:10000;display:none;align-items:center;justify-content:center;opacity:0;transition:opacity .3s ease">
+  <div style="width:min(420px,92vw);background:var(--bg2);border:1px solid var(--border2);border-radius:14px;padding:24px;box-shadow:var(--e3);position:relative;overflow:hidden">
+    <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent2),transparent)"></div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <div class="splash-brand-mark" style="width:48px;height:48px;border-radius:14px"><img data-suite-logo alt="Padeswood Works"></div>
+      <div style="min-width:0">
+        <div style="font-family:var(--ff-head);font-weight:800;font-size:20px;color:var(--text);line-height:1.05">Checking licence</div>
+        <div style="font-family:var(--ff-mono);font-size:9px;letter-spacing:2.2px;text-transform:uppercase;color:var(--text3);margin-top:4px">HeidelbergMaterials · Shift Tracker</div>
+      </div>
+    </div>
+    <div id="licenceSpinner" style="display:flex;align-items:center;justify-content:center;gap:8px;color:var(--text3);font-size:12px;font-family:var(--ff-mono);margin:8px 0 14px">
+      <span class="db-dot" aria-hidden="true"></span>
+      Verifying licence…
+    </div>
+    <div id="licenceMsg" style="display:none;font-size:13px;color:var(--red);line-height:1.6;margin-bottom:16px"></div>
+    <div id="licenceRetryBtn" style="display:none">
+      <button type="button" class="splash-btn" onclick="stCheckLicence()">Retry</button>
+    </div>
+  </div>
+</div>
+
 <div id="splash">
   <div class="splash-hero">
     <div class="splash-hero-mark"><img id="stSplashHeroLogo" alt="Padeswood Works"></div>
@@ -1649,8 +1670,7 @@ function renderTrackerApp(){
   }
 
   app.appendChild(h("div",{style:{marginBottom:"14px"}},
-    h("h1",{style:{fontSize:"20px",fontWeight:"700",letterSpacing:"-0.03em",color:"var(--text)"}},"Shift Tracker"),
-    h("p",{class:"mono",style:{fontSize:"9px",color:"var(--text3)",marginTop:"2px"}},"2D · 2N · 4OFF × 7 + 14 break = 70-day cycle")
+    h("h1",{style:{fontSize:"20px",fontWeight:"700",letterSpacing:"-0.03em",color:"var(--text)"}},"Shift Tracker")
   ));
 
   const pills=h("div",{style:{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:"6px",marginBottom:"12px"}});
@@ -1704,6 +1724,40 @@ function syncTrackerThemeButton(){
 
 let stCurrentUser = null;
 let stCurrentProfile = null;
+let stCurrentKilnUser = null;
+
+function stLooksLikeShortLoginName(value, email, username){
+  const raw = String(value || '').trim();
+  if (!raw) return false;
+  const normalized = raw.toLowerCase();
+  const emailLocal = email && String(email).includes('@') ? String(email).split('@')[0].trim().toLowerCase() : '';
+  const loginName = String(username || '').trim().toLowerCase();
+  if (emailLocal && normalized === emailLocal) return true;
+  if (loginName && normalized === loginName) return true;
+  return !/\s/.test(raw) && /^[a-z0-9._-]{3,}$/i.test(raw);
+}
+
+function stDisplayName(profile, kilnUser, user){
+  const lockedName = kilnUser && kilnUser.locked_name ? String(kilnUser.locked_name).trim() : '';
+  const fullName = profile && profile.full_name ? String(profile.full_name).trim() : '';
+  const email = (profile && profile.email) ? String(profile.email).trim() : ((user && user.email) ? String(user.email).trim() : '');
+  const sessionFullName = user && user.user_metadata && user.user_metadata.full_name ? String(user.user_metadata.full_name).trim() : '';
+  const sessionUserName = user && user.user_metadata && user.user_metadata.user_name ? String(user.user_metadata.user_name).trim() : '';
+  const username = kilnUser && kilnUser.username ? String(kilnUser.username).trim() : '';
+  const emailLocal = email && email.includes('@') ? email.split('@')[0].trim().toLowerCase() : '';
+  const fullLooksShort = stLooksLikeShortLoginName(fullName, email, username);
+  const sessionLooksShort = stLooksLikeShortLoginName(sessionFullName, email, username) || stLooksLikeShortLoginName(sessionUserName, email, username);
+  const looksShort = lockedName && (
+    (!/\s/.test(lockedName) && /^[a-z0-9._-]{3,}$/i.test(lockedName)) ||
+    (emailLocal && lockedName.toLowerCase() === emailLocal) ||
+    (username && lockedName.toLowerCase() === username.toLowerCase())
+  );
+  if (sessionFullName && !sessionLooksShort) return sessionFullName;
+  if (fullName && !fullLooksShort) return fullName;
+  if (email) return email;
+  if (lockedName && !looksShort) return lockedName;
+  return '—';
+}
 
 async function stPersistSharedTheme(user, light){
   if(!stSb || !user || !user.id) return;
@@ -1769,6 +1823,61 @@ const ST_LICENCE_KEY = 'KBL-HEIDELBERG-PADESWOOD-2026';
 const ST_LIC_URL = 'https://dviicnomxeibbuafbozp.supabase.co';
 const ST_LIC_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2aWljbm9teGVpYmJ1YWZib3pwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4ODM0MzcsImV4cCI6MjA4ODQ1OTQzN30.c1T3WXC225tdBbq_1R__9bhGFIZdSxim9dgxfvmkRjU';
 let stLoginRevealTimer = null;
+
+async function stCheckLicence() {
+  const overlay = document.getElementById('licenceOverlay');
+  const msg = document.getElementById('licenceMsg');
+  const spinner = document.getElementById('licenceSpinner');
+  const retry = document.getElementById('licenceRetryBtn');
+  if (overlay) {
+    overlay.style.display = 'flex';
+    overlay.style.opacity = '1';
+  }
+  if (spinner) spinner.style.display = 'flex';
+  if (msg) {
+    msg.style.display = 'none';
+    msg.textContent = '';
+  }
+  if (retry) retry.style.display = 'none';
+  try {
+    const licRes = await fetch(
+      ST_LIC_URL + '/rest/v1/kiln_licences?licence_key=eq.' + encodeURIComponent(ST_LICENCE_KEY) + '&select=paid,expires_at,customer,site',
+      {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+          'apikey': ST_LIC_KEY,
+          'Authorization': 'Bearer ' + ST_LIC_KEY,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+    if (!licRes.ok) {
+      throw new Error('Unable to confirm licence.');
+    }
+    const rows = await licRes.json();
+    const lic = rows && rows[0];
+    if (!lic || !lic.paid) {
+      throw new Error('Licence not active.');
+    }
+    if (new Date(lic.expires_at) < new Date()) {
+      throw new Error('Licence expired on ' + new Date(lic.expires_at).toLocaleDateString('en-GB') + '.');
+    }
+    if (overlay) {
+      overlay.style.opacity = '0';
+      setTimeout(function(){ overlay.style.display = 'none'; }, 280);
+    }
+    return true;
+  } catch (e) {
+    if (spinner) spinner.style.display = 'none';
+    if (msg) {
+      msg.textContent = e && e.message ? e.message + ' Please contact your administrator.' : 'Unable to confirm licence. Please contact your administrator.';
+      msg.style.display = 'block';
+    }
+    if (retry) retry.style.display = 'block';
+    return false;
+  }
+}
 
 function stCancelLoginReveal(){
   if(stLoginRevealTimer){
@@ -1890,26 +1999,29 @@ function stShowAccessDenied(message) {
   if (els.deniedMsg) els.deniedMsg.textContent = message || 'You do not have access to this app.';
 }
 
-function stApplyHeaderProfile(user, profile) {
+function stApplyHeaderProfile(user, profile, kilnUser) {
   const userChip = document.getElementById('stHeaderUser');
   const emailEl = document.getElementById('stHeaderEmail');
   if (!userChip || !emailEl) return;
-  emailEl.textContent = (user && user.email) || (profile && profile.email) || '—';
+  emailEl.textContent = stDisplayName(profile, kilnUser, user);
   userChip.style.display = 'inline-flex';
 }
 
 async function stProfileAllowed(sb, user) {
-  const { data, error } = await sb
-    .from('pw_profiles')
-    .select('*')
-    .eq('id', user.id)
-    .maybeSingle();
-  if (error) throw error;
-  if (!data) return { allowed: true, profile: null };
-  return { allowed: data.approved !== false && data.disabled !== true && data.shift_tracker_access !== false, profile: data };
+  const [profileRes, kilnRes] = await Promise.all([
+    sb.from('pw_profiles').select('*').eq('id', user.id).maybeSingle(),
+    sb.from('kiln_users').select('auth_user_id,locked_name,email,username').eq('auth_user_id', user.id).maybeSingle()
+  ]);
+  if (profileRes.error) throw profileRes.error;
+  if (kilnRes.error && kilnRes.error.code !== 'PGRST116') throw kilnRes.error;
+  const data = profileRes.data || null;
+  const kilnUser = kilnRes.data || null;
+  if (!data) return { allowed: true, profile: null, kilnUser };
+  return { allowed: data.approved !== false && data.disabled !== true && data.shift_tracker_access !== false, profile: data, kilnUser };
 }
 
 async function initShiftTrackerSupabaseAuth() {
+  if (!(await stCheckLicence())) return;
   const sb = supabase.createClient(ST_SUPABASE_URL, ST_SUPABASE_ANON_KEY);
   stSb = sb;
   let els = stGetEls();
@@ -1965,7 +2077,8 @@ async function initShiftTrackerSupabaseAuth() {
       }
       stCurrentUser = user;
       stCurrentProfile = profileState.profile || null;
-      stApplyHeaderProfile(user, profileState.profile);
+      stCurrentKilnUser = profileState.kilnUser || null;
+      stApplyHeaderProfile(user, profileState.profile, profileState.kilnUser);
       await stSyncThemeFromUser(user);
       stRevealApp();
       return true;
@@ -2005,7 +2118,8 @@ async function initShiftTrackerSupabaseAuth() {
       }
       stCurrentUser = user;
       stCurrentProfile = profileState.profile || null;
-      stApplyHeaderProfile(user, profileState.profile);
+      stCurrentKilnUser = profileState.kilnUser || null;
+      stApplyHeaderProfile(user, profileState.profile, profileState.kilnUser);
       await stSyncThemeFromUser(user);
       stRevealApp();
     } catch (e) {
@@ -2045,6 +2159,7 @@ async function initShiftTrackerSupabaseAuth() {
       } catch (e) {}
       stCurrentUser = null;
       stCurrentProfile = null;
+      stCurrentKilnUser = null;
       sessionStorage.removeItem('auth');
       window.location.href = '../index.html';
     });

@@ -31,6 +31,7 @@
   --role-manager:#7c3aed;
   --role-electrician:#38bdf8;
   --role-mechanical:#2563eb;
+  --role-operator:#e11d48;
   --role-analyst:#b45309;
   --r:10px; --rsm:7px; --rxs:5px;
   --e1:0 1px 3px rgba(0,0,0,.55),0 1px 2px rgba(0,0,0,.4);
@@ -60,6 +61,7 @@
   --role-manager:#7c3aed;
   --role-electrician:#38bdf8;
   --role-mechanical:#2563eb;
+  --role-operator:#e11d48;
   --role-analyst:#b45309;
   --e1:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
   --e2:0 4px 18px rgba(0,0,0,.07); --e3:0 20px 56px rgba(0,0,0,.10);
@@ -132,6 +134,12 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   body{animation:none !important}
 }
 body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.card-arrow,#mainHeader,#adminPanel,#roleEditPanel,#loginScreen,#licenceOverlay,.toast,.modal,.panel,.tab-btn,.section-label,.header-user){transition-timing-function:var(--ease-smooth);}
+#roleEditPanel{
+  width:min(560px, calc(100vw - 48px));
+  max-width:min(560px, calc(100vw - 48px));
+  height:min(calc(100dvh - 56px), 760px);
+  max-height:min(calc(100dvh - 56px), 760px);
+}
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:var(--sf)}
 ::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:3px}
@@ -623,6 +631,10 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
         <span id="resetReqBadge" style="display:none;position:absolute;top:2px;right:2px;background:var(--red);color:#fff;font-size:9px;font-weight:700;border-radius:10px;padding:1px 5px;min-width:16px;text-align:center;line-height:16px"></span>
       </button>
+      <button class="icon-btn" id="holidayReqBtn" onclick="openHolidayRequests()" title="Holiday Requests" style="display:none;position:relative">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M7 3.5v4M17 3.5v4M3.5 9.5h17"/><path d="M8.5 14.8l1.8 1.9 4.8-5.2"/></svg>
+        <span id="holidayReqBadge" style="display:none;position:absolute;top:2px;right:2px;background:var(--amb);color:#fff;font-size:9px;font-weight:700;border-radius:10px;padding:1px 5px;min-width:16px;text-align:center;line-height:16px"></span>
+      </button>
       <button class="icon-btn" id="changePwBtn" onclick="openChangePwModal()" title="Change Password" style="display:none">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
       </button>
@@ -671,6 +683,27 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
         </div>
         <div class="card-title">Padeswood Logs</div>
         <div class="card-desc">Role-based shift logging for burners, shift managers, electricians, mechanical teams and cement analysts, with overview reporting, search, AI summaries, feedback tracking and print-ready handovers.</div>
+        <div class="card-arrow">→</div>
+      </a>
+
+      <a href="holiday-request/index.html" class="app-card">
+        <div class="card-top">
+          <div class="card-icon calendar-icon">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <defs>
+                <linearGradient id="cardHolidayGrad" x1="4" y1="3" x2="20" y2="21" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#f59e0b"/>
+                  <stop offset="100%" stop-color="#f97316"/>
+                </linearGradient>
+              </defs>
+              <rect x="3.5" y="5" width="17" height="15" rx="3" fill="url(#cardHolidayGrad)"/>
+              <path d="M7 3.5v4M17 3.5v4M3.5 9.5h17" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+              <path d="M8.5 14.8l1.8 1.9 4.8-5.2" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+        <div class="card-title">Holiday Requests</div>
+        <div class="card-desc">Request leave, track balance, review approvals and keep a clean per-person audit trail with manager decisions.</div>
         <div class="card-arrow">→</div>
       </a>
 
@@ -768,12 +801,25 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
             <input type="text" id="inviteName" placeholder="e.g. John Smith" style="width:100%;height:38px;padding:0 12px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none;box-sizing:border-box">
           </div>
           <div><label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Email Address</label>
-            <input type="email" id="inviteEmail" placeholder="name@heidelbergmaterials.com" style="width:100%;height:38px;padding:0 12px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none;box-sizing:border-box">
+            <div id="inviteEmailWrap" style="display:flex;align-items:stretch;overflow:hidden;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);box-sizing:border-box">
+              <input type="text" id="inviteEmailUser" placeholder="username" style="border:none;border-radius:0;flex:1;min-width:0;background:transparent;height:38px;padding:0 12px;color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none" oninput="syncInviteEmail()">
+              <select id="inviteDomain" onchange="syncInviteEmail();if(this.value==='other'){document.getElementById('inviteEmailUser').placeholder='full@address.com';document.getElementById('inviteEmailUser').type='email';}else{document.getElementById('inviteEmailUser').placeholder='username';document.getElementById('inviteEmailUser').type='text';}" style="height:38px;padding:0 10px 0 4px;background:var(--sf3);border:none;border-left:1px solid var(--bd2);color:var(--tx2);font-family:var(--ff-mono);font-size:10px;cursor:pointer;outline:none;flex-shrink:0;max-width:190px">
+                <option value="@heidelbergmaterials.com">@heidelbergmaterials.com</option>
+                <option value="other">Full email</option>
+              </select>
+            </div>
+            <input type="hidden" id="inviteEmail" value="">
           </div>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+        <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px">
           <div><label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Platform Access</label>
             <select id="inviteRole" style="width:100%;height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
+              <option value="true">Allow Access</option>
+              <option value="false">No Access</option>
+            </select>
+          </div>
+          <div><label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Holiday Requests</label>
+            <select id="inviteHolidayAccess" style="width:100%;height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
               <option value="true">Allow Access</option>
               <option value="false">No Access</option>
             </select>
@@ -784,6 +830,7 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
               <option value="burner">Burner</option>
               <option value="electrician">Electrician</option>
               <option value="mechanical">Mechanical</option>
+              <option value="process_operator">Process Operator</option>
               <option value="shift_manager">Shift Manager</option>
               <option value="cement_analyst">Cement Analyst</option>
               <option value="day_staff">Day Staff</option>
@@ -796,6 +843,12 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
               <option value="true">Allow Access</option>
               <option value="false">No Access</option>
             </select>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr;gap:10px">
+          <div style="grid-column:1 / -1">
+            <label style="display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:6px">Holiday Manager <span style="font-weight:400;color:var(--tx3);text-transform:none;letter-spacing:0">optional</span></label>
+            <select id="inviteHolidayManager" style="width:100%;height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none"></select>
           </div>
         </div>
         <div style="background:var(--sf3);border:1px solid var(--bd);border-radius:var(--rsm);padding:10px 12px;font-size:11px;color:var(--tx3);line-height:1.6">
@@ -839,15 +892,26 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
 <div id="roleEditPanel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.98);width:640px;max-width:94vw;background:var(--sf);border:1px solid var(--bd);border-radius:14px;z-index:806;display:none;flex-direction:column;overflow:hidden;box-shadow:var(--e3)">
   <div style="padding:18px 22px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0">
     <div>
-      <div style="font-family:var(--ff-head);font-weight:700;font-size:16px;color:var(--tx)">Edit User Roles</div>
+      <div style="font-family:var(--ff-head);font-weight:700;font-size:16px;color:var(--tx)">Edit User</div>
       <div id="roleEditSub" style="font-family:var(--ff-mono);font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:var(--tx3);margin-top:4px">—</div>
     </div>
     <button onclick="closeRoleEditor()" style="width:auto;min-width:64px;height:28px;padding:0 12px;border-radius:6px;border:1px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;font-size:11px;font-family:var(--ff-mono);letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;line-height:1">Close</button>
   </div>
-  <div style="padding:18px 22px 20px;overflow:auto;display:flex;flex-direction:column;gap:16px">
+  <div style="flex:1;min-height:0;padding:18px 22px 20px;overflow:auto;display:flex;flex-direction:column;gap:16px">
     <input type="hidden" id="roleEditProfileId">
     <input type="hidden" id="roleEditKilnUsername">
-    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <label style="display:flex;flex-direction:column;gap:6px">
+        <div style="font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3)">Full Name</div>
+        <input id="roleEditFullName" type="text" style="height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none" placeholder="Full name">
+      </label>
+      <label style="display:flex;flex-direction:column;gap:6px">
+        <div style="font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3)">Email Address</div>
+        <input id="roleEditEmail" type="email" style="height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none" placeholder="name@heidelbergmaterials.com">
+        <div style="font-size:10px;color:var(--tx3);line-height:1.45;font-family:var(--ff-mono)">This updates the suite profile email and kiln record. It does not change the Supabase login email.</div>
+      </label>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px">
       <label style="display:flex;flex-direction:column;gap:6px">
         <div style="font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3)">Platform Access</div>
         <select id="roleEditDocs" style="height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
@@ -863,12 +927,25 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
         </select>
       </label>
       <label style="display:flex;flex-direction:column;gap:6px">
+        <div style="font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3)">Holiday Requests</div>
+        <select id="roleEditHoliday" style="height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
+          <option value="true">Allow Access</option>
+          <option value="false">No Access</option>
+        </select>
+      </label>
+      <label style="display:flex;flex-direction:column;gap:6px">
         <div style="font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3)">Shift Log Access</div>
         <select id="roleEditKilnAccess" style="height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
           <option value="true">Allow Access</option>
           <option value="false">No Access</option>
         </select>
       </label>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr;gap:6px">
+      <div style="font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3)">Holiday Manager</div>
+      <select id="roleEditHolidayManager" style="height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none"></select>
+      <div style="font-size:11px;color:var(--tx3);line-height:1.45;font-family:var(--ff-mono)">Optional. Leave blank for shift managers and admins.</div>
+      <div style="font-size:11px;color:var(--tx3);line-height:1.45;font-family:var(--ff-mono)">Changing the name and email updates the suite profile records shown across the apps.</div>
     </div>
     <div style="border:1px solid var(--bd);border-radius:var(--rsm);background:var(--sf2);padding:14px 14px 12px">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px">
@@ -880,6 +957,7 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
           <input type="checkbox" id="roleEditKilnAdmin" style="accent-color:var(--ac3)">
           <span style="font-size:12px;color:var(--tx)">Admin</span>
         </label>
+        <div id="roleEditKilnAdminNote" style="grid-column:1 / -1;font-size:10px;color:var(--tx3);font-family:var(--ff-mono);line-height:1.45;margin-top:-4px">Leave this on for admin accounts that need Shift Log admin access.</div>
         <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--bd2);border-radius:var(--rsm);background:var(--sf);cursor:pointer">
           <input type="checkbox" id="roleEditKilnManager" style="accent-color:var(--ac3)">
           <span style="font-size:12px;color:var(--tx)">Shift Manager</span>
@@ -891,6 +969,10 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
         <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--bd2);border-radius:var(--rsm);background:var(--sf);cursor:pointer">
           <input type="checkbox" id="roleEditKilnMechanical" style="accent-color:var(--role-mechanical)">
           <span style="font-size:12px;color:var(--tx)">Mechanical</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--bd2);border-radius:var(--rsm);background:var(--sf);cursor:pointer">
+          <input type="checkbox" id="roleEditKilnOperator" style="accent-color:var(--role-operator)">
+          <span style="font-size:12px;color:var(--tx)">Process Operator</span>
         </label>
         <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--bd2);border-radius:var(--rsm);background:var(--sf);cursor:pointer">
           <input type="checkbox" id="roleEditKilnAnalyst" style="accent-color:var(--ac3)">
@@ -915,7 +997,7 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
   </div>
   <div style="padding:14px 22px;border-top:1px solid var(--bd);display:flex;justify-content:flex-end;gap:10px;flex-shrink:0;background:linear-gradient(180deg, rgba(255,255,255,.02), transparent)">
     <button class="btn btn-ghost" onclick="closeRoleEditor()" style="min-width:96px;height:38px;padding:0 14px;font-size:12px;font-weight:600">Cancel</button>
-    <button class="btn btn-iso" onclick="saveRoleEditor()" style="min-width:112px;height:38px;padding:0 14px;font-size:12px;font-weight:700">Save Roles</button>
+    <button class="btn btn-iso" onclick="saveRoleEditor()" style="min-width:112px;height:38px;padding:0 14px;font-size:12px;font-weight:700">Save Changes</button>
   </div>
 </div>
 
@@ -1014,7 +1096,8 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
     font-size:16px;
   }
   #emailWrap,
-  #regEmailWrap{
+  #regEmailWrap,
+  #inviteEmailWrap{
     flex-direction:column;
     gap:8px;
     background:transparent;
@@ -1023,7 +1106,8 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
     overflow:visible;
   }
   #loginEmailUser,
-  #regEmailUser{
+  #regEmailUser,
+  #inviteEmailUser{
     width:100% !important;
     min-height:40px;
     padding:0 12px !important;
@@ -1034,7 +1118,8 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
     box-sizing:border-box;
   }
   .email-domain-select,
-  #regDomain{
+  #regDomain,
+  #inviteDomain{
     width:100%;
     max-width:none;
     min-width:0;
@@ -1076,6 +1161,83 @@ body :where(.login-card,.lic-inner,.app-card,.coming-card,.icon-btn,.login-btn,.
   .app-card{padding:18px 14px;}
   .card-desc{font-size:12px;line-height:1.45;}
   .card-arrow{bottom:16px;right:14px;}
+  #adminPanel{
+    width:100vw;
+    max-width:100vw;
+  }
+  #adminPanel > div:nth-child(2){
+    padding:16px 12px 18px;
+    gap:16px;
+  }
+  #adminPanel [style*="grid-template-columns:repeat(4,minmax(0,1fr))"]{
+    grid-template-columns:1fr !important;
+  }
+  #adminPanel [style*="grid-template-columns:1fr 1fr"]{
+    grid-template-columns:1fr !important;
+  }
+  #adminPanel [style*="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap"]{
+    flex-direction:column;
+    align-items:stretch !important;
+  }
+  #adminPanel [style*="display:flex;gap:8px;flex-wrap:wrap"]{
+    width:100%;
+  }
+  #adminPanel [style*="display:flex;gap:8px;flex-wrap:wrap"] button{
+    flex:1 1 100%;
+  }
+  #roleEditPanel{
+    width:calc(100vw - 16px);
+    max-width:calc(100vw - 16px);
+    border-radius:14px;
+    top:6px;
+    left:50%;
+    transform:translateX(-50%);
+    height:calc(100dvh - 12px);
+    max-height:calc(100dvh - 12px);
+  }
+  #roleEditPanel > div:nth-child(2){
+    padding:12px 10px 12px;
+    gap:10px;
+    min-height:0;
+    overscroll-behavior:contain;
+    -webkit-overflow-scrolling:touch;
+  }
+  #roleEditPanel [style*="grid-template-columns:repeat(4,minmax(0,1fr))"],
+  #roleEditPanel [style*="grid-template-columns:1fr 1fr"],
+  #roleEditPanel [style*="grid-template-columns:repeat(2,minmax(0,1fr))"]{
+    grid-template-columns:1fr !important;
+  }
+  #roleEditPanel [style*="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px"]{
+    flex-direction:column;
+    align-items:flex-start !important;
+  }
+  #roleEditPanel [style*="display:flex;gap:10px;margin-top:4px"]{
+    flex-direction:column;
+  }
+  #roleEditPanel [style*="display:flex;gap:10px;margin-top:4px"] button{
+    width:100%;
+  }
+  #roleEditPanel > div:last-child{
+    padding:10px;
+    position:sticky;
+    bottom:0;
+    background:linear-gradient(180deg, rgba(255,255,255,.02), var(--sf));
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+  }
+  #roleEditPanel > div:first-child{
+    padding:14px 12px;
+  }
+  #roleEditPanel input,
+  #roleEditPanel select{
+    height:36px !important;
+    font-size:12px !important;
+  }
+  #roleEditPanel [style*="font-size:9px;"],
+  #roleEditPanel [style*="font-size:10px;"],
+  #roleEditPanel [style*="font-size:11px;"]{
+    line-height:1.35;
+  }
 }
 @media(max-width:400px){
   .header-logo{width:28px;height:28px;font-size:11px;}
@@ -1195,6 +1357,12 @@ function syncLoginEmail() {
   document.getElementById('loginEmail').value = (domain === 'other') ? user : user + domain;
 }
 
+function syncInviteEmail() {
+  const user   = document.getElementById('inviteEmailUser').value.trim();
+  const domain = document.getElementById('inviteDomain').value;
+  document.getElementById('inviteEmail').value = (domain === 'other') ? user : user + domain;
+}
+
 function setLoginEmailFromAddress(email) {
   const emailValue = (email || '').trim();
   const userField = document.getElementById('loginEmailUser');
@@ -1225,6 +1393,38 @@ function setLoginEmailFromAddress(email) {
     domainField.value = '@heidelbergmaterials.com';
   }
   syncLoginEmail();
+}
+
+function setInviteEmailFromAddress(email) {
+  const emailValue = (email || '').trim();
+  const userField = document.getElementById('inviteEmailUser');
+  const domainField = document.getElementById('inviteDomain');
+  if (!emailValue) {
+    userField.value = '';
+    domainField.value = '@heidelbergmaterials.com';
+    userField.placeholder = 'username';
+    userField.type = 'text';
+    syncInviteEmail();
+    return;
+  }
+  const parts = emailValue.split('@');
+  if (parts.length === 2 && parts[1].toLowerCase() === 'heidelbergmaterials.com') {
+    userField.type = 'text';
+    userField.placeholder = 'username';
+    userField.value = parts[0];
+    domainField.value = '@heidelbergmaterials.com';
+  } else if (parts.length === 2) {
+    userField.type = 'email';
+    userField.placeholder = 'full@address.com';
+    userField.value = emailValue;
+    domainField.value = 'other';
+  } else {
+    userField.type = 'text';
+    userField.placeholder = 'username';
+    userField.value = emailValue;
+    domainField.value = '@heidelbergmaterials.com';
+  }
+  syncInviteEmail();
 }
 
 function toggleForgot() {
@@ -1339,7 +1539,12 @@ async function showAppSelector(user, opts) {
       err.style.display = 'block';
       return false;
     }
-    const displayName = (user && user.email) ? user.email : ((data && data.full_name) ? data.full_name : '—');
+    const sessionFullName = user && user.user_metadata && user.user_metadata.full_name
+      ? String(user.user_metadata.full_name).trim()
+      : '';
+    const displayName = sessionFullName && !looksLikeShortLoginName(sessionFullName, (data && data.email) ? data.email : (user && user.email) ? user.email : '', null)
+      ? sessionFullName
+      : getSuiteDisplayName(data || null, null, (user && user.email) ? user.email : '—');
     document.getElementById('headerEmail').textContent = displayName;
     if (data && data.role === 'admin') {
       document.getElementById('adminPanelBtn').style.display = 'flex';
@@ -1353,10 +1558,17 @@ async function showAppSelector(user, opts) {
         .eq('auth_user_id', user.id)
         .maybeSingle();
       _platformKilnUser = ku || null;
+      const holidayBtn = document.getElementById('holidayReqBtn');
+      if (holidayBtn) {
+        holidayBtn.style.display = (ku && ku.is_shift_manager && (!data || data.holiday_requests_access !== false)) ? 'flex' : 'none';
+      }
       if (ku) {
-        if ((!data || !data.full_name) && ku.locked_name) {
-          document.getElementById('headerEmail').textContent = ku.locked_name;
-        }
+        const sessionFullName = user && user.user_metadata && user.user_metadata.full_name
+          ? String(user.user_metadata.full_name).trim()
+          : '';
+        document.getElementById('headerEmail').textContent = sessionFullName && !looksLikeShortLoginName(sessionFullName, (data && data.email) ? data.email : (user && user.email) ? user.email : '', ku && ku.username ? ku.username : '')
+          ? sessionFullName
+          : getSuiteDisplayName(data || null, ku || null, (user && user.email) ? user.email : '—');
         if (ku.must_reset_password) {
           if (skipResetPrompt) {
             try {
@@ -1386,6 +1598,7 @@ async function showAppSelector(user, opts) {
     return false;
   }
   await loadUserTheme();
+  loadHolidayReqBadge();
   document.getElementById('mainWrapper').style.display = 'block';
   checkAppStatus();
   return true;
@@ -1803,6 +2016,10 @@ window.addEventListener('load', function() {
       detectSessionInUrl: false
     }
   });
+  const suiteLogo = document.querySelector('.header-logo img');
+  if (suiteLogo && suiteLogo.src) {
+    try { localStorage.setItem('pw_suite_logo_src', suiteLogo.src); } catch(e) {}
+  }
   if (window.location.hash && window.location.hash.includes('access_token')) {
     handleEmailConfirmation();
   } else {
@@ -1866,6 +2083,71 @@ let _pendingResetReqTable = null;
 let _pwPostResetSkipUid = null;
 function canManagePlatformUsers() {
   return !!(_platformProfile && _platformProfile.role === 'admin');
+}
+
+function getActiveHolidayManagerProfiles(excludeProfileId) {
+  return (_usersCache || [])
+    .filter(function(p) {
+      if (!p || p.approved === false || p.disabled === true || p.role === 'none') return false;
+      if (excludeProfileId && String(p.id) === String(excludeProfileId)) return false;
+      const ku = (_kilnUsersCache || []).find(function(x) { return String(x.auth_user_id) === String(p.id); }) || null;
+      return !!(ku && ku.is_shift_manager);
+    })
+    .sort(function(a, b) {
+      const an = (a.full_name || a.email || '').toLowerCase();
+      const bn = (b.full_name || b.email || '').toLowerCase();
+      return an.localeCompare(bn);
+    });
+}
+
+function holidayManagerLabel(managerId) {
+  if (!managerId) return '';
+  const p = (_usersCache || []).find(function(x) { return String(x.id) === String(managerId); }) || null;
+  const ku = (_kilnUsersCache || []).find(function(x) { return String(x.auth_user_id) === String(managerId); }) || null;
+  return getSuiteDisplayName(p, ku, '—');
+}
+
+function looksLikeShortLoginName(value, email, username) {
+  const raw = String(value || '').trim();
+  if (!raw) return false;
+  const normalized = raw.toLowerCase();
+  const emailLocal = email && String(email).includes('@') ? String(email).split('@')[0].trim().toLowerCase() : '';
+  const loginName = String(username || '').trim().toLowerCase();
+  if (emailLocal && normalized === emailLocal) return true;
+  if (loginName && normalized === loginName) return true;
+  return !/\s/.test(raw) && /^[a-z0-9._-]{3,}$/i.test(raw);
+}
+
+function getSuiteDisplayName(profile, kilnUser, fallback) {
+  const lockedName = kilnUser && kilnUser.locked_name ? String(kilnUser.locked_name).trim() : '';
+  const fullName = profile && profile.full_name ? String(profile.full_name).trim() : '';
+  const email = profile && profile.email ? String(profile.email).trim() : ((kilnUser && kilnUser.email) ? String(kilnUser.email).trim() : '');
+  if (fullName && !looksLikeShortLoginName(fullName, email, kilnUser && kilnUser.username)) return fullName;
+  if (email) return email;
+  if (lockedName && !looksLikeShortLoginName(lockedName, email, kilnUser && kilnUser.username)) return lockedName;
+  return fallback || '—';
+}
+
+function populateHolidayManagerSelect(selectId, selectedId, excludeProfileId) {
+  const el = document.getElementById(selectId);
+  if (!el) return;
+  const selected = selectedId ? String(selectedId) : '';
+  const managers = getActiveHolidayManagerProfiles(excludeProfileId);
+  const seen = new Set();
+  let html = '<option value="">No manager</option>';
+  managers.forEach(function(p) {
+    const value = String(p.id || '');
+    if (!value || seen.has(value)) return;
+    seen.add(value);
+    const ku = (_kilnUsersCache || []).find(function(x) { return String(x.auth_user_id) === String(value); }) || null;
+    const label = getSuiteDisplayName(p, ku, 'Unknown');
+    html += '<option value="'+esc(value)+'">'+esc(label)+'</option>';
+  });
+  if (selected && !seen.has(selected)) {
+    html += '<option value="'+esc(selected)+'">'+esc((holidayManagerLabel(selected) || 'Unavailable') + ' (current)')+'</option>';
+  }
+  el.innerHTML = html;
+  el.value = selected;
 }
 
 const PW_REQUESTS_TABLE = 'pw_requests';
@@ -2092,10 +2374,16 @@ async function submitPlatformForceReset() {
         if (!userId) throw new Error('Failed to create auth user');
         const accessReq = _accessRequestsCache.find(function(x){ return x.id === target.reqId; }) || null;
         const trackerAllowed = accessReq ? accessReq.shift_tracker_access !== false : true;
+        const holidayAllowed = accessReq ? accessReq.holiday_requests_access !== false : true;
+        const holidayManagerAuthUserId = accessReq ? (accessReq.holiday_manager_auth_user_id || null) : null;
+        const holidayManagerValue = holidayManagerAuthUserId && getActiveHolidayManagerProfiles(null).some(function(m) { return String(m.id) === String(holidayManagerAuthUserId); }) ? holidayManagerAuthUserId : null;
         const { error: profErr } = await sb.from('pw_profiles').upsert({
           id: userId, email: target.email, full_name: target.fullName,
           role: target.role || 'viewer',
-          shift_tracker_access: trackerAllowed, approved: true
+          shift_tracker_access: trackerAllowed,
+          holiday_requests_access: holidayAllowed,
+          holiday_manager_auth_user_id: (target.kilnRole === 'admin' || target.kilnRole === 'shift_manager') ? null : holidayManagerValue,
+          approved: true
         });
         if (profErr) throw new Error(profErr.message || 'Failed to save platform profile');
         if (target.kilnRole && target.kilnRole !== 'none') {
@@ -2103,6 +2391,7 @@ async function submitPlatformForceReset() {
             is_admin: target.kilnRole==='admin', is_shift_manager: target.kilnRole==='shift_manager',
             is_electrician: target.kilnRole==='electrician',
             is_mechanical: target.kilnRole==='mechanical',
+            is_process_operator: target.kilnRole==='process_operator',
             is_cement_analyst: target.kilnRole==='cement_analyst', is_day_staff: target.kilnRole==='day_staff',
             is_burner: target.kilnRole==='burner', is_readonly: target.kilnRole==='read_only'
           };
@@ -2301,6 +2590,7 @@ function getPlatformRoleGroups() {
     { label:'Shift Managers',   key:'shift_manager',  color:'var(--role-manager)',  bg:'rgba(124,58,237,.10)',  border:'rgba(124,58,237,.26)',  test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_shift_manager); } },
     { label:'Electricians',     key:'electrician',    color:'var(--role-electrician)', bg:'rgba(56,189,248,.10)',  border:'rgba(56,189,248,.26)',  test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_electrician); } },
     { label:'Mechanical',       key:'mechanical',     color:'var(--role-mechanical)', bg:'rgba(37,99,235,.10)',   border:'rgba(37,99,235,.26)',   test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_mechanical); } },
+    { label:'Process Operators',key:'process_operator',color:'var(--role-operator)', bg:'rgba(225,29,72,.10)',   border:'rgba(225,29,72,.26)',   test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_process_operator); } },
     { label:'Cement Analysts',  key:'cement_analyst', color:'var(--role-analyst)', bg:'rgba(180,83,9,.10)',    border:'rgba(180,83,9,.26)',    test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_cement_analyst); } },
     { label:'Day Staff',        key:'day_staff',      color:'#0891b2', bg:'rgba(8,145,178,.10)',   border:'rgba(8,145,178,.26)',   test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_day_staff); } },
     { label:'Burners',          key:'burner',         color:'#d97706', bg:'rgba(217,119,6,.10)',   border:'rgba(217,119,6,.26)',   test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_burner); } },
@@ -2327,6 +2617,15 @@ function isPlatformManagedAdmin(m) {
   return !!((ku && ku.is_admin) || (p && p.role === 'admin'));
 }
 
+function getShiftLogAdminCount(excludeProfileId) {
+  return getMergedPlatformUsers().filter(function(m) {
+    if (!isPlatformManagedAdmin(m)) return false;
+    const pid = m && m.prof ? m.prof.id : (m && m.kiln && m.kiln.auth_user_id ? m.kiln.auth_user_id : null);
+    if (!pid) return false;
+    return !excludeProfileId || String(pid) !== String(excludeProfileId);
+  }).length;
+}
+
 function isPlatformManagedDisabled(m) {
   const p = m && m.prof;
   const ku = m && m.kiln;
@@ -2347,7 +2646,21 @@ function isBulkEligibleManagedUser(m) {
 function getManagedUserDisplayName(m) {
   const p = m && m.prof;
   const ku = m && m.kiln;
-  return (p && (p.full_name || p.email)) || (ku && (ku.locked_name || ku.email || ku.username)) || 'User';
+  return getSuiteDisplayName(p, ku, 'User');
+}
+
+function hasAnyKilnRole(ku) {
+  return !!(ku && (
+    ku.is_admin ||
+    ku.is_shift_manager ||
+    ku.is_electrician ||
+    ku.is_mechanical ||
+    ku.is_process_operator ||
+    ku.is_cement_analyst ||
+    ku.is_day_staff ||
+    ku.is_burner ||
+    ku.is_readonly
+  ));
 }
 
 function toManagedUserTarget(m) {
@@ -2494,7 +2807,7 @@ async function loadAllUsers() {
 
     const [profRes, kilnRes] = await withTimeout(Promise.all([
       sb.from('pw_profiles').select('*').order('email'),
-      sb.from('kiln_users').select('username,locked_name,email,is_admin,is_burner,is_shift_manager,is_electrician,is_mechanical,is_cement_analyst,is_day_staff,is_readonly,is_locked,shift_log_access,must_reset_password,auth_user_id').order('username')
+      sb.from('kiln_users').select('username,locked_name,email,is_admin,is_burner,is_shift_manager,is_electrician,is_mechanical,is_process_operator,is_cement_analyst,is_day_staff,is_readonly,is_locked,shift_log_access,must_reset_password,auth_user_id').order('username')
     ]), 10000);
 
     if (profRes.error) {
@@ -2504,6 +2817,7 @@ async function loadAllUsers() {
     _kilnUsersCache = (kilnRes.error ? [] : kilnRes.data) || [];
 
     _accessRequestsCache = await loadRequestRows('access', { status: 'pending', ascending: false });
+    populateHolidayManagerSelect('inviteHolidayManager', document.getElementById('inviteHolidayManager') ? document.getElementById('inviteHolidayManager').value : '', null);
 
     const emailFixes = [];
     _kilnUsersCache.forEach(function(ku) {
@@ -2550,6 +2864,7 @@ function renderAllUsers() {
         +'<div style="flex:1;min-width:0">'
         +'<div style="font-size:12px;font-weight:600;color:var(--tx);font-family:var(--ff-head)">'+esc(req.full_name||'—')+'</div>'
         +'<div style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">'+esc(req.email)+'</div>'
+        +(req.holiday_manager_auth_user_id ? '<div style="font-size:10px;color:var(--tx3);font-family:var(--ff-mono);margin-top:2px">Holiday manager: '+esc(holidayManagerLabel(req.holiday_manager_auth_user_id) || '—')+'</div>' : '')
         +'<div style="font-size:10px;color:var(--amb);font-family:var(--ff-mono);margin-top:2px">Requested '+new Date(req.requested_at).toLocaleDateString('en-GB')+'</div>'
         +'</div>'
         +'<button data-req-id="'+esc(req.id)+'" data-req-email="'+esc(req.email)+'" data-req-name="'+esc(req.full_name||'')+'" data-req-role="'+esc(req.role||'viewer')+'" data-req-kiln="'+esc(req.kiln_role||'read_only')+'" onclick="activateRequestFromBtn(this)" style="height:28px;padding:0 12px;font-size:11px;font-family:var(--ff-head);font-weight:600;background:var(--grnd);border:1px solid var(--grnb);border-radius:var(--rsm);color:var(--grn);cursor:pointer;white-space:nowrap">\u2713 Activate</button>'
@@ -2593,6 +2908,8 @@ function renderAllUsers() {
   const ungrouped = merged.filter(function(m){ return !ROLE_GROUPS.some(function(g){ return g.test(m); }); });
   ungrouped.forEach(function(m){ html += renderUserCard(m, DS, LS, RS, rc); });
   list.innerHTML = html;
+  populateHolidayManagerSelect('inviteHolidayManager', document.getElementById('inviteHolidayManager') ? document.getElementById('inviteHolidayManager').value : '', null);
+  populateHolidayManagerSelect('roleEditHolidayManager', document.getElementById('roleEditHolidayManager') ? document.getElementById('roleEditHolidayManager').value : '', document.getElementById('roleEditProfileId') ? document.getElementById('roleEditProfileId').value : '');
   } catch(e) { _umShowErr(list, 'Render error: ' + (e && e.message ? e.message : String(e))); }
 }
 
@@ -2603,17 +2920,19 @@ function renderUserCard(m, DS, LS, RS, rc) {
   const isSelf = _platformProfile && profileId && profileId === _platformProfile.id;
   const isProtectedKiln = ku && ku.username === PLATFORM_PROTECTED_USERNAME;
   const isDisabledEverywhere = isPlatformManagedDisabled(m);
-  const displayName = (p&&(p.full_name||p.email))||(ku&&(ku.locked_name||ku.username))||'?';
+  const displayName = getSuiteDisplayName(p || null, ku || null, '?');
   const email = (p&&p.email)||(ku&&ku.email)||'\u2014';
   const initials = displayName.split(' ').map(function(w){return w[0]||'';}).join('').slice(0,2).toUpperCase()||'?';
-  const kilnAccess = ku ? (ku.shift_log_access !== false) : null;
-  const kilnRole = !ku ? null : (kilnAccess === false ? 'none' : ku.is_admin ? 'admin' : ku.is_shift_manager ? 'shift_manager' : ku.is_electrician ? 'electrician' : ku.is_mechanical ? 'mechanical' : ku.is_cement_analyst ? 'cement_analyst' : ku.is_day_staff ? 'day_staff' : ku.is_burner ? 'burner' : 'read_only');
+  const kilnAccess = ku ? ((ku.shift_log_access !== false) || hasAnyKilnRole(ku)) : null;
+  const kilnRole = !ku ? null : (kilnAccess === false ? 'none' : ku.is_admin ? 'admin' : ku.is_shift_manager ? 'shift_manager' : ku.is_electrician ? 'electrician' : ku.is_mechanical ? 'mechanical' : ku.is_process_operator ? 'process_operator' : ku.is_cement_analyst ? 'cement_analyst' : ku.is_day_staff ? 'day_staff' : ku.is_burner ? 'burner' : 'read_only');
+  const holidayManagerId = p ? (p.holiday_manager_auth_user_id || null) : null;
   const kilnRoles = [];
   if (ku) {
     if (ku.is_admin) kilnRoles.push('Admin');
     if (ku.is_shift_manager) kilnRoles.push('Shift Manager');
     if (ku.is_electrician) kilnRoles.push('Electrician');
     if (ku.is_mechanical) kilnRoles.push('Mechanical');
+    if (ku.is_process_operator) kilnRoles.push('Process Operator');
     if (ku.is_cement_analyst) kilnRoles.push('Cement Analyst');
     if (ku.is_day_staff) kilnRoles.push('Day Staff');
     if (ku.is_burner) kilnRoles.push('Burner');
@@ -2629,27 +2948,33 @@ function renderUserCard(m, DS, LS, RS, rc) {
     +(ku&&ku.must_reset_password?'<span style="font-size:9px;font-family:var(--ff-mono);color:var(--amb);border:1px solid var(--ambb);background:var(--ambd);padding:2px 6px;border-radius:4px;flex-shrink:0;white-space:nowrap">PW RESET</span>':'')
     +(!isDisabledEverywhere&&ku&&ku.is_locked?'<span style="font-size:9px;font-family:var(--ff-mono);color:var(--red);border:1px solid var(--redb);background:var(--redd);padding:2px 6px;border-radius:4px;flex-shrink:0">LOCKED</span>':'')
     +'</div>';
-  h += '<div style="'+RS+'"><span style="'+LS+'">Access Levels</span>';
+  h += '<div style="display:flex;flex-direction:column;gap:6px;margin-bottom:7px"><span style="'+LS+'">Access Levels</span>';
   if(ku){
     if(isProtectedKiln){
-      h+='<div style="height:30px;padding:0 8px;font-size:11px;font-family:var(--ff-mono);background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--ac3);display:flex;align-items:center;flex:1">Admin (protected)</div>';
+      h+='<div style="height:30px;padding:0 8px;font-size:11px;font-family:var(--ff-mono);background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--ac3);display:flex;align-items:center;min-width:0">Admin (protected)</div>';
     } else {
-      h+='<div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0">'
-        +'<div style="height:30px;padding:0 8px;font-size:11px;font-family:var(--ff-mono);background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--tx);display:flex;align-items:center;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(kilnRoles.length ? kilnRoles.join(' · ') : 'No Access')+'</div>'
-        +(canManageUsers && profileId ? '<button type="button" onclick="openRoleEditor(\''+esc(profileId)+'\')" style="height:30px;padding:0 10px;font-size:11px;font-family:var(--ff-head);font-weight:600;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--ac3);cursor:pointer;white-space:nowrap">Edit Roles</button>' : '')
-        +'</div>';
+      h+='<div style="height:30px;padding:0 8px;font-size:11px;font-family:var(--ff-mono);background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--tx);display:flex;align-items:center;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(kilnRoles.length ? kilnRoles.join(' · ') : 'No Access')+'</div>';
     }
   } else {
-    h+='<div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0">'
-      +'<div style="height:30px;padding:0 8px;font-size:11px;font-family:var(--ff-mono);background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--tx3);display:flex;align-items:center;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">No shift log account</div>'
-      +(canManageUsers && profileId ? '<button type="button" onclick="openRoleEditor(\''+esc(profileId)+'\')" style="height:30px;padding:0 10px;font-size:11px;font-family:var(--ff-head);font-weight:600;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--ac3);cursor:pointer;white-space:nowrap">Edit Roles</button>' : '')
+    h+='<div style="height:30px;padding:0 8px;font-size:11px;font-family:var(--ff-mono);background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--tx3);display:flex;align-items:center;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">No shift log account</div>';
+  }
+  h+='</div>';
+  if (p) {
+    h += '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">'
+      +'<span style="font-size:9px;font-family:var(--ff-mono);letter-spacing:1px;text-transform:uppercase;border:1px solid var(--bd2);border-radius:999px;padding:3px 7px;color:var(--tx3);background:var(--sf3)">Platform: '+(p.role === 'none' ? 'No Access' : 'Allow')+'</span>'
+      +'<span style="font-size:9px;font-family:var(--ff-mono);letter-spacing:1px;text-transform:uppercase;border:1px solid var(--bd2);border-radius:999px;padding:3px 7px;color:var(--tx3);background:var(--sf3)">Tracker: '+(p.shift_tracker_access === false ? 'No Access' : 'Allow')+'</span>'
+      +'<span style="font-size:9px;font-family:var(--ff-mono);letter-spacing:1px;text-transform:uppercase;border:1px solid var(--bd2);border-radius:999px;padding:3px 7px;color:var(--tx3);background:var(--sf3)">Holiday: '+(p.holiday_requests_access === false ? 'No Access' : 'Allow')+'</span>'
+      +'<span style="font-size:9px;font-family:var(--ff-mono);letter-spacing:1px;text-transform:uppercase;border:1px solid var(--bd2);border-radius:999px;padding:3px 7px;color:var(--tx3);background:var(--sf3);max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Holiday Manager: '+esc(holidayManagerLabel(holidayManagerId) || 'None')+'</span>'
       +'</div>';
   }
   h+='</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid var(--bd)">';
+  if (canManageUsers && profileId) {
+    h+='<button type="button" onclick="openRoleEditor(\''+esc(profileId)+'\')" style="height:26px;padding:0 10px;font-size:11px;font-family:var(--ff-head);font-weight:600;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--ac3);cursor:pointer;white-space:nowrap">Edit Roles</button>';
+  }
   if(p&&p.approved===false){h+='<button onclick="approveUser(\''+esc(p.id)+'\')" style="height:26px;padding:0 12px;font-size:11px;font-family:var(--ff-head);font-weight:600;background:var(--grnd);border:1px solid var(--grnb);border-radius:var(--rsm);color:var(--grn);cursor:pointer">\u2713 Approve</button>';}
   if(!isSelf&&!isProtectedKiln){
     const authId = p ? p.id : (ku && ku.auth_user_id ? ku.auth_user_id : null);
-    const dName  = (p&&p.full_name) || (ku&&ku.locked_name) || email;
+    const dName  = getSuiteDisplayName(p || null, ku || null, email);
     const kilnUn = ku ? ku.username : null;
     if(authId){
       h+='<button onclick="openAdminSetPwModal(\''+esc(authId)+'\','+( kilnUn ? '\''+esc(kilnUn)+'\'' : 'null' )+',\''+esc(dName)+'\')" style="height:26px;padding:0 10px;font-size:11px;font-family:var(--ff-body);background:var(--sf3);border:1px solid var(--bd);border-radius:var(--rsm);color:var(--tx2);cursor:pointer">Set PW</button>';
@@ -2682,6 +3007,7 @@ async function updateKilnRole(username, role) {
     is_shift_manager:  role === 'shift_manager',
     is_electrician:    role === 'electrician',
     is_mechanical:     role === 'mechanical',
+    is_process_operator: role === 'process_operator',
     is_cement_analyst: role === 'cement_analyst',
     is_day_staff:      role === 'day_staff',
     is_burner:         role === 'burner',
@@ -2693,6 +3019,7 @@ async function updateKilnRole(username, role) {
     flags.is_shift_manager = false;
     flags.is_electrician = false;
     flags.is_mechanical = false;
+    flags.is_process_operator = false;
     flags.is_cement_analyst = false;
     flags.is_day_staff = false;
     flags.is_burner = false;
@@ -2753,19 +3080,36 @@ function openRoleEditor(profileId) {
   const ku = _kilnUsersCache.find(function(x){ return x.auth_user_id === profileId; }) || null;
   document.getElementById('roleEditProfileId').value = profileId;
   document.getElementById('roleEditKilnUsername').value = ku ? (ku.username || '') : '';
-  document.getElementById('roleEditSub').textContent = (p.full_name || p.email || 'User') + ' · ' + (p.email || '—');
+  document.getElementById('roleEditSub').textContent = getSuiteDisplayName(p || null, ku || null, 'User') + ' · ' + (p.email || (ku && ku.email) || '—');
+  document.getElementById('roleEditFullName').value = p && p.full_name ? p.full_name : '';
+  document.getElementById('roleEditEmail').value = p && p.email ? p.email : (ku && ku.email ? ku.email : '');
   document.getElementById('roleEditDocs').value = p.role === 'none' ? 'false' : 'true';
   document.getElementById('roleEditTracker').value = p.shift_tracker_access === false ? 'false' : 'true';
-  const access = !ku ? false : (ku.shift_log_access !== false);
+  document.getElementById('roleEditHoliday').value = p.holiday_requests_access === false ? 'false' : 'true';
+  const access = !ku ? false : ((ku.shift_log_access !== false) || hasAnyKilnRole(ku));
   document.getElementById('roleEditKilnAccess').value = access ? 'true' : 'false';
+  populateHolidayManagerSelect('roleEditHolidayManager', p.holiday_manager_auth_user_id || '', profileId);
   document.getElementById('roleEditKilnAdmin').checked = !!(ku && ku.is_admin);
   document.getElementById('roleEditKilnManager').checked = !!(ku && ku.is_shift_manager);
   document.getElementById('roleEditKilnElectrician').checked = !!(ku && ku.is_electrician);
   document.getElementById('roleEditKilnMechanical').checked = !!(ku && ku.is_mechanical);
+  document.getElementById('roleEditKilnOperator').checked = !!(ku && ku.is_process_operator);
   document.getElementById('roleEditKilnAnalyst').checked = !!(ku && ku.is_cement_analyst);
   document.getElementById('roleEditKilnDay').checked = !!(ku && ku.is_day_staff);
   document.getElementById('roleEditKilnBurner').checked = !!(ku && ku.is_burner);
   document.getElementById('roleEditKilnReadOnly').checked = !!(ku && ku.is_readonly);
+  const isProtectedAdmin = !!(ku && ku.username === PLATFORM_PROTECTED_USERNAME);
+  const remainingAdmins = getShiftLogAdminCount(profileId);
+  const lockAdminToggle = !!(ku && ku.is_admin && (isProtectedAdmin || remainingAdmins <= 0));
+  const adminCheckbox = document.getElementById('roleEditKilnAdmin');
+  adminCheckbox.disabled = lockAdminToggle;
+  adminCheckbox.checked = !!(ku && ku.is_admin);
+  const adminNote = document.getElementById('roleEditKilnAdminNote');
+  if (adminNote) {
+    adminNote.textContent = lockAdminToggle
+      ? 'This is the last admin account, so Admin cannot be removed.'
+      : 'Leave this on for admin accounts that need Shift Log admin access.';
+  }
   roleEditorShowMsg('', '');
   document.getElementById('roleEditOverlay').style.display = 'block';
   document.getElementById('roleEditPanel').style.display = 'flex';
@@ -2788,45 +3132,96 @@ async function saveRoleEditor() {
   const p = _usersCache.find(function(x){ return x.id === profileId; });
   if (!p) { roleEditorShowMsg('err', 'User not found'); return; }
   const ku = _kilnUsersCache.find(function(x){ return x.auth_user_id === profileId; }) || null;
+  const fullNameInput = document.getElementById('roleEditFullName').value.trim();
+  const emailInput = document.getElementById('roleEditEmail').value.trim().toLowerCase();
   const platformAccess = document.getElementById('roleEditDocs').value !== 'false';
   const trackerAccess = document.getElementById('roleEditTracker').value !== 'false';
+  const holidayAccess = document.getElementById('roleEditHoliday').value !== 'false';
   const kilnAccess = document.getElementById('roleEditKilnAccess').value !== 'false';
+  if (!fullNameInput) {
+    roleEditorShowMsg('err', 'Please enter a full name.');
+    return;
+  }
+  if (!emailInput || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput)) {
+    roleEditorShowMsg('err', 'Please enter a valid email address.');
+    return;
+  }
+  const requestedKilnRole = !!(
+    document.getElementById('roleEditKilnAdmin').checked ||
+    document.getElementById('roleEditKilnManager').checked ||
+    document.getElementById('roleEditKilnElectrician').checked ||
+    document.getElementById('roleEditKilnMechanical').checked ||
+    document.getElementById('roleEditKilnOperator').checked ||
+    document.getElementById('roleEditKilnAnalyst').checked ||
+    document.getElementById('roleEditKilnDay').checked ||
+    document.getElementById('roleEditKilnBurner').checked ||
+    document.getElementById('roleEditKilnReadOnly').checked
+  );
+  const shouldEnableKilnAccess = kilnAccess || requestedKilnRole;
   const kilnFlags = {
     is_admin: !!document.getElementById('roleEditKilnAdmin').checked,
     is_shift_manager: !!document.getElementById('roleEditKilnManager').checked,
     is_electrician: !!document.getElementById('roleEditKilnElectrician').checked,
     is_mechanical: !!document.getElementById('roleEditKilnMechanical').checked,
+    is_process_operator: !!document.getElementById('roleEditKilnOperator').checked,
     is_cement_analyst: !!document.getElementById('roleEditKilnAnalyst').checked,
     is_day_staff: !!document.getElementById('roleEditKilnDay').checked,
     is_burner: !!document.getElementById('roleEditKilnBurner').checked,
     is_readonly: !!document.getElementById('roleEditKilnReadOnly').checked,
-    shift_log_access: kilnAccess
+    shift_log_access: shouldEnableKilnAccess
   };
-  if (!kilnAccess) {
+  let holidayManagerAuthUserId = document.getElementById('roleEditHolidayManager').value || null;
+  const isProtectedAdmin = !!(ku && ku.username === PLATFORM_PROTECTED_USERNAME);
+  const existingAdmin = !!(ku && ku.is_admin);
+  const requestedAdmin = !!document.getElementById('roleEditKilnAdmin').checked;
+  const remainingAdmins = getShiftLogAdminCount(profileId);
+  if (existingAdmin && !requestedAdmin && (isProtectedAdmin || remainingAdmins <= 0)) {
+    roleEditorShowMsg('err', 'The last admin account must stay admin.');
+    return;
+  }
+  if (!shouldEnableKilnAccess) {
     kilnFlags.is_admin = false;
     kilnFlags.is_shift_manager = false;
     kilnFlags.is_electrician = false;
     kilnFlags.is_mechanical = false;
+    kilnFlags.is_process_operator = false;
     kilnFlags.is_cement_analyst = false;
     kilnFlags.is_day_staff = false;
     kilnFlags.is_burner = false;
     kilnFlags.is_readonly = false;
   }
-  if (kilnAccess && !kilnFlags.is_admin && !kilnFlags.is_shift_manager && !kilnFlags.is_electrician && !kilnFlags.is_mechanical && !kilnFlags.is_cement_analyst && !kilnFlags.is_day_staff && !kilnFlags.is_burner && !kilnFlags.is_readonly) {
+  if (requestedKilnRole) {
+    kilnFlags.shift_log_access = true;
+  }
+  if (kilnFlags.shift_log_access && !kilnFlags.is_admin && !kilnFlags.is_shift_manager && !kilnFlags.is_electrician && !kilnFlags.is_mechanical && !kilnFlags.is_process_operator && !kilnFlags.is_cement_analyst && !kilnFlags.is_day_staff && !kilnFlags.is_burner && !kilnFlags.is_readonly) {
     kilnFlags.is_readonly = true;
+  }
+  if (kilnFlags.is_admin || kilnFlags.is_shift_manager) {
+    holidayManagerAuthUserId = null;
+  }
+  if (holidayManagerAuthUserId && !getActiveHolidayManagerProfiles(profileId).some(function(m) { return String(m.id) === String(holidayManagerAuthUserId); })) {
+    holidayManagerAuthUserId = null;
   }
   roleEditorShowMsg('', '');
   try {
     const {error: profErr} = await sb.from('pw_profiles').update({
+      full_name: fullNameInput,
+      email: emailInput,
       role: platformAccess ? (p.role && p.role !== 'none' ? p.role : 'viewer') : 'none',
-      shift_tracker_access: trackerAccess
+      shift_tracker_access: trackerAccess,
+      holiday_requests_access: holidayAccess,
+      holiday_manager_auth_user_id: holidayManagerAuthUserId
     }).eq('id', profileId);
     if (profErr) throw profErr;
     if (ku) {
-      const {error: kilnErr} = await sb.from('kiln_users').update(kilnFlags).eq('username', ku.username);
+      const {error: kilnErr} = await sb.from('kiln_users').update({
+        ...kilnFlags,
+        locked_name: fullNameInput,
+        email: emailInput
+      }).eq('username', ku.username);
       if (kilnErr) throw kilnErr;
-    } else if (kilnAccess) {
-      const baseUsername = (p.email || '')
+    } else if (kilnFlags.shift_log_access) {
+      const baseUsername = (emailInput || '')
         .split('@')[0]
         .replace(/[^a-z0-9_]/gi, '')
         .toLowerCase() || ('user_' + String(profileId).slice(0, 8).toLowerCase());
@@ -2839,8 +3234,8 @@ async function saveRoleEditor() {
       const newKilnUser = {
         auth_user_id: profileId,
         username: username,
-        locked_name: p.full_name || p.email || username,
-        email: p.email || null,
+        locked_name: fullNameInput,
+        email: emailInput,
         is_locked: false,
         must_reset_password: false,
         ...kilnFlags
@@ -2849,9 +3244,13 @@ async function saveRoleEditor() {
       if (kilnInsertErr) throw kilnInsertErr;
       _kilnUsersCache.push(newKilnUser);
     }
+    p.full_name = fullNameInput;
+    p.email = emailInput;
     p.role = platformAccess ? (p.role && p.role !== 'none' ? p.role : 'viewer') : 'none';
     p.shift_tracker_access = trackerAccess;
-    if (ku) Object.assign(ku, kilnFlags);
+    p.holiday_requests_access = holidayAccess;
+    p.holiday_manager_auth_user_id = holidayManagerAuthUserId;
+    if (ku) Object.assign(ku, kilnFlags, { locked_name: fullNameInput, email: emailInput });
     renderAllUsers();
     closeRoleEditor();
     showPlatformToast('Access updated ✓');
@@ -2900,13 +3299,14 @@ async function forceKilnPwReset(username) {
   const {error} = await sb.from('kiln_users').update({must_reset_password:true}).eq('username', username);
   if (error) { showPlatformToast('Failed: '+error.message); return; }
   const u = _kilnUsersCache.find(x=>x.username===username); if (u) u.must_reset_password = true;
-  renderAllUsers(); showPlatformToast(username+' will be prompted to reset password ✓');
+  const p = u && u.auth_user_id ? _usersCache.find(x=>x.id===u.auth_user_id) : null;
+  renderAllUsers(); showPlatformToast(getSuiteDisplayName(p || null, u || null, 'User')+' will be prompted to reset password ✓');
 }
 
 function setKilnPassword(username) {
   const ku = _kilnUsersCache.find(x=>x.username===username);
   const pu = ku && ku.auth_user_id ? _usersCache.find(x=>x.id===ku.auth_user_id) : null;
-  const displayName = (pu&&pu.full_name) || (ku&&ku.locked_name) || username;
+  const displayName = getSuiteDisplayName(pu || null, ku || null, username);
   const authId = ku && ku.auth_user_id;
   openAdminSetPwModal(authId, username, displayName);
 }
@@ -2932,11 +3332,14 @@ async function inviteUser() {
     showInviteMsg('err', 'Admin only.');
     return;
   }
+  syncInviteEmail();
   const email = document.getElementById('inviteEmail').value.trim().toLowerCase();
   const name  = document.getElementById('inviteName').value.trim();
   const platformAccess = document.getElementById('inviteRole').value !== 'false';
+  const holidayAccessVal = document.getElementById('inviteHolidayAccess').value !== 'false';
   const kilnRoleVal = document.getElementById('inviteKilnRole').value;
   const trackerAccessVal = document.getElementById('inviteTrackerAccess').value === 'true';
+  const holidayManagerAuthUserId = document.getElementById('inviteHolidayManager').value || null;
   const btn = document.getElementById('inviteBtn');
   showInviteMsg('','');
   if (!email) { showInviteMsg('err','Please enter an email address.'); return; }
@@ -2960,20 +3363,32 @@ async function inviteUser() {
       btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add User';
       return;
     }
+    let holidayManagerValue = holidayManagerAuthUserId;
+    if (holidayManagerValue && !getActiveHolidayManagerProfiles(null).some(function(m) { return String(m.id) === String(holidayManagerValue); })) {
+      holidayManagerValue = null;
+    }
     await saveRequestRow('access', {
       email,
       full_name: name,
       role: platformAccess ? 'viewer' : 'none',
+      holiday_requests_access: holidayAccessVal,
+      holiday_manager_auth_user_id: (kilnRoleVal === 'shift_manager' || kilnRoleVal === 'admin') ? null : holidayManagerValue,
       kiln_role: kilnRoleVal,
       shift_tracker_access: trackerAccessVal,
       status: 'pending',
       requested_at: new Date().toISOString()
     });
+    document.getElementById('inviteEmailUser').value = '';
     document.getElementById('inviteEmail').value = '';
     document.getElementById('inviteName').value = '';
+    document.getElementById('inviteDomain').value='@heidelbergmaterials.com';
     document.getElementById('inviteRole').value='true';
+    document.getElementById('inviteHolidayAccess').value='true';
+    document.getElementById('inviteHolidayManager').value='';
     document.getElementById('inviteKilnRole').value='none';
     document.getElementById('inviteTrackerAccess').value='true';
+    document.getElementById('inviteEmailUser').placeholder = 'username';
+    document.getElementById('inviteEmailUser').type = 'text';
     showInviteMsg('ok', name + ' added to pending queue — set their password in the Users list below.');
     showPlatformToast(name + ' added to queue ✓');
     await loadAllUsers(); loadPendingBadge();
@@ -3017,6 +3432,43 @@ async function loadResetReqBadge() {
     const badge = document.getElementById('resetReqBadge');
     if (badge) { badge.textContent = count; badge.style.display = count > 0 ? 'block' : 'none'; }
   } catch(e) {}
+}
+
+async function loadHolidayReqBadge() {
+  const badge = document.getElementById('holidayReqBadge');
+  if (!badge) return;
+  const userId = _platformProfile && _platformProfile.id ? _platformProfile.id : null;
+  const ku = _platformKilnUser || null;
+  if (!userId || !ku || !ku.is_shift_manager || _platformProfile && _platformProfile.holiday_requests_access === false) {
+    badge.style.display = 'none';
+    badge.textContent = '';
+    return;
+  }
+  try {
+    const { data: staffRows } = await sb.from('pw_profiles').select('id').eq('holiday_manager_auth_user_id', userId);
+    const staffIds = (staffRows || []).map(function(r){ return r.id; }).filter(Boolean);
+    if (!staffIds.length) {
+      badge.style.display = 'none';
+      badge.textContent = '';
+      return;
+    }
+    const { count, error } = await sb.from('holiday_requests').select('id', { count: 'exact', head: true }).eq('status', 'pending').in('auth_user_id', staffIds);
+    if (error) throw error;
+    const pending = count || 0;
+    badge.textContent = pending;
+    badge.style.display = pending > 0 ? 'block' : 'none';
+  } catch(e) {
+    badge.style.display = 'none';
+    badge.textContent = '';
+  }
+}
+
+function openHolidayRequests() {
+  if (!_platformProfile || !_platformKilnUser || !_platformKilnUser.is_shift_manager || _platformProfile.holiday_requests_access === false) {
+    showPlatformToast('Holiday Requests not available');
+    return;
+  }
+  window.location.href = 'holiday-request/index.html?focus=approvals';
 }
 
 function openResetReqModal() {

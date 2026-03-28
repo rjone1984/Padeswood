@@ -165,6 +165,7 @@ body {
   color: var(--tx);
   min-height: 100vh; font-size: 13.5px; line-height: 1.55;
   -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
   transition: background .35s var(--ease-smooth), color .35s var(--ease-smooth);
   animation: pageEnter .45s var(--ease-smooth) both;
 }
@@ -678,6 +679,22 @@ body.app-ready #app {
 .overview-date-picker:active { transform:translateY(0) scale(.98) }
 .overview-date-picker:focus { outline:none; border-color:var(--ac); box-shadow:0 0 0 3px var(--acd1) }
 .overview-date-picker::-webkit-calendar-picker-indicator { cursor:pointer; opacity:.7; }
+.overview-filter-bar {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:18px;
+  flex-wrap:wrap;
+}
+.overview-filter-label {
+  font-size:11px;
+  font-weight:600;
+  color:var(--tx3);
+  font-family:var(--ff-mono);
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  margin-right:4px;
+}
 .page-status { display:flex; align-items:center; gap:8px; margin-top:7px }
 
 .search-wrap { position:relative; margin-bottom:18px }
@@ -1693,7 +1710,7 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
 
 @media(max-width:860px){
   .shifts-grid { grid-template-columns:1fr }
-  .main   { padding:10px 12px 16px }
+  .main   { padding:10px 12px 32px }
   .log-section,
   .notes-section,
   .ca-section,
@@ -1804,9 +1821,77 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
 
   .day-tabs { overflow-x:auto; -webkit-overflow-scrolling:touch; flex-wrap:nowrap; }
   .day-tab  { flex-shrink:0; }
+
+  .page-header {
+    top:54px;
+    flex-direction:column;
+    align-items:stretch;
+    gap:10px;
+  }
+  .page-title-wrap {
+    width:100%;
+    flex-wrap:wrap;
+    gap:8px;
+    align-items:center;
+  }
+  .page-title {
+    font-size:18px;
+    line-height:1.15;
+  }
+  .page-nav-group {
+    width:100%;
+    gap:8px;
+  }
+  .overview-period-group,
+  .overview-date-group {
+    width:100%;
+  }
+  .overview-period-group .page-period-jump {
+    flex:1 1 0;
+    min-width:0;
+  }
+  .overview-date-group {
+    flex-wrap:wrap;
+  }
+  .overview-step-group {
+    width:auto;
+    flex-shrink:0;
+  }
+  .overview-date-picker-wrap {
+    width:100%;
+  }
+  .overview-date-picker {
+    flex:1 1 0;
+    min-width:0;
+    height:28px;
+    font-size:9px;
+  }
+  .page-date {
+    margin-top:0;
+    font-size:9px;
+  }
+  .page-status {
+    margin-top:4px;
+    flex-wrap:wrap;
+  }
+  .overview-filter-bar {
+    gap:6px;
+  }
+  .overview-filter-bar button {
+    flex:1 1 calc(50% - 6px);
+    min-width:0;
+    justify-content:center;
+  }
+  .overview-filter-label {
+    width:100%;
+    margin-right:0;
+    margin-bottom:2px;
+  }
 }
 
 @media(max-width:480px){
+  .main { padding-left:10px; padding-right:10px; padding-bottom:44px; }
+  .stat-grid { grid-template-columns:1fr; }
   .week-cards { grid-template-columns:repeat(2,1fr) }
   .topbar-title { font-size:12px }
   .topbar-left { gap:6px }
@@ -1830,6 +1915,22 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
   .topbar .btn,
   .topbar .btn-icon {
     flex-shrink:0;
+  }
+  .page-header {
+    top:52px;
+    gap:8px;
+  }
+  .overview-period-group,
+  .overview-date-group {
+    gap:6px;
+  }
+  .overview-period-group .page-period-jump,
+  .overview-date-picker,
+  .overview-step-jump {
+    min-height:28px;
+  }
+  .overview-filter-bar button {
+    flex-basis:100%;
   }
 }
 
@@ -2603,7 +2704,7 @@ async function restoreKilnSharedSession(){
     sb.auth.signOut().catch(function(){});
     return true;
   }
-  await _applyUserSession(match);
+  await _applyUserSession(match, session.user);
   return true;
 }
 
@@ -2865,13 +2966,23 @@ async function doLogin(){
       return;
   }
 
-  _applyUserSession(match);
+  _applyUserSession(match, session.user);
 }
 
-async function _applyUserSession(match){
+async function _applyUserSession(match, sessionUser){
   document.body.classList.remove('app-ready');
   currentUser     = match.username;
-  currentUserLogon = match.email || match.username || null;
+  const loginLabel = String(match.locked_name || '').trim();
+  const emailLabel = String(match.email || '').trim();
+  const usernameLabel = String(match.username || '').trim();
+  const fullNameLabel = String((sessionUser && sessionUser.user_metadata && sessionUser.user_metadata.full_name) || (sessionUser && sessionUser.user_metadata && sessionUser.user_metadata.name) || '').trim();
+  const emailLocal = emailLabel && emailLabel.includes('@') ? emailLabel.split('@')[0].trim().toLowerCase() : '';
+  const looksShortLogin = loginLabel && (
+    (!/\s/.test(loginLabel) && /^[a-z0-9._-]{3,}$/i.test(loginLabel)) ||
+    (emailLocal && loginLabel.toLowerCase() === emailLocal) ||
+    (usernameLabel && loginLabel.toLowerCase() === usernameLabel.toLowerCase())
+  );
+  currentUserLogon = fullNameLabel || emailLabel || (currentUser && currentUser.user_metadata && currentUser.user_metadata.email) || null;
   currentUserThemeId = match.auth_user_id || match.email || match.username || null;
   isAdmin         = match.is_admin || false;
   isShiftManager  = match.is_shift_manager || false;
@@ -2897,7 +3008,7 @@ async function _applyUserSession(match){
 
   document.getElementById('splash').style.display='none';
   document.getElementById('app').style.display='block';
-  document.getElementById('userLabel').textContent = currentUserLogon || currentUser;
+  document.getElementById('userLabel').textContent = currentUserLogon || currentUser || '—';
   UM_SELF_ID = match.auth_user_id || null;
   document.getElementById('manageListsBtn').style.display = isAdmin ? '' : 'none';
   const _cdBtn = document.getElementById('clearDayBtn'); if(_cdBtn) _cdBtn.style.display = isAdmin ? '' : 'none';
@@ -5450,7 +5561,7 @@ function renderRows(sk,entries){
         if(v){
           var now=new Date();
           var ts=now.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})+' '+now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-          var actor=lockedName||currentUserLogon||currentUser||'';
+          var actor=currentUserLogon||lockedName||currentUser||'';
           entry.statusBy=actor;
           entry.statusAt=ts;
           if(actor && !entry.flaggedBy) entry.flaggedBy=actor;
@@ -6931,7 +7042,7 @@ async function resolveFeedbackIssue(idx){
     showToast('You do not have permission to resolve feedback');
     return;
   }
-  const resolverName = lockedName || currentUserLogon || currentUser || '';
+  const resolverName = currentUserLogon || lockedName || currentUser || '';
   const now = new Date();
   const ts = now.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})+' '+now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
 
@@ -7144,7 +7255,7 @@ async function reopenFeedbackIssue(idx){
     showToast('You do not have permission to reopen feedback');
     return;
   }
-  const reopenerName = lockedName || currentUserLogon || currentUser || '';
+  const reopenerName = currentUserLogon || lockedName || currentUser || '';
   const now = new Date();
   const ts = now.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})+' '+now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
 
@@ -7417,7 +7528,7 @@ function wbSave(tid){
   if(actual) _wbData[tid].actual = actual.value.trim();
   if(status){ _wbData[tid].status = status.value; wbUpdate(tid); }
   if(note)   _wbData[tid].note   = note.value.trim();
-  _wbData[tid].editedBy = lockedName || currentUserLogon || currentUser;
+  _wbData[tid].editedBy = currentUserLogon || lockedName || currentUser;
   _wbData[tid].editedAt = new Date().toISOString();
   saveWhiteboardData();
   showToast('Saved ✓');
@@ -7462,7 +7573,7 @@ function wbSaveNotes(){
   if(!ta) return;
   if(!_wbData['__notes__']) _wbData['__notes__'] = {};
   _wbData['__notes__'].text     = ta.value;
-  _wbData['__notes__'].editedBy = lockedName || currentUserLogon || currentUser;
+  _wbData['__notes__'].editedBy = currentUserLogon || lockedName || currentUser;
   _wbData['__notes__'].editedAt = new Date().toISOString();
   saveWhiteboardData();
   const auditEl = document.getElementById('wb-notes-audit');
@@ -7560,7 +7671,7 @@ function setEntryStatus(sk,i,val){
   if(val){
     const now=new Date();
     const ts=now.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})+' '+now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-    const actor=lockedName||currentUserLogon||currentUser||'';
+    const actor=currentUserLogon||lockedName||currentUser||'';
     entry.statusBy=actor;
     entry.statusAt=ts;
     if(actor && !entry.flaggedBy) entry.flaggedBy=actor;
@@ -7972,8 +8083,8 @@ function renderOverview(){
   mc.appendChild(hdr);
   if(canSeeAllOverview){
     const filterBar = document.createElement('div');
-    filterBar.style.cssText = 'display:flex;align-items:center;gap:8px;margin-bottom:18px;flex-wrap:wrap;';
-    filterBar.innerHTML = '<span style="font-size:11px;font-weight:600;color:var(--tx3);font-family:var(--ff-mono);letter-spacing:.08em;text-transform:uppercase;margin-right:4px">Include:</span>';
+    filterBar.className = 'overview-filter-bar';
+    filterBar.innerHTML = '<span class="overview-filter-label">Include:</span>';
     [['burners','Kiln Burners','var(--role-burner)'],['managers','Shift Managers','var(--role-manager)'],['electricians','Electricians','var(--role-electrician)'],['mechanicals','Mechanical','var(--role-mechanical)'],['analysts','Cement Analysts','var(--role-analyst)']].forEach(function(t){
       const key=t[0],label=t[1],col=t[2];
       const btn=document.createElement('button');
@@ -8821,7 +8932,7 @@ const PRINT_ROLE_VARS = ':root{--role-burner:#1a7a35;--role-manager:#7c3aed;--ro
 const PRINT_PAGE_STYLE = '<style>@page{margin:1.5cm}'+PRINT_ROLE_VARS+'body{margin:0;padding:20px;font-family:Arial,sans-serif}</style>';
 
 function openPrintWindow(days, note, inclBurners, inclSM, inclEL, inclMECH, inclCA, win){
-  const printedBy = lockedName || currentUserLogon || currentUser || 'Unknown user';
+  const printedBy = currentUserLogon || lockedName || currentUser || 'Unknown user';
   const tally = {};
   if(inclBurners){
     days.forEach(function(day){
@@ -9010,7 +9121,7 @@ document.addEventListener('keydown',e=>{
 });
 
 function openPrintOverview(note, win, inclBurners, inclSM, inclEL, inclMECH, inclCA){
-  const printedBy = lockedName || currentUserLogon || currentUser || 'Unknown user';
+  const printedBy = currentUserLogon || lockedName || currentUser || 'Unknown user';
   var totalIssues=0, filledDays=0, totalShifts=0;
   var shiftManagerNoteCount=0, electricianNoteCount=0, mechanicalNoteCount=0, analystEntryCount=0;
   DAYS.forEach(function(d){
