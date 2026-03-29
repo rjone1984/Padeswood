@@ -560,6 +560,15 @@ body.loading-start.loaded-ready{
 .form-card .input[type="date"]{
   min-height:44px;
 }
+.form-card .input[type="date"],
+.retro-date,
+.retro-end{
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  box-sizing:border-box;
+  display:block;
+}
 .form-card .field-note{
   font-size:11px;
   color:var(--tx2);
@@ -867,6 +876,13 @@ body.loading-start.loaded-ready{
   .field.wide,.field.full{grid-column:auto}
   .field{padding:11px}
   .form-grid > *{min-width:0}
+  .form-card .input[type="date"],
+  .retro-date,
+  .retro-end{
+    font-size:12px;
+    padding-inline:10px;
+    padding-block:0;
+  }
   .request-grid{grid-template-columns:1fr}
   .staff-row{grid-template-columns:1fr;gap:8px}
   .staff-card summary{padding:12px}

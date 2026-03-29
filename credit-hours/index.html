@@ -606,6 +606,14 @@ body.loading-start.loaded-ready{
 .form-card .input[type="date"]{
   min-height:44px;
 }
+.form-card .input[type="date"],
+#reqStart{
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  box-sizing:border-box;
+  display:block;
+}
 .form-card .field-note{
   font-size:11px;
   color:var(--tx2);
@@ -1099,6 +1107,12 @@ body.loading-start.loaded-ready{
   .input,.textarea,.select{padding:11px 12px;border-radius:11px}
   .textarea{min-height:98px}
   .form-grid > *{min-width:0}
+  .form-card .input[type="date"],
+  #reqStart{
+    font-size:12px;
+    padding-inline:10px;
+    padding-block:0;
+  }
   .form-actions{margin-top:10px}
   .form-actions .btn{width:100%}
   .request-target-box{margin-top:10px;padding:10px 12px}

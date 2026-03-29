@@ -81,6 +81,19 @@ body.light-mode{
     linear-gradient(180deg, rgba(255,255,255,.2), rgba(255,255,255,0)),
     var(--bg);
 }
+body::after{
+  content:'';
+  position:fixed;
+  inset:-8%;
+  pointer-events:none;
+  z-index:0;
+  background:
+    radial-gradient(38% 32% at 12% 12%, rgba(46,204,92,.14), transparent 68%),
+    radial-gradient(26% 22% at 88% 14%, rgba(46,204,92,.10), transparent 70%),
+    radial-gradient(24% 26% at 72% 88%, rgba(33,194,122,.08), transparent 72%);
+  filter:blur(24px) saturate(1.08);
+  opacity:.8;
+}
 body.light-mode .lic-inner,
 body.light-mode #loginScreen .login-card,
 body.light-mode .app-card,
@@ -121,6 +134,7 @@ body.light-mode .coming-card{
     linear-gradient(180deg, rgba(255,255,255,.8), rgba(255,255,255,.62)),
     var(--glass-4);
 }
+/* Suite skin: frosted-glass */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{font-family:var(--ff-body);background:var(--bg);color:var(--tx);
@@ -359,9 +373,11 @@ body :where(.app-card,.coming-card,.icon-btn,.login-btn,.card-arrow,.palette-opt
   max-width: min(92vw, 560px);
   border: 1px solid var(--bd2);
   border-radius: 18px;
-  background: var(--glass-3);
+  background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.04)), var(--glass-3);
   box-shadow: 0 18px 44px rgba(15,23,42,.10);
   overflow: hidden;
+  backdrop-filter: blur(28px) saturate(1.08);
+  -webkit-backdrop-filter: blur(28px) saturate(1.08);
 }
 .palette-head {
   padding: 18px 22px;
@@ -465,9 +481,11 @@ body :where(.app-card,.coming-card,.icon-btn,.login-btn,.card-arrow,.palette-opt
   width: min(440px, 92vw);
   border: 1px solid var(--bd2);
   border-radius: 18px;
-  background: var(--glass-3);
+  background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.04)), var(--glass-3);
   box-shadow: 0 18px 44px rgba(15,23,42,.10);
   overflow: hidden;
+  backdrop-filter: blur(28px) saturate(1.08);
+  -webkit-backdrop-filter: blur(28px) saturate(1.08);
 }
 .manager-requests-head {
   padding: 18px 20px;
@@ -575,17 +593,18 @@ body :where(.app-card,.coming-card,.icon-btn,.login-btn,.card-arrow,.palette-opt
 }
 .app-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;margin-bottom:40px;}
 .app-card{background:
-  radial-gradient(130% 150% at 0% 0%, var(--palette-card-glow-1), transparent 38%),
-  linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,0)),
-  var(--glass-3);border:1px solid var(--bd2);border-radius:16px;padding:24px;
+  radial-gradient(130% 150% at 0% 0%, rgba(255,255,255,.10), transparent 34%),
+  radial-gradient(110% 120% at 100% 100%, var(--palette-card-glow-1), transparent 42%),
+  linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.03)),
+  var(--glass-3);border:1px solid color-mix(in srgb, var(--bd2) 82%, rgba(255,255,255,.28) 18%);border-radius:20px;padding:24px;
   position:relative;overflow:hidden;transition:border-color .28s,box-shadow .28s,transform .28s,filter .28s;
   cursor:pointer;text-decoration:none;display:block;color:inherit;
-  box-shadow:0 18px 46px rgba(0,0,0,.14), inset 0 1px 0 rgba(255,255,255,.04);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  box-shadow:0 20px 48px rgba(0,0,0,.14), inset 0 1px 0 rgba(255,255,255,.14);backdrop-filter:blur(30px) saturate(1.12);-webkit-backdrop-filter:blur(30px) saturate(1.12);
   will-change:transform,box-shadow;}
 .app-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
   background:linear-gradient(90deg,transparent,var(--ac3),transparent);
   background-size:200% 100%;
-  opacity:0;transition:opacity .22s;
+  opacity:.3;transition:opacity .22s;
   animation:lineFlow 8s ease-in-out infinite;
 }
 .app-card::before,
@@ -595,13 +614,13 @@ body :where(.app-card,.coming-card,.icon-btn,.login-btn,.card-arrow,.palette-opt
 }
 .app-card::after{content:'';position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;opacity:.2;
   background:
-    radial-gradient(circle at 18% 0%, var(--palette-card-glow-2), transparent 42%),
+    radial-gradient(circle at 18% 0%, rgba(255,255,255,.12), transparent 42%),
     radial-gradient(circle at 82% 100%, var(--palette-card-glow-1), transparent 44%);
   box-shadow:0 0 0 1px var(--palette-card-border),0 0 18px var(--palette-card-glow-2),0 0 36px var(--palette-card-glow-1);
   transform:scale(1);
   transition:opacity 1s ease, box-shadow 1s ease, transform 1s ease, filter 1s ease;
   animation:appBorderPulse 12s ease-in-out infinite;}
-.app-card:hover{border-color:color-mix(in srgb, var(--ac3) 58%, var(--bd2));box-shadow:0 20px 52px rgba(0,0,0,.16),0 0 0 1px var(--palette-card-border),0 0 14px var(--palette-card-glow-2);transform:translateY(-4px) scale(1.01);}
+.app-card:hover{border-color:color-mix(in srgb, var(--ac3) 58%, var(--bd2));box-shadow:0 24px 58px rgba(0,0,0,.18),0 0 0 1px var(--palette-card-border),0 0 18px var(--palette-card-glow-2);transform:translateY(-4px) scale(1.01);}
 .app-card:hover::before{opacity:1;}
 .app-card:hover::after{
   opacity:.42;
@@ -708,7 +727,7 @@ body :where(.app-card,.coming-card,.icon-btn,.login-btn,.card-arrow,.palette-opt
 .header-logo { background:none !important; box-shadow:none !important; }
 </style>
 </head>
-<body>
+<body class="suite-frosted-glass">
 
 <div id="licenceOverlay">
   <div class="lic-inner">
@@ -1951,12 +1970,11 @@ function showRegMsg(type, text) {
 async function loadPendingBadge() {
   try {
     const profRes = await sb.from('pw_profiles').select('id', { count: 'exact', head: true }).eq('approved', false);
-    const [accessReqs, resetReqs, feedbackReqs] = await Promise.all([
+    const [accessReqs, resetReqs] = await Promise.all([
       loadRequestRows('access', { status: 'pending', ascending: false }),
-      loadRequestRows('reset', { status: 'pending', ascending: false }),
-      loadRequestRows('feedback', { status: 'pending', ascending: false })
+      loadRequestRows('reset', { status: 'pending', ascending: false })
     ]);
-    const reqCount = (accessReqs ? accessReqs.length : 0) + (resetReqs ? resetReqs.length : 0) + (feedbackReqs ? feedbackReqs.length : 0);
+    const reqCount = (accessReqs ? accessReqs.length : 0) + (resetReqs ? resetReqs.length : 0);
     const total = (profRes.count || 0) + reqCount;
     const badge = document.getElementById('pendingBadge');
     if (badge) { badge.textContent = total; badge.style.display = total > 0 ? 'block' : 'none'; }
@@ -2391,6 +2409,7 @@ let _usersCache = [];
 let _kilnUsersCache = [];
 let _platformProfile = null;
 let _platformKilnUser = null;
+let _feedbackDoneRequestsCache = [];
 const SB_URL_PLATFORM = 'https://xnkwrkoxvgptobnmekgv.supabase.co';
 const SB_KEY_PLATFORM = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhua3dya294dmdwdG9ibm1la2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NjAxNTQsImV4cCI6MjA4ODIzNjE1NH0.PrmnJ4eGepac41bQuNPG7TcBaunrfTWdjLtkGLr_2LY';
 
@@ -2551,6 +2570,78 @@ function parseFeedbackRequestPayload(req) {
   return out;
 }
 
+function reviewFeedbackRequestText(summary, details) {
+  const combined = String(summary || '') + '\n' + String(details || '');
+  const normalized = combined
+    .toLowerCase()
+    .replace(/[^\w\s']/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (!normalized) {
+    return { ok: true, reason: '' };
+  }
+  const blockedPatterns = [
+    { label: 'swearing', re: /\b(fuck|fucker|fucking|shit|shithead|bitch|cunt|wanker|arsehole|asshole|dickhead|prick|bastard|bullshit|bollocks|crap)\b/i },
+    { label: 'insults', re: /\b(idiot|moron|stupid|useless|pathetic|trash|twat|loser|clown)\b/i },
+    { label: 'threats', re: /\b(kill yourself|go die|die in a fire|beat you up|hurt you)\b/i },
+    { label: 'slurs', re: /\b(nigger|faggot|retard|spastic)\b/i }
+  ];
+  const hits = [];
+  blockedPatterns.forEach(function(item) {
+    if (item.re.test(normalized)) hits.push(item.label);
+  });
+  if (hits.length) {
+    const uniqueHits = Array.from(new Set(hits));
+    return {
+      ok: false,
+      reason: 'Please remove swearing, insults, threats, or slurs before sending. The local safety check flagged: ' + uniqueHits.join(', ') + '.'
+    };
+  }
+  return { ok: true, reason: '' };
+}
+
+function getFeedbackAllowedApps() {
+  const apps = [{ value: 'Platform', label: 'Platform' }];
+  if (canManagePlatformUsers()) {
+    return apps.concat([
+      { value: 'Holiday Requests', label: 'Holiday Requests' },
+      { value: 'Credit Hours', label: 'Credit Hours' },
+      { value: 'Shift Tracker', label: 'Shift Tracker' },
+      { value: 'Logs', label: 'Logs' }
+    ]);
+  }
+  const profile = _platformProfile || null;
+  const ku = _platformKilnUser || null;
+  if (profile && profile.holiday_requests_access !== false) {
+    apps.push({ value: 'Holiday Requests', label: 'Holiday Requests' });
+  }
+  if (profile && profile.credit_hours_access !== false) {
+    apps.push({ value: 'Credit Hours', label: 'Credit Hours' });
+  }
+  if (profile && profile.shift_tracker_access !== false) {
+    apps.push({ value: 'Shift Tracker', label: 'Shift Tracker' });
+  }
+  if (ku && (ku.shift_log_access !== false || hasAnyKilnRole(ku) || ku.is_admin)) {
+    apps.push({ value: 'Logs', label: 'Logs' });
+  }
+  return apps;
+}
+
+function populateFeedbackAppSelect() {
+  const appEl = document.getElementById('feedbackReqApp');
+  if (!appEl) return;
+  const apps = getFeedbackAllowedApps();
+  const current = String(appEl.value || 'Platform');
+  appEl.innerHTML = apps.map(function(app) {
+    return '<option value="'+esc(app.value)+'">'+esc(app.label)+'</option>';
+  }).join('');
+  if (apps.some(function(app) { return app.value === current; })) {
+    appEl.value = current;
+  } else if (apps.length) {
+    appEl.value = apps[0].value;
+  }
+}
+
 function openFeedbackRequestModal() {
   const overlay = document.getElementById('feedbackReqOverlay');
   const typeEl = document.getElementById('feedbackReqType');
@@ -2560,7 +2651,8 @@ function openFeedbackRequestModal() {
   const msgEl = document.getElementById('feedbackReqMsg');
   if (!overlay) return;
   if (typeEl) typeEl.value = 'feature';
-  if (appEl) appEl.value = 'Platform';
+  populateFeedbackAppSelect();
+  if (appEl) appEl.value = appsContainsValue(getFeedbackAllowedApps(), 'Platform') ? 'Platform' : ((appEl && appEl.options && appEl.options[0]) ? appEl.options[0].value : 'Platform');
   if (summaryEl) summaryEl.value = '';
   if (detailsEl) detailsEl.value = '';
   if (msgEl) msgEl.style.display = 'none';
@@ -2568,6 +2660,10 @@ function openFeedbackRequestModal() {
   setTimeout(function() {
     if (summaryEl) summaryEl.focus();
   }, 60);
+}
+
+function appsContainsValue(apps, value) {
+  return (apps || []).some(function(app) { return app && app.value === value; });
 }
 
 function closeFeedbackRequestModal() {
@@ -2588,6 +2684,7 @@ async function submitFeedbackRequest() {
   const summaryEl = document.getElementById('feedbackReqSummary');
   const detailsEl = document.getElementById('feedbackReqDetails');
   const msgEl = document.getElementById('feedbackReqMsg');
+  const btn = document.querySelector('#feedbackReqOverlay .btn-iso');
   const category = typeEl ? String(typeEl.value || 'feature') : 'feature';
   const app = appEl ? String(appEl.value || 'Platform') : 'Platform';
   const summary = summaryEl ? summaryEl.value.trim() : '';
@@ -2614,17 +2711,31 @@ async function submitFeedbackRequest() {
     }
     return;
   }
+  const review = reviewFeedbackRequestText(summary, details);
+  if (!review.ok) {
+    if (msgEl) {
+      msgEl.textContent = review.reason;
+      msgEl.style.display = 'block';
+      msgEl.style.background = 'var(--redd)';
+      msgEl.style.color = 'var(--red)';
+      msgEl.style.border = '1px solid var(--redb)';
+    }
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = 'Send Request';
+    }
+    return;
+  }
   if (msgEl) msgEl.style.display = 'none';
-  const btn = document.querySelector('#feedbackReqOverlay .btn-iso');
   if (btn) {
     btn.disabled = true;
     btn.textContent = 'Sending…';
   }
   try {
-    await saveRequestRow('feedback', {
+    await saveRequestRow('access', {
       full_name: reporterName,
       email: reporterEmail,
-      role: category,
+      role: 'feedback_' + category,
       kiln_role: JSON.stringify({ app: app, summary: summary, details: details }),
       status: 'pending',
       requested_at: new Date().toISOString()
@@ -2658,13 +2769,43 @@ async function resolveFeedbackRequest(reqId, status) {
     showPlatformToast('Admin only');
     return;
   }
-  const req = _feedbackRequestsCache.find(function(x){ return String(x.id) === String(reqId); }) || { id: reqId, requestType: 'feedback', requestTable: PW_REQUESTS_TABLE };
+  const req = _feedbackRequestsCache.find(function(x){ return String(x.id) === String(reqId); })
+    || _feedbackDoneRequestsCache.find(function(x){ return String(x.id) === String(reqId); })
+    || { id: reqId, requestType: 'access', requestTable: PW_REQUESTS_TABLE };
   try {
     await updateRequestRow(req, { status: status });
-    _feedbackRequestsCache = _feedbackRequestsCache.filter(function(x){ return String(x.id) !== String(reqId); });
+    if (status === 'done') {
+      _feedbackRequestsCache = _feedbackRequestsCache.filter(function(x){ return String(x.id) !== String(reqId); });
+      _feedbackDoneRequestsCache = _feedbackDoneRequestsCache.filter(function(x){ return String(x.id) !== String(reqId); });
+      _feedbackDoneRequestsCache.push(normalizeRequestRow(Object.assign({}, req, { status: 'done' }), 'access', PW_REQUESTS_TABLE));
+    } else {
+      _feedbackRequestsCache = _feedbackRequestsCache.filter(function(x){ return String(x.id) !== String(reqId); });
+      _feedbackDoneRequestsCache = _feedbackDoneRequestsCache.filter(function(x){ return String(x.id) !== String(reqId); });
+    }
     renderAllUsers();
     loadPendingBadge();
-    showPlatformToast(status === 'done' ? 'Marked fixed ✓' : 'Dismissed ✓');
+    showPlatformToast(status === 'done' ? 'Marked complete ✓' : 'Updated ✓');
+  } catch (e) {
+    showPlatformToast('Failed: ' + (e && e.message ? e.message : String(e)));
+  }
+}
+
+async function deleteFeedbackRequest(reqId) {
+  if (!canManagePlatformUsers()) {
+    showPlatformToast('Admin only');
+    return;
+  }
+  const req = _feedbackRequestsCache.find(function(x){ return String(x.id) === String(reqId); })
+    || _feedbackDoneRequestsCache.find(function(x){ return String(x.id) === String(reqId); })
+    || { id: reqId, requestType: 'access', requestTable: PW_REQUESTS_TABLE };
+  if (!confirm('Delete this feedback request permanently?\n\nThis will remove it from the admin queue.')) return;
+  try {
+    await deleteRequestRow(req);
+    _feedbackRequestsCache = _feedbackRequestsCache.filter(function(x){ return String(x.id) !== String(reqId); });
+    _feedbackDoneRequestsCache = _feedbackDoneRequestsCache.filter(function(x){ return String(x.id) !== String(reqId); });
+    renderAllUsers();
+    loadPendingBadge();
+    showPlatformToast('Request deleted ✓');
   } catch (e) {
     showPlatformToast('Failed: ' + (e && e.message ? e.message : String(e)));
   }
@@ -2680,7 +2821,8 @@ function renderFeedbackRequestsSection() {
     + '</span></div>';
   _feedbackRequestsCache.forEach(function(req) {
     const payload = parseFeedbackRequestPayload(req);
-    const isBug = String(req && req.role ? req.role : '').toLowerCase() === 'bug';
+    const rawRole = String(req && req.role ? req.role : '').toLowerCase();
+    const isBug = rawRole === 'feedback_bug';
     const typeLabel = isBug ? 'Bug report' : 'Feature request';
     const typeBg = isBug ? 'var(--redd)' : 'var(--purd)';
     const typeBd = isBug ? 'var(--redb)' : 'var(--purb)';
@@ -2699,12 +2841,53 @@ function renderFeedbackRequestsSection() {
       + '<div style="font-size:10px;color:var(--tx3);font-family:var(--ff-mono);margin-top:6px">By '+esc(reporter)+' · '+esc(req && req.email ? req.email : '—')+'</div>'
       + '</div>'
       + '<div style="display:flex;align-items:center;gap:8px;flex-shrink:0">'
-      + '<button type="button" onclick="resolveFeedbackRequest(\''+esc(req.id)+'\',\'done\')" style="height:28px;padding:0 12px;font-size:11px;font-family:var(--ff-head);font-weight:600;background:var(--grnd);border:1px solid var(--grnb);border-radius:var(--rsm);color:var(--grn);cursor:pointer;white-space:nowrap">Mark Fixed</button>'
-      + '<button type="button" onclick="resolveFeedbackRequest(\''+esc(req.id)+'\',\'dismissed\')" style="height:28px;padding:0 10px;font-size:11px;font-family:var(--ff-mono);background:transparent;border:1px solid var(--bd);border-radius:var(--rsm);color:var(--tx3);cursor:pointer;white-space:nowrap">Dismiss</button>'
+      + '<button type="button" onclick="resolveFeedbackRequest(\''+esc(req.id)+'\',\'done\')" style="height:28px;padding:0 12px;font-size:11px;font-family:var(--ff-head);font-weight:600;background:var(--grnd);border:1px solid var(--grnb);border-radius:var(--rsm);color:var(--grn);cursor:pointer;white-space:nowrap">Mark Complete</button>'
+      + '<button type="button" onclick="deleteFeedbackRequest(\''+esc(req.id)+'\')" style="height:28px;padding:0 10px;font-size:11px;font-family:var(--ff-mono);background:transparent;border:1px solid var(--redb);border-radius:var(--rsm);color:var(--red);cursor:pointer;white-space:nowrap">Delete</button>'
       + '</div>'
       + '</div>';
   });
   html += '</div>';
+  return html;
+}
+
+function renderCompletedFeedbackRequestsSection() {
+  if (!_feedbackDoneRequestsCache || !_feedbackDoneRequestsCache.length) return '';
+  let html = '<details style="margin-bottom:12px;padding-bottom:4px;border-bottom:1px solid var(--bd)">'
+    + '<summary style="list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-family:var(--ff-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--tx3);margin-bottom:8px">'
+    + 'Completed Ideas <span style="background:var(--grnd);border:1px solid var(--grnb);color:var(--grn);border-radius:10px;padding:1px 7px;font-size:10px">'+_feedbackDoneRequestsCache.length+'</span>'
+    + '<span style="margin-left:auto;display:flex;align-items:center;gap:6px;flex-wrap:wrap">'
+    + '<button type="button" onclick="event.preventDefault(); event.stopPropagation(); loadAllUsers()" style="height:24px;padding:0 9px;font-size:10px;font-family:var(--ff-head);font-weight:600;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--tx2);cursor:pointer">Refresh</button>'
+    + '<span style="font-size:11px;letter-spacing:0;text-transform:none;color:var(--tx3);font-family:var(--ff-body)">Show / hide</span>'
+    + '</span></summary>';
+  html += '<div style="padding-top:4px">';
+  _feedbackDoneRequestsCache.forEach(function(req) {
+    const payload = parseFeedbackRequestPayload(req);
+    const rawRole = String(req && req.role ? req.role : '').toLowerCase();
+    const isBug = rawRole === 'feedback_bug';
+    const typeLabel = isBug ? 'Bug report' : 'Feature request';
+    const typeBg = isBug ? 'var(--redd)' : 'var(--purd)';
+    const typeBd = isBug ? 'var(--redb)' : 'var(--purb)';
+    const typeColor = isBug ? 'var(--red)' : 'var(--pur)';
+    const reporter = getSuiteDisplayName({ full_name: req && req.full_name ? req.full_name : '' }, null, req && req.full_name ? req.full_name : 'Unknown user');
+    const when = req && req.requested_at ? new Date(req.requested_at).toLocaleString('en-GB') : '—';
+    html += '<div style="background:var(--sf2);border:1px solid var(--bd2);border-radius:var(--rsm);padding:12px 14px;margin-bottom:6px;display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;opacity:.92">'
+      + '<div style="flex:1;min-width:0">'
+      + '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'
+      + '<div style="font-size:12px;font-weight:700;color:var(--tx);font-family:var(--ff-head)">'+esc(payload.app || 'Platform')+'</div>'
+      + '<span style="font-size:10px;font-family:var(--ff-mono);padding:2px 7px;border-radius:10px;background:'+typeBg+';border:1px solid '+typeBd+';color:'+typeColor+'">'+esc(typeLabel)+'</span>'
+      + '<span style="font-size:10px;font-family:var(--ff-mono);color:var(--tx3)">'+esc(when)+'</span>'
+      + '<span style="font-size:10px;font-family:var(--ff-mono);padding:2px 7px;border-radius:10px;background:var(--grnd);border:1px solid var(--grnb);color:var(--grn)">Completed</span>'
+      + '</div>'
+      + '<div style="font-size:13px;font-weight:600;color:var(--tx);font-family:var(--ff-head);margin-top:4px">'+esc(payload.summary || 'No summary')+'</div>'
+      + '<div style="font-size:11px;color:var(--tx2);font-family:var(--ff-body);margin-top:4px;line-height:1.6;white-space:pre-wrap">'+esc(payload.details || 'No details provided')+'</div>'
+      + '<div style="font-size:10px;color:var(--tx3);font-family:var(--ff-mono);margin-top:6px">By '+esc(reporter)+' · '+esc(req && req.email ? req.email : '—')+'</div>'
+      + '</div>'
+      + '<div style="display:flex;align-items:center;gap:8px;flex-shrink:0">'
+      + '<button type="button" onclick="deleteFeedbackRequest(\''+esc(req.id)+'\')" style="height:28px;padding:0 10px;font-size:11px;font-family:var(--ff-mono);background:transparent;border:1px solid var(--redb);border-radius:var(--rsm);color:var(--red);cursor:pointer;white-space:nowrap">Delete</button>'
+      + '</div>'
+      + '</div>';
+  });
+  html += '</div></details>';
   return html;
 }
 
@@ -3451,8 +3634,17 @@ async function loadAllUsers() {
     _usersCache = profRes.data || [];
     _kilnUsersCache = (kilnRes.error ? [] : kilnRes.data) || [];
 
-    _accessRequestsCache = await loadRequestRows('access', { status: 'pending', ascending: false });
-    _feedbackRequestsCache = await loadRequestRows('feedback', { status: 'pending', ascending: false });
+    const pendingAccessRows = await loadRequestRows('access', { status: 'pending', ascending: false });
+    const completedFeedbackRows = await loadRequestRows('access', { status: 'done', ascending: false });
+    _accessRequestsCache = pendingAccessRows.filter(function(req) {
+      return String(req && req.role ? req.role : '').toLowerCase().indexOf('feedback_') !== 0;
+    });
+    _feedbackRequestsCache = pendingAccessRows.filter(function(req) {
+      return String(req && req.role ? req.role : '').toLowerCase().indexOf('feedback_') === 0;
+    });
+    _feedbackDoneRequestsCache = completedFeedbackRows.filter(function(req) {
+      return String(req && req.role ? req.role : '').toLowerCase().indexOf('feedback_') === 0;
+    });
     syncAccessRequestSelection();
     populateHolidayManagerSelect('inviteHolidayManager', document.getElementById('inviteHolidayManager') ? document.getElementById('inviteHolidayManager').value : '', null);
 
@@ -3520,6 +3712,7 @@ function renderAllUsers() {
   }
 
   html += renderFeedbackRequestsSection();
+  html += renderCompletedFeedbackRequestsSection();
 
   ROLE_GROUPS.forEach(function(grp) {
     const members = merged.filter(grp.test);
@@ -4322,7 +4515,7 @@ async function deleteResetReq(btnOrId) {
     </div>
     <div style="flex:1;min-height:0;overflow:auto;padding:18px 22px 20px;display:flex;flex-direction:column;gap:14px">
       <div style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono);line-height:1.6">
-        Use this to request a new feature or report a bug. The admin account will see it inside Platform and can mark it fixed when done.
+        Use this to request a new feature or report a bug. Only apps you can access are shown in the app picker. The admin account will see it inside Platform and can mark it complete when done.
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
         <label style="display:flex;flex-direction:column;gap:6px">
