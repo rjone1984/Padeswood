@@ -173,6 +173,14 @@ body {
   animation: pageEnter .62s cubic-bezier(.16,1,.3,1) both;
 }
 @keyframes pageEnter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes lineFlow{
+  0%,100%{background-position:0% 50%;opacity:.62}
+  50%{background-position:100% 50%;opacity:1}
+}
+@keyframes chipBreath{
+  0%,100%{transform:translateY(0) scale(1);filter:saturate(1)}
+  50%{transform:translateY(-1px) scale(1.015);filter:saturate(1.05)}
+}
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important}
   body{animation:none !important}
@@ -191,6 +199,43 @@ body::before {
   background-image:
     radial-gradient(circle, var(--green-wash-2) 1px, transparent 1px),
     radial-gradient(900px 520px at 50% 0%, var(--green-wash-1), transparent 65%);
+}
+
+.boot-shield {
+  position:fixed; inset:0; z-index:9998;
+  display:flex; align-items:center; justify-content:center;
+  padding:24px 18px; background:var(--bg);
+}
+.boot-shield::before {
+  content:''; position:absolute; inset:0; pointer-events:none; z-index:0;
+  background-image:radial-gradient(circle, var(--green-wash-2) 1px, transparent 1px);
+  background-size:28px 28px; opacity:.9;
+}
+.boot-shield-card {
+  position:relative; z-index:1;
+  display:flex; align-items:center; gap:12px;
+  padding:16px 18px; border:1px solid var(--border2); border-radius:18px;
+  background:var(--glass-3); box-shadow:var(--e3);
+  backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
+}
+.boot-shield-mark {
+  width:44px; height:44px; flex-shrink:0; border-radius:14px;
+  display:flex; align-items:center; justify-content:center;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255,255,255,.98), rgba(255,255,255,.78) 24%, rgba(255,255,255,0) 62%),
+    linear-gradient(135deg, rgba(26,122,53,.12), rgba(46,204,92,.08));
+  border:1px solid var(--border2);
+  box-shadow:0 12px 28px rgba(0,0,0,.10), inset 0 1px 0 rgba(255,255,255,.48);
+  overflow:hidden;
+  animation: heroZzzFloat 8.8s cubic-bezier(.22,1,.36,1) infinite;
+}
+.boot-shield-mark img { width:100%; height:100%; object-fit:contain; display:block; }
+.boot-shield-copy { display:grid; gap:2px; min-width:0; }
+.boot-shield-title {
+  font-family:var(--ff-head); font-size:15px; font-weight:800; color:var(--tx); letter-spacing:-.3px;
+}
+.boot-shield-sub {
+  font-size:9px; font-family:var(--ff-mono); text-transform:uppercase; letter-spacing:2px; color:var(--tx3);
 }
 
 ::-webkit-scrollbar { width:5px; height:5px }
@@ -568,10 +613,12 @@ body.app-ready #app {
 }
 .day-tab.active {
   color:var(--row-accent);
-  background:var(--row-accent-soft);
+  background:linear-gradient(120deg,var(--row-accent-soft) 0%, color-mix(in srgb, var(--row-accent-soft) 60%, var(--row-accent-line) 40%) 48%, var(--row-accent-soft) 100%);
+  background-size:200% 100%;
   border-color:var(--row-accent-line);
   box-shadow:0 10px 20px -14px var(--row-accent-shadow), inset 0 1px 0 rgba(255,255,255,.07);
   transform:none;
+  animation:lineFlow 7.8s ease-in-out infinite;
 }
 .day-tab.today::after {
   content:'NOW';
@@ -963,7 +1010,13 @@ body.app-ready #app {
   color:var(--tx3); cursor:pointer; transition:all .12s;
 }
 .search-scope-btn:hover { border-color:var(--ac); color:var(--ac); }
-.search-scope-btn.active { background:var(--ac); border-color:var(--ac); color:#fff; }
+.search-scope-btn.active {
+  background:linear-gradient(120deg,var(--ac) 0%, color-mix(in srgb, var(--ac) 72%, #fff 28%) 48%, var(--ac) 100%);
+  background-size:200% 100%;
+  border-color:var(--ac);
+  color:#fff;
+  animation:lineFlow 7.2s ease-in-out infinite;
+}
 
 .fb-action-btn{
   min-width:136px;
@@ -1342,8 +1395,10 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
 }
 .stat-card::before {
   content:''; position:absolute; left:0; top:0; bottom:0; width:2px;
-  background:var(--ac); transform:scaleY(0); transition:transform .2s;
+  background:linear-gradient(180deg,var(--ac3),var(--ac)); background-size:100% 200%;
+  transform:scaleY(0); transition:transform .2s;
   transform-origin:bottom;
+  animation:lineFlow 8.2s ease-in-out infinite;
 }
 .stat-card:hover { border-color:color-mix(in srgb, var(--green-edge) 55%, var(--bd2)); box-shadow:var(--e2), 0 0 0 1px rgba(46,204,92,.05) inset }
 .stat-card:hover::before { transform:scaleY(1) }
@@ -1371,7 +1426,14 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
   margin:18px 0 12px; color:var(--tx3); font-size:9px;
   font-family:var(--ff-mono); letter-spacing:1.5px; text-transform:uppercase;
 }
-.section-div::before,.section-div::after { content:''; flex:1; height:1px; background:var(--bd) }
+.section-div::before,.section-div::after {
+  content:'';
+  flex:1;
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--ac3),transparent);
+  background-size:200% 100%;
+  animation:lineFlow 8s ease-in-out infinite;
+}
 
 .overlay {
   position:fixed; inset:0; background:rgba(0,0,0,.60);
@@ -2039,6 +2101,16 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
 </head>
 <body>
 
+<div id="bootShield" class="boot-shield" aria-hidden="true">
+  <div class="boot-shield-card">
+    <div class="boot-shield-mark"><img id="kblBootShieldLogo" alt="Padeswood Works"></div>
+    <div class="boot-shield-copy">
+      <div class="boot-shield-title">Padeswood Works</div>
+      <div class="boot-shield-sub">Opening Logs</div>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <div id="licenceOverlay" style="position:fixed;inset:0;background:var(--bg);z-index:10000;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.3s ease">
@@ -2472,6 +2544,7 @@ const SB_LIC_URL    = 'https://dviicnomxeibbuafbozp.supabase.co';
 const SB_LIC_KEY    = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2aWljbm9teGVpYmJ1YWZib3pwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4ODM0MzcsImV4cCI6MjA4ODQ1OTQzN30.c1T3WXC225tdBbq_1R__9bhGFIZdSxim9dgxfvmkRjU';
 
 async function checkLicence(){
+  syncBootShieldLogo();
   const overlay = document.getElementById('licenceOverlay');
   const msg = document.getElementById('licenceMsg');
   const showTimer = setTimeout(function(){
@@ -2637,7 +2710,21 @@ function setSharedSession(session){
   _sbSession = session && session.access_token ? session.access_token : null;
 }
 
+function dismissBootShield(){
+  const shield = document.getElementById('bootShield');
+  if (shield) shield.style.display = 'none';
+}
+
+function syncBootShieldLogo(){
+  const bootLogo = document.getElementById('kblBootShieldLogo');
+  const splashLogo = document.querySelector('#splash .splash-logo img');
+  if (!bootLogo || !splashLogo) return;
+  const src = splashLogo.currentSrc || splashLogo.src;
+  if (src) bootLogo.src = src;
+}
+
 function showKilnAccessDenied(message){
+  dismissBootShield();
   const splash = document.getElementById('splash');
   const loginCard = document.querySelector('#splash .splash-card');
   const deniedCard = document.getElementById('accessDenied');
@@ -2653,6 +2740,7 @@ function showKilnAccessDenied(message){
 }
 
 function showKilnLoginScreen(){
+  dismissBootShield();
   const splash = document.getElementById('splash');
   const loginCard = document.querySelector('#splash .splash-card');
   const deniedCard = document.getElementById('accessDenied');
@@ -3039,6 +3127,7 @@ async function _applyUserSession(match, sessionUser, profileDisplayName){
   readOnly        = match.is_readonly || false;
   const hasShiftLogAccess = match.shift_log_access !== false || isAdmin;
   if(!hasShiftLogAccess){
+    dismissBootShield();
     errEl.textContent = 'You do not have access to Logs. Please contact your administrator.';
     errEl.style.display = 'block';
     document.getElementById('splash').style.display = 'flex';
@@ -3050,6 +3139,7 @@ async function _applyUserSession(match, sessionUser, profileDisplayName){
   await sbLoadUsers();
   _pwCache = {};
 
+  dismissBootShield();
   document.getElementById('splash').style.display='none';
   document.getElementById('app').style.display='block';
   document.getElementById('userLabel').textContent = currentUserLogon || currentUser || '—';
@@ -6745,6 +6835,19 @@ function deleteAiKnowledgeEntry(idx){
   showToast('Entry removed');
 }
 
+async function clearAiKnowledgeEntries(){
+  if(!isAdmin) { showToast('Only admins can clear knowledge entries'); return; }
+  const entries = Array.isArray(_allLists.ai_knowledge) ? _allLists.ai_knowledge : [];
+  if(!entries.length){ showToast('No knowledge entries to clear'); return; }
+  if(!confirm('Remove all AI knowledge entries? This cannot be undone.')) return;
+  _allLists.ai_knowledge = [];
+  syncAllListRefs();
+  sortAll();
+  await sbSaveList('ai_knowledge', _allLists.ai_knowledge);
+  renderManageTab('ai_knowledge');
+  showToast('AI knowledge cleared');
+}
+
 
 let _wbData = {}; // { targetId: { actual: '', status: 'hit'|'missed'|'inprogress'|'' } }
 
@@ -7956,13 +8059,15 @@ function renderManageTab(tab){
   }
   if(tab==='equipment'){
     cont.innerHTML=`
-      <p style="font-size:12px;color:var(--text-soft);margin-bottom:12px;line-height:1.6">Add or remove equipment. Changes apply to all dropdowns immediately.</p>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap">
+        <p style="font-size:12px;color:var(--text-soft);margin:0;line-height:1.6">Add or remove equipment. Changes apply to all dropdowns immediately.</p>
+        ${isAdmin ? '<button onclick="clearEquipmentList()" class="btn btn-ghost" style="font-size:11px;color:var(--red);border-color:var(--redb);padding:4px 8px;flex-shrink:0">Delete List</button>' : ''}
+      </div>
       <div class="eq-list" id="eqList"></div>
       <div class="add-eq-row"><input type="text" id="newEqInput" placeholder="New equipment name..." onkeydown="if(event.key==='Enter')addEquipmentItem()"><button class="btn btn-primary" onclick="addEquipmentItem()">Add</button></div>`;
     renderEqList();
   } else {
-    const PROTECTED = new Set(['equipment']); // equipment is used in dropdowns, protect it
-    const isDeletable = !PROTECTED.has(tab);
+    const isDeletable = true;
     const label = getManageTabLabel(tab);
     const isBurners=tab==='burners';
     cont.innerHTML=`
@@ -7978,9 +8083,12 @@ function renderManageTab(tab){
   if(tab === 'ai_knowledge'){
     const entries = (_allLists.ai_knowledge || []);
     let html = '<div style="margin-bottom:14px">'
-      + '<p style="font-size:12px;color:var(--tx3);margin-bottom:12px;line-height:1.6">'
+      + '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px">'
+      + '<p style="font-size:12px;color:var(--tx3);margin:0;line-height:1.6">'
       + 'Add facts about your plant that the AI should always know — equipment specs, quality targets, shift patterns, anything relevant. '
       + 'Each entry is a single piece of information. The AI will only use what is recorded here and in the logs — it will not guess.</p>'
+      + (isAdmin && entries.length ? '<button onclick="clearAiKnowledgeEntries()" class="btn btn-ghost" style="font-size:11px;color:var(--red);border-color:var(--redb);padding:4px 8px;flex-shrink:0">Clear All</button>' : '')
+      + '</div>'
       + '<div id="aiKnowledgeList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px">';
     if(entries.length === 0){
       html += '<div style="padding:12px;background:var(--sf2);border:1px solid var(--bd);border-radius:6px;color:var(--tx3);font-size:12px;text-align:center">No knowledge entries yet. Add your first one below.</div>';
@@ -8055,6 +8163,24 @@ function removeEq(name){
     setListSyncState('equipment', saved ? 'connected' : 'local');
     renderManageTabs(currentManageTab);
     renderEqList(); showToast('"'+name+'" removed' + (saved ? '' : ' (saved locally only)'));
+  });
+}
+
+async function clearEquipmentList(){
+  if(!isAdmin) { showToast('Only admins can delete the equipment list'); return; }
+  if(!Array.isArray(equipment) || !equipment.length){ showToast('Equipment list is already empty'); return; }
+  if(!confirm('Delete all equipment entries? This will clear the list for everyone.')) return;
+  equipment = [];
+  sortAll();
+  syncAllListRefs();
+  setListSyncState('equipment', 'syncing');
+  renderManageTabs(currentManageTab);
+  localStorage.setItem('kbl_eq5',JSON.stringify(equipment));
+  sbSaveList('equipment', equipment).then(function(saved){
+    setListSyncState('equipment', saved ? 'connected' : 'local');
+    renderManageTabs(currentManageTab);
+    renderEqList();
+    showToast('Equipment list cleared' + (saved ? '' : ' (saved locally only)'));
   });
 }
 

@@ -112,10 +112,83 @@ body::before{
   z-index:0;
 }
 @keyframes pageEnter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes lineFlow{
+  0%,100%{background-position:0% 50%;opacity:.62}
+  50%{background-position:100% 50%;opacity:1}
+}
+@keyframes chipBreath{
+  0%,100%{transform:translateY(0) scale(1);filter:saturate(1)}
+  50%{transform:translateY(-1px) scale(1.015);filter:saturate(1.05)}
+}
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important}
 }
 .hidden{display:none !important}
+.boot-shield{
+  position:fixed;
+  inset:0;
+  z-index:9998;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px 18px;
+  background:var(--bg);
+}
+.boot-shield::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background-image:radial-gradient(circle,var(--palette-card-glow-2) 1px,transparent 1px);
+  background-size:28px 28px;
+  opacity:.9;
+}
+.boot-shield-card{
+  position:relative;
+  z-index:1;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:16px 18px;
+  border:1px solid var(--border2);
+  border-radius:18px;
+  background:var(--glass-3);
+  box-shadow:var(--e3);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+}
+.boot-shield-mark{
+  width:44px;
+  height:44px;
+  flex-shrink:0;
+  border-radius:14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255,255,255,.98), rgba(255,255,255,.78) 24%, rgba(255,255,255,0) 62%),
+    linear-gradient(135deg, rgba(26,122,53,.12), rgba(46,204,92,.08));
+  border:1px solid var(--border2);
+  box-shadow:0 12px 28px rgba(0,0,0,.10), inset 0 1px 0 rgba(255,255,255,.48);
+  overflow:hidden;
+  animation:holidayLogoFloat 8.8s cubic-bezier(.22,1,.36,1) infinite;
+}
+.boot-shield-mark img{width:100%;height:100%;object-fit:contain;display:block}
+.boot-shield-copy{display:grid;gap:2px;min-width:0}
+.boot-shield-title{
+  font-family:var(--ff-head);
+  font-size:15px;
+  font-weight:800;
+  color:var(--text);
+  letter-spacing:-.3px;
+}
+.boot-shield-sub{
+  font-size:9px;
+  font-family:var(--ff-mono);
+  text-transform:uppercase;
+  letter-spacing:2px;
+  color:var(--text-soft);
+}
 .app-shell,.auth-screen{position:relative;z-index:1}
 .auth-screen{
   min-height:100vh;
@@ -395,7 +468,25 @@ body::before{
 .panel-sub{color:var(--tx2);font-size:12px}
 .tabs{display:flex;gap:8px;flex-wrap:wrap}
 .tab-btn{padding:10px 14px;font-weight:700}
-.tab-btn.active{background:linear-gradient(180deg,var(--acd2),var(--acd1));border-color:var(--ac3);color:var(--ac3)}
+.tab-btn.active{
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(180deg,var(--acd2),var(--acd1));
+  border-color:var(--ac3);
+  color:var(--ac3);
+  animation:chipBreath 6.8s ease-in-out infinite;
+}
+.tab-btn.active::after{
+  content:'';
+  position:absolute;
+  inset:-1px;
+  border-radius:inherit;
+  pointer-events:none;
+  background:linear-gradient(120deg,transparent 0%,rgba(255,255,255,.18) 48%,transparent 100%);
+  background-size:200% 100%;
+  animation:lineFlow 7.6s ease-in-out infinite;
+  opacity:.24;
+}
 .form-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
 .form-grid > *{min-width:0}
 .field.wide{grid-column:span 2}
@@ -521,6 +612,7 @@ body::before{
 .staff-card .staff-summary-right .pill{
   width:max-content;
   white-space:nowrap;
+  animation:chipBreath 7.4s ease-in-out infinite;
 }
 .staff-card .staff-body{
   border-top:1px solid var(--bd);
@@ -783,6 +875,15 @@ body::before{
 </style>
 </head>
 <body>
+<div id="bootShield" class="boot-shield" aria-hidden="true">
+  <div class="boot-shield-card">
+    <div class="boot-shield-mark"><img data-suite-logo alt="Padeswood Works"></div>
+    <div class="boot-shield-copy">
+      <div class="boot-shield-title">Padeswood Works</div>
+      <div class="boot-shield-sub">Opening Holiday Requests</div>
+    </div>
+  </div>
+</div>
 <div id="loginScreen" class="auth-screen hidden">
   <div class="auth-shell">
     <div class="splash-hero">
@@ -1712,6 +1813,10 @@ window.addEventListener('storage', function(e){
 function goBackToPlatform(){
   window.location.href = '../index.html';
 }
+function dismissBootShield(){
+  const el = $('bootShield');
+  if (el) el.classList.add('hidden');
+}
 async function logout(){
   try { if (sb) await sb.auth.signOut(); } catch(e) {}
   currentUser = null;
@@ -1731,6 +1836,7 @@ async function logout(){
   window.location.href = '../index.html';
 }
 function showAccessDenied(message){
+  dismissBootShield();
   $('loginScreen').classList.add('hidden');
   $('appShell').classList.add('hidden');
   $('accessDenied').classList.remove('hidden');
@@ -1738,6 +1844,7 @@ function showAccessDenied(message){
   if (small) small.textContent = message || 'You do not have access to Holiday Requests. Please contact your administrator if this is unexpected.';
 }
 function showLoginScreen(){
+  dismissBootShield();
   $('appShell').classList.add('hidden');
   $('accessDenied').classList.add('hidden');
   $('loginScreen').classList.remove('hidden');
@@ -1758,6 +1865,7 @@ function showLoginScreen(){
   loginReady = true;
 }
 function showAppScreen(){
+  dismissBootShield();
   $('loginScreen').classList.add('hidden');
   $('accessDenied').classList.add('hidden');
   $('appShell').classList.remove('hidden');

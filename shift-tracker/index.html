@@ -139,9 +139,82 @@
     position: relative;
   }
   @keyframes pageEnter { from { opacity:0; transform:translateY(8px) } to { opacity:1; transform:none } }
+  @keyframes lineFlow {
+    0%,100% { background-position:0% 50%; opacity:.62; }
+    50% { background-position:100% 50%; opacity:1; }
+  }
+  @keyframes chipBreath {
+    0%,100% { transform:translateY(0) scale(1); filter:saturate(1); }
+    50% { transform:translateY(-1px) scale(1.015); filter:saturate(1.05); }
+  }
   @media (prefers-reduced-motion: reduce) {
     *,*::before,*::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; scroll-behavior:auto !important; }
     body { animation:none !important; }
+  }
+  .boot-shield {
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 18px;
+    background: var(--bg);
+  }
+  .boot-shield::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: radial-gradient(circle, rgba(26,122,53,.06) 1px, transparent 1px);
+    background-size: 28px 28px;
+    opacity: .9;
+  }
+  .boot-shield-card {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 18px;
+    border: 1px solid var(--border2);
+    border-radius: 18px;
+    background: var(--glass-3);
+    box-shadow: var(--e3);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+  }
+  .boot-shield-mark {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+      radial-gradient(circle at 30% 20%, rgba(255,255,255,.98), rgba(255,255,255,.78) 24%, rgba(255,255,255,0) 62%),
+      linear-gradient(135deg, rgba(26,122,53,.12), rgba(46,204,92,.08));
+    border: 1px solid var(--border2);
+    box-shadow: 0 12px 28px rgba(0,0,0,.10), inset 0 1px 0 rgba(255,255,255,.48);
+    overflow: hidden;
+    animation: heroZzzFloat 8.8s cubic-bezier(.22,1,.36,1) infinite;
+  }
+  .boot-shield-mark img { width:100%; height:100%; object-fit:contain; display:block; }
+  .boot-shield-copy { display:grid; gap:2px; min-width:0; }
+  .boot-shield-title {
+    font-family: var(--ff-head);
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -.3px;
+  }
+  .boot-shield-sub {
+    font-size: 9px;
+    font-family: var(--ff-mono);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text3);
   }
   body :where(.splash-btn,.tracker-shell-back,.tracker-shell-icon,.pill,.nav-btn,.tab,.card,.action-btn,.share-btn,.today-btn,.page,.header-btn,.tracker-shell,.modal,.toast,.panel,.shift-panel,.matrix-card,.card,.input,.splash-card) { transition-timing-function: var(--ease-smooth); }
   body::before {
@@ -982,7 +1055,14 @@
   .nav-btn:active { background: var(--bg3); transform: scale(0.95); }
   .tab { cursor: pointer; padding: 8px 13px; border-radius: 8px; font-size: 12px; font-weight: 600; transition: all 0.28s var(--ease-smooth); white-space: nowrap; border: 1px solid transparent; background: var(--glass-2); font-family: var(--ff-body); color: var(--text2); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
   .dark .tab { background: var(--glass-2); }
-  .tab.active { background: var(--glass-3); color: var(--accent2); box-shadow: 0 1px 3px var(--shadow); border-color: var(--border2); }
+  .tab.active {
+    background: linear-gradient(120deg, var(--glass-3) 0%, color-mix(in srgb, var(--glass-3) 72%, var(--accent-soft) 28%) 48%, var(--glass-3) 100%);
+    background-size: 200% 100%;
+    color: var(--accent2);
+    box-shadow: 0 1px 3px var(--shadow);
+    border-color: var(--border2);
+    animation: lineFlow 7.2s ease-in-out infinite;
+  }
   .dark .tab.active { background: var(--glass-3); }
   .tab:active { transform: scale(0.95); }
   input[type="date"], input[type="text"], textarea { font-family: var(--ff-body); font-size: 14px; border: 1px solid var(--border2); border-radius: 7px; padding: 10px 12px; width: 100%; background: var(--glass-4); color: var(--text); outline: none; transition: border-color 0.2s; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
@@ -990,7 +1070,18 @@
   input:focus, textarea:focus { border-color: var(--accent2); box-shadow: 0 0 0 3px var(--accent-soft); }
   .card { background: var(--glass-5); border-radius: 14px; padding: 16px; box-shadow: 0 12px 36px rgba(0,0,0,.12); margin-bottom: 14px; border: 1px solid var(--border2); transition: background 0.3s, border-color 0.3s; position: relative; overflow: hidden; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); }
   .dark .card { background: var(--glass-5); }
-  .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--accent2), transparent); opacity: .85; }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent2), transparent);
+    background-size: 200% 100%;
+    opacity: .85;
+    animation: lineFlow 8s ease-in-out infinite;
+  }
   .badge { display: inline-flex; align-items: center; gap: 3px; padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: 600; letter-spacing: 0.05em; }
   .today-btn { background: var(--glass-6); border: 1px solid var(--border2); border-radius: 7px; padding: 5px 12px; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--text2); font-family: var(--ff-body); transition: all 0.28s var(--ease-smooth); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
   .dark .today-btn { background: var(--glass-6); }
@@ -1163,6 +1254,15 @@
 </style>
 </head>
 <body>
+<div id="bootShield" class="boot-shield" aria-hidden="true">
+  <div class="boot-shield-card">
+    <div class="boot-shield-mark"><img id="stBootShieldLogo" alt="Padeswood Works"></div>
+    <div class="boot-shield-copy">
+      <div class="boot-shield-title">Padeswood Works</div>
+      <div class="boot-shield-sub">Opening Shift Tracker</div>
+    </div>
+  </div>
+</div>
 
 <div id="licenceOverlay" style="position:fixed;inset:0;background:var(--bg);z-index:10000;display:none;align-items:center;justify-content:center;opacity:0;transition:opacity .3s ease">
   <div style="width:min(420px,92vw);background:var(--bg2);border:1px solid var(--border2);border-radius:14px;padding:24px;box-shadow:var(--e3);position:relative;overflow:hidden">
@@ -1984,13 +2084,20 @@ function stShowError(text) {
 function stSyncSplashBrandLogo() {
   const splashLogo = document.getElementById('stSplashLogo');
   const splashHeroLogo = document.getElementById('stSplashHeroLogo');
+  const bootLogo = document.getElementById('stBootShieldLogo');
   const headerLogo = document.querySelector('.tracker-shell-mark img');
   if (!splashLogo || !headerLogo) return;
   const src = headerLogo.currentSrc || headerLogo.src;
   if (src) {
     splashLogo.src = src;
     if (splashHeroLogo) splashHeroLogo.src = src;
+    if (bootLogo) bootLogo.src = src;
   }
+}
+
+function stDismissBootShield() {
+  const shield = document.getElementById('bootShield');
+  if (shield) shield.style.display = 'none';
 }
 
 async function stSyncThemeFromUser(user) {
@@ -2005,6 +2112,7 @@ async function stSyncThemeFromUser(user) {
 function stRevealApp() {
   const els = stGetEls();
   stCancelLoginReveal();
+  stDismissBootShield();
   sessionStorage.setItem('auth', '1');
   if (els.loginArea) els.loginArea.style.display = 'none';
   if (els.splash) els.splash.style.display = 'none';
@@ -2015,6 +2123,7 @@ function stShowLogin() {
   const els = stGetEls();
   const userChip = document.getElementById('stHeaderUser');
   stCancelLoginReveal();
+  stDismissBootShield();
   sessionStorage.removeItem('auth');
   stSyncSplashBrandLogo();
   if (els.splash) {
@@ -2033,6 +2142,7 @@ function stShowAccessDenied(message) {
   const els = stGetEls();
   const userChip = document.getElementById('stHeaderUser');
   stCancelLoginReveal();
+  stDismissBootShield();
   sessionStorage.removeItem('auth');
   if (els.splash) {
     els.splash.style.display = 'block';
@@ -2066,6 +2176,7 @@ async function stProfileAllowed(sb, user) {
 }
 
 async function initShiftTrackerSupabaseAuth() {
+  stSyncSplashBrandLogo();
   if (!(await stCheckLicence())) return;
   const sb = supabase.createClient(ST_SUPABASE_URL, ST_SUPABASE_ANON_KEY);
   stSb = sb;
