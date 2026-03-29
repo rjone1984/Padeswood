@@ -32,6 +32,11 @@
     --accent-soft: rgba(26,122,53,.10);
     --accent-soft-2: rgba(26,122,53,.18);
     --accent-border: rgba(26,122,53,.28);
+    --palette-card-bg-1: rgba(34,168,71,.24);
+    --palette-card-bg-2: rgba(21,92,40,.12);
+    --palette-card-border: rgba(46,204,92,.24);
+    --palette-card-glow-1: rgba(46,204,92,.18);
+    --palette-card-glow-2: rgba(46,204,92,.10);
     --danger-soft: rgba(240,82,79,.10);
     --danger-border: rgba(240,82,79,.28);
     --glass-1: rgba(255,255,255,.96);
@@ -58,6 +63,11 @@
     --accent-soft: rgba(26,122,53,.10);
     --accent-soft-2: rgba(26,122,53,.18);
     --accent-border: rgba(26,122,53,.28);
+    --palette-card-bg-1: rgba(34,168,71,.18);
+    --palette-card-bg-2: rgba(21,92,40,.10);
+    --palette-card-border: rgba(46,204,92,.20);
+    --palette-card-glow-1: rgba(46,204,92,.14);
+    --palette-card-glow-2: rgba(46,204,92,.08);
     --danger-soft: rgba(240,82,79,.10);
     --danger-border: rgba(240,82,79,.28);
     --glass-1: rgba(22,25,31,.72);
@@ -138,6 +148,9 @@
     -webkit-font-smoothing: antialiased;
     position: relative;
   }
+  body.dark {
+    background: var(--bg);
+  }
   @keyframes pageEnter { from { opacity:0; transform:translateY(8px) } to { opacity:1; transform:none } }
   @keyframes lineFlow {
     0%,100% { background-position:0% 50%; opacity:.62; }
@@ -180,8 +193,11 @@
     padding: 16px 18px;
     border: 1px solid var(--border2);
     border-radius: 18px;
-    background: var(--glass-3);
-    box-shadow: var(--e3);
+    background:
+      radial-gradient(140% 120% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
+      linear-gradient(180deg, var(--glass-3), var(--glass-2));
+    border: 1px solid color-mix(in srgb, var(--palette-card-border) 45%, var(--border2));
+    box-shadow: 0 20px 62px rgba(0,0,0,.18), 0 0 0 1px var(--palette-card-border), 0 0 18px var(--palette-card-glow-2);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
   }
@@ -205,7 +221,7 @@
     justify-content: center;
     background:
       radial-gradient(circle at 30% 20%, rgba(255,255,255,.98), rgba(255,255,255,.78) 24%, rgba(255,255,255,0) 62%),
-      linear-gradient(135deg, rgba(26,122,53,.12), rgba(46,204,92,.08));
+      linear-gradient(135deg, var(--palette-card-bg-1), var(--palette-card-bg-2));
     border: 1px solid var(--border2);
     box-shadow: 0 12px 28px rgba(0,0,0,.10), inset 0 1px 0 rgba(255,255,255,.48);
     overflow: hidden;
@@ -234,11 +250,11 @@
     inset: 0;
     pointer-events: none;
     z-index: 0;
-    background-image: radial-gradient(circle, rgba(26,122,53,.06) 1px, transparent 1px);
+    background-image: radial-gradient(circle, var(--palette-card-glow-2) 1px, transparent 1px);
     background-size: 28px 28px;
   }
   body.dark::before {
-    background-image: radial-gradient(circle, rgba(26,122,53,.06) 1px, transparent 1px);
+    background-image: radial-gradient(circle, var(--palette-card-glow-2) 1px, transparent 1px);
   }
   body * { transition: background-color 0.3s, border-color 0.3s, color 0.3s; }
 
@@ -271,7 +287,7 @@
     justify-content: center;
     background:
       radial-gradient(circle at 30% 20%, rgba(255,255,255,.98), rgba(255,255,255,.78) 24%, rgba(255,255,255,0) 62%),
-      linear-gradient(135deg, rgba(26,122,53,.12), rgba(46,204,92,.08));
+      linear-gradient(135deg, var(--palette-card-bg-1), var(--palette-card-bg-2));
     border: 1px solid var(--border2);
     box-shadow: 0 12px 28px rgba(0,0,0,.10), inset 0 1px 0 rgba(255,255,255,.48);
     overflow: hidden;
@@ -563,10 +579,12 @@
   }
   .login-card {
     width: min(560px, 100%);
-    border: 1px solid var(--border2);
+    border: 1px solid color-mix(in srgb, var(--palette-card-border) 42%, var(--border2));
     border-radius: 20px;
-    background: linear-gradient(180deg, var(--glass-1), var(--glass-2));
-    box-shadow: var(--e3), var(--eac);
+    background:
+      radial-gradient(140% 120% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
+      linear-gradient(180deg, var(--glass-1), var(--glass-2));
+    box-shadow: var(--e3), 0 0 0 1px var(--palette-card-border), 0 0 18px var(--palette-card-glow-2), var(--eac);
     padding: 22px;
   }
   .auth-screen .login-card {
@@ -588,7 +606,7 @@
     justify-content: center;
     background:
       radial-gradient(circle at 30% 20%, rgba(255,255,255,.98), rgba(255,255,255,.78) 24%, rgba(255,255,255,0) 62%),
-      linear-gradient(135deg, rgba(26,122,53,.12), rgba(46,204,92,.08));
+      linear-gradient(135deg, var(--palette-card-bg-1), var(--palette-card-bg-2));
     border: 1px solid var(--border2);
     box-shadow: 0 12px 28px rgba(0,0,0,.10), inset 0 1px 0 rgba(255,255,255,.48);
     overflow: hidden;
@@ -1024,21 +1042,27 @@
     gap: 12px;
     height: 56px;
     padding: 0 20px;
-    border-bottom: 1px solid var(--border2);
-    background: var(--glass-1);
+    border-bottom: 1px solid color-mix(in srgb, var(--palette-card-border) 40%, var(--border2));
+    background:
+      radial-gradient(130% 170% at 0% 0%, var(--palette-card-glow-1), transparent 40%),
+      linear-gradient(180deg, var(--glass-1), var(--glass-2)),
+      var(--glass-1);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
     overflow: visible;
   }
   body:not(.dark) .tracker-shell {
     background:
-      radial-gradient(130% 170% at 0% 0%, rgba(26,122,53,.06), transparent 40%),
+      radial-gradient(130% 170% at 0% 0%, var(--palette-card-glow-1), transparent 40%),
       linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.8)),
       var(--glass-1);
-    box-shadow: 0 10px 30px rgba(15,23,42,.055), inset 0 1px 0 rgba(255,255,255,.74);
+    box-shadow: 0 10px 30px rgba(15,23,42,.055), inset 0 1px 0 rgba(255,255,255,.74), 0 0 0 1px var(--palette-card-border);
   }
   .dark .tracker-shell {
-    background: var(--glass-1);
+    background:
+      radial-gradient(130% 170% at 0% 0%, var(--palette-card-glow-1), transparent 40%),
+      linear-gradient(180deg, var(--glass-1), var(--glass-2)),
+      var(--glass-1);
   }
   .tracker-shell::before {
     content: '';
@@ -1047,7 +1071,7 @@
     left: 0;
     right: 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent, var(--accent2), transparent);
+    background: linear-gradient(90deg, transparent, var(--palette-card-glow-1), transparent);
     opacity: .28;
   }
   .tracker-shell-left {
@@ -1062,19 +1086,23 @@
     height: 32px;
     border-radius: 7px;
     border: 1px solid var(--border2);
-    background: var(--glass-2);
+    background:
+      radial-gradient(circle at 30% 20%, color-mix(in srgb, var(--palette-card-glow-1) 42%, transparent) 0%, transparent 56%),
+      var(--glass-2);
     color: var(--text2);
     text-decoration: none;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    transition: border-color .18s, color .18s, background-color .18s;
+    transition: border-color .18s, color .18s, background-color .18s, box-shadow .18s, transform .18s;
   }
   .tracker-shell-back:hover {
-    border-color: var(--accent2);
-    color: var(--accent2);
-    background: var(--accent-soft);
+    border-color: var(--accent);
+    color: #fff;
+    background: linear-gradient(180deg, var(--accent2), var(--accent));
+    box-shadow: 0 0 0 3px var(--accent-soft), 0 0 22px rgba(33,194,122,.34);
+    transform: translateY(-1px) scale(1.06);
   }
   .tracker-shell-mark {
     width: 36px;
@@ -1193,7 +1221,9 @@
     height: 32px;
     border-radius: 7px;
     border: 1px solid var(--border2);
-    background: var(--glass-2);
+    background:
+      radial-gradient(circle at 30% 20%, color-mix(in srgb, var(--palette-card-glow-1) 42%, transparent) 0%, transparent 56%),
+      var(--glass-2);
     color: var(--text2);
     text-decoration: none;
     cursor: pointer;
@@ -1232,6 +1262,25 @@
     background: var(--accent-soft);
     box-shadow: 0 0 0 1px var(--accent-soft-2);
   }
+  .tracker-shell-icon.palette.active {
+    border-color: var(--accent2);
+    color: var(--accent2);
+    background: var(--accent-soft);
+    box-shadow: 0 0 0 1px var(--accent-soft-2), 0 0 18px var(--palette-card-glow-1);
+  }
+  .palette-overlay{
+    position:fixed;
+    inset:0;
+    z-index:15000;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:18px;
+    background:rgba(7,12,20,.56);
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+  }
+  .palette-overlay.open{display:flex}
   #app {
     width: 100%;
     max-width: 900px;
@@ -1293,8 +1342,12 @@
   input[type="date"], input[type="text"], textarea { font-family: var(--ff-body); font-size: 14px; border: 1px solid var(--border2); border-radius: 7px; padding: 10px 12px; width: 100%; background: var(--glass-4); color: var(--text); outline: none; transition: border-color 0.2s; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
   .dark input[type="date"], .dark input[type="text"], .dark textarea { background: var(--glass-4); }
   input:focus, textarea:focus { border-color: var(--accent2); box-shadow: 0 0 0 3px var(--accent-soft); }
-  .card { background: var(--glass-5); border-radius: 14px; padding: 16px; box-shadow: 0 12px 36px rgba(0,0,0,.12); margin-bottom: 14px; border: 1px solid var(--border2); transition: background 0.3s, border-color 0.3s; position: relative; overflow: hidden; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); }
-  .dark .card { background: var(--glass-5); }
+  .card { background:
+      radial-gradient(140% 120% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
+      var(--glass-5); border-radius: 14px; padding: 16px; box-shadow: 0 12px 36px rgba(0,0,0,.12), 0 0 0 1px var(--palette-card-border), 0 0 18px var(--palette-card-glow-2); margin-bottom: 14px; border: 1px solid color-mix(in srgb, var(--palette-card-border) 42%, var(--border2)); transition: background 0.3s, border-color 0.3s; position: relative; overflow: hidden; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); }
+  .dark .card { background:
+      radial-gradient(140% 120% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
+      var(--glass-5); }
   .card::before {
     content: '';
     position: absolute;

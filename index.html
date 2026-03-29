@@ -2332,10 +2332,7 @@ async function loadUserPalette() {
   const shared = await loadSharedPalettePreference();
   if (shared) {
     localStorage.setItem(PALETTE_STORAGE_KEY, shared);
-    applyStoredPalette();
-    return;
   }
-  localStorage.removeItem(PALETTE_STORAGE_KEY);
   applyStoredPalette();
 }
 (function() {

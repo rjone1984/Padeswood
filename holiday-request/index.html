@@ -364,6 +364,13 @@ body.loading-start.loaded-ready{
 }
 .btn{padding:12px 16px;font-weight:700}
 .btn:hover,.icon-btn:hover,.tab-btn:hover,.chip:hover{transform:translateY(-1px);border-color:var(--bd3)}
+.topbar .back-platform-btn:hover{
+  border-color:var(--ac);
+  color:#fff;
+  background:linear-gradient(180deg,var(--ac2),var(--ac));
+  box-shadow:0 0 0 3px var(--acd1),0 0 22px rgba(33,194,122,.34);
+  transform:translateY(-1px) scale(1.06);
+}
 .btn-primary{background:linear-gradient(180deg,var(--acd2),var(--acd1));border-color:var(--ac3);color:var(--ac3)}
 .btn-danger{background:var(--redd);border-color:var(--redb);color:var(--red)}
 .btn-ghost{background:var(--sf3)}
@@ -993,7 +1000,7 @@ body.loading-start.loaded-ready{
 <div id="appShell" class="app-shell hidden">
   <header class="topbar">
     <div class="topbar-left">
-      <button class="icon-btn" type="button" onclick="goBackToPlatform()" title="Back to platform" aria-label="Back to platform">
+      <button class="icon-btn back-platform-btn" type="button" onclick="goBackToPlatform()" title="Back to platform" aria-label="Back to platform">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M15 18l-6-6 6-6"/><path d="M9 12h12"/></svg>
       </button>
       <div class="brand-mark logo-mark md" aria-hidden="true"><img data-suite-logo alt="Padeswood Works"></div>
