@@ -973,6 +973,7 @@ body::before{
       <div class="form-actions">
         <button class="btn btn-primary" type="button" onclick="submitHolidayRequest()">Submit entry</button>
       </div>
+      <div id="submitStatus" class="small" style="margin-top:8px;color:var(--txt2);min-height:1.2em"></div>
     </section>
 
     <section class="panel" id="myRequestsPanel">
@@ -1448,29 +1449,36 @@ function quarterStartForDate(value){
   d.setMonth(d.getMonth() - 3);
   return toLocalDateString(d);
 }
+function requestQuarterDateKey(req, pivotDate){
+  const pivot = pivotDate instanceof Date
+    ? toLocalDateString(pivotDate)
+    : dateKeyFrom(pivotDate || new Date());
+  const workKey = String(req && req.work_date || '').slice(0, 10);
+  if (workKey && (!pivot || workKey <= pivot)) return workKey;
+  const fallback = dateKeyFrom(req && (req.requested_at || req.created_at || req.decided_at));
+  return fallback || workKey || '';
+}
 function rollingQuarterStatsForUser(userId, pivotDate){
-  const pivot = dateKeyFrom(pivotDate || new Date());
+  const pivot = pivotDate instanceof Date
+    ? toLocalDateString(pivotDate)
+    : dateKeyFrom(pivotDate || new Date());
   const start = quarterStartForDate(pivot);
-  const approved = allHolidayRequests.filter(function(r){
-    const workKey = String(r.work_date || '').slice(0, 10);
+  const active = allHolidayRequests.filter(function(r){
+    const workKey = requestQuarterDateKey(r, pivot);
     return String(r.auth_user_id || '') === String(userId || '')
       && requestConsumesBalance(r)
-      && r.status === 'approved'
+      && r.status !== 'cancelled'
+      && r.status !== 'denied'
       && workKey >= start
       && workKey <= pivot;
   });
-  const pending = allHolidayRequests.filter(function(r){
-    const workKey = String(r.work_date || '').slice(0, 10);
-    return String(r.auth_user_id || '') === String(userId || '')
-      && requestConsumesBalance(r)
-      && r.status === 'pending'
-      && workKey >= start
-      && workKey <= pivot;
+  const pending = active.filter(function(r){
+    return r.status === 'pending';
   });
-  const used = approved.reduce(function(sum, r){ return sum + requestCreditHoursEarned(r); }, 0);
+  const used = active.reduce(function(sum, r){ return sum + requestCreditHoursEarned(r); }, 0);
   const pendingHours = pending.reduce(function(sum, r){ return sum + requestCreditHoursEarned(r); }, 0);
   const remaining = Math.max(0, 48 - used);
-  const projected = Math.max(0, 48 - used - pendingHours);
+  const projected = remaining;
   return { used: used, pending: pendingHours, remaining: remaining, projected: projected, start: start, end: pivot };
 }
 function countWeekdays(startStr, endStr){
@@ -1837,11 +1845,29 @@ function setSelectedYear(value){
   selectedYear = year;
   renderHolidayApp();
 }
+function creditClaimAvailableForDate(workDate){
+  if (!currentUser) return true;
+  const stats = statsForUser(currentUser.id, requestYear({ work_date: workDate || new Date() }));
+  const quarterStats = rollingQuarterStatsForUser(currentUser.id, workDate || new Date());
+  return stats.remaining > 0 && quarterStats.remaining > 0;
+}
 function syncRequestedDays(){
   const amountField = $('reqDays');
   if (amountField) {
     amountField.min = '0.5';
     amountField.step = '0.5';
+  }
+  const unitEl = $('reqUnit');
+  if (unitEl) {
+    const creditAllowed = creditClaimAvailableForDate($('reqStart') ? $('reqStart').value : '');
+    const creditOption = Array.from(unitEl.options || []).find(function(opt){ return opt.value === 'credit'; });
+    if (creditOption) {
+      creditOption.disabled = !creditAllowed;
+      creditOption.textContent = creditAllowed ? 'Credit hours' : 'Credit hours (unavailable)';
+    }
+    if (!creditAllowed && unitEl.value === 'credit') {
+      unitEl.value = 'overtime';
+    }
   }
 }
 function syncExtrasUnit(unitInputId, amountInputId){
@@ -2066,6 +2092,7 @@ function renderTeamOverviewCards(){
     const ku = kilnUserFor(p.id);
     const stats = statsForUser(p.id, selectedYear);
     const displayName = personDisplayNameFromRecords(p, ku, 'Unknown');
+    const quarterUsed = stats.quarterUsed;
     const quarterRemaining = stats.quarterRemaining;
     const requestHistory = requestsForUser(p.id).filter(function(r){ return requestMatchesYear(r, selectedYear); }).slice(0, 6);
     return '<details class="staff-card">'+
@@ -2083,8 +2110,8 @@ function renderTeamOverviewCards(){
       '<div class="staff-body">'+
         '<div class="meta" style="font-size:10px">Annual allowance '+esc(requestHoursText(stats.entitlement))+'</div>'+
         '<div class="meta" style="font-size:10px">Credit used '+esc(requestHoursText(stats.used))+'</div>'+
-        '<div class="meta" style="font-size:10px">Quarter used '+esc(requestHoursText(stats.quarterUsed))+'</div>'+
-        '<div class="meta" style="font-size:10px">Quarter left '+esc(requestHoursText(stats.quarterRemaining))+'</div>'+
+        '<div class="meta" style="font-size:10px">Quarter used '+esc(requestHoursText(quarterUsed))+'</div>'+
+        '<div class="meta" style="font-size:10px">Quarter left '+esc(requestHoursText(quarterRemaining))+'</div>'+
         '<div class="meta" style="font-size:10px">Credit left '+esc(requestHoursText(stats.remaining))+'</div>'+
         '<div class="meta" style="font-size:10px">Approved overtime '+esc(requestHoursText(stats.overtime))+'</div>'+
         '<div class="meta" style="font-size:10px">Pending claimed '+esc(requestHoursText(stats.pending))+'</div>'+
@@ -2281,6 +2308,8 @@ function renderAllowanceList(){
 }
 function renderSummary(){
   const stats = statsForUser(currentUser.id, selectedYear);
+  const quarterUsedDisplay = stats.quarterUsed;
+  const quarterRemainingDisplay = stats.quarterRemaining;
   $('statEntitlement').textContent = requestHoursText(stats.entitlement);
   $('statUsed').textContent = requestHoursText(stats.used);
   $('statPending').textContent = requestHoursText(stats.pending);
@@ -2289,8 +2318,12 @@ function renderSummary(){
   $('statEntitlementSub').textContent = 'Default annual credit-hours allowance';
   const quarterUsed = $('statQuarterUsed');
   const quarterRemaining = $('statQuarterRemaining');
-  if (quarterUsed) quarterUsed.textContent = requestHoursText(stats.quarterUsed);
-  if (quarterRemaining) quarterRemaining.textContent = requestHoursText(stats.quarterRemaining);
+  if (quarterUsed) quarterUsed.textContent = requestHoursText(quarterUsedDisplay);
+  if (quarterRemaining) quarterRemaining.textContent = requestHoursText(quarterRemainingDisplay);
+  const quarterUsedSub = quarterUsed ? quarterUsed.parentElement && quarterUsed.parentElement.querySelector('.sub') : null;
+  const quarterRemainingSub = quarterRemaining ? quarterRemaining.parentElement && quarterRemaining.parentElement.querySelector('.sub') : null;
+  if (quarterUsedSub) quarterUsedSub.textContent = 'Approved plus pending credit reserved this quarter';
+  if (quarterRemainingSub) quarterRemainingSub.textContent = 'Remaining after pending claims are reserved';
 }
 function renderHolidayApp(){
   $('yearSelect').value = String(selectedYear);
@@ -2303,7 +2336,7 @@ function renderHolidayApp(){
   const managerViewEnabled = isHolidayAdmin || isApprover;
   if (personalSummary) personalSummary.style.display = isApprover ? 'none' : '';
   if (myRequestsPanel) myRequestsPanel.style.display = isApprover ? 'none' : '';
-  if (myRequestsActivityWrap) myRequestsActivityWrap.style.display = isApprover ? 'none' : '';
+  if (myRequestsActivityWrap) myRequestsActivityWrap.style.display = 'none';
   if (activityPanel) activityPanel.style.display = managerViewEnabled ? '' : 'none';
   const confirmName = $('holidayManagerConfirmName');
   const confirmNote = $('holidayManagerConfirmNote');
@@ -2539,16 +2572,22 @@ async function doLogin(){
 
 async function submitHolidayRequest(){
   if (!currentUser) return;
+  const statusEl = $('submitStatus');
   const workDate = $('reqStart').value;
   const hoursWorked = num($('reqWorkedHours').value, 0);
   const hoursClaimed = num($('reqDays').value, 0);
   const claimType = $('reqUnit').value === 'overtime' ? 'overtime' : 'credit';
   const reason = $('reqReason').value.trim();
+  if (statusEl) statusEl.textContent = '';
   if (!workDate) { setToast('Please choose the date worked.'); return; }
   if (hoursWorked <= 0) { setToast('Please enter the hours worked.'); return; }
   if (hoursClaimed <= 0) { setToast('Please enter the hours to be claimed.'); return; }
   if (hoursClaimed > hoursWorked) { setToast('Claimed hours cannot be greater than hours worked.'); return; }
   if (!reason) { setToast('Please add a reason or note.'); return; }
+  if (claimType === 'credit' && !creditClaimAvailableForDate(workDate)) {
+    setToast('Credit hours are unavailable right now. Please choose paid overtime.');
+    return;
+  }
   const managerName = holidayManagerDisplayNameForUser(currentUser.id);
   const previewReq = {
     auth_user_id: currentUser.id,
@@ -2576,6 +2615,7 @@ async function submitHolidayRequest(){
     : 'Submit this credit-hours entry to ' + managerName + '?';
   if (!confirm(confirmText)) return;
   $('syncLabel').textContent = 'Saving…';
+  if (statusEl) statusEl.textContent = 'Saving your entry...';
   const payload = {
     auth_user_id: currentUser.id,
     requester_name: currentDisplayName(),
@@ -2585,16 +2625,40 @@ async function submitHolidayRequest(){
     hours_claimed: hoursClaimed,
     claim_type: claimType,
     reason,
+    manager_note: '',
     employee_signed_at: new Date().toISOString(),
     employee_signed_name: currentDisplayName(),
     status: 'pending'
   };
-  const { error } = await sb.from('credit_hour_entries').insert(payload);
+  const { data, error } = await sb.from('credit_hour_entries').insert(payload).select('*').maybeSingle();
   if (error) {
     $('syncLabel').textContent = 'Synced';
+    if (statusEl) statusEl.textContent = 'Could not save your entry: ' + error.message;
     setToast('Could not save entry: ' + error.message);
     return;
   }
+  const optimisticEntry = {
+    ...payload,
+    id: data && data.id ? data.id : ('temp_' + Date.now()),
+    requested_at: (data && data.requested_at) || payload.employee_signed_at,
+    created_at: (data && data.created_at) || payload.employee_signed_at
+  };
+  allHolidayRequests.push({ ...optimisticEntry });
+  allHolidayEvents.push({
+    request_id: optimisticEntry.id,
+    action: 'Submitted',
+    new_status: 'pending',
+    note: reason,
+    created_at: optimisticEntry.requested_at || optimisticEntry.created_at || new Date().toISOString(),
+    actor_name: currentDisplayName(),
+    actor_auth_user_id: currentUser.id
+  });
+  const liveQuarterStats = rollingQuarterStatsForUser(currentUser.id, new Date());
+  const quarterUsedEl = $('statQuarterUsed');
+  const quarterRemainingEl = $('statQuarterRemaining');
+  if (quarterUsedEl) quarterUsedEl.textContent = requestHoursText(liveQuarterStats.used);
+  if (quarterRemainingEl) quarterRemainingEl.textContent = requestHoursText(liveQuarterStats.remaining);
+  syncRequestedDays();
   $('reqReason').value = '';
   $('reqDays').value = '0';
   $('reqWorkedHours').value = '0';
@@ -2603,7 +2667,10 @@ async function submitHolidayRequest(){
   await loadHolidayData();
   renderHolidayApp();
   $('syncLabel').textContent = 'Synced';
+  if (statusEl) statusEl.textContent = 'Submitted ✓ It now appears in My entries.';
   setToast('Credit-hours entry submitted ✓');
+  const myEntriesPanel = $('myRequestsPanel');
+  if (myEntriesPanel) myEntriesPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 async function cancelRequest(id){
@@ -2681,7 +2748,7 @@ async function decideRequest(id, decision){
   $('syncLabel').textContent = 'Saving…';
   const { error } = await sb.from('credit_hour_entries').update({
     status: decision,
-    manager_note: note || null,
+    manager_note: note || '',
     decided_by: currentUser.id,
     decided_by_name: currentDisplayName(),
     decided_at: new Date().toISOString()
