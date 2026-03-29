@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'">
+<meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Padeswood Works">
@@ -2711,7 +2714,8 @@ async function restoreKilnSharedSession(){
     sb.auth.signOut().catch(function(){});
     return true;
   }
-  await _applyUserSession(match, session.user);
+  const profileDisplayName = await loadCurrentProfileDisplayName(session.user.id);
+  await _applyUserSession(match, session.user, profileDisplayName);
   return true;
 }
 
@@ -2902,6 +2906,32 @@ function pickBestKilnUser(rows, sessionUser){
   }
   return rows.slice().sort(function(a, b){ return score(b) - score(a); })[0];
 }
+async function loadCurrentProfileDisplayName(authUserId){
+  try {
+    const rows = await sbFetch('/rest/v1/pw_profiles?auth_user_id=eq.' + encodeURIComponent(authUserId) + '&select=full_name,email&limit=1');
+    if(rows && rows.length){
+      const row = rows[0] || {};
+      const fullName = String(row.full_name || '').trim();
+      const email = String(row.email || '').trim();
+      return fullName || email || '';
+    }
+  } catch(e){ console.warn('Profile display name load failed:', e); }
+  return '';
+}
+function resolveCurrentUserDisplayName(match, sessionUser, profileDisplayName){
+  const fullNameLabel = String(profileDisplayName || '').trim();
+  const sessionNameLabel = String((sessionUser && sessionUser.user_metadata && sessionUser.user_metadata.full_name) || (sessionUser && sessionUser.user_metadata && sessionUser.user_metadata.name) || '').trim();
+  const emailLabel = String((sessionUser && sessionUser.email) || match.email || '').trim();
+  const loginLabel = String(match.locked_name || '').trim();
+  const usernameLabel = String(match.username || '').trim();
+  if (fullNameLabel) return fullNameLabel;
+  if (sessionNameLabel) return sessionNameLabel;
+  if (emailLabel && emailLabel.includes('@')) return emailLabel;
+  if (loginLabel && !((!/\s/.test(loginLabel) && /^[a-z0-9._-]{3,}$/i.test(loginLabel)) || (emailLabel && loginLabel.toLowerCase() === emailLabel.split('@')[0].trim().toLowerCase()) || (usernameLabel && loginLabel.toLowerCase() === usernameLabel.toLowerCase()))) {
+    return loginLabel;
+  }
+  return emailLabel || loginLabel || usernameLabel || '—';
+}
 
 async function doLogin(){
   const errEl = document.getElementById('splashErr');
@@ -2973,23 +3003,14 @@ async function doLogin(){
       return;
   }
 
-  _applyUserSession(match, session.user);
+  const profileDisplayName = await loadCurrentProfileDisplayName(session.user.id);
+  _applyUserSession(match, session.user, profileDisplayName);
 }
 
-async function _applyUserSession(match, sessionUser){
+async function _applyUserSession(match, sessionUser, profileDisplayName){
   document.body.classList.remove('app-ready');
   currentUser     = match.username;
-  const loginLabel = String(match.locked_name || '').trim();
-  const emailLabel = String(match.email || '').trim();
-  const usernameLabel = String(match.username || '').trim();
-  const fullNameLabel = String((sessionUser && sessionUser.user_metadata && sessionUser.user_metadata.full_name) || (sessionUser && sessionUser.user_metadata && sessionUser.user_metadata.name) || '').trim();
-  const emailLocal = emailLabel && emailLabel.includes('@') ? emailLabel.split('@')[0].trim().toLowerCase() : '';
-  const looksShortLogin = loginLabel && (
-    (!/\s/.test(loginLabel) && /^[a-z0-9._-]{3,}$/i.test(loginLabel)) ||
-    (emailLocal && loginLabel.toLowerCase() === emailLocal) ||
-    (usernameLabel && loginLabel.toLowerCase() === usernameLabel.toLowerCase())
-  );
-  currentUserLogon = fullNameLabel || emailLabel || (currentUser && currentUser.user_metadata && currentUser.user_metadata.email) || null;
+  currentUserLogon = resolveCurrentUserDisplayName(match, sessionUser, profileDisplayName);
   currentUserThemeId = match.auth_user_id || match.email || match.username || null;
   isAdmin         = match.is_admin || false;
   isShiftManager  = match.is_shift_manager || false;
@@ -3481,8 +3502,10 @@ async function goToToday(){
 }
 async function _gotoTodayAndSwitch(silent, forceBuild){
   if(weekStart) localStorage.setItem('kbl_week_'+toISO(weekStart), JSON.stringify(state));
-  const now=new Date(), dow=now.getDay();
-  const mon=new Date(now); mon.setDate(now.getDate()-(dow===0?6:dow-1));
+  const now=getShiftEffectiveNow();
+  const dow=now.getDay();
+  const mon=normalizeDateOnly(now); mon.setDate(now.getDate()-(dow===0?6:dow-1));
+  mon.setHours(0,0,0,0);
   const iso=toISO(mon);
   if(!weekStart || toISO(weekStart)!==iso){
     weekStart=mon;
@@ -3527,7 +3550,7 @@ async function _gotoTodayAndSwitch(silent, forceBuild){
     DAYS.forEach(d=>{ if(!caState[d]) caState[d]=mkCaDay(); });
   }
   if(forceBuild || !document.getElementById('dayNav-Monday')) buildTabs();
-  const todayIdx=JS_DAY[new Date().getDay()];
+  const todayIdx=JS_DAY[getShiftEffectiveNow().getDay()];
   const today=DAYS[todayIdx]||'Monday';
   currentDay=today;
   currentSmDay=today;
@@ -3553,6 +3576,7 @@ async function _gotoTodayAndSwitch(silent, forceBuild){
 function setWeekToNow(){
   const now=new Date(), dow=now.getDay();
   const mon=new Date(now); mon.setDate(now.getDate()-(dow===0?6:dow-1));
+  mon.setHours(0,0,0,0);
   weekStart=mon;
   const iso=toISO(mon);
   document.getElementById('weekDate').value=iso;
@@ -3560,13 +3584,39 @@ function setWeekToNow(){
 }
 
 function toISO(d){ const z=n=>String(n).padStart(2,'0'); return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}`; }
-function parseLocalDate(s){ if(!s)return new Date(); const[y,m,d]=s.split('-').map(Number); return new Date(y,m-1,d); }
+function normalizeDateOnly(d){
+  const next = new Date(d);
+  next.setHours(0,0,0,0);
+  return next;
+}
+function parseLocalDate(s){
+  if(!s) return normalizeDateOnly(new Date());
+  const[y,m,d]=s.split('-').map(Number);
+  return normalizeDateOnly(new Date(y,m-1,d));
+}
+function getShiftEffectiveNow(){
+  const now = new Date();
+  const effective = normalizeDateOnly(now);
+  if(now.getHours() < 5 || (now.getHours() === 5 && now.getMinutes() < 30)){
+    effective.setDate(effective.getDate() - 1);
+  }
+  return effective;
+}
+function getShiftWeekStart(date){
+  const base = normalizeDateOnly(date || getShiftEffectiveNow());
+  const dow = base.getDay();
+  const monday = normalizeDateOnly(base);
+  monday.setDate(base.getDate() - (dow === 0 ? 6 : dow - 1));
+  monday.setHours(0,0,0,0);
+  return monday;
+}
 function getDateForDay(day){
   if(!weekStart) return null;
   const idx = DAYS.indexOf(day);
-  if(idx < 0) return new Date(weekStart);
-  const d = new Date(weekStart);
+  if(idx < 0) return normalizeDateOnly(weekStart);
+  const d = normalizeDateOnly(weekStart);
   d.setDate(d.getDate()+idx);
+  d.setHours(0,0,0,0);
   return d;
 }
 function syncWeekDateInput(day){
@@ -3793,8 +3843,9 @@ document.getElementById('weekDate').addEventListener('change', async function(){
   if(weekStart){ localStorage.setItem('kbl_week_'+toISO(weekStart), JSON.stringify(state)); }
   const pickedDate = parseLocalDate(this.value);
   const dow = pickedDate.getDay();
-  const monday = new Date(pickedDate);
+  const monday = normalizeDateOnly(pickedDate);
   monday.setDate(pickedDate.getDate() - (dow === 0 ? 6 : dow - 1));
+  monday.setHours(0,0,0,0);
   weekStart = monday;
   const iso = toISO(monday);
   localStorage.setItem('kbl_wk5', iso);
@@ -3835,7 +3886,6 @@ document.getElementById('weekDate').addEventListener('change', async function(){
   DAYS.forEach(function(d){ if(!state[d]) state[d]=mkDay(); });
   DAYS.forEach(function(d){ ensureSmDayState(d); });
   DAYS.forEach(function(d){ if(!caState[d]) caState[d]=mkCaDay(); });
-  buildTabs();
   const dayIdx = JS_DAY[dow];
   currentDay = DAYS[dayIdx] || 'Monday';
   currentSmDay = currentDay;
@@ -3843,6 +3893,7 @@ document.getElementById('weekDate').addEventListener('change', async function(){
   currentMechDay = currentDay;
   currentCaDay = currentDay;
   syncWeekDateInput(currentDay);
+  buildTabs();
   renderPrimaryDay(currentDay);
   updateDots();
   showToast('Switched to week of ' + toISO(weekStart));
@@ -3905,7 +3956,7 @@ function getOverviewAnchorDate(){
   if(window._overviewPickedDate){
     return parseLocalDate(window._overviewPickedDate);
   }
-  return new Date();
+  return normalizeDateOnly(new Date());
 }
 
 function getOverviewActiveDay(){
@@ -3913,16 +3964,16 @@ function getOverviewActiveDay(){
 }
 
 function getOverviewPeriodStart(period, anchorDate){
-  const base = anchorDate || getOverviewAnchorDate();
-  if(period === 'month') return new Date(base.getFullYear(), base.getMonth(), 1);
-  if(period === 'year') return new Date(base.getFullYear(), 0, 1);
-  return new Date(base);
+  const base = normalizeDateOnly(anchorDate || getOverviewAnchorDate());
+  if(period === 'month') return normalizeDateOnly(new Date(base.getFullYear(), base.getMonth(), 1));
+  if(period === 'year') return normalizeDateOnly(new Date(base.getFullYear(), 0, 1));
+  return normalizeDateOnly(base);
 }
 
 function getOverviewPeriodMonday(period, anchorDate){
   const start = getOverviewPeriodStart(period, anchorDate);
   const dow = start.getDay();
-  const monday = new Date(start);
+  const monday = normalizeDateOnly(start);
   monday.setDate(start.getDate() - (dow === 0 ? 6 : dow - 1));
   monday.setHours(0,0,0,0);
   return monday;
@@ -3938,7 +3989,7 @@ async function loadOverviewWeekForDate(isoDate){
   const pickedDate = parseLocalDate(isoDate);
   if(!pickedDate) return null;
   const dow = pickedDate.getDay();
-  const monday = new Date(pickedDate);
+  const monday = normalizeDateOnly(pickedDate);
   monday.setDate(pickedDate.getDate() - (dow === 0 ? 6 : dow - 1));
   monday.setHours(0,0,0,0);
   const mondayIso = toISO(monday);
@@ -3956,7 +4007,7 @@ function sameOverviewWeek(isoDate){
   const pickedDate = parseLocalDate(isoDate);
   if(!pickedDate) return false;
   const dow = pickedDate.getDay();
-  const monday = new Date(pickedDate);
+  const monday = normalizeDateOnly(pickedDate);
   monday.setDate(pickedDate.getDate() - (dow === 0 ? 6 : dow - 1));
   monday.setHours(0,0,0,0);
   return toISO(weekStart) === toISO(monday);
@@ -4092,13 +4143,17 @@ function buildDayHeader(day, subtitle, subtitleColor, switchFnName){
 }
 function weekRange(){
   if(!weekStart) return '';
-  const e=new Date(weekStart); e.setDate(e.getDate()+6);
+  const s = normalizeDateOnly(weekStart);
+  const e=normalizeDateOnly(s); e.setDate(e.getDate()+6);
   return weekStart.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})+' \u2013 '+e.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
 }
 function isToday(day){
   if(!weekStart) return false;
-  const d=new Date(weekStart); d.setDate(d.getDate()+DAYS.indexOf(day));
-  return d.toDateString()===new Date().toDateString();
+  const currentWeekStart = getShiftWeekStart();
+  if(toISO(weekStart) !== toISO(currentWeekStart)) return false;
+  const d=normalizeDateOnly(weekStart); d.setDate(d.getDate()+DAYS.indexOf(day));
+  const today = normalizeDateOnly(getShiftEffectiveNow());
+  return d.toDateString()===today.toDateString();
 }
 
 function buildTabs(){
@@ -6204,7 +6259,7 @@ async function navigateToResult(weekKey, day){
   closeSearchModal();
   if(weekKey !== 'current' && weekKey !== (weekStart ? toISO(weekStart) : null)){
     const [y,m,d] = weekKey.split('-').map(Number);
-    weekStart = new Date(y, m-1, d);
+    weekStart = normalizeDateOnly(new Date(y, m-1, d));
     resetSmWeekState();
     caState = {};
     const burnerData = await sbLoadBurnerWeek(weekKey);

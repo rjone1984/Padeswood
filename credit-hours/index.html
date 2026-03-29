@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'">
+<meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Credit Hours">
@@ -396,6 +399,52 @@ body::before{
 .field.full{grid-column:1/-1}
 .form-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:12px;flex-wrap:wrap}
 .list{display:grid;gap:12px}
+.entry-groups{display:grid;gap:12px}
+.entry-group{
+  border:1px solid var(--bd);
+  border-radius:18px;
+  background:
+    radial-gradient(140% 100% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
+    radial-gradient(120% 100% at 100% 0%, var(--palette-card-glow-2), transparent 48%),
+    linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  box-shadow:var(--e1), var(--eac);
+  overflow:hidden;
+}
+.entry-group summary{
+  list-style:none;
+  cursor:pointer;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+  padding:12px 14px;
+}
+.entry-group summary::-webkit-details-marker{display:none}
+.entry-group .entry-group-left{
+  min-width:0;
+  display:grid;
+  gap:3px;
+}
+.entry-group .entry-group-title{
+  font-family:var(--ff-head);
+  font-size:15px;
+  font-weight:800;
+}
+.entry-group .entry-group-sub{
+  font-size:11px;
+  color:var(--tx2);
+  line-height:1.45;
+}
+.entry-group .entry-group-right{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+.entry-group .entry-group-body{
+  border-top:1px solid var(--bd);
+  padding:12px 14px 14px;
+}
 .empty{
   padding:20px;border:1px dashed var(--bd2);border-radius:18px;color:var(--tx3);
   background:rgba(255,255,255,.02);text-align:center
@@ -762,6 +811,10 @@ body::before{
   .request-grid{grid-template-columns:1fr}
   .request-card,.event-card,.staff-row,.queue-card,.staff-card,.activity-card{border-radius:16px}
   .request-card,.event-card,.staff-row,.queue-card,.staff-card,.activity-card{padding:12px}
+  .entry-group summary{padding:10px 11px;gap:10px}
+  .entry-group .entry-group-title{font-size:14px}
+  .entry-group .entry-group-sub{font-size:10px}
+  .entry-group .entry-group-body{padding:10px 11px 11px}
   .staff-row{grid-template-columns:1fr;gap:8px}
   .staff-card summary{padding:10px 11px;gap:10px}
   .staff-card .staff-summary-right{justify-content:flex-start}
@@ -965,6 +1018,11 @@ body::before{
         <div class="value" id="statProjected">0.0</div>
         <div class="sub">Approved paid overtime this year</div>
       </div>
+      <div class="stat hidden" id="statBreakCover">
+        <div class="label">Break cover</div>
+        <div class="value">0.0</div>
+        <div class="sub" id="statBreakCoverSub">Approved credit from "No break cover provided"</div>
+      </div>
       <div class="stat">
         <div class="label">Quarter Used</div>
         <div class="value" id="statQuarterUsed">0.0</div>
@@ -1007,6 +1065,10 @@ body::before{
         <div class="field full form-card">
           <label for="reqReason">Reason / notes</label>
           <textarea id="reqReason" class="textarea" placeholder="Why were these hours worked, and is there anything the manager should know before approving them?"></textarea>
+          <div id="quickCreditPresetWrap" class="row" style="margin-top:8px;align-items:center">
+            <button class="btn btn-ghost" type="button" onclick="applyOneHourCreditPreset()" style="padding:8px 12px;height:auto">1 hour credit preset</button>
+            <div class="small" style="flex:1;min-width:0">Fills in “No break cover provided”, sets credit hours, and drops the claim to 1 hour.</div>
+          </div>
         </div>
       </div>
       <div class="card-box request-target-box">
@@ -1026,10 +1088,16 @@ body::before{
       <div class="panel-head">
         <div>
           <div class="panel-title">My entries</div>
-          <div class="panel-sub">Your worked-hours entries, manager decisions, and the audit trail for your own records.</div>
+          <div class="panel-sub">Browse your worked-hours history by week, month, or year. Open a period to expand the entries inside.</div>
         </div>
         <div class="queue-controls">
           <span class="pill" id="myRequestCount">0 entries</span>
+          <select id="myRequestGroupSelect" class="select" onchange="setMyRequestGroupMode(this.value)">
+            <option value="week">By week</option>
+            <option value="month">By month</option>
+            <option value="year">By year</option>
+            <option value="all">All entries</option>
+          </select>
         </div>
       </div>
       <div id="myRequests" class="list"></div>
@@ -1252,9 +1320,11 @@ let allHolidayEvents = [];
 let allHolidayProfileEvents = [];
 let allCreditBankHolidays = [];
 let selectedYear = new Date().getFullYear();
+let selectedMyRequestsGroup = 'month';
 let loginReady = false;
 let focusApprovalsOnRender = new URLSearchParams(window.location.search).get('focus') === 'approvals';
 const SHIFT_HOURS = 12;
+const MY_REQUESTS_GROUP_STORAGE_KEY = 'credit_hours_my_requests_group';
 
 function $(id) { return document.getElementById(id); }
 function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
@@ -1438,6 +1508,121 @@ function addMonthsToDateKey(value, months){
   d.setMonth(d.getMonth() + num(months, 0));
   return toLocalDateString(d);
 }
+function normalizeMyRequestGroupMode(value){
+  const mode = String(value || '').toLowerCase();
+  return mode === 'week' || mode === 'month' || mode === 'year' || mode === 'all' ? mode : 'month';
+}
+function getStoredMyRequestGroupMode(){
+  try {
+    return normalizeMyRequestGroupMode(localStorage.getItem(MY_REQUESTS_GROUP_STORAGE_KEY));
+  } catch (e) {
+    return 'month';
+  }
+}
+function setMyRequestGroupMode(value){
+  selectedMyRequestsGroup = normalizeMyRequestGroupMode(value);
+  try {
+    localStorage.setItem(MY_REQUESTS_GROUP_STORAGE_KEY, selectedMyRequestsGroup);
+  } catch (e) {}
+  renderHolidayApp();
+}
+function requestGroupDateKey(req){
+  return String(req && (req.work_date || req.requested_at || req.created_at || req.decided_at) || '').slice(0, 10);
+}
+function weekStartKey(value){
+  const d = parseDateKey(value);
+  if (!d) return '';
+  const day = d.getDay();
+  const delta = day === 0 ? -6 : 1 - day;
+  d.setDate(d.getDate() + delta);
+  return toLocalDateString(d);
+}
+function weekEndKey(value){
+  const start = parseDateKey(weekStartKey(value));
+  if (!start) return '';
+  start.setDate(start.getDate() + 6);
+  return toLocalDateString(start);
+}
+function formatMonthYear(value){
+  const d = parseDateKey(value);
+  if (!d) return 'Undated';
+  return d.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+}
+function requestGroupInfoFor(req, mode){
+  const keyDate = requestGroupDateKey(req);
+  if (!keyDate) {
+    return {
+      groupKey: mode + ':undated',
+      sortKey: '',
+      label: 'Undated',
+      sub: 'No date recorded'
+    };
+  }
+  if (mode === 'week') {
+    const start = weekStartKey(keyDate);
+    const end = weekEndKey(keyDate);
+    return {
+      groupKey: mode + ':' + (start || keyDate),
+      sortKey: start || keyDate,
+      label: start ? 'Week of ' + formatDateOnly(start) : 'Week',
+      sub: start && end ? 'Runs from ' + formatDateOnly(start) + ' to ' + formatDateOnly(end) : 'Grouped by week'
+    };
+  }
+  if (mode === 'month') {
+    return {
+      groupKey: mode + ':' + keyDate.slice(0, 7),
+      sortKey: keyDate.slice(0, 7) + '-01',
+      label: formatMonthYear(keyDate),
+      sub: 'Grouped by month'
+    };
+  }
+  if (mode === 'year') {
+    return {
+      groupKey: mode + ':' + keyDate.slice(0, 4),
+      sortKey: keyDate.slice(0, 4) + '-01-01',
+      label: keyDate.slice(0, 4),
+      sub: 'Grouped by year'
+    };
+  }
+  return {
+    groupKey: 'all:all',
+    sortKey: keyDate,
+    label: 'All entries',
+    sub: 'Flat list'
+  };
+}
+function groupRequestsForMyEntries(rows, mode){
+  const groupsByKey = new Map();
+  const list = rows.slice().sort(function(a, b){
+    return requestListSortValue(b) - requestListSortValue(a);
+  });
+  list.forEach(function(req){
+    const info = requestGroupInfoFor(req, mode);
+    const group = groupsByKey.get(info.groupKey) || {
+      groupKey: info.groupKey,
+      sortKey: info.sortKey || '',
+      label: info.label,
+      sub: info.sub,
+      count: 0,
+      total: 0,
+      items: []
+    };
+    group.count += 1;
+    group.total += requestHours(req);
+    group.items.push(req);
+    groupsByKey.set(info.groupKey, group);
+  });
+  return Array.from(groupsByKey.values()).sort(function(a, b){
+    const aKey = String(a.sortKey || '');
+    const bKey = String(b.sortKey || '');
+    return bKey.localeCompare(aKey) || String(b.label).localeCompare(String(a.label));
+  });
+}
+function requestListSortValue(req){
+  const source = requestGroupDateKey(req);
+  const d = source ? new Date(source + 'T00:00:00') : null;
+  return d && !isNaN(d) ? d.getTime() : 0;
+}
 function normalizeCreditHours(hours){
   return Math.round(num(hours, 0) * 100) / 100;
 }
@@ -1469,6 +1654,8 @@ function previousDayCreditEntry(req){
 }
 function requestCreditMultiplier(req){
   if (!req || !requestConsumesBalance(req)) return 1;
+  const reason = String(req.reason || '').toLowerCase();
+  if (reason.includes('no break cover provided')) return 1;
   if (isWeekendOrBankHoliday(req.work_date)) return 4 / 3;
   const prev = previousDayCreditEntry(req);
   if (prev && num(prev.hours_worked, 0) >= SHIFT_HOURS && num(req.hours_worked, 0) >= SHIFT_HOURS) return 4 / 3;
@@ -1476,6 +1663,8 @@ function requestCreditMultiplier(req){
 }
 function requestCreditMultiplierReason(req){
   if (!req || !requestConsumesBalance(req)) return '';
+  const reason = String(req.reason || '').toLowerCase();
+  if (reason.includes('no break cover provided')) return '';
   if (isWeekendOrBankHoliday(req.work_date)) return 'weekend/bank holiday';
   const prev = previousDayCreditEntry(req);
   if (prev && num(prev.hours_worked, 0) >= SHIFT_HOURS && num(req.hours_worked, 0) >= SHIFT_HOURS) return 'back-to-back 12-hour shift';
@@ -1641,6 +1830,22 @@ function requestKindFromRequest(req){
 function requestHours(req){
   return requestConsumesBalance(req) ? requestCreditHoursEarned(req) : num(req && req.hours_claimed, 0);
 }
+function breakCoverCreditHoursForUser(userId, year){
+  const phrase = 'no break cover provided';
+  return allHolidayRequests
+    .filter(function(r){
+      if (String(r.auth_user_id || '') !== String(userId || '')) return false;
+      if (r.status !== 'approved' || !requestConsumesBalance(r)) return false;
+      if (requestMatchesYear(r, year) !== true) return false;
+      return String(r.reason || '').toLowerCase().includes(phrase);
+    })
+    .reduce(function(sum, r){
+      return sum + requestHours(r);
+    }, 0);
+}
+function canUseOneHourCreditPreset(){
+  return !!(currentKilnUser && (currentKilnUser.is_burner || currentKilnUser.is_cement_analyst));
+}
 function balanceTrafficLightClass(days){
   const n = num(days, 0);
   if (n <= 0) return 'balance-red';
@@ -1745,28 +1950,39 @@ function getStoredPalettePreset(){
 async function persistSharedPalettePreference(key){
   if (!sb || !currentUser || !currentUser.id) return;
   try {
-    const themeKey = 'palette_uid_' + currentUser.id;
-    if (key === 'default') {
-      await sb.from('kiln_config').upsert({
-        key: themeKey,
-        value: 'default'
-      });
-      return;
-    }
-    await sb.from('kiln_config').upsert({
-      key: themeKey,
-      value: key
+    const session = await sb.auth.getSession();
+    const token = session && session.data && session.data.session && session.data.session.access_token;
+    const uid = session && session.data && session.data.session && session.data.session.user && session.data.session.user.id;
+    if (!token || !uid) return;
+    const value = key === 'default' ? 'default' : key;
+    await fetch(SUPABASE_URL + '/rest/v1/kiln_config', {
+      method: 'POST',
+      keepalive: true,
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json',
+        'Prefer': 'resolution=merge-duplicates,return=minimal'
+      },
+      body: JSON.stringify({
+        key: 'palette_uid_' + uid,
+        value: value
+      })
     });
   } catch (e) {}
 }
 async function loadSharedPalettePreference(){
-  if (!sb || !currentUser || !currentUser.id) return null;
   try {
-    const { data } = await sb.from('kiln_config')
-      .select('value')
-      .eq('key', 'palette_uid_' + currentUser.id)
-      .maybeSingle();
-    if (data && data.value && PALETTE_PRESETS[data.value]) return data.value;
+    if (!sb) return null;
+    const session = await sb.auth.getSession();
+    const token = session && session.data && session.data.session && session.data.session.access_token;
+    const uid = session && session.data && session.data.session && session.data.session.user && session.data.session.user.id;
+    if (!token || !uid) return null;
+    const res = await fetch(SUPABASE_URL + '/rest/v1/kiln_config?key=eq.palette_uid_' + uid + '&select=value', {
+      headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + token }
+    });
+    const rows = await res.json();
+    if (rows && rows.length && rows[0].value && (PALETTE_PRESETS[rows[0].value] || rows[0].value === 'default')) return rows[0].value;
   } catch (e) {}
   return null;
 }
@@ -1808,6 +2024,11 @@ function openPaletteModal(){
 function closePaletteModal(){
   $('paletteModal').classList.remove('open');
 }
+window.addEventListener('beforeunload', function(){
+  if (!currentUser || !currentUser.id) return;
+  const preset = getStoredPalettePreset();
+  persistSharedPalettePreference(preset);
+});
 window.addEventListener('storage', function(e){
   if (e.key === PALETTE_STORAGE_KEY) applyStoredPalette();
   if (e.key === 'pw_theme') {
@@ -2052,12 +2273,37 @@ function makeStatusPill(status){
 function renderMyRequests(){
   const box = $('myRequests');
   const rows = requestsForUser(currentUser.id).filter(r => requestMatchesYear(r, selectedYear));
+  const groupMode = normalizeMyRequestGroupMode(selectedMyRequestsGroup);
+  selectedMyRequestsGroup = groupMode;
+  const groupSelect = $('myRequestGroupSelect');
+  if (groupSelect && groupSelect.value !== groupMode) groupSelect.value = groupMode;
   $('myRequestCount').textContent = rows.length + ' entr' + (rows.length === 1 ? 'y' : 'ies');
   if (!rows.length) {
     box.innerHTML = '<div class="empty">No credit-hours entries found for '+selectedYear+'.</div>';
     return;
   }
-  box.innerHTML = rows.map(renderRequestCard).join('');
+  if (groupMode === 'all') {
+    box.innerHTML = rows.map(renderRequestCard).join('');
+    return;
+  }
+  const groups = groupRequestsForMyEntries(rows, groupMode);
+  box.innerHTML = '<div class="entry-groups">' + groups.map(function(group, index){
+    return '<details class="entry-group"' + (index === 0 ? ' open' : '') + '>' +
+      '<summary>' +
+        '<div class="entry-group-left">' +
+          '<div class="entry-group-title">' + esc(group.label) + '</div>' +
+          '<div class="entry-group-sub">' + esc(group.sub) + ' · ' + esc(group.count + ' entr' + (group.count === 1 ? 'y' : 'ies')) + '</div>' +
+        '</div>' +
+        '<div class="entry-group-right">' +
+          '<span class="pill">' + esc(requestHoursText(group.total)) + ' total</span>' +
+          '<span class="pill">' + esc(group.count + ' entr' + (group.count === 1 ? 'y' : 'ies')) + '</span>' +
+        '</div>' +
+      '</summary>' +
+      '<div class="entry-group-body">' +
+        '<div class="list">' + group.items.map(renderRequestCard).join('') + '</div>' +
+      '</div>' +
+    '</details>';
+  }).join('') + '</div>';
 }
 function renderRequestCard(req){
   const events = eventsForRequest(req.id);
@@ -2356,6 +2602,7 @@ function renderSummary(){
   const stats = statsForUser(currentUser.id, selectedYear);
   const quarterUsedDisplay = stats.quarterUsed;
   const quarterRemainingDisplay = stats.quarterRemaining;
+  const breakCoverHours = breakCoverCreditHoursForUser(currentUser.id, selectedYear);
   $('statEntitlement').textContent = requestHoursText(stats.entitlement);
   $('statUsed').textContent = requestHoursText(stats.used);
   $('statPending').textContent = requestHoursText(stats.pending);
@@ -2370,9 +2617,29 @@ function renderSummary(){
   const quarterRemainingSub = quarterRemaining ? quarterRemaining.parentElement && quarterRemaining.parentElement.querySelector('.sub') : null;
   if (quarterUsedSub) quarterUsedSub.textContent = 'Approved plus pending credit reserved this quarter';
   if (quarterRemainingSub) quarterRemainingSub.textContent = 'Remaining after pending claims are reserved';
+  const breakCoverStat = $('statBreakCover');
+  if (breakCoverStat) {
+    breakCoverStat.classList.toggle('hidden', !canUseOneHourCreditPreset());
+    const value = breakCoverStat.querySelector('.value');
+    if (value) value.textContent = requestHoursText(breakCoverHours);
+  }
+  const breakCoverSub = $('statBreakCoverSub');
+  if (breakCoverSub) {
+    breakCoverSub.textContent = 'Approved credit from "No break cover provided"';
+  }
 }
 function renderHolidayApp(){
   $('yearSelect').value = String(selectedYear);
+  const myRequestGroupMode = normalizeMyRequestGroupMode(selectedMyRequestsGroup);
+  selectedMyRequestsGroup = myRequestGroupMode;
+  const myRequestGroupSelect = $('myRequestGroupSelect');
+  if (myRequestGroupSelect && myRequestGroupSelect.value !== myRequestGroupMode) {
+    myRequestGroupSelect.value = myRequestGroupMode;
+  }
+  const quickCreditPresetWrap = $('quickCreditPresetWrap');
+  if (quickCreditPresetWrap) {
+    quickCreditPresetWrap.style.display = canUseOneHourCreditPreset() ? '' : 'none';
+  }
   const requestPanel = $('requestPanel');
   if (requestPanel) requestPanel.style.display = isApprover ? 'none' : '';
   const personalSummary = $('personalSummarySection');
@@ -2418,8 +2685,8 @@ function renderHolidayApp(){
   if (!isApprover && !isHolidayAdmin && myRequestsPanel) {
     const title = myRequestsPanel.querySelector('.panel-title');
     const sub = myRequestsPanel.querySelector('.panel-sub');
-    if (title) title.textContent = 'My entries & activity';
-    if (sub) sub.textContent = 'Your worked-hours history first, followed by recent activity on those entries.';
+    if (title) title.textContent = 'My entries';
+    if (sub) sub.textContent = 'Your worked-hours history, grouped by ' + myRequestGroupMode + '. Open a period to see the entries inside.';
   }
   if (page && activityPanel && approvalsPanel && managerViewEnabled) {
     page.insertBefore(activityPanel, approvalsPanel);
@@ -2461,10 +2728,7 @@ async function ensureHolidayProfile(){
   }
 }
 async function loadHolidayData(){
-  const requestPromise = sb.from('credit_hour_entries').select('*');
-  const eventPromise = sb.from('credit_hour_events').select('*');
-  const profilePromise = sb.from('credit_hour_profiles').select('*');
-  const profileEventPromise = sb.from('credit_hour_profile_events').select('*');
+  const managerScopeEnabled = !!(isHolidayAdmin || isApprover);
   const bankHolidayPromise = sb.from('credit_hour_bank_holidays').select('*').order('holiday_date', { ascending: true });
   const currentManagerId = currentProfile && currentProfile.holiday_manager_auth_user_id ? currentProfile.holiday_manager_auth_user_id : null;
   const currentManagerProfilePromise = currentManagerId
@@ -2473,32 +2737,62 @@ async function loadHolidayData(){
   const currentManagerKilnPromise = currentManagerId
     ? sb.from('kiln_users').select('auth_user_id,locked_name,email,username').eq('auth_user_id', currentManagerId).maybeSingle()
     : Promise.resolve({ data: null });
-  const extraProfilePromise = sb.from('pw_profiles').select('id,full_name,email,approved,disabled,role,credit_hours_access,holiday_manager_auth_user_id').order('full_name', { ascending: true });
-  const kilnUserPromise = sb.from('kiln_users').select('auth_user_id,is_admin,is_shift_manager,is_locked,locked_name,email,username').order('username', { ascending: true });
-  const results = await Promise.all([requestPromise, eventPromise, profilePromise, profileEventPromise, bankHolidayPromise, currentManagerProfilePromise, currentManagerKilnPromise, extraProfilePromise, kilnUserPromise]);
-  const [reqRes, evRes, hpRes, hpEventRes, bankHolidayRes, currentManagerProfRes, currentManagerKilnRes, extraRes, kilnRes] = results;
-  if (reqRes.error) throw reqRes.error;
-  if (evRes.error) throw evRes.error;
-  if (hpRes.error) throw hpRes.error;
-  if (bankHolidayRes.error) throw bankHolidayRes.error;
-  allHolidayRequests = (reqRes.data || []).map(r => ({ ...r }));
-  allHolidayEvents = evRes.data || [];
-  allHolidayProfiles = hpRes.data || [];
-  allHolidayProfileEvents = hpEventRes.data || [];
-  allCreditBankHolidays = bankHolidayRes.data || [];
+  const currentManagerResults = await Promise.all([currentManagerProfilePromise, currentManagerKilnPromise]);
+  const [currentManagerProfRes, currentManagerKilnRes] = currentManagerResults;
   if (currentManagerId) {
     currentHolidayManagerProfile = currentManagerProfRes.data || null;
     currentHolidayManagerKilnUser = currentManagerKilnRes.data || null;
     currentHolidayManagerLabel = holidayManagerDisplayNameFromRecords(currentHolidayManagerProfile, currentHolidayManagerKilnUser);
   }
-  allPwProfiles = (extraRes.data || []);
-  allKilnUsers = (kilnRes.data || []);
+  if (managerScopeEnabled) {
+    const requestPromise = sb.from('credit_hour_entries').select('*');
+    const eventPromise = sb.from('credit_hour_events').select('*');
+    const profilePromise = sb.from('credit_hour_profiles').select('*');
+    const profileEventPromise = sb.from('credit_hour_profile_events').select('*');
+    const extraProfilePromise = sb.from('pw_profiles').select('id,full_name,email,approved,disabled,role,credit_hours_access,holiday_manager_auth_user_id').order('full_name', { ascending: true });
+    const kilnUserPromise = sb.from('kiln_users').select('auth_user_id,is_admin,is_shift_manager,is_burner,is_cement_analyst,is_locked,locked_name,email,username').order('username', { ascending: true });
+    const results = await Promise.all([requestPromise, eventPromise, profilePromise, profileEventPromise, bankHolidayPromise, extraProfilePromise, kilnUserPromise]);
+    const [reqRes, evRes, hpRes, hpEventRes, bankHolidayRes, extraRes, kilnRes] = results;
+    if (reqRes.error) throw reqRes.error;
+    if (evRes.error) throw evRes.error;
+    if (hpRes.error) throw hpRes.error;
+    if (bankHolidayRes.error) throw bankHolidayRes.error;
+    allHolidayRequests = (reqRes.data || []).map(r => ({ ...r }));
+    allHolidayEvents = evRes.data || [];
+    allHolidayProfiles = hpRes.data || [];
+    allHolidayProfileEvents = hpEventRes.data || [];
+    allCreditBankHolidays = bankHolidayRes.data || [];
+    allPwProfiles = (extraRes.data || []);
+    allKilnUsers = (kilnRes.data || []);
+    return;
+  }
+  const requestPromise = sb.from('credit_hour_entries').select('*').eq('auth_user_id', currentUser.id);
+  const profilePromise = sb.from('credit_hour_profiles').select('*').eq('auth_user_id', currentUser.id);
+  const profileEventPromise = sb.from('credit_hour_profile_events').select('*').eq('profile_user_id', currentUser.id);
+  const [reqRes, hpRes, hpEventRes, bankHolidayRes] = await Promise.all([requestPromise, profilePromise, profileEventPromise, bankHolidayPromise]);
+  if (reqRes.error) throw reqRes.error;
+  if (hpRes.error) throw hpRes.error;
+  if (bankHolidayRes.error) throw bankHolidayRes.error;
+  const ownRequests = (reqRes.data || []).map(r => ({ ...r }));
+  const reqIds = ownRequests.map(r => r.id).filter(Boolean);
+  const eventRes = reqIds.length
+    ? await sb.from('credit_hour_events').select('*').in('request_id', reqIds)
+    : { data: [] };
+  if (eventRes.error) throw eventRes.error;
+  allHolidayRequests = ownRequests;
+  allHolidayEvents = eventRes.data || [];
+  allHolidayProfiles = hpRes.data || [];
+  allHolidayProfileEvents = hpEventRes.data || [];
+  allCreditBankHolidays = bankHolidayRes.data || [];
+  allPwProfiles = [currentProfile].filter(Boolean);
+  allKilnUsers = [currentKilnUser].filter(Boolean);
 }
 
 async function initHolidayApp(){
   await applySuiteLogos();
   applyTheme((getStoredThemePref() || (new Date().getHours() >= 7 && new Date().getHours() < 18)) === 'light');
   applyStoredPalette();
+  selectedMyRequestsGroup = getStoredMyRequestGroupMode();
   sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false }
   });
@@ -2541,7 +2835,7 @@ async function hydrateFromSession(){
       return false;
     }
     currentUser = data.session.user;
-    const { data: prof, error: profErr } = await sb.from('pw_profiles').select('*').eq('id', currentUser.id).maybeSingle();
+    const { data: prof, error: profErr } = await sb.from('pw_profiles').select('id,full_name,email,approved,disabled,role,credit_hours_access,holiday_manager_auth_user_id,must_reset_password').eq('id', currentUser.id).maybeSingle();
     if (profErr) throw profErr;
     if (!prof || prof.approved === false || prof.disabled === true || prof.role === 'none' || prof.credit_hours_access === false) {
       await sb.auth.signOut();
@@ -2561,7 +2855,7 @@ async function hydrateFromSession(){
       currentHolidayManagerKilnUser = mgrKiln || null;
       currentHolidayManagerLabel = holidayManagerDisplayNameFromRecords(currentHolidayManagerProfile, currentHolidayManagerKilnUser);
     }
-    const { data: kilnRow, error: kilnErr } = await sb.from('kiln_users').select('auth_user_id,is_admin,is_shift_manager,is_locked,shift_log_access,locked_name,email,username').eq('auth_user_id', currentUser.id).maybeSingle();
+    const { data: kilnRow, error: kilnErr } = await sb.from('kiln_users').select('auth_user_id,is_admin,is_shift_manager,is_burner,is_cement_analyst,is_locked,shift_log_access,locked_name,email,username').eq('auth_user_id', currentUser.id).maybeSingle();
     if (kilnErr) throw kilnErr;
     currentKilnUser = kilnRow || null;
     isApprover = !!(currentKilnUser && currentKilnUser.is_shift_manager && !(currentProfile && currentProfile.holiday_manager_auth_user_id));
@@ -2717,6 +3011,38 @@ async function submitHolidayRequest(){
   setToast('Credit-hours entry submitted ✓');
   const myEntriesPanel = $('myRequestsPanel');
   if (myEntriesPanel) myEntriesPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function applyOneHourCreditPreset(){
+  if (!canUseOneHourCreditPreset()) {
+    setToast('This preset is only available to burners and cement analysts.');
+    return;
+  }
+  const startEl = $('reqStart');
+  const workedEl = $('reqWorkedHours');
+  const claimEl = $('reqDays');
+  const unitEl = $('reqUnit');
+  const reasonEl = $('reqReason');
+  if (!startEl.value) {
+    startEl.value = toLocalDateString(new Date());
+  }
+  if (workedEl) workedEl.value = '1';
+  if (claimEl) claimEl.value = '1';
+  if (unitEl) unitEl.value = 'credit';
+  if (reasonEl) {
+    const phrase = 'No break cover provided';
+    const current = String(reasonEl.value || '').trim();
+    if (!current) {
+      reasonEl.value = phrase;
+    } else if (current.toLowerCase().includes(phrase.toLowerCase())) {
+      reasonEl.value = current;
+    } else {
+      reasonEl.value = phrase + ' - ' + current;
+    }
+    reasonEl.focus();
+  }
+  syncRequestedDays();
+  setToast('1-hour credit preset applied ✓');
 }
 
 async function cancelRequest(id){

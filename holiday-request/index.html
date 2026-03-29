@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'">
+<meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Holiday Requests">
@@ -1393,6 +1396,22 @@ function syncRequestedEndDate(){
   }
   endField.value = addWeekdays(start, amount);
 }
+function syncDateRangeEndDate(startId, unitId, amountId, endId){
+  const startEl = $(startId);
+  const unitEl = $(unitId);
+  const amountEl = $(amountId);
+  const endEl = $(endId);
+  if (!startEl || !unitEl || !amountEl || !endEl) return;
+  const start = startEl.value;
+  const unit = unitEl.value === 'hours' ? 'hours' : 'days';
+  const amount = num(amountEl.value, 0);
+  const days = unit === 'hours' ? amount / SHIFT_HOURS : amount;
+  if (!start || days <= 0) {
+    endEl.value = '';
+    return;
+  }
+  endEl.value = addWeekdays(start, days);
+}
 function requestYear(request){
   if (!request) return selectedYear;
   const source = request.start_date || request.requested_at || request.created_at || '';
@@ -1465,6 +1484,66 @@ function requestSummaryText(req){
   const amountText = requestAmountText(req);
   const kind = requestKindLabel(requestKindFromRequest(req));
   return kind === 'Holiday' ? amountText : kind + ' · ' + amountText;
+}
+async function addRetrospectiveHoliday(userId, startId, endId, amountId, unitId, reasonId){
+  if (!currentUser) return;
+  if (!canAddRetrospectiveHolidayFor(userId)) return;
+  const startEl = $(startId);
+  const endEl = $(endId);
+  const amountEl = $(amountId);
+  const unitEl = $(unitId);
+  const reasonEl = $(reasonId);
+  const start = startEl ? startEl.value : '';
+  const end = endEl ? endEl.value : '';
+  const unit = unitEl && unitEl.value === 'hours' ? 'hours' : 'days';
+  const amountRaw = num(amountEl ? amountEl.value : 0, 0);
+  const reason = String(reasonEl ? reasonEl.value : '').trim();
+  if (!start || !end) { setToast('Please choose both dates.'); return; }
+  if (new Date(start + 'T00:00:00') > new Date(end + 'T00:00:00')) { setToast('The end date must be after the start date.'); return; }
+  const today = toLocalDateString(new Date());
+  if (end > today) { setToast('Retrospective holiday must be for dates in the past.'); return; }
+  if (!reason) { setToast('Please add a reason or note.'); return; }
+  const fallbackAmount = unit === 'hours' ? countWeekdays(start, end) * SHIFT_HOURS : countWeekdays(start, end);
+  const amount = amountRaw > 0 ? amountRaw : fallbackAmount;
+  if (amount <= 0) { setToast('Please enter at least one day or hour.'); return; }
+  const days = unit === 'hours' ? amount / SHIFT_HOURS : amount;
+  const stats = statsForUser(userId, selectedYear);
+  const needed = unit === 'hours' ? amount : days * SHIFT_HOURS;
+  if (stats.remaining < needed) {
+    setToast('Not enough holiday balance remaining for this retrospective entry.');
+    return;
+  }
+  const targetName = holidayManagerDisplayNameForUser(userId);
+  if (!confirm('Add this retrospective holiday for ' + targetName + '?')) return;
+  $('syncLabel').textContent = 'Saving…';
+  const targetProfile = profileFor(userId);
+  const payload = {
+    auth_user_id: userId,
+    requester_name: targetProfile ? personDisplayNameFromRecords(targetProfile, kilnUserFor(userId), 'Unknown') : currentDisplayName(),
+    requester_email: (targetProfile && targetProfile.email) || '',
+    start_date: start,
+    end_date: end,
+    requested_unit: unit,
+    requested_amount: amount,
+    requested_days: days,
+    reason,
+    status: 'approved',
+    manager_note: reason,
+    decided_by: currentUser.id,
+    decided_by_name: currentDisplayName(),
+    decided_at: new Date().toISOString()
+  };
+  const { error } = await sb.from('holiday_requests').insert(payload);
+  $('syncLabel').textContent = 'Synced';
+  if (error) { setToast('Could not add retrospective holiday: ' + error.message); return; }
+  if (startEl) startEl.value = '';
+  if (endEl) endEl.value = '';
+  if (amountEl) amountEl.value = '';
+  if (reasonEl) reasonEl.value = '';
+  if (unitEl) unitEl.value = 'days';
+  await loadHolidayData();
+  renderHolidayApp();
+  setToast('Retrospective holiday added ✓');
 }
 function setToast(msg, ms){
   const t = $('toast');
@@ -1722,6 +1801,11 @@ function syncExtrasUnit(unitInputId, amountInputId){
   unitEl.dataset.unit = next;
   amountEl.step = next === 'hours' ? '1' : '0.5';
   amountEl.min = next === 'hours' ? '-999' : '-999';
+}
+function canAddRetrospectiveHolidayFor(userId){
+  if (!currentUser) return false;
+  if (isHolidayAdmin) return true;
+  return String(profileFor(userId)?.holiday_manager_auth_user_id || '') === String(currentUser.id || '');
 }
 function currentDisplayName(){
   const sessionFullName = currentUser && currentUser.user_metadata && currentUser.user_metadata.full_name
@@ -1995,6 +2079,18 @@ function renderTeamOverviewCards(){
             '</div>';
           }).join('') : '<div class="small">No allowance changes logged yet.</div>')+
         '</div>'+
+        (editable ? (
+          '<div class="staff-section">'+
+            '<div class="staff-section-title">Retrospective holiday</div>'+
+            '<div class="staff-section-sub">Add a backdated holiday entry for this staff member. It is recorded as an approved request and kept in the audit trail.</div>'+
+            '<div class="field"><label class="small" style="margin-bottom:4px">Start date</label><input class="input retro-date" type="date" id="retroStart_'+esc(p.id)+'" onchange="syncDateRangeEndDate(\'retroStart_'+esc(p.id)+'\', \'retroUnit_'+esc(p.id)+'\', \'retroAmount_'+esc(p.id)+'\', \'retroEnd_'+esc(p.id)+'\')"></div>'+
+            '<div class="field"><label class="small" style="margin-bottom:4px">Request as</label><select class="select retro-unit" id="retroUnit_'+esc(p.id)+'" onchange="syncDateRangeEndDate(\'retroStart_'+esc(p.id)+'\', \'retroUnit_'+esc(p.id)+'\', \'retroAmount_'+esc(p.id)+'\', \'retroEnd_'+esc(p.id)+'\')"><option value="days">Days</option><option value="hours">Hours</option></select></div>'+
+            '<div class="field"><label class="small" style="margin-bottom:4px">Amount</label><input class="input retro-amount" type="number" min="0" step="0.5" id="retroAmount_'+esc(p.id)+'" onchange="syncDateRangeEndDate(\'retroStart_'+esc(p.id)+'\', \'retroUnit_'+esc(p.id)+'\', \'retroAmount_'+esc(p.id)+'\', \'retroEnd_'+esc(p.id)+'\')"></div>'+
+            '<div class="field"><label class="small" style="margin-bottom:4px">End date</label><input class="input retro-end" type="date" id="retroEnd_'+esc(p.id)+'" readonly></div>'+
+            '<div class="field"><label class="small" style="margin-bottom:4px">Reason / note</label><textarea class="textarea allowance-reason" id="retroReason_'+esc(p.id)+'" placeholder="Explain why this retrospective holiday is being added."></textarea><div class="field-note">This is stored on the approved request and its audit trail.</div></div>'+
+            '<div style="display:flex;justify-content:flex-end"><button class="btn btn-primary" style="height:30px;padding:0 10px;font-size:10px" type="button" onclick="addRetrospectiveHoliday(\''+esc(p.id)+'\', \'retroStart_'+esc(p.id)+'\', \'retroEnd_'+esc(p.id)+'\', \'retroAmount_'+esc(p.id)+'\', \'retroUnit_'+esc(p.id)+'\', \'retroReason_'+esc(p.id)+'\')">Add retrospective holiday</button></div>'+
+          '</div>'
+        ) : '')+
         '<div class="staff-request-audit">'+
           '<div class="staff-request-audit-title">Request audit</div>'+
           (requestHistory.length ? requestHistory.map(renderRequestAuditItem).join('') : '<div class="small">No leave requests logged yet.</div>')+
@@ -2274,10 +2370,7 @@ async function ensureHolidayProfile(){
   }
 }
 async function loadHolidayData(){
-  const requestPromise = sb.from('holiday_requests').select('*');
-  const eventPromise = sb.from('holiday_request_events').select('*');
-  const profilePromise = sb.from('holiday_profiles').select('*');
-  const profileEventPromise = sb.from('holiday_profile_events').select('*');
+  const managerScopeEnabled = !!(isHolidayAdmin || isApprover);
   const currentManagerId = currentProfile && currentProfile.holiday_manager_auth_user_id ? currentProfile.holiday_manager_auth_user_id : null;
   const currentManagerProfilePromise = currentManagerId
     ? sb.from('pw_profiles').select('id,full_name,email').eq('id', currentManagerId).maybeSingle()
@@ -2285,27 +2378,57 @@ async function loadHolidayData(){
   const currentManagerKilnPromise = currentManagerId
     ? sb.from('kiln_users').select('auth_user_id,locked_name,email,username').eq('auth_user_id', currentManagerId).maybeSingle()
     : Promise.resolve({ data: null });
-  const extraProfilePromise = sb.from('pw_profiles').select('id,full_name,email,approved,disabled,role,holiday_requests_access,holiday_manager_auth_user_id').order('full_name', { ascending: true });
-  const kilnUserPromise = sb.from('kiln_users').select('auth_user_id,is_admin,is_shift_manager,is_locked,locked_name,email,username').order('username', { ascending: true });
-  const results = await Promise.all([requestPromise, eventPromise, profilePromise, profileEventPromise, currentManagerProfilePromise, currentManagerKilnPromise, extraProfilePromise, kilnUserPromise]);
-  const [reqRes, evRes, hpRes, hpEventRes, currentManagerProfRes, currentManagerKilnRes, extraRes, kilnRes] = results;
-  if (reqRes.error) throw reqRes.error;
-  if (evRes.error) throw evRes.error;
-  if (hpRes.error) throw hpRes.error;
-  allHolidayRequests = (reqRes.data || []).map(r => ({
-    ...r,
-    requested_days: num(r.requested_days, 0),
-  }));
-  allHolidayEvents = evRes.data || [];
-  allHolidayProfiles = hpRes.data || [];
-  allHolidayProfileEvents = hpEventRes.data || [];
+  const currentManagerResults = await Promise.all([currentManagerProfilePromise, currentManagerKilnPromise]);
+  const [currentManagerProfRes, currentManagerKilnRes] = currentManagerResults;
   if (currentManagerId) {
     currentHolidayManagerProfile = currentManagerProfRes.data || null;
     currentHolidayManagerKilnUser = currentManagerKilnRes.data || null;
     currentHolidayManagerLabel = holidayManagerDisplayNameFromRecords(currentHolidayManagerProfile, currentHolidayManagerKilnUser);
   }
-  allPwProfiles = (extraRes.data || []);
-  allKilnUsers = (kilnRes.data || []);
+  if (managerScopeEnabled) {
+    const requestPromise = sb.from('holiday_requests').select('*');
+    const eventPromise = sb.from('holiday_request_events').select('*');
+    const profilePromise = sb.from('holiday_profiles').select('*');
+    const profileEventPromise = sb.from('holiday_profile_events').select('*');
+    const extraProfilePromise = sb.from('pw_profiles').select('id,full_name,email,approved,disabled,role,holiday_requests_access,holiday_manager_auth_user_id').order('full_name', { ascending: true });
+    const kilnUserPromise = sb.from('kiln_users').select('auth_user_id,is_admin,is_shift_manager,is_locked,locked_name,email,username').order('username', { ascending: true });
+    const results = await Promise.all([requestPromise, eventPromise, profilePromise, profileEventPromise, extraProfilePromise, kilnUserPromise]);
+    const [reqRes, evRes, hpRes, hpEventRes, extraRes, kilnRes] = results;
+    if (reqRes.error) throw reqRes.error;
+    if (evRes.error) throw evRes.error;
+    if (hpRes.error) throw hpRes.error;
+    allHolidayRequests = (reqRes.data || []).map(r => ({
+      ...r,
+      requested_days: num(r.requested_days, 0),
+    }));
+    allHolidayEvents = evRes.data || [];
+    allHolidayProfiles = hpRes.data || [];
+    allHolidayProfileEvents = hpEventRes.data || [];
+    allPwProfiles = (extraRes.data || []);
+    allKilnUsers = (kilnRes.data || []);
+    return;
+  }
+  const requestPromise = sb.from('holiday_requests').select('*').eq('auth_user_id', currentUser.id);
+  const profilePromise = sb.from('holiday_profiles').select('*').eq('auth_user_id', currentUser.id);
+  const profileEventPromise = sb.from('holiday_profile_events').select('*').eq('profile_user_id', currentUser.id);
+  const [reqRes, hpRes, hpEventRes] = await Promise.all([requestPromise, profilePromise, profileEventPromise]);
+  if (reqRes.error) throw reqRes.error;
+  if (hpRes.error) throw hpRes.error;
+  const ownRequests = (reqRes.data || []).map(r => ({
+    ...r,
+    requested_days: num(r.requested_days, 0),
+  }));
+  const reqIds = ownRequests.map(r => r.id).filter(Boolean);
+  const eventRes = reqIds.length
+    ? await sb.from('holiday_request_events').select('*').in('request_id', reqIds)
+    : { data: [] };
+  if (eventRes.error) throw eventRes.error;
+  allHolidayRequests = ownRequests;
+  allHolidayEvents = eventRes.data || [];
+  allHolidayProfiles = hpRes.data || [];
+  allHolidayProfileEvents = hpEventRes.data || [];
+  allPwProfiles = [currentProfile].filter(Boolean);
+  allKilnUsers = [currentKilnUser].filter(Boolean);
 }
 
 async function initHolidayApp(){
@@ -2348,7 +2471,7 @@ async function hydrateFromSession(){
       return false;
     }
     currentUser = data.session.user;
-    const { data: prof, error: profErr } = await sb.from('pw_profiles').select('*').eq('id', currentUser.id).maybeSingle();
+    const { data: prof, error: profErr } = await sb.from('pw_profiles').select('id,full_name,email,approved,disabled,role,holiday_requests_access,holiday_manager_auth_user_id,must_reset_password').eq('id', currentUser.id).maybeSingle();
     if (profErr) throw profErr;
     if (!prof || prof.approved === false || prof.disabled === true || prof.role === 'none' || prof.holiday_requests_access === false) {
       await sb.auth.signOut();
