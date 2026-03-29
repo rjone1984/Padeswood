@@ -921,6 +921,19 @@
     color: #f0524f;
     background: var(--danger-soft);
   }
+  .tracker-shell-icon.break-labels {
+    font-family: var(--ff-mono);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    color: var(--text2);
+  }
+  .tracker-shell-icon.break-labels.active {
+    border-color: var(--accent2);
+    color: var(--accent2);
+    background: var(--accent-soft);
+    box-shadow: 0 0 0 1px var(--accent-soft-2);
+  }
   #app {
     width: 100%;
     max-width: 900px;
@@ -1294,7 +1307,10 @@ function meta(s){
 
 function describeCyclePosition(shift,date){
   const d=cycleIndexForDate(shift,date);
-  if(d>=52) return `Break · day ${d-51} of 18`;
+  if(d>=52){
+    const phase=S.breakLabelsTrial ? getLongBreakPhase(shift,date) : "";
+    return phase ? `Break · day ${d-51} of 18 · ${phase}` : `Break · day ${d-51} of 18`;
+  }
   const block=Math.floor(d/8)+1,pos=d%8;
   if(pos<2) return `Block ${block} · Day ${pos+1} of 2`;
   if(pos<4) return `Block ${block} · Night ${pos-1} of 2`;
@@ -1311,6 +1327,24 @@ function getDaysUntilLongBreak(shift){
   let i=0;
   while(i<140){ if(CYCLE[cycleIndexForDate(shift,addDays(TODAY,i))]==="X") break; i++; }
   return i;
+}
+
+function loadBreakLabelTrial(){ return true; }
+function persistBreakLabelTrial(enabled){
+  try { localStorage.removeItem("tracker_break_labels_trial"); } catch (e) {}
+}
+function getLongBreakPhase(shift,date){
+  if(cycleStatusForDate(shift,date)!=="X") return "";
+  const day = cycleIndexForDate(shift,date) - 51;
+  if(day <= 3) return "Just starting";
+  if(day >= 16) return "Back soon";
+  return "";
+}
+function getLongBreakPhaseShort(shift,date){
+  const phase = getLongBreakPhase(shift,date);
+  if(phase === "Just starting") return "START";
+  if(phase === "Back soon") return "SOON";
+  return "";
 }
 
 function buildMonthGrid(year,month){
@@ -1389,6 +1423,7 @@ let S={
   focus:defaultFocusShift, tab:"Today", banner:true,
   searchDate:"",
   dark:isDarkThemeEnabled(),
+  breakLabelsTrial:loadBreakLabelTrial(),
   viewOffset:0,
 };
 const set=patch=>{S={...S,...patch};renderTrackerApp();};
@@ -1408,10 +1443,16 @@ function h(tag,props,...kids){
   return e;
 }
 
-function buildShiftBadge(m,id,color,isFocus){
-  return h("div",{style:{display:"flex",alignItems:"center",gap:"2px",padding:"1px 3px",borderRadius:"3px",background:m.bg,border:`1px solid ${isFocus?color:m.br+"66"}`,boxShadow:isFocus?`0 0 5px ${color}44`:"none"}},
+function buildShiftBadge(m,id,color,isFocus,phaseShort=""){
+  const kids=[
     h("span",{class:"mono",style:{fontSize:"8px",fontWeight:"700",color,lineHeight:"1",minWidth:"7px"}},id),
     h("span",{class:"mono",style:{fontSize:"8px",color:m.fg,lineHeight:"1"}},m.short)
+  ];
+  if(phaseShort){
+    kids.push(h("span",{class:"mono",style:{fontSize:"6.5px",fontWeight:"700",letterSpacing:".06em",lineHeight:"1",padding:"1px 4px",borderRadius:"999px",background:"rgba(255,255,255,.28)",border:`1px solid ${m.br}88`,color:m.fg,whiteSpace:"nowrap"}},phaseShort));
+  }
+  return h("div",{style:{display:"flex",alignItems:"center",gap:"2px",padding:"1px 3px",borderRadius:"3px",background:m.bg,border:`1px solid ${isFocus?color:m.br+"66"}`,boxShadow:isFocus?`0 0 5px ${color}44`:"none",minHeight:"16px"}},
+    ...kids
   );
 }
 
@@ -1552,7 +1593,10 @@ function renderCalendarView(){
     if(hasNote) cell.appendChild(h("div",{style:{position:"absolute",top:"2px",right:"3px",fontSize:"8px"}},"📝"));
     cell.appendChild(h("div",{class:"mono",style:{textAlign:"center",fontSize:"10px",fontWeight:isToday?"700":"400",color:isToday?active.color:"var(--text2)",marginBottom:"2px"}},String(date.getDate())));
     const bdgs=h("div",{style:{display:"flex",flexDirection:"column",gap:"2px",padding:"0 1px"}});
-    for(const sh of SHIFTS) bdgs.appendChild(buildShiftBadge(meta(status(sh,date)),sh.id,sh.color,sh.id===focus));
+    for(const sh of SHIFTS){
+      const st=status(sh,date);
+      bdgs.appendChild(buildShiftBadge(meta(st),sh.id,sh.color,sh.id===focus,S.breakLabelsTrial ? getLongBreakPhaseShort(sh,date) : ""));
+    }
     cell.appendChild(bdgs);
     grid.appendChild(cell);
   });
@@ -1675,13 +1719,14 @@ function renderTrackerApp(){
 
   const pills=h("div",{style:{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:"6px",marginBottom:"12px"}});
   for(const sh of SHIFTS){
-    const st=status(sh,TODAY),m=meta(st),sel=sh.id===focus;
+    const st=status(sh,TODAY),m=meta(st),sel=sh.id===focus,phase=S.breakLabelsTrial ? getLongBreakPhaseShort(sh,TODAY) : "";
     pills.appendChild(h("div",{class:"pill",
       style:{background:sel?"var(--bg2)":"var(--bg3)",border:`2px solid ${sel?sh.color:"var(--border)"}`,borderRadius:"12px",padding:"9px 4px",textAlign:"center",boxShadow:sel?`0 3px 12px ${sh.color}30`:"none"},
       onClick:()=>set({focus:sh.id,viewOffset:0})},
       h("div",{style:{fontSize:"18px",fontWeight:"700",color:sh.color}},sh.id),
       h("div",{style:{fontSize:"14px",margin:"2px 0"}},m.emoji),
-      h("div",{class:"badge",style:{background:m.bg,color:m.fg,border:`1px solid ${m.br}`,fontSize:"9px"}},m.short)
+      h("div",{class:"badge",style:{background:m.bg,color:m.fg,border:`1px solid ${m.br}`,fontSize:"9px"}},m.short),
+      phase?h("div",{class:"mono",style:{fontSize:"8px",fontWeight:"700",letterSpacing:".06em",color:sh.color,marginTop:"2px"}},phase):null
     ));
   }
   app.appendChild(pills);

@@ -440,6 +440,106 @@ body :where(.app-card,.coming-card,.icon-btn,.login-btn,.card-arrow,.palette-opt
 .palette-actions button {
   min-width: 116px;
 }
+.manager-requests-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 821;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(4,10,20,.56);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.manager-requests-overlay.open { display: flex; }
+.manager-requests-panel {
+  width: min(440px, 92vw);
+  border: 1px solid var(--bd2);
+  border-radius: 18px;
+  background: var(--glass-3);
+  box-shadow: 0 18px 44px rgba(15,23,42,.10);
+  overflow: hidden;
+}
+.manager-requests-head {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--bd2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.manager-requests-title {
+  font-family: var(--ff-head);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--tx);
+}
+.manager-requests-sub {
+  font-size: 11px;
+  color: var(--tx2);
+  line-height: 1.45;
+  margin-top: 4px;
+}
+.manager-requests-actions {
+  padding: 18px 20px 20px;
+  display: grid;
+  gap: 10px;
+}
+.manager-requests-btn {
+  width: 100%;
+  border: 1px solid var(--bd);
+  border-radius: 14px;
+  padding: 14px 16px;
+  background: linear-gradient(180deg, var(--glass-1), var(--glass-2));
+  color: var(--tx);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  box-shadow: var(--e1);
+  transition: transform .28s var(--ease-smooth), border-color .28s var(--ease-smooth), box-shadow .28s var(--ease-smooth);
+}
+.manager-requests-btn:hover {
+  transform: translateY(-1px);
+  border-color: var(--ac3);
+  box-shadow: 0 10px 26px rgba(15,23,42,.08), 0 0 0 1px var(--acd2);
+}
+.manager-requests-btn .left {
+  display: grid;
+  gap: 2px;
+  text-align: left;
+}
+.manager-requests-btn .label {
+  font-family: var(--ff-head);
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+.manager-requests-btn .desc {
+  font-size: 11px;
+  color: var(--tx2);
+  line-height: 1.45;
+}
+.manager-requests-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  border: 1px solid var(--bd);
+  background: var(--glass-1);
+  color: var(--tx2);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform .28s var(--ease-smooth), border-color .28s var(--ease-smooth), color .28s var(--ease-smooth);
+}
+.manager-requests-close:hover {
+  border-color: var(--ac3);
+  color: var(--ac3);
+  transform: translateY(-1px);
+}
 #mainContent{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:48px 28px 64px;}
 .platform-hero{margin-bottom:40px;}
 .platform-hero h1{font-family:var(--ff-head);font-weight:800;font-size:clamp(22px,3.5vw,32px);
@@ -707,7 +807,7 @@ body :where(.app-card,.coming-card,.icon-btn,.login-btn,.card-arrow,.palette-opt
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
         <span id="resetReqBadge" style="display:none;position:absolute;top:2px;right:2px;background:var(--red);color:#fff;font-size:9px;font-weight:700;border-radius:10px;padding:1px 5px;min-width:16px;text-align:center;line-height:16px"></span>
       </button>
-      <button class="icon-btn" id="holidayReqBtn" onclick="openHolidayRequests()" title="Holiday Requests" style="display:none;position:relative">
+      <button class="icon-btn" id="holidayReqBtn" onclick="openManagerRequests()" title="Manager Requests" style="display:none;position:relative">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M7 3.5v4M17 3.5v4M3.5 9.5h17"/><path d="M8.5 14.8l1.8 1.9 4.8-5.2"/></svg>
         <span id="holidayReqBadge" style="display:none;position:absolute;top:2px;right:2px;background:var(--amb);color:#fff;font-size:9px;font-weight:700;border-radius:10px;padding:1px 5px;min-width:16px;text-align:center;line-height:16px"></span>
       </button>
@@ -765,7 +865,7 @@ body :where(.app-card,.coming-card,.icon-btn,.login-btn,.card-arrow,.palette-opt
         <div class="card-arrow">→</div>
       </a>
 
-      <a href="holiday-request/index.html" class="app-card">
+      <a href="holiday-request/index.html" class="app-card" onclick="return openHolidayApp(event)">
         <div class="card-top">
           <div class="card-icon holiday-icon">
             <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -789,7 +889,7 @@ body :where(.app-card,.coming-card,.icon-btn,.login-btn,.card-arrow,.palette-opt
         <div class="card-arrow">→</div>
       </a>
 
-      <a href="credit-hours/index.html" class="app-card">
+      <a href="credit-hours/index.html" class="app-card" onclick="return openCreditHoursApp(event)">
         <div class="card-top">
           <div class="card-icon tracker-icon">
             <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -880,10 +980,23 @@ body :where(.app-card,.coming-card,.icon-btn,.login-btn,.card-arrow,.palette-opt
         </button>
       </div>
     </div>
-    <div class="palette-actions">
-      <button class="btn btn-ghost" type="button" onclick="resetPalettePreset()">Reset to default</button>
-      <button class="btn btn-ghost" type="button" onclick="closePaletteModal()">Done</button>
+<div class="palette-actions">
+  <button class="btn btn-ghost" type="button" onclick="resetPalettePreset()">Reset to default</button>
+  <button class="btn btn-ghost" type="button" onclick="closePaletteModal()">Done</button>
+</div>
+</div>
+</div>
+
+<div class="manager-requests-overlay" id="managerRequestsModal" onclick="if(event.target===this)closeManagerRequestsMenu()">
+  <div class="manager-requests-panel" role="dialog" aria-modal="true" aria-labelledby="managerRequestsTitle">
+    <div class="manager-requests-head">
+      <div>
+        <div class="manager-requests-title" id="managerRequestsTitle">Manager Requests</div>
+        <div class="manager-requests-sub">Choose which approval queue you want to open.</div>
+      </div>
+      <button type="button" class="manager-requests-close" onclick="closeManagerRequestsMenu()" aria-label="Close manager requests menu">✕</button>
     </div>
+    <div class="manager-requests-actions" id="managerRequestsChoices"></div>
   </div>
 </div>
 
@@ -1387,9 +1500,8 @@ async function checkLicence() {
       const rows = await res.json();
       const lic  = rows && rows[0];
       if (lic && lic.paid && new Date(lic.expires_at) >= new Date()) {
-        const exp = new Date(lic.expires_at).toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'});
         const licEl = document.getElementById('licStatus');
-        if (licEl) licEl.textContent = 'Licence active · expires ' + exp;
+        if (licEl) licEl.textContent = 'Licence active';
         hideLicenceOverlay();
         return;
       }
@@ -1621,6 +1733,7 @@ async function doLogin() {
 
 async function showAppSelector(user, opts) {
   const skipResetPrompt = !!(opts && opts.skipResetPrompt) || _pwPostResetSkipUid === user.id;
+  const isMobileViewport = !!(window.matchMedia && window.matchMedia('(max-width: 640px)').matches);
   document.getElementById('headerUser').style.display = 'flex';
   document.getElementById('logoutBtn').style.display = 'flex';
   document.getElementById('changePwBtn').style.display = 'flex';
@@ -1680,7 +1793,7 @@ async function showAppSelector(user, opts) {
       _platformKilnUser = ku || null;
       const holidayBtn = document.getElementById('holidayReqBtn');
       if (holidayBtn) {
-        holidayBtn.style.display = (ku && ku.is_shift_manager && (!data || data.holiday_requests_access !== false)) ? 'flex' : 'none';
+        holidayBtn.style.display = (ku && ku.is_shift_manager && (data && (data.holiday_requests_access !== false || data.credit_hours_access !== false))) ? 'flex' : 'none';
       }
       if (ku) {
         const sessionFullName = user && user.user_metadata && user.user_metadata.full_name
@@ -1694,6 +1807,8 @@ async function showAppSelector(user, opts) {
             try {
               await callAdminPwFunction({ action: 'clearReset', userId: user.id, email: data && data.email ? data.email : user.email, username: ku.username || null });
             } catch(e) {}
+          } else if (isMobileViewport) {
+            // Keep mobile first-login flow aligned with desktop rather than forcing the reset sheet open.
           } else {
             setTimeout(function() { openForcePwResetModal(ku.username); }, 600);
             return false; // handled
@@ -1705,6 +1820,8 @@ async function showAppSelector(user, opts) {
           try {
             await callAdminPwFunction({ action: 'clearReset', userId: user.id, email: data.email || user.email, username: ku && ku.username ? ku.username : null });
           } catch(e) {}
+        } else if (isMobileViewport) {
+          // Keep mobile first-login flow aligned with desktop rather than forcing the reset sheet open.
         } else {
           setTimeout(function() { openForcePwResetModal(null); }, 600);
           return false;
@@ -3631,6 +3748,106 @@ function openKilnLogsApp(event) {
   return true;
 }
 
+function openHolidayApp(event) {
+  const profile = _platformProfile || null;
+  const hasPlatformSession = !!profile;
+  const hasAccess = !!(profile && profile.approved !== false && profile.disabled !== true && profile.role !== 'none' && profile.holiday_requests_access !== false);
+  if (hasPlatformSession && !hasAccess) {
+    if (event) event.preventDefault();
+    window.location.href = 'holiday-request/index.html?access=denied';
+    return false;
+  }
+  return true;
+}
+
+function openCreditHoursApp(event) {
+  const profile = _platformProfile || null;
+  const hasPlatformSession = !!profile;
+  const hasAccess = !!(profile && profile.approved !== false && profile.disabled !== true && profile.role !== 'none' && profile.credit_hours_access !== false);
+  if (hasPlatformSession && !hasAccess) {
+    if (event) event.preventDefault();
+    window.location.href = 'credit-hours/index.html?access=denied';
+    return false;
+  }
+  return true;
+}
+
+function canOpenManagerRequests(){
+  const profile = _platformProfile || null;
+  const ku = _platformKilnUser || null;
+  if (!profile || !ku || !ku.is_shift_manager) return false;
+  return !!(profile.holiday_requests_access !== false || profile.credit_hours_access !== false);
+}
+
+function managerRequestTargets(){
+  const profile = _platformProfile || null;
+  if (!profile || profile.approved === false || profile.disabled === true || profile.role === 'none') return [];
+  const items = [];
+  if (profile.holiday_requests_access !== false) {
+    items.push({
+      key: 'holiday',
+      label: 'Holiday Requests',
+      desc: 'Open the approval queue for holiday requests.',
+      href: 'holiday-request/index.html?focus=approvals'
+    });
+  }
+  if (profile.credit_hours_access !== false) {
+    items.push({
+      key: 'credit',
+      label: 'Credit Hours',
+      desc: 'Open the approval queue for credit-hours claims.',
+      href: 'credit-hours/index.html?focus=approvals'
+    });
+  }
+  return items;
+}
+
+function closeManagerRequestsMenu(){
+  const overlay = document.getElementById('managerRequestsModal');
+  if (overlay) overlay.classList.remove('open');
+}
+
+function openManagerRequestsMenu(){
+  const overlay = document.getElementById('managerRequestsModal');
+  const list = document.getElementById('managerRequestsChoices');
+  if (!overlay || !list) return false;
+  const items = managerRequestTargets();
+  list.innerHTML = '';
+  items.forEach(function(item){
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'manager-requests-btn';
+    btn.innerHTML = '<span class="left"><span class="label">'+esc(item.label)+'</span><span class="desc">'+esc(item.desc)+'</span></span><span style="font-size:18px;color:var(--ac3)">→</span>';
+    btn.addEventListener('click', function(){
+      window.location.href = item.href;
+    });
+    list.appendChild(btn);
+  });
+  overlay.classList.add('open');
+  return true;
+}
+
+function openManagerRequests(event) {
+  const ku = _platformKilnUser || null;
+  const hasPlatformSession = !!_platformProfile;
+  if (hasPlatformSession && !(ku && ku.is_shift_manager)) {
+    if (event) event.preventDefault();
+    showPlatformToast('Manager requests not available');
+    return false;
+  }
+  const items = managerRequestTargets();
+  if (!items.length) {
+    showPlatformToast('Manager requests not available');
+    return false;
+  }
+  if (items.length === 1) {
+    window.location.href = items[0].href;
+    return false;
+  }
+  if (event) event.preventDefault();
+  return openManagerRequestsMenu();
+}
+
 async function loadResetReqBadge() {
   try {
     const rows = await loadRequestRows('reset', { status: 'pending', ascending: false });
@@ -3645,7 +3862,7 @@ async function loadHolidayReqBadge() {
   if (!badge) return;
   const userId = _platformProfile && _platformProfile.id ? _platformProfile.id : null;
   const ku = _platformKilnUser || null;
-  if (!userId || !ku || !ku.is_shift_manager || _platformProfile && _platformProfile.holiday_requests_access === false) {
+  if (!userId || !ku || !ku.is_shift_manager || !canOpenManagerRequests()) {
     badge.style.display = 'none';
     badge.textContent = '';
     return;
@@ -3658,23 +3875,19 @@ async function loadHolidayReqBadge() {
       badge.textContent = '';
       return;
     }
-    const { count, error } = await sb.from('holiday_requests').select('id', { count: 'exact', head: true }).eq('status', 'pending').in('auth_user_id', staffIds);
-    if (error) throw error;
-    const pending = count || 0;
+    const [holidayCountRes, creditCountRes] = await Promise.all([
+      sb.from('holiday_requests').select('id', { count: 'exact', head: true }).eq('status', 'pending').in('auth_user_id', staffIds),
+      sb.from('credit_hour_entries').select('id', { count: 'exact', head: true }).eq('status', 'pending').in('auth_user_id', staffIds)
+    ]);
+    if (holidayCountRes.error) throw holidayCountRes.error;
+    if (creditCountRes.error) throw creditCountRes.error;
+    const pending = (holidayCountRes.count || 0) + (creditCountRes.count || 0);
     badge.textContent = pending;
     badge.style.display = pending > 0 ? 'block' : 'none';
   } catch(e) {
     badge.style.display = 'none';
     badge.textContent = '';
   }
-}
-
-function openHolidayRequests() {
-  if (!_platformProfile || !_platformKilnUser || !_platformKilnUser.is_shift_manager || _platformProfile.holiday_requests_access === false) {
-    showPlatformToast('Holiday Requests not available');
-    return;
-  }
-  window.location.href = 'holiday-request/index.html?focus=approvals';
 }
 
 function openResetReqModal() {

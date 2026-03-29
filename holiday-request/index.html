@@ -239,10 +239,13 @@ body::before{
     radial-gradient(120% 100% at 100% 0%, var(--palette-card-glow-2), transparent 52%),
     linear-gradient(180deg,var(--glass-1),var(--glass-2));
   box-shadow:var(--e1);
+  min-width:0;
 }
 .field label,.help-label{font-size:11px;font-family:var(--ff-mono);text-transform:uppercase;letter-spacing:1px;color:var(--tx3)}
 .input,.textarea,.select{
   width:100%;
+  max-width:100%;
+  min-width:0;
   border:1px solid var(--bd);
   border-radius:12px;
   background:var(--sf2);
@@ -394,6 +397,7 @@ body::before{
 .tab-btn{padding:10px 14px;font-weight:700}
 .tab-btn.active{background:linear-gradient(180deg,var(--acd2),var(--acd1));border-color:var(--ac3);color:var(--ac3)}
 .form-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.form-grid > *{min-width:0}
 .field.wide{grid-column:span 2}
 .field.full{grid-column:1/-1}
 .form-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:12px;flex-wrap:wrap}
@@ -418,6 +422,7 @@ body::before{
 .request-meta{font-size:12px;color:var(--tx2);margin-top:3px}
 .request-note{margin-top:2px;color:var(--tx2)}
 .request-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.request-grid > *{min-width:0}
 .card-box{
   border:1px solid var(--bd);
   background:var(--sf2);
@@ -757,6 +762,7 @@ body::before{
   .form-grid{grid-template-columns:1fr}
   .field.wide,.field.full{grid-column:auto}
   .field{padding:11px}
+  .form-grid > *{min-width:0}
   .request-grid{grid-template-columns:1fr}
   .staff-row{grid-template-columns:1fr;gap:8px}
   .staff-card summary{padding:12px}
@@ -823,14 +829,13 @@ body::before{
       <div class="brand-row">
         <div class="brand-mark logo-mark lg" aria-hidden="true"><img data-suite-logo alt="Padeswood Works"></div>
         <div>
-          <h1 class="brand-title">Access denied</h1>
-          <div class="brand-sub">Your account is not allowed to use Holiday Requests.</div>
+          <h1 class="brand-title">No Access</h1>
+          <div class="brand-sub">You do not have access to Holiday Requests.</div>
         </div>
       </div>
       <div class="small">Please contact an administrator if you think this is wrong.</div>
       <div class="row" style="margin-top:14px">
         <button class="btn btn-primary" type="button" onclick="goBackToPlatform()">Back to Platform</button>
-        <button class="btn btn-ghost" type="button" onclick="logout()">Sign out</button>
       </div>
     </div>
   </div>
@@ -1180,6 +1185,7 @@ let currentHolidayProfile = null;
 let currentHolidayManagerProfile = null;
 let currentHolidayManagerKilnUser = null;
 let currentHolidayManagerLabel = 'No manager assigned';
+const HOLIDAY_ACCESS_DENIED_LAUNCH = new URLSearchParams(window.location.search).get('access') === 'denied';
 let isHolidayAdmin = false;
 let isApprover = false;
 let allPwProfiles = [];
@@ -1729,7 +1735,7 @@ function showAccessDenied(message){
   $('appShell').classList.add('hidden');
   $('accessDenied').classList.remove('hidden');
   const small = $('accessDenied').querySelector('.small');
-  if (small) small.textContent = message || 'Your account is not allowed to use Holiday Requests.';
+  if (small) small.textContent = message || 'You do not have access to Holiday Requests. Please contact your administrator if this is unexpected.';
 }
 function showLoginScreen(){
   $('appShell').classList.add('hidden');
@@ -2457,6 +2463,10 @@ async function initHolidayApp(){
       await new Promise(function(resolve){ setTimeout(resolve, 200); });
       return tryHydrateSession(retries - 1);
     }
+    if (HOLIDAY_ACCESS_DENIED_LAUNCH) {
+      showAccessDenied('You do not have Holiday Requests access.');
+      return false;
+    }
     showLoginScreen();
     return false;
   }
@@ -2474,7 +2484,6 @@ async function hydrateFromSession(){
     const { data: prof, error: profErr } = await sb.from('pw_profiles').select('id,full_name,email,approved,disabled,role,holiday_requests_access,holiday_manager_auth_user_id,must_reset_password').eq('id', currentUser.id).maybeSingle();
     if (profErr) throw profErr;
     if (!prof || prof.approved === false || prof.disabled === true || prof.role === 'none' || prof.holiday_requests_access === false) {
-      await sb.auth.signOut();
       currentProfile = null;
       showAccessDenied(!prof ? 'This account does not have Platform access yet.' : prof.disabled === true ? 'Your account has been disabled. Please contact an administrator.' : prof.holiday_requests_access === false ? 'You do not have Holiday Requests access.' : 'You do not have Platform access.');
       return false;

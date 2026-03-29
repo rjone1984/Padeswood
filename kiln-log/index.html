@@ -343,6 +343,7 @@ body.app-ready #app {
   pointer-events:auto;
   transition:opacity .28s var(--ease-smooth);
 }
+:root { --log-sticky-top: 58px; }
 
 .topbar {
   background:
@@ -451,12 +452,22 @@ body.app-ready #app {
     var(--glass-1);
 }
 .page-header {
-  position:sticky; top:58px; z-index:150;
+  position:sticky; top:var(--log-sticky-top, 58px); z-index:150;
   background:
     linear-gradient(180deg, color-mix(in srgb, var(--green-wash-1) 85%, transparent), transparent 82%),
     var(--bg);
   padding-top:8px;
   margin-bottom:0 !important;
+}
+@keyframes logLineGlow {
+  0%,100% { opacity:.58; filter:drop-shadow(0 0 0 rgba(46,204,92,0)); }
+  50% { opacity:1; filter:drop-shadow(0 0 8px var(--acd2)); }
+}
+.splash-card::before,
+.access-denied::before,
+.shift-panel-head::before,
+.modal::before {
+  animation:logLineGlow 6.4s ease-in-out infinite;
 }
 .dual-nav-row {
   --row-accent: var(--ac);
@@ -1821,7 +1832,7 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
   #searchTopbarBtn { display:inline-flex !important }
   #clearDayBtn { display:none !important }
   .topbar-sub { display:none }
-  .page-header { top:60px; padding-top:8px; }
+  .page-header { padding-top:8px; }
   .dual-nav { backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px); }
 
   .btn { padding:5px 8px; font-size:10px; }
@@ -1833,7 +1844,6 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
   .day-tab  { flex-shrink:0; }
 
   .page-header {
-    top:54px;
     flex-direction:column;
     align-items:stretch;
     gap:10px;
@@ -1927,7 +1937,6 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
     flex-shrink:0;
   }
   .page-header {
-    top:52px;
     gap:8px;
   }
   .overview-period-group,
@@ -2500,9 +2509,8 @@ async function checkLicence(){
       showLicenceBlock(msg, 'Licence expired on ' + exp + '. Once payment is received, access will resume automatically.');
       return false;
     }
-    const exp = new Date(lic.expires_at).toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'});
     const licEl = document.getElementById('kblLicStatus');
-    if(licEl) licEl.textContent = 'Licence active · expires ' + exp;
+    if(licEl) licEl.textContent = 'Licence active';
     clearTimeout(showTimer);
     overlay.style.display = 'none';
     document.getElementById('splash').style.display = 'flex';
@@ -2908,7 +2916,7 @@ function pickBestKilnUser(rows, sessionUser){
 }
 async function loadCurrentProfileDisplayName(authUserId){
   try {
-    const rows = await sbFetch('/rest/v1/pw_profiles?auth_user_id=eq.' + encodeURIComponent(authUserId) + '&select=full_name,email&limit=1');
+    const rows = await sbFetch('/rest/v1/pw_profiles?id=eq.' + encodeURIComponent(authUserId) + '&select=full_name,email&limit=1');
     if(rows && rows.length){
       const row = rows[0] || {};
       const fullName = String(row.full_name || '').trim();
@@ -2932,6 +2940,14 @@ function resolveCurrentUserDisplayName(match, sessionUser, profileDisplayName){
   }
   return emailLabel || loginLabel || usernameLabel || '—';
 }
+
+function syncStickyHeaderOffset(){
+  const topbar = document.querySelector('.topbar');
+  const offset = topbar ? Math.ceil(topbar.getBoundingClientRect().height) : 58;
+  document.documentElement.style.setProperty('--log-sticky-top', offset + 'px');
+}
+window.addEventListener('resize', syncStickyHeaderOffset, { passive: true });
+window.addEventListener('orientationchange', syncStickyHeaderOffset);
 
 async function doLogin(){
   const errEl = document.getElementById('splashErr');
@@ -3065,6 +3081,7 @@ async function _applyUserSession(match, sessionUser, profileDisplayName){
   }
   applyStoredPalette();
   await initApp();
+  syncStickyHeaderOffset();
   document.body.classList.add('app-ready');
 }
 async function doLogout(){

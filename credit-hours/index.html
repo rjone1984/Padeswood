@@ -239,10 +239,13 @@ body::before{
     radial-gradient(120% 100% at 100% 0%, var(--palette-card-glow-2), transparent 52%),
     linear-gradient(180deg,var(--glass-1),var(--glass-2));
   box-shadow:var(--e1);
+  min-width:0;
 }
 .field label,.help-label{font-size:11px;font-family:var(--ff-mono);text-transform:uppercase;letter-spacing:1px;color:var(--tx3)}
 .input,.textarea,.select{
   width:100%;
+  max-width:100%;
+  min-width:0;
   border:1px solid var(--bd);
   border-radius:12px;
   background:var(--sf2);
@@ -395,6 +398,7 @@ body::before{
 .tab-btn{padding:10px 14px;font-weight:700}
 .tab-btn.active{background:linear-gradient(180deg,var(--acd2),var(--acd1));border-color:var(--ac3);color:var(--ac3)}
 .form-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.form-grid > *{min-width:0}
 .field.wide{grid-column:span 2}
 .field.full{grid-column:1/-1}
 .form-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:12px;flex-wrap:wrap}
@@ -619,6 +623,191 @@ body::before{
   border-radius:12px;
   background:var(--sf3);
 }
+.insights-grid{
+  display:grid;
+  gap:14px;
+}
+.insight-card{
+  border:1px solid var(--bd);
+  border-radius:18px;
+  background:
+    radial-gradient(140% 100% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
+    radial-gradient(120% 100% at 100% 0%, var(--palette-card-glow-2), transparent 48%),
+    linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  box-shadow:var(--e1), var(--eac);
+  overflow:hidden;
+}
+.insight-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+  padding:14px 16px;
+}
+.insight-head-left{
+  min-width:0;
+  display:grid;
+  gap:4px;
+}
+.insight-team-title{
+  font-family:var(--ff-head);
+  font-size:16px;
+  font-weight:800;
+  color:var(--tx);
+  letter-spacing:-.3px;
+}
+.insight-team-sub{
+  font-size:11px;
+  color:var(--tx2);
+  line-height:1.45;
+}
+.insight-pills{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+.insight-body{
+  border-top:1px solid var(--bd);
+  padding:14px 16px 16px;
+  display:grid;
+  gap:14px;
+}
+.insight-section-title{
+  font-size:9px;
+  font-family:var(--ff-mono);
+  text-transform:uppercase;
+  letter-spacing:1px;
+  color:var(--tx3);
+}
+.insight-chart{
+  display:grid;
+  grid-template-columns:repeat(12,minmax(0,1fr));
+  gap:8px;
+  align-items:end;
+  min-height:146px;
+}
+.insight-month{
+  min-width:0;
+  display:grid;
+  gap:6px;
+}
+.insight-bars{
+  position:relative;
+  height:var(--bar-height, 108px);
+  border:1px solid var(--bd);
+  border-radius:12px;
+  background:var(--sf3);
+  overflow:hidden;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+}
+.insight-bar{
+  position:absolute;
+  left:50%;
+  width:62%;
+  transform:translateX(-50%);
+  border-radius:8px 8px 4px 4px;
+}
+.insight-bar.credit{
+  bottom:0;
+  background:linear-gradient(180deg,var(--grn),color-mix(in srgb, var(--grn) 70%, #000 30%));
+}
+.insight-bar.overtime{
+  background:linear-gradient(180deg,var(--amb),color-mix(in srgb, var(--amb) 70%, #000 30%));
+}
+.insight-bar.pending{
+  opacity:.45;
+  border:1px dashed color-mix(in srgb, var(--tx3) 50%, var(--amb) 50%);
+}
+.insight-month-label{
+  font-size:10px;
+  font-family:var(--ff-mono);
+  color:var(--tx3);
+  text-align:center;
+  white-space:nowrap;
+}
+.insight-row-list{
+  display:grid;
+  gap:10px;
+}
+.insight-member{
+  border:1px solid var(--bd);
+  border-radius:14px;
+  background:var(--sf3);
+  padding:12px;
+  display:grid;
+  gap:10px;
+}
+.insight-member-head{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:flex-start;
+}
+.insight-member-name{
+  font-family:var(--ff-head);
+  font-weight:800;
+  font-size:13px;
+  color:var(--tx);
+}
+.insight-member-sub{
+  font-size:11px;
+  color:var(--tx2);
+  margin-top:3px;
+}
+.insight-member-chart{
+  display:grid;
+  grid-template-columns:repeat(12,minmax(0,1fr));
+  gap:6px;
+}
+.insight-member-chart .insight-bars{
+  --bar-height:56px;
+}
+.insight-member-chart .insight-month-label{
+  font-size:9px;
+}
+.insight-member-bar{
+  height:34px;
+  border-radius:10px;
+  border:1px solid var(--bd);
+  background:
+    linear-gradient(180deg,var(--grn),var(--grnb)),
+    var(--sf2);
+  position:relative;
+  overflow:hidden;
+}
+.insight-member-bar::after{
+  content:'';
+  position:absolute;
+  left:0;
+  bottom:0;
+  width:100%;
+  height:100%;
+  background:linear-gradient(180deg,transparent 0%, transparent calc(100% - var(--credit-height, 0%)), rgba(33,194,122,.85) calc(100% - var(--credit-height, 0%)));
+  opacity:1;
+}
+.insight-member-bar.overtime{
+  background:
+    linear-gradient(180deg,var(--amb),var(--ambb)),
+    var(--sf2);
+}
+.insight-member-pill-row{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+.insight-member-pill-row .pill{
+  font-size:10px;
+  padding:4px 7px;
+}
+.insight-empty{
+  padding:16px;
+  border:1px dashed var(--bd2);
+  border-radius:16px;
+  color:var(--tx3);
+  background:rgba(255,255,255,.02);
+}
 .staff-card .staff-request-item .top{
   display:flex;
   justify-content:space-between;
@@ -802,12 +991,31 @@ body::before{
   .field label,.help-label{font-size:10px;letter-spacing:.8px}
   .input,.textarea,.select{padding:11px 12px;border-radius:11px}
   .textarea{min-height:98px}
+  .form-grid > *{min-width:0}
   .form-actions{margin-top:10px}
   .form-actions .btn{width:100%}
   .request-target-box{margin-top:10px;padding:10px 12px}
   .request-target-box .target-row{display:grid;gap:4px;justify-items:start}
   .request-target-box .small{font-size:11px;line-height:1.45}
   .request-target-box strong{font-size:14px}
+  #myRequestsPanel .panel-head{
+    flex-direction:column;
+    justify-content:center;
+    align-items:stretch;
+    text-align:center;
+  }
+  #myRequestsPanel .panel-head .panel-sub{margin:0 auto}
+  .queue-controls{
+    width:100%;
+    align-items:center;
+    justify-content:center;
+    margin:0 auto;
+  }
+  .queue-controls .pill{margin:0 auto}
+  .queue-controls .select{
+    width:min(100%, 260px);
+    min-width:0;
+  }
   .request-grid{grid-template-columns:1fr}
   .request-card,.event-card,.staff-row,.queue-card,.staff-card,.activity-card{border-radius:16px}
   .request-card,.event-card,.staff-row,.queue-card,.staff-card,.activity-card{padding:12px}
@@ -830,6 +1038,41 @@ body::before{
   .staff-card .staff-request-item .meta{font-size:9px}
   .staff-card .staff-request-item .timeline-item{padding:6px 7px}
   .staff-card .staff-request-item .timeline-item .t-note{font-size:10px}
+  #insightsPanel .panel-head{
+    flex-direction:column;
+    justify-content:center;
+    align-items:stretch;
+    text-align:center;
+  }
+  #insightsPanel .panel-head .panel-sub{margin:0 auto}
+  .insight-card{border-radius:16px}
+  .insight-head{
+    padding:12px;
+    flex-direction:column;
+    align-items:stretch;
+  }
+  .insight-pills{
+    justify-content:flex-start;
+  }
+  .insight-body{
+    padding:12px;
+    gap:12px;
+  }
+  .insight-chart{
+    gap:4px;
+    min-height:124px;
+  }
+  .insight-member-chart{
+    gap:4px;
+  }
+  .insight-member-chart .insight-bars{
+    --bar-height:46px;
+  }
+  .insight-team-title{font-size:15px}
+  .insight-team-sub{font-size:10px}
+  .insight-member-sub{font-size:10px}
+  .insight-section-title{font-size:8px}
+  .insight-month-label{font-size:9px}
   .palette-grid{grid-template-columns:1fr}
   .topbar{
     padding:10px 12px;
@@ -910,14 +1153,13 @@ body::before{
       <div class="brand-row">
         <div class="brand-mark logo-mark lg" aria-hidden="true"><img data-suite-logo alt="Padeswood Works"></div>
         <div>
-          <h1 class="brand-title">Access denied</h1>
-          <div class="brand-sub">Your account is not allowed to use Credit Hours.</div>
+          <h1 class="brand-title">No Access</h1>
+          <div class="brand-sub">You do not have access to Credit Hours.</div>
         </div>
       </div>
       <div class="small">Please contact an administrator if you think this is wrong.</div>
       <div class="row" style="margin-top:14px">
         <button class="btn btn-primary" type="button" onclick="goBackToPlatform()">Back to Platform</button>
-        <button class="btn btn-ghost" type="button" onclick="logout()">Sign out</button>
       </div>
     </div>
   </div>
@@ -1033,6 +1275,16 @@ body::before{
         <div class="value" id="statQuarterRemaining">48.0</div>
         <div class="sub">Maximum credit hours still available this quarter</div>
       </div>
+    </section>
+
+    <section class="panel hidden" id="insightsPanel">
+      <div class="panel-head">
+        <div>
+          <div class="panel-title">Yearly insights</div>
+          <div class="panel-sub">A visual at-a-glance view of credit hours and overtime paid through the year, grouped by team and by individual.</div>
+        </div>
+      </div>
+      <div id="insightCards" class="list"></div>
     </section>
 
     <section class="panel" id="requestPanel">
@@ -1310,6 +1562,7 @@ let currentHolidayProfile = null;
 let currentHolidayManagerProfile = null;
 let currentHolidayManagerKilnUser = null;
 let currentHolidayManagerLabel = 'No manager assigned';
+const CREDIT_ACCESS_DENIED_LAUNCH = new URLSearchParams(window.location.search).get('access') === 'denied';
 let isHolidayAdmin = false;
 let isApprover = false;
 let allPwProfiles = [];
@@ -2067,7 +2320,7 @@ function showAccessDenied(message){
   $('appShell').classList.add('hidden');
   $('accessDenied').classList.remove('hidden');
   const small = $('accessDenied').querySelector('.small');
-  if (small) small.textContent = message || 'Your account is not allowed to use Credit Hours.';
+  if (small) small.textContent = message || 'You do not have access to Credit Hours. Please contact your administrator if this is unexpected.';
 }
 function showLoginScreen(){
   $('appShell').classList.add('hidden');
@@ -2188,7 +2441,7 @@ function holidayManagerDisplayNameForUser(userId){
   return currentHolidayManagerLabel || 'No manager assigned';
 }
 function isAssignedHolidayManagerForRequest(req){
-  if (!isApprover || isHolidayAdmin || !req || !currentUser) return false;
+  if (isHolidayAdmin || !req || !currentUser) return false;
   const requester = profileFor(req.auth_user_id);
   return !!(requester && String(requester.holiday_manager_auth_user_id || '') === String(currentUser.id || ''));
 }
@@ -2215,6 +2468,9 @@ function assignedHolidayStaffForCurrentUser(){
     if (!p || p.approved === false || p.disabled === true || p.role === 'none') return false;
     return String(p.holiday_manager_auth_user_id || '') === String(currentUser.id || '');
   });
+}
+function canViewManagerSections(){
+  return !!(isHolidayAdmin || (currentKilnUser && currentKilnUser.is_shift_manager));
 }
 function hasAssignedHolidayStaff(){
   return assignedHolidayStaffForCurrentUser().length > 0;
@@ -2415,10 +2671,209 @@ function renderTeamOverviewCards(){
     '</details>';
   }).join('');
 }
+const INSIGHT_MONTH_LABELS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function requestMonthIndex(req){
+  const key = String(req && (req.work_date || req.requested_at || req.created_at || '')).slice(0, 10);
+  if (!key) return -1;
+  const d = new Date(key + 'T00:00:00');
+  return isNaN(d) ? -1 : d.getMonth();
+}
+function insightBucketsForRequests(rows){
+  const buckets = Array.from({ length: 12 }, function(){
+    return { credit: 0, overtime: 0, pendingCredit: 0, pendingOvertime: 0, total: 0 };
+  });
+  rows.forEach(function(req){
+    const monthIndex = requestMonthIndex(req);
+    if (monthIndex < 0 || monthIndex > 11) return;
+    const amount = requestHours(req);
+    if (req.status === 'approved') {
+      if (requestConsumesBalance(req)) buckets[monthIndex].credit += amount;
+      else buckets[monthIndex].overtime += amount;
+    } else if (req.status === 'pending') {
+      if (requestConsumesBalance(req)) buckets[monthIndex].pendingCredit += amount;
+      else buckets[monthIndex].pendingOvertime += amount;
+    }
+    buckets[monthIndex].total += amount;
+  });
+  return buckets;
+}
+function insightTotalsForRequests(rows){
+  return rows.reduce(function(acc, req){
+    if (req.status === 'approved') {
+      if (requestConsumesBalance(req)) acc.credit += requestHours(req);
+      else acc.overtime += requestHours(req);
+    } else if (req.status === 'pending') {
+      if (requestConsumesBalance(req)) acc.pendingCredit += requestHours(req);
+      else acc.pendingOvertime += requestHours(req);
+    }
+    acc.total += requestHours(req);
+    return acc;
+  }, { credit: 0, overtime: 0, pendingCredit: 0, pendingOvertime: 0, total: 0 });
+}
+function insightRequestsFromMembers(members){
+  return (members || []).reduce(function(acc, member){
+    return acc.concat(member && Array.isArray(member.requests) ? member.requests : []);
+  }, []);
+}
+function currentInsightProfiles(){
+  const profiles = isHolidayAdmin
+    ? allPwProfiles.filter(function(p){ return p && p.approved !== false && p.disabled !== true && p.role !== 'none'; })
+    : assignedHolidayStaffForCurrentUser();
+  return profiles.filter(Boolean);
+}
+function insightsGroupsForCurrentView(){
+  const profiles = currentInsightProfiles();
+  if (!profiles.length) return [];
+  if (!isHolidayAdmin) {
+    const members = profiles.map(function(p){
+      const reqs = requestsForUser(p.id).filter(function(r){
+        return requestMatchesYear(r, selectedYear) && r.status !== 'cancelled' && r.status !== 'denied';
+      });
+      return {
+        profile: p,
+        kiln: kilnUserFor(p.id),
+        requests: reqs,
+        totals: insightTotalsForRequests(reqs),
+        buckets: insightBucketsForRequests(reqs),
+        title: personDisplayNameFromRecords(p, kilnUserFor(p.id), 'Unknown')
+      };
+    }).sort(function(a, b){
+      return (b.totals.credit + b.totals.overtime) - (a.totals.credit + a.totals.overtime) || String(a.title).localeCompare(String(b.title));
+    });
+    return [{
+      key: 'team:current',
+      title: 'Your team',
+      sub: 'Staff assigned to your holiday manager',
+      members: members,
+      buckets: insightBucketsForRequests(insightRequestsFromMembers(members)),
+      totals: insightTotalsForRequests(insightRequestsFromMembers(members))
+    }];
+  }
+  const grouped = new Map();
+  profiles.forEach(function(p){
+    const reqs = requestsForUser(p.id).filter(function(r){
+      return requestMatchesYear(r, selectedYear) && r.status !== 'cancelled' && r.status !== 'denied';
+    });
+    const teamLabel = holidayManagerDisplayNameForUser(p.id) || 'Unassigned';
+    const entry = grouped.get(teamLabel) || {
+      key: teamLabel,
+      title: teamLabel,
+      sub: 'Assigned holiday team',
+      members: [],
+      buckets: [],
+      totals: { credit: 0, overtime: 0, pendingCredit: 0, pendingOvertime: 0, total: 0 }
+    };
+    const member = {
+      profile: p,
+      kiln: kilnUserFor(p.id),
+      requests: reqs,
+      totals: insightTotalsForRequests(reqs),
+      buckets: insightBucketsForRequests(reqs),
+      title: personDisplayNameFromRecords(p, kilnUserFor(p.id), 'Unknown')
+    };
+    entry.members.push(member);
+    grouped.set(teamLabel, entry);
+  });
+  return Array.from(grouped.values()).map(function(group){
+    group.members.sort(function(a, b){
+      return (b.totals.credit + b.totals.overtime) - (a.totals.credit + a.totals.overtime) || String(a.title).localeCompare(String(b.title));
+    });
+    const requests = insightRequestsFromMembers(group.members);
+    group.buckets = insightBucketsForRequests(requests);
+    group.totals = insightTotalsForRequests(requests);
+    return group;
+  }).sort(function(a, b){
+    return (b.totals.credit + b.totals.overtime) - (a.totals.credit + a.totals.overtime) || String(a.title).localeCompare(String(b.title));
+  });
+}
+function insightMonthCell(bucket, peak, compact, monthLabel){
+  const total = bucket.credit + bucket.overtime + bucket.pendingCredit + bucket.pendingOvertime;
+  const creditHeight = total > 0 ? Math.max(4, (bucket.credit / peak) * 100) : 0;
+  const overtimeHeight = total > 0 ? Math.max(4, (bucket.overtime / peak) * 100) : 0;
+  const pendingHeight = total > 0 ? Math.max(3, ((bucket.pendingCredit + bucket.pendingOvertime) / peak) * 100) : 0;
+  const style = [];
+  if (creditHeight > 0) style.push('height:' + creditHeight + '%');
+  const pieces = [];
+  if (bucket.credit > 0) {
+    pieces.push('<div class="insight-bar credit" style="height:' + creditHeight + '%"></div>');
+  }
+  if (bucket.overtime > 0) {
+    pieces.push('<div class="insight-bar overtime" style="height:' + overtimeHeight + '%;bottom:' + creditHeight + '%"></div>');
+  }
+  if (bucket.pendingCredit + bucket.pendingOvertime > 0) {
+    pieces.push('<div class="insight-bar pending" style="height:' + pendingHeight + '%;bottom:' + (creditHeight + overtimeHeight) + '%"></div>');
+  }
+  return '<div class="insight-month" title="' + esc(monthLabel) + ': ' + esc(requestHoursText(bucket.credit)) + ' credit · ' + esc(requestHoursText(bucket.overtime)) + ' overtime' + (bucket.pendingCredit + bucket.pendingOvertime > 0 ? ' · ' + esc(requestHoursText(bucket.pendingCredit + bucket.pendingOvertime)) + ' pending' : '') + '">' +
+    '<div class="insight-bars"' + (compact ? ' style="--bar-height:56px"' : '') + '>' + pieces.join('') + '</div>' +
+    '<div class="insight-month-label">' + esc(monthLabel) + '</div>' +
+  '</div>';
+}
+function insightMemberRow(member){
+  const peak = Math.max(1, ...member.buckets.map(function(b){ return b.credit + b.overtime + b.pendingCredit + b.pendingOvertime; }));
+  const bars = member.buckets.map(function(bucket, index){
+    return insightMonthCell(bucket, peak, true, INSIGHT_MONTH_LABELS[index]);
+  }).join('');
+  return '<div class="insight-member">' +
+    '<div class="insight-member-head">' +
+      '<div style="min-width:0">' +
+        '<div class="insight-member-name">' + esc(member.title) + '</div>' +
+        '<div class="insight-member-sub">' + esc(requestHoursText(member.totals.credit)) + ' credit · ' + esc(requestHoursText(member.totals.overtime)) + ' overtime · ' + esc(requestHoursText(member.totals.pendingCredit + member.totals.pendingOvertime)) + ' pending</div>' +
+      '</div>' +
+      '<div class="insight-pills">' +
+        '<span class="pill kind-credit">' + esc(requestHoursText(member.totals.credit)) + ' credit</span>' +
+        '<span class="pill kind-overtime">' + esc(requestHoursText(member.totals.overtime)) + ' overtime</span>' +
+      '</div>' +
+    '</div>' +
+    '<div class="insight-member-chart">' + bars + '</div>' +
+  '</div>';
+}
+function insightTeamCard(group){
+  const peak = Math.max(1, ...group.buckets.map(function(b){ return b.credit + b.overtime + b.pendingCredit + b.pendingOvertime; }));
+  const bars = group.buckets.map(function(bucket, index){
+    return insightMonthCell(bucket, peak, false, INSIGHT_MONTH_LABELS[index]);
+  }).join('');
+  return '<article class="insight-card">' +
+    '<div class="insight-head">' +
+      '<div class="insight-head-left">' +
+        '<div class="insight-team-title">' + esc(group.title) + '</div>' +
+        '<div class="insight-team-sub">' + esc(group.members.length + ' staff') + ' · ' + esc(requestHoursText(group.totals.credit)) + ' credit · ' + esc(requestHoursText(group.totals.overtime)) + ' overtime · ' + esc(requestHoursText(group.totals.pendingCredit + group.totals.pendingOvertime)) + ' pending</div>' +
+      '</div>' +
+      '<div class="insight-pills">' +
+        '<span class="pill kind-credit">' + esc(requestHoursText(group.totals.credit)) + ' credit</span>' +
+        '<span class="pill kind-overtime">' + esc(requestHoursText(group.totals.overtime)) + ' overtime</span>' +
+        '<span class="pill pending">' + esc(requestHoursText(group.totals.pendingCredit + group.totals.pendingOvertime)) + ' pending</span>' +
+      '</div>' +
+    '</div>' +
+    '<div class="insight-body">' +
+      '<div class="insight-section-title">Year chart</div>' +
+      '<div class="insight-chart">' + bars + '</div>' +
+      '<div class="insight-section-title">Individuals</div>' +
+      '<div class="insight-row-list">' + group.members.map(insightMemberRow).join('') + '</div>' +
+    '</div>' +
+  '</article>';
+}
+function renderInsightsPanel(){
+  const panel = $('insightsPanel');
+  const box = $('insightCards');
+  if (!panel || !box) return;
+  const managerViewEnabled = canViewManagerSections();
+  panel.style.display = managerViewEnabled ? '' : 'none';
+  panel.classList.toggle('hidden', !managerViewEnabled);
+  if (!managerViewEnabled) {
+    box.innerHTML = '';
+    return;
+  }
+  const groups = insightsGroupsForCurrentView();
+  if (!groups.length) {
+    box.innerHTML = '<div class="insight-empty">No staff or entries found for '+selectedYear+'.</div>';
+    return;
+  }
+  box.innerHTML = '<div class="insights-grid">' + groups.map(insightTeamCard).join('') + '</div>';
+}
 function renderApproverQueue(){
   const panel = $('approverQueuePanel');
   const allowancePanel = $('allowancePanel');
-  const managerViewEnabled = isHolidayAdmin || isApprover;
+  const managerViewEnabled = canViewManagerSections();
   if (!managerViewEnabled) {
     panel.style.display = 'none';
     if (allowancePanel) allowancePanel.style.display = 'none';
@@ -2507,7 +2962,7 @@ function renderApproverQueue(){
 }
 function renderAllowanceList(){
   const box = $('allowanceList');
-  const managerViewEnabled = isHolidayAdmin || isApprover;
+  const managerViewEnabled = canViewManagerSections();
   if (!managerViewEnabled) { box.innerHTML = ''; return; }
   const activeProfiles = isHolidayAdmin ? allPwProfiles.filter(p => p && p.approved !== false && p.disabled !== true && p.role !== 'none') : assignedHolidayStaffForCurrentUser();
   const carryoverOpen = canEditCarryoverNow();
@@ -2641,13 +3096,15 @@ function renderHolidayApp(){
     quickCreditPresetWrap.style.display = canUseOneHourCreditPreset() ? '' : 'none';
   }
   const requestPanel = $('requestPanel');
+  const insightsPanel = $('insightsPanel');
   if (requestPanel) requestPanel.style.display = isApprover ? 'none' : '';
   const personalSummary = $('personalSummarySection');
   const myRequestsPanel = $('myRequestsPanel');
   const myRequestsActivityWrap = $('myRequestsActivityWrap');
   const activityPanel = $('activityPanel');
-  const managerViewEnabled = isHolidayAdmin || isApprover;
+  const managerViewEnabled = canViewManagerSections();
   if (personalSummary) personalSummary.style.display = isApprover ? 'none' : '';
+  if (insightsPanel) insightsPanel.style.display = managerViewEnabled ? '' : 'none';
   if (myRequestsPanel) myRequestsPanel.style.display = isApprover ? 'none' : '';
   if (myRequestsActivityWrap) myRequestsActivityWrap.style.display = 'none';
   if (activityPanel) activityPanel.style.display = managerViewEnabled ? '' : 'none';
@@ -2662,6 +3119,7 @@ function renderHolidayApp(){
   }
   renderSummary();
   renderMyRequests();
+  renderInsightsPanel();
   renderApproverQueue();
   renderTeamOverviewCards();
   renderActivityFeed();
@@ -2691,6 +3149,9 @@ function renderHolidayApp(){
   if (page && activityPanel && approvalsPanel && managerViewEnabled) {
     page.insertBefore(activityPanel, approvalsPanel);
   }
+  if (page && insightsPanel && managerViewEnabled) {
+    page.insertBefore(insightsPanel, requestPanel);
+  }
   if (page && allowancePanel && isHolidayAdmin) {
     page.appendChild(allowancePanel);
   }
@@ -2700,7 +3161,7 @@ function renderHolidayApp(){
   if (bankHolidayPanel) {
     bankHolidayPanel.style.display = isHolidayAdmin ? '' : 'none';
   }
-  if (focusApprovalsOnRender && (isApprover || isHolidayAdmin)) {
+  if (focusApprovalsOnRender && managerViewEnabled) {
     const filter = $('managerFilter');
     if (filter) filter.value = 'pending';
     setTimeout(function(){
@@ -2728,7 +3189,7 @@ async function ensureHolidayProfile(){
   }
 }
 async function loadHolidayData(){
-  const managerScopeEnabled = !!(isHolidayAdmin || isApprover);
+  const managerScopeEnabled = canViewManagerSections();
   const bankHolidayPromise = sb.from('credit_hour_bank_holidays').select('*').order('holiday_date', { ascending: true });
   const currentManagerId = currentProfile && currentProfile.holiday_manager_auth_user_id ? currentProfile.holiday_manager_auth_user_id : null;
   const currentManagerProfilePromise = currentManagerId
@@ -2821,6 +3282,10 @@ async function initHolidayApp(){
       await new Promise(function(resolve){ setTimeout(resolve, 200); });
       return tryHydrateSession(retries - 1);
     }
+    if (CREDIT_ACCESS_DENIED_LAUNCH) {
+      showAccessDenied('You do not have Credit Hours access.');
+      return false;
+    }
     showLoginScreen();
     return false;
   }
@@ -2838,7 +3303,6 @@ async function hydrateFromSession(){
     const { data: prof, error: profErr } = await sb.from('pw_profiles').select('id,full_name,email,approved,disabled,role,credit_hours_access,holiday_manager_auth_user_id,must_reset_password').eq('id', currentUser.id).maybeSingle();
     if (profErr) throw profErr;
     if (!prof || prof.approved === false || prof.disabled === true || prof.role === 'none' || prof.credit_hours_access === false) {
-      await sb.auth.signOut();
       currentProfile = null;
       showAccessDenied(!prof ? 'This account does not have Platform access yet.' : prof.disabled === true ? 'Your account has been disabled. Please contact an administrator.' : prof.credit_hours_access === false ? 'You do not have Credit Hours access.' : 'You do not have Platform access.');
       return false;
