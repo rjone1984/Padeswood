@@ -737,18 +737,46 @@ body::before{
   .brand-row{gap:12px;margin-bottom:14px;align-items:flex-start}
   .brand-title{font-size:22px}
   .brand-sub{font-size:12px}
-  .page{padding:14px 12px 24px}
-  .hero{padding:16px;align-items:flex-start}
-  .hero h2{font-size:22px}
-  .summary-grid{grid-template-columns:1fr}
-  .stat{padding:12px 13px}
+  .page{padding:12px 10px 20px;gap:12px}
+  .hero{padding:14px;align-items:flex-start;border-radius:18px}
+  .hero h2{font-size:20px;line-height:1.08}
+  .hero p{font-size:12px;line-height:1.5}
+  .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .stat{padding:10px 11px;border-radius:14px}
+  .stat .label{font-size:8px}
+  .stat .value{font-size:18px;margin-top:3px}
+  .stat .sub{display:none}
+  .panel{padding:14px;border-radius:18px}
   .form-grid{grid-template-columns:1fr}
   .field.wide,.field.full{grid-column:auto}
-  .field{padding:11px}
+  .field{padding:10px}
+  .field label,.help-label{font-size:10px;letter-spacing:.8px}
+  .input,.textarea,.select{padding:11px 12px;border-radius:11px}
+  .textarea{min-height:98px}
+  .form-actions{margin-top:10px}
+  .form-actions .btn{width:100%}
+  .request-target-box{margin-top:10px;padding:10px 12px}
+  .request-target-box .target-row{display:grid;gap:4px;justify-items:start}
+  .request-target-box .small{font-size:11px;line-height:1.45}
+  .request-target-box strong{font-size:14px}
   .request-grid{grid-template-columns:1fr}
+  .request-card,.event-card,.staff-row,.queue-card,.staff-card,.activity-card{border-radius:16px}
+  .request-card,.event-card,.staff-row,.queue-card,.staff-card,.activity-card{padding:12px}
   .staff-row{grid-template-columns:1fr;gap:8px}
-  .staff-card summary{padding:12px}
-  .staff-card .staff-body{padding:12px}
+  .staff-card summary{padding:10px 11px;gap:10px}
+  .staff-card .staff-summary-right{justify-content:flex-start}
+  .staff-card .staff-summary-right .pill{padding:3px 6px;font-size:10px}
+  .staff-card .staff-body{padding:10px 11px;gap:8px}
+  .staff-card .staff-body .meta{font-size:11px !important;line-height:1.35}
+  .staff-card .staff-section{padding:10px;gap:8px}
+  .staff-card .staff-section-title{font-size:9px}
+  .staff-card .staff-section-sub{font-size:10px;line-height:1.4}
+  .staff-card .staff-request-audit{padding-top:8px;gap:6px}
+  .staff-card .staff-request-item{padding:7px 8px;border-radius:11px}
+  .staff-card .staff-request-item .title{font-size:10px}
+  .staff-card .staff-request-item .meta{font-size:9px}
+  .staff-card .staff-request-item .timeline-item{padding:6px 7px}
+  .staff-card .staff-request-item .timeline-item .t-note{font-size:10px}
   .palette-grid{grid-template-columns:1fr}
   .topbar{
     padding:10px 12px;
@@ -761,6 +789,24 @@ body::before{
   .topbar-title .kicker{font-size:9px}
   .user-chip{max-width:180px}
   .brand-mark.logo-mark.md{width:28px;height:28px}
+  .panel-head{margin-bottom:10px}
+  .panel-title{font-size:16px}
+  .panel-sub{font-size:11px;line-height:1.45}
+  .summary-grid .stat .sub,
+  .requestPanel .panel-sub,
+  #myRequestsPanel .panel-sub,
+  #activityPanel .panel-sub{display:none}
+  #requestPanel .panel-sub{display:block;font-size:11px}
+  #myRequestsPanel .panel-head{margin-bottom:10px}
+  #activityPanel .panel-head{margin-bottom:10px}
+  #approverQueuePanel .panel-head{margin-bottom:10px}
+  .queue-controls{width:100%}
+  .queue-controls .select{width:100%;min-width:0}
+  .card-box{padding:10px;border-radius:12px}
+  .card-box .box-label{font-size:9px;margin-bottom:5px}
+  .timeline-item{padding:8px 10px;border-radius:11px}
+  .activity-card{padding:10px 11px}
+  .activity-card .detail{font-size:12px}
 }
 </style>
 </head>
