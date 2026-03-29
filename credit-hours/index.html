@@ -124,11 +124,22 @@ body::before{
   *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important}
 }
 .hidden{display:none !important}
+.loading-start .boot-shield,
+.loading-start .auth-screen,
+.loading-start #appShell{
+  display:none !important;
+}
+body.loading-start{
+  visibility:hidden;
+}
+body.loading-start.loaded-ready{
+  visibility:visible;
+}
 .boot-shield{
   position:fixed;
   inset:0;
   z-index:9998;
-  display:flex;
+  display:none !important;
   align-items:center;
   justify-content:center;
   padding:24px 18px;
@@ -144,6 +155,7 @@ body::before{
   opacity:.9;
 }
 .boot-shield-card{
+  display:none;
   position:relative;
   z-index:1;
   display:flex;
@@ -1201,7 +1213,7 @@ body::before{
 }
 </style>
 </head>
-<body>
+<body class="loading-start">
 <div id="bootShield" class="boot-shield" aria-hidden="true">
   <div class="boot-shield-card">
     <div class="boot-shield-mark"><img data-suite-logo alt="Padeswood Works"></div>
@@ -2405,6 +2417,10 @@ function dismissBootShield(){
   const el = $('bootShield');
   if (el) el.classList.add('hidden');
 }
+function clearStartupGate(){
+  document.body.classList.add('loaded-ready');
+  document.body.classList.remove('loading-start');
+}
 async function logout(){
   try { if (sb) await sb.auth.signOut(); } catch(e) {}
   currentUser = null;
@@ -2424,6 +2440,7 @@ async function logout(){
   window.location.href = '../index.html';
 }
 function showAccessDenied(message){
+  clearStartupGate();
   dismissBootShield();
   $('loginScreen').classList.add('hidden');
   $('appShell').classList.add('hidden');
@@ -2432,6 +2449,7 @@ function showAccessDenied(message){
   if (small) small.textContent = message || 'You do not have access to Credit Hours. Please contact your administrator if this is unexpected.';
 }
 function showLoginScreen(){
+  clearStartupGate();
   dismissBootShield();
   $('appShell').classList.add('hidden');
   $('accessDenied').classList.add('hidden');
@@ -2453,6 +2471,7 @@ function showLoginScreen(){
   loginReady = true;
 }
 function showAppScreen(){
+  clearStartupGate();
   dismissBootShield();
   $('loginScreen').classList.add('hidden');
   $('accessDenied').classList.add('hidden');

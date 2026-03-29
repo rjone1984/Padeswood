@@ -203,8 +203,13 @@ body::before {
 
 .boot-shield {
   position:fixed; inset:0; z-index:9998;
-  display:flex; align-items:center; justify-content:center;
+  display:none !important; align-items:center; justify-content:center;
   padding:24px 18px; background:var(--bg);
+}
+.loading-start #bootShield,
+.loading-start #splash,
+.loading-start #licenceOverlay{
+  display:none !important;
 }
 .boot-shield::before {
   content:''; position:absolute; inset:0; pointer-events:none; z-index:0;
@@ -212,6 +217,7 @@ body::before {
   background-size:28px 28px; opacity:.9;
 }
 .boot-shield-card {
+  display:none;
   position:relative; z-index:1;
   display:flex; align-items:center; gap:12px;
   padding:16px 18px; border:1px solid var(--border2); border-radius:18px;
@@ -2099,7 +2105,7 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
 }
 </style>
 </head>
-<body>
+<body class="loading-start">
 
 <div id="bootShield" class="boot-shield" aria-hidden="true">
   <div class="boot-shield-card">
@@ -2714,6 +2720,10 @@ function dismissBootShield(){
   const shield = document.getElementById('bootShield');
   if (shield) shield.style.display = 'none';
 }
+function clearStartupGate(){
+  document.body.classList.add('loaded-ready');
+  document.body.classList.remove('loading-start');
+}
 
 function syncBootShieldLogo(){
   const bootLogo = document.getElementById('kblBootShieldLogo');
@@ -2724,6 +2734,7 @@ function syncBootShieldLogo(){
 }
 
 function showKilnAccessDenied(message){
+  clearStartupGate();
   dismissBootShield();
   const splash = document.getElementById('splash');
   const loginCard = document.querySelector('#splash .splash-card');
@@ -2740,6 +2751,7 @@ function showKilnAccessDenied(message){
 }
 
 function showKilnLoginScreen(){
+  clearStartupGate();
   dismissBootShield();
   const splash = document.getElementById('splash');
   const loginCard = document.querySelector('#splash .splash-card');
@@ -3127,6 +3139,7 @@ async function _applyUserSession(match, sessionUser, profileDisplayName){
   readOnly        = match.is_readonly || false;
   const hasShiftLogAccess = match.shift_log_access !== false || isAdmin;
   if(!hasShiftLogAccess){
+    clearStartupGate();
     dismissBootShield();
     errEl.textContent = 'You do not have access to Logs. Please contact your administrator.';
     errEl.style.display = 'block';
@@ -3139,6 +3152,7 @@ async function _applyUserSession(match, sessionUser, profileDisplayName){
   await sbLoadUsers();
   _pwCache = {};
 
+  clearStartupGate();
   dismissBootShield();
   document.getElementById('splash').style.display='none';
   document.getElementById('app').style.display='block';
