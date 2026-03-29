@@ -3320,7 +3320,7 @@ async function ensureHolidayProfile(){
 }
 async function loadHolidayData(){
   const managerScopeEnabled = canViewManagerSections();
-  const bankHolidayPromise = sb.from('credit_hour_bank_holidays').select('*').order('holiday_date', { ascending: true });
+  const bankHolidayPromise = sb.from('credit_hour_bank_holidays').select('holiday_date,label').order('holiday_date', { ascending: true });
   const currentManagerId = currentProfile && currentProfile.holiday_manager_auth_user_id ? currentProfile.holiday_manager_auth_user_id : null;
   const currentManagerProfilePromise = currentManagerId
     ? sb.from('pw_profiles').select('id,full_name,email').eq('id', currentManagerId).maybeSingle()
@@ -3338,7 +3338,7 @@ async function loadHolidayData(){
   if (managerScopeEnabled) {
     const requestPromise = sb.from('credit_hour_entries').select('*');
     const eventPromise = sb.from('credit_hour_events').select('*');
-    const profilePromise = sb.from('credit_hour_profiles').select('*');
+    const profilePromise = sb.from('credit_hour_profiles').select('auth_user_id,annual_allowance_hours,annual_allowance_days,carryover_days,entitlement_extras_days');
     const profileEventPromise = sb.from('credit_hour_profile_events').select('*');
     const extraProfilePromise = sb.from('pw_profiles').select('id,full_name,email,approved,disabled,role,credit_hours_access,holiday_manager_auth_user_id').order('full_name', { ascending: true });
     const kilnUserPromise = sb.from('kiln_users').select('auth_user_id,is_admin,is_shift_manager,is_burner,is_cement_analyst,is_locked,locked_name,email,username').order('username', { ascending: true });
@@ -3358,7 +3358,7 @@ async function loadHolidayData(){
     return;
   }
   const requestPromise = sb.from('credit_hour_entries').select('*').eq('auth_user_id', currentUser.id);
-  const profilePromise = sb.from('credit_hour_profiles').select('*').eq('auth_user_id', currentUser.id);
+  const profilePromise = sb.from('credit_hour_profiles').select('auth_user_id,annual_allowance_hours,annual_allowance_days,carryover_days,entitlement_extras_days').eq('auth_user_id', currentUser.id);
   const profileEventPromise = sb.from('credit_hour_profile_events').select('*').eq('profile_user_id', currentUser.id);
   const [reqRes, hpRes, hpEventRes, bankHolidayRes] = await Promise.all([requestPromise, profilePromise, profileEventPromise, bankHolidayPromise]);
   if (reqRes.error) throw reqRes.error;

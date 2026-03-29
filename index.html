@@ -833,6 +833,9 @@ body :where(.app-card,.coming-card,.icon-btn,.login-btn,.card-arrow,.palette-opt
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
         <span id="resetReqBadge" style="display:none;position:absolute;top:2px;right:2px;background:var(--red);color:#fff;font-size:9px;font-weight:700;border-radius:10px;padding:1px 5px;min-width:16px;text-align:center;line-height:16px"></span>
       </button>
+      <button class="icon-btn" id="feedbackBtn" onclick="openFeedbackRequestModal()" title="Report Bug / Request Feature" style="display:none;position:relative">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 15a3 3 0 0 1-3 3H8l-5 4V6a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3z"/><path d="M8 10h8"/><path d="M8 14h5"/></svg>
+      </button>
       <button class="icon-btn" id="holidayReqBtn" onclick="openManagerRequests()" title="Manager Requests" style="display:none;position:relative">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M7 3.5v4M17 3.5v4M3.5 9.5h17"/><path d="M8.5 14.8l1.8 1.9 4.8-5.2"/></svg>
         <span id="holidayReqBadge" style="display:none;position:absolute;top:2px;right:2px;background:var(--amb);color:#fff;font-size:9px;font-weight:700;border-radius:10px;padding:1px 5px;min-width:16px;text-align:center;line-height:16px"></span>
@@ -1777,6 +1780,8 @@ async function showAppSelector(user, opts) {
       document.getElementById('headerUser').style.display = 'none';
       document.getElementById('logoutBtn').style.display = 'none';
       document.getElementById('changePwBtn').style.display = 'none';
+      const feedbackDeniedBtn = document.getElementById('feedbackBtn');
+      if (feedbackDeniedBtn) feedbackDeniedBtn.style.display = 'none';
       document.getElementById('loginScreen').style.display = 'flex';
       const err = document.getElementById('loginErr');
       if (data.disabled === true) {
@@ -1863,6 +1868,8 @@ async function showAppSelector(user, opts) {
   await loadUserTheme();
   await loadUserPalette();
   loadHolidayReqBadge();
+  const feedbackBtn = document.getElementById('feedbackBtn');
+  if (feedbackBtn) feedbackBtn.style.display = 'flex';
   document.getElementById('mainWrapper').style.display = 'block';
   checkAppStatus();
   return true;
@@ -1944,11 +1951,12 @@ function showRegMsg(type, text) {
 async function loadPendingBadge() {
   try {
     const profRes = await sb.from('pw_profiles').select('id', { count: 'exact', head: true }).eq('approved', false);
-    const [accessReqs, resetReqs] = await Promise.all([
+    const [accessReqs, resetReqs, feedbackReqs] = await Promise.all([
       loadRequestRows('access', { status: 'pending', ascending: false }),
-      loadRequestRows('reset', { status: 'pending', ascending: false })
+      loadRequestRows('reset', { status: 'pending', ascending: false }),
+      loadRequestRows('feedback', { status: 'pending', ascending: false })
     ]);
-    const reqCount = (accessReqs ? accessReqs.length : 0) + (resetReqs ? resetReqs.length : 0);
+    const reqCount = (accessReqs ? accessReqs.length : 0) + (resetReqs ? resetReqs.length : 0) + (feedbackReqs ? feedbackReqs.length : 0);
     const total = (profRes.count || 0) + reqCount;
     const badge = document.getElementById('pendingBadge');
     if (badge) { badge.textContent = total; badge.style.display = total > 0 ? 'block' : 'none'; }
@@ -2526,6 +2534,180 @@ async function deleteRequestRow(row) {
   return PW_REQUESTS_TABLE;
 }
 
+function parseFeedbackRequestPayload(req) {
+  const out = { app: 'Platform', summary: '', details: '' };
+  const raw = String(req && req.kiln_role ? req.kiln_role : '').trim();
+  if (!raw) return out;
+  try {
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === 'object') {
+      if (parsed.app) out.app = String(parsed.app);
+      if (parsed.summary) out.summary = String(parsed.summary);
+      if (parsed.details) out.details = String(parsed.details);
+      return out;
+    }
+  } catch(e) {}
+  out.details = raw;
+  return out;
+}
+
+function openFeedbackRequestModal() {
+  const overlay = document.getElementById('feedbackReqOverlay');
+  const typeEl = document.getElementById('feedbackReqType');
+  const appEl = document.getElementById('feedbackReqApp');
+  const summaryEl = document.getElementById('feedbackReqSummary');
+  const detailsEl = document.getElementById('feedbackReqDetails');
+  const msgEl = document.getElementById('feedbackReqMsg');
+  if (!overlay) return;
+  if (typeEl) typeEl.value = 'feature';
+  if (appEl) appEl.value = 'Platform';
+  if (summaryEl) summaryEl.value = '';
+  if (detailsEl) detailsEl.value = '';
+  if (msgEl) msgEl.style.display = 'none';
+  overlay.style.display = 'flex';
+  setTimeout(function() {
+    if (summaryEl) summaryEl.focus();
+  }, 60);
+}
+
+function closeFeedbackRequestModal() {
+  const overlay = document.getElementById('feedbackReqOverlay');
+  const msgEl = document.getElementById('feedbackReqMsg');
+  if (overlay) overlay.style.display = 'none';
+  if (msgEl) msgEl.style.display = 'none';
+}
+
+async function submitFeedbackRequest() {
+  if (!sb) return;
+  if (!canManagePlatformUsers() && !(_platformProfile && _platformProfile.id)) {
+    showPlatformToast('Please sign in again');
+    return;
+  }
+  const typeEl = document.getElementById('feedbackReqType');
+  const appEl = document.getElementById('feedbackReqApp');
+  const summaryEl = document.getElementById('feedbackReqSummary');
+  const detailsEl = document.getElementById('feedbackReqDetails');
+  const msgEl = document.getElementById('feedbackReqMsg');
+  const category = typeEl ? String(typeEl.value || 'feature') : 'feature';
+  const app = appEl ? String(appEl.value || 'Platform') : 'Platform';
+  const summary = summaryEl ? summaryEl.value.trim() : '';
+  const details = detailsEl ? detailsEl.value.trim() : '';
+  const reporterName = getSuiteDisplayName(_platformProfile || null, _platformKilnUser || null, 'Unknown user');
+  const reporterEmail = _platformProfile && _platformProfile.email ? String(_platformProfile.email).trim() : '';
+  if (!summary) {
+    if (msgEl) {
+      msgEl.textContent = 'Please add a short summary.';
+      msgEl.style.display = 'block';
+      msgEl.style.background = 'var(--redd)';
+      msgEl.style.color = 'var(--red)';
+      msgEl.style.border = '1px solid var(--redb)';
+    }
+    return;
+  }
+  if (!details) {
+    if (msgEl) {
+      msgEl.textContent = 'Please add the details.';
+      msgEl.style.display = 'block';
+      msgEl.style.background = 'var(--redd)';
+      msgEl.style.color = 'var(--red)';
+      msgEl.style.border = '1px solid var(--redb)';
+    }
+    return;
+  }
+  if (msgEl) msgEl.style.display = 'none';
+  const btn = document.querySelector('#feedbackReqOverlay .btn-iso');
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+  }
+  try {
+    await saveRequestRow('feedback', {
+      full_name: reporterName,
+      email: reporterEmail,
+      role: category,
+      kiln_role: JSON.stringify({ app: app, summary: summary, details: details }),
+      status: 'pending',
+      requested_at: new Date().toISOString()
+    });
+    if (summaryEl) summaryEl.value = '';
+    if (detailsEl) detailsEl.value = '';
+    closeFeedbackRequestModal();
+    showPlatformToast('Request sent to admin ✓');
+    await loadPendingBadge().catch(function(){});
+    if (_platformProfile && _platformProfile.role === 'admin') {
+      await loadAllUsers().catch(function(){});
+    }
+  } catch (e) {
+    if (msgEl) {
+      msgEl.textContent = e && e.message ? e.message : 'Failed to submit request.';
+      msgEl.style.display = 'block';
+      msgEl.style.background = 'var(--redd)';
+      msgEl.style.color = 'var(--red)';
+      msgEl.style.border = '1px solid var(--redb)';
+    }
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = 'Send Request';
+    }
+  }
+}
+
+async function resolveFeedbackRequest(reqId, status) {
+  if (!canManagePlatformUsers()) {
+    showPlatformToast('Admin only');
+    return;
+  }
+  const req = _feedbackRequestsCache.find(function(x){ return String(x.id) === String(reqId); }) || { id: reqId, requestType: 'feedback', requestTable: PW_REQUESTS_TABLE };
+  try {
+    await updateRequestRow(req, { status: status });
+    _feedbackRequestsCache = _feedbackRequestsCache.filter(function(x){ return String(x.id) !== String(reqId); });
+    renderAllUsers();
+    loadPendingBadge();
+    showPlatformToast(status === 'done' ? 'Marked fixed ✓' : 'Dismissed ✓');
+  } catch (e) {
+    showPlatformToast('Failed: ' + (e && e.message ? e.message : String(e)));
+  }
+}
+
+function renderFeedbackRequestsSection() {
+  if (!_feedbackRequestsCache || !_feedbackRequestsCache.length) return '';
+  let html = '<div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--bd)">';
+  html += '<div style="font-family:var(--ff-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--pur);margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">'
+    + 'Feature / Bug Requests <span style="background:var(--purd);border:1px solid var(--purb);color:var(--pur);border-radius:10px;padding:1px 7px;font-size:10px">'+_feedbackRequestsCache.length+'</span>'
+    + '<span style="margin-left:auto;display:flex;align-items:center;gap:6px;flex-wrap:wrap">'
+    + '<button type="button" onclick="loadAllUsers()" style="height:24px;padding:0 9px;font-size:10px;font-family:var(--ff-head);font-weight:600;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--tx2);cursor:pointer">Refresh</button>'
+    + '</span></div>';
+  _feedbackRequestsCache.forEach(function(req) {
+    const payload = parseFeedbackRequestPayload(req);
+    const isBug = String(req && req.role ? req.role : '').toLowerCase() === 'bug';
+    const typeLabel = isBug ? 'Bug report' : 'Feature request';
+    const typeBg = isBug ? 'var(--redd)' : 'var(--purd)';
+    const typeBd = isBug ? 'var(--redb)' : 'var(--purb)';
+    const typeColor = isBug ? 'var(--red)' : 'var(--pur)';
+    const reporter = getSuiteDisplayName({ full_name: req && req.full_name ? req.full_name : '' }, null, req && req.full_name ? req.full_name : 'Unknown user');
+    const when = req && req.requested_at ? new Date(req.requested_at).toLocaleString('en-GB') : '—';
+    html += '<div style="background:var(--sf2);border:1px solid var(--bd2);border-radius:var(--rsm);padding:12px 14px;margin-bottom:6px;display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap">'
+      + '<div style="flex:1;min-width:0">'
+      + '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'
+      + '<div style="font-size:12px;font-weight:700;color:var(--tx);font-family:var(--ff-head)">'+esc(payload.app || 'Platform')+'</div>'
+      + '<span style="font-size:10px;font-family:var(--ff-mono);padding:2px 7px;border-radius:10px;background:'+typeBg+';border:1px solid '+typeBd+';color:'+typeColor+'">'+esc(typeLabel)+'</span>'
+      + '<span style="font-size:10px;font-family:var(--ff-mono);color:var(--tx3)">'+esc(when)+'</span>'
+      + '</div>'
+      + '<div style="font-size:13px;font-weight:600;color:var(--tx);font-family:var(--ff-head);margin-top:4px">'+esc(payload.summary || 'No summary')+'</div>'
+      + '<div style="font-size:11px;color:var(--tx2);font-family:var(--ff-body);margin-top:4px;line-height:1.6;white-space:pre-wrap">'+esc(payload.details || 'No details provided')+'</div>'
+      + '<div style="font-size:10px;color:var(--tx3);font-family:var(--ff-mono);margin-top:6px">By '+esc(reporter)+' · '+esc(req && req.email ? req.email : '—')+'</div>'
+      + '</div>'
+      + '<div style="display:flex;align-items:center;gap:8px;flex-shrink:0">'
+      + '<button type="button" onclick="resolveFeedbackRequest(\''+esc(req.id)+'\',\'done\')" style="height:28px;padding:0 12px;font-size:11px;font-family:var(--ff-head);font-weight:600;background:var(--grnd);border:1px solid var(--grnb);border-radius:var(--rsm);color:var(--grn);cursor:pointer;white-space:nowrap">Mark Fixed</button>'
+      + '<button type="button" onclick="resolveFeedbackRequest(\''+esc(req.id)+'\',\'dismissed\')" style="height:28px;padding:0 10px;font-size:11px;font-family:var(--ff-mono);background:transparent;border:1px solid var(--bd);border-radius:var(--rsm);color:var(--tx3);cursor:pointer;white-space:nowrap">Dismiss</button>'
+      + '</div>'
+      + '</div>';
+  });
+  html += '</div>';
+  return html;
+}
+
 async function hasPendingRequestByEmail(requestType, email) {
   const rows = await loadRequestRows(requestType, { status: 'pending', email: email, ascending: false });
   return !!(rows && rows.length);
@@ -2883,6 +3065,7 @@ function closeAdminPanel() {
 
 let _accessRequestsCache = [];
 let _resetRequestsCache = [];
+let _feedbackRequestsCache = [];
 let _accessRequestSelection = {};
 let _bulkAccessRequestTargets = [];
 const PLATFORM_PROTECTED_USERNAME = 'rjone';
@@ -3258,7 +3441,7 @@ async function loadAllUsers() {
     }
 
     const [profRes, kilnRes] = await withTimeout(Promise.all([
-      sb.from('pw_profiles').select('*').order('email'),
+      sb.from('pw_profiles').select('id,full_name,email,approved,disabled,role,must_reset_password,holiday_requests_access,holiday_manager_auth_user_id,shift_tracker_access,credit_hours_access').order('email'),
       sb.from('kiln_users').select('username,locked_name,email,is_admin,is_burner,is_shift_manager,is_electrician,is_mechanical,is_process_operator,is_cement_analyst,is_day_staff,is_readonly,is_locked,shift_log_access,must_reset_password,auth_user_id').order('username')
     ]), 10000);
 
@@ -3269,6 +3452,7 @@ async function loadAllUsers() {
     _kilnUsersCache = (kilnRes.error ? [] : kilnRes.data) || [];
 
     _accessRequestsCache = await loadRequestRows('access', { status: 'pending', ascending: false });
+    _feedbackRequestsCache = await loadRequestRows('feedback', { status: 'pending', ascending: false });
     syncAccessRequestSelection();
     populateHolidayManagerSelect('inviteHolidayManager', document.getElementById('inviteHolidayManager') ? document.getElementById('inviteHolidayManager').value : '', null);
 
@@ -3334,6 +3518,8 @@ function renderAllUsers() {
     });
     html += '</div>';
   }
+
+  html += renderFeedbackRequestsSection();
 
   ROLE_GROUPS.forEach(function(grp) {
     const members = merged.filter(grp.test);
@@ -4125,6 +4311,55 @@ async function deleteResetReq(btnOrId) {
 }
 </script>
 
+<div id="feedbackReqOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:1000;align-items:center;justify-content:center" onclick="if(event.target===this)closeFeedbackRequestModal()">
+  <div style="width:620px;max-width:94vw;max-height:86vh;background:var(--sf);border:1px solid var(--bd);border-radius:14px;display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--e3)">
+    <div style="padding:18px 22px;border-bottom:1px solid var(--bd);display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-shrink:0">
+      <div>
+        <div style="font-family:var(--ff-head);font-weight:700;font-size:16px;color:var(--tx)">Feature / Bug Request</div>
+        <div style="font-family:var(--ff-mono);font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:var(--tx3);margin-top:4px">Send this to the admin queue for review</div>
+      </div>
+      <button onclick="closeFeedbackRequestModal()" style="width:auto;min-width:64px;height:28px;padding:0 12px;border-radius:6px;border:1px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;font-size:11px;font-family:var(--ff-mono);letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;line-height:1">Close</button>
+    </div>
+    <div style="flex:1;min-height:0;overflow:auto;padding:18px 22px 20px;display:flex;flex-direction:column;gap:14px">
+      <div style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono);line-height:1.6">
+        Use this to request a new feature or report a bug. The admin account will see it inside Platform and can mark it fixed when done.
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <label style="display:flex;flex-direction:column;gap:6px">
+          <div style="font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3)">App</div>
+          <select id="feedbackReqApp" style="height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
+            <option value="Platform">Platform</option>
+            <option value="Holiday Requests">Holiday Requests</option>
+            <option value="Credit Hours">Credit Hours</option>
+            <option value="Shift Tracker">Shift Tracker</option>
+            <option value="Logs">Logs</option>
+            <option value="Other">Other</option>
+          </select>
+        </label>
+        <label style="display:flex;flex-direction:column;gap:6px">
+          <div style="font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3)">Type</div>
+          <select id="feedbackReqType" style="height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
+            <option value="feature">Feature request</option>
+            <option value="bug">Bug report</option>
+          </select>
+        </label>
+      </div>
+      <label style="display:flex;flex-direction:column;gap:6px">
+        <div style="font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3)">Summary</div>
+        <input id="feedbackReqSummary" type="text" placeholder="Short title" style="height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
+      </label>
+      <label style="display:flex;flex-direction:column;gap:6px;flex:1;min-height:0">
+        <div style="font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3)">Details</div>
+        <textarea id="feedbackReqDetails" rows="7" placeholder="Describe the bug or feature request" style="flex:1;min-height:140px;padding:10px 12px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;line-height:1.6;outline:none;resize:vertical"></textarea>
+      </label>
+      <div id="feedbackReqMsg" style="display:none;font-size:12px;padding:8px 12px;border-radius:var(--rsm)"></div>
+      <div style="display:flex;justify-content:flex-end;gap:10px;flex-shrink:0">
+        <button type="button" class="btn btn-ghost" onclick="closeFeedbackRequestModal()" style="min-width:96px;height:38px;padding:0 14px;font-size:12px;font-weight:600">Cancel</button>
+        <button type="button" class="btn btn-iso" onclick="submitFeedbackRequest()" style="min-width:140px;height:38px;padding:0 14px;font-size:12px;font-weight:700">Send Request</button>
+      </div>
+    </div>
+  </div>
+</div>
 <div id="resetReqOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;align-items:center;justify-content:center" onclick="if(event.target===this)closeResetReqModal()">
   <div style="width:520px;max-width:94vw;max-height:80vh;background:var(--sf);border:1px solid var(--bd);border-radius:14px;display:flex;flex-direction:column;overflow:hidden">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--bd)">

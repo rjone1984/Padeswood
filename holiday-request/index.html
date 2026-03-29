@@ -2521,7 +2521,7 @@ async function loadHolidayData(){
   if (managerScopeEnabled) {
     const requestPromise = sb.from('holiday_requests').select('*');
     const eventPromise = sb.from('holiday_request_events').select('*');
-    const profilePromise = sb.from('holiday_profiles').select('*');
+    const profilePromise = sb.from('holiday_profiles').select('auth_user_id,annual_allowance_days,carryover_days,entitlement_extras_days');
     const profileEventPromise = sb.from('holiday_profile_events').select('*');
     const extraProfilePromise = sb.from('pw_profiles').select('id,full_name,email,approved,disabled,role,holiday_requests_access,holiday_manager_auth_user_id').order('full_name', { ascending: true });
     const kilnUserPromise = sb.from('kiln_users').select('auth_user_id,is_admin,is_shift_manager,is_locked,locked_name,email,username').order('username', { ascending: true });
@@ -2542,7 +2542,7 @@ async function loadHolidayData(){
     return;
   }
   const requestPromise = sb.from('holiday_requests').select('*').eq('auth_user_id', currentUser.id);
-  const profilePromise = sb.from('holiday_profiles').select('*').eq('auth_user_id', currentUser.id);
+  const profilePromise = sb.from('holiday_profiles').select('auth_user_id,annual_allowance_days,carryover_days,entitlement_extras_days').eq('auth_user_id', currentUser.id);
   const profileEventPromise = sb.from('holiday_profile_events').select('*').eq('profile_user_id', currentUser.id);
   const [reqRes, hpRes, hpEventRes] = await Promise.all([requestPromise, profilePromise, profileEventPromise]);
   if (reqRes.error) throw reqRes.error;

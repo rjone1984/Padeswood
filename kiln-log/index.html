@@ -314,6 +314,102 @@ body::before {
 }
 .splash-btn:hover { background:var(--ac2); transform:translateY(-1px) }
 .splash-btn:active { transform:translateY(0) }
+.auth-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  background: var(--bg);
+  overflow: auto;
+}
+.auth-shell {
+  width: min(420px, 92vw);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.login-card {
+  width: 100%;
+  background:var(--sf);
+  border:1px solid var(--bd);
+  border-radius:14px;
+  padding:18px 22px 20px;
+  box-shadow:var(--e3);
+  position:relative;
+  overflow:hidden;
+}
+.login-card::before {
+  content:'';
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:1px;
+  background:linear-gradient(90deg, transparent, var(--ac3), transparent);
+}
+.brand-row {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:4px;
+}
+.brand-mark {
+  width:54px;
+  height:54px;
+  flex-shrink:0;
+  border-radius:16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255,255,255,.98), rgba(255,255,255,.78) 24%, rgba(255,255,255,0) 62%),
+    linear-gradient(135deg, rgba(26,122,53,.10), rgba(46,204,92,.06));
+  border:1px solid var(--bd2);
+  box-shadow:0 10px 26px rgba(0,0,0,.08), inset 0 1px 0 rgba(255,255,255,.48);
+  overflow:hidden;
+}
+.brand-mark.lg {
+  width:54px;
+  height:54px;
+  border-radius:16px;
+}
+.brand-mark img {
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+}
+.brand-title {
+  font-family:var(--ff-head);
+  font-size:24px;
+  line-height:1.04;
+  font-weight:800;
+  color:var(--tx);
+  letter-spacing:-.02em;
+}
+.brand-sub {
+  margin-top:4px;
+  font-family:var(--ff-mono);
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:2.2px;
+  text-transform:uppercase;
+  color:var(--tx3);
+}
+.small {
+  font-size:13px;
+  line-height:1.6;
+  color:var(--tx2);
+}
+.row {
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  flex-wrap:wrap;
+}
 .splash-err {
   display:none;
   color:var(--red); font-size:12px; text-align:center; margin-top:10px; min-height:18px;
@@ -2180,10 +2276,29 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
       <div class="splash-line"></div>
       <div class="splash-version">Padeswood Works &nbsp;&#8226;&nbsp; Shift Record System</div>
     </div>
-    <div id="accessDenied" class="access-denied">
-      <div class="access-denied-title">No Access</div>
-      <div class="access-denied-msg" id="accessDeniedMsg">You do not have access to Logs.</div>
-      <a class="access-denied-btn" href="../index.html">Back to Platform</a>
+    <div id="accessDenied" class="auth-screen" style="display:none">
+      <div class="auth-shell">
+        <div class="splash-hero">
+          <div class="splash-hero-mark"><img id="kblDeniedHeroLogo" alt="Padeswood Works"></div>
+          <div class="splash-hero-copy">
+            <div class="splash-hero-title">Padeswood Works</div>
+            <div class="splash-hero-sub">HeidelbergMaterials · Logs</div>
+          </div>
+        </div>
+        <div class="login-card">
+        <div class="brand-row">
+            <div class="brand-mark lg" aria-hidden="true"><img id="kblDeniedCardLogo" alt="Padeswood Works"></div>
+            <div>
+              <div class="brand-title">No Access</div>
+              <div class="brand-sub">You do not have access to Logs.</div>
+            </div>
+          </div>
+          <div class="small" id="accessDeniedMsg">Please contact an administrator if you think this is wrong.</div>
+          <div class="row" style="margin-top:14px">
+            <button type="button" class="btn btn-primary" onclick="window.location.href='../index.html'">Back to Platform</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -2728,14 +2843,21 @@ function clearStartupGate(){
 function syncBootShieldLogo(){
   const bootLogo = document.getElementById('kblBootShieldLogo');
   const splashLogo = document.querySelector('#splash .splash-logo img');
+  const deniedHeroLogo = document.getElementById('kblDeniedHeroLogo');
+  const deniedCardLogo = document.getElementById('kblDeniedCardLogo');
   if (!bootLogo || !splashLogo) return;
   const src = splashLogo.currentSrc || splashLogo.src;
-  if (src) bootLogo.src = src;
+  if (src) {
+    bootLogo.src = src;
+    if (deniedHeroLogo) deniedHeroLogo.src = src;
+    if (deniedCardLogo) deniedCardLogo.src = src;
+  }
 }
 
 function showKilnAccessDenied(message){
   clearStartupGate();
   dismissBootShield();
+  syncBootShieldLogo();
   const splash = document.getElementById('splash');
   const loginCard = document.querySelector('#splash .splash-card');
   const deniedCard = document.getElementById('accessDenied');
@@ -2744,7 +2866,7 @@ function showKilnAccessDenied(message){
   const errEl = document.getElementById('splashErr');
   if(splash) splash.style.display = 'flex';
   if(loginCard) loginCard.style.display = 'none';
-  if(deniedCard) deniedCard.style.display = 'block';
+  if(deniedCard) deniedCard.style.display = 'flex';
   if(deniedMsg) deniedMsg.textContent = message || 'You do not have access to Logs. Please contact your administrator.';
   if(loader) loader.style.display = 'none';
   if(errEl) errEl.style.display = 'none';
@@ -2801,7 +2923,7 @@ async function restoreKilnSharedSession(){
   setSharedSession(session);
 
   const uid = session.user.id;
-  const userRes = await fetch(SB_URL + '/rest/v1/kiln_users?auth_user_id=eq.' + uid + '&select=*', {
+  const userRes = await fetch(SB_URL + '/rest/v1/kiln_users?auth_user_id=eq.' + encodeURIComponent(uid) + '&select=auth_user_id,locked_name,email,username,is_admin,is_readonly,is_burner,is_shift_manager,is_electrician,is_mechanical,is_cement_analyst,is_day_staff,is_locked,shift_log_access,must_reset_password', {
     headers: {
       'apikey': SB_KEY,
       'Authorization': 'Bearer ' + _sbSession
@@ -3089,7 +3211,7 @@ async function doLogin(){
 
   setSharedSession(session);
   const uid = session.user.id;
-  const userRes = await fetch(SB_URL + '/rest/v1/kiln_users?auth_user_id=eq.' + uid + '&select=*', {
+  const userRes = await fetch(SB_URL + '/rest/v1/kiln_users?auth_user_id=eq.' + encodeURIComponent(uid) + '&select=auth_user_id,locked_name,email,username,is_admin,is_readonly,is_burner,is_shift_manager,is_electrician,is_mechanical,is_cement_analyst,is_day_staff,is_locked,shift_log_access,must_reset_password', {
     headers: {
       'apikey': SB_KEY,
       'Authorization': 'Bearer ' + _sbSession

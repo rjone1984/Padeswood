@@ -473,6 +473,229 @@
     transition: opacity 0.28s var(--ease-smooth), transform 0.28s var(--ease-smooth); letter-spacing: 0.02em;
     box-shadow: 0 4px 22px rgba(26,122,53,.35);
   }
+  .auth-screen {
+    min-height: 100vh;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 26px 18px;
+  }
+  .auth-shell {
+    width: min(560px, 100%);
+    display: grid;
+    gap: 14px;
+  }
+  @keyframes holidayCardBreath {
+    0%, 100% {
+      transform: translateY(0) scale(1);
+      box-shadow: var(--e3), var(--eac);
+    }
+    50% {
+      transform: translateY(-1px) scale(1.01);
+      box-shadow: 0 24px 62px rgba(0,0,0,.18);
+    }
+  }
+  @keyframes holidayLogoFloat {
+    0%, 100% {
+      transform: translateY(0) scale(1);
+      filter: drop-shadow(0 0 0 rgba(46,204,92,0));
+    }
+    50% {
+      transform: translateY(-2px) scale(1.03);
+      filter: drop-shadow(0 10px 18px rgba(46,204,92,.14));
+    }
+  }
+  .splash-hero {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 0 8px;
+  }
+  .splash-hero-mark {
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+      radial-gradient(circle at 30% 20%, rgba(255,255,255,.98), rgba(255,255,255,.78) 24%, rgba(255,255,255,0) 62%),
+      linear-gradient(135deg, rgba(26,122,53,.12), rgba(46,204,92,.08));
+    border: 1px solid var(--border2);
+    box-shadow: 0 12px 28px rgba(0,0,0,.10), inset 0 1px 0 rgba(255,255,255,.48);
+    overflow: hidden;
+    animation: holidayLogoFloat 8.8s cubic-bezier(.22,1,.36,1) infinite;
+  }
+  .splash-hero-mark img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  .splash-hero-copy {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .splash-hero-title {
+    font-family: var(--ff-head);
+    font-size: 25px;
+    line-height: 1.02;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.03em;
+  }
+  .splash-hero-sub {
+    font-family: var(--ff-mono);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 2.4px;
+    text-transform: uppercase;
+    color: var(--text3);
+  }
+  .auth-screen .splash-hero {
+    margin: 0;
+    width: auto;
+    max-width: none;
+    padding: 0 8px;
+  }
+  .login-card {
+    width: min(560px, 100%);
+    border: 1px solid var(--border2);
+    border-radius: 20px;
+    background: linear-gradient(180deg, var(--glass-1), var(--glass-2));
+    box-shadow: var(--e3), var(--eac);
+    padding: 22px;
+  }
+  .auth-screen .login-card {
+    animation: holidayCardBreath 9.2s cubic-bezier(.22,1,.36,1) infinite;
+  }
+  .brand-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+  .brand-mark {
+    width: 54px;
+    height: 54px;
+    flex-shrink: 0;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+      radial-gradient(circle at 30% 20%, rgba(255,255,255,.98), rgba(255,255,255,.78) 24%, rgba(255,255,255,0) 62%),
+      linear-gradient(135deg, rgba(26,122,53,.12), rgba(46,204,92,.08));
+    border: 1px solid var(--border2);
+    box-shadow: 0 12px 28px rgba(0,0,0,.10), inset 0 1px 0 rgba(255,255,255,.48);
+    overflow: hidden;
+  }
+  .brand-mark.logo-mark{
+    background:none;
+    border:none;
+    box-shadow:none;
+    padding:0;
+  }
+  .brand-mark.logo-mark img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    display:block;
+  }
+  .brand-mark.lg {
+    width: 54px;
+    height: 54px;
+    border-radius: 16px;
+    animation: holidayLogoFloat 8.8s cubic-bezier(.22,1,.36,1) infinite;
+  }
+  .brand-mark.logo-mark.lg{width:54px;height:54px}
+  .brand-mark.logo-mark.md{width:32px;height:32px}
+  .brand-mark img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  .brand-title {
+    font-family: var(--ff-head);
+    font-size: 24px;
+    line-height: 1.1;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+  .brand-sub {
+    margin-top: 4px;
+    font-family: var(--ff-mono);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2.2px;
+    text-transform: uppercase;
+    color: var(--text3);
+  }
+  .auth-screen .brand-title {
+    margin: 0;
+    color: var(--text);
+  }
+  .auth-screen .brand-sub {
+    margin: 3px 0 0;
+    color: var(--text2);
+    font-family: var(--ff-body);
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: normal;
+    text-transform: none;
+  }
+  .small {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text2);
+  }
+  .auth-screen .small {
+    font-size: 12px;
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .auth-screen .row {
+    justify-content: flex-start;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 38px;
+    padding: 0 16px;
+    border-radius: 7px;
+    border: 1px solid var(--border2);
+    background: var(--bg3);
+    color: var(--text);
+    font-family: var(--ff-head);
+    font-weight: 600;
+    font-size: 13px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.28s var(--ease-smooth);
+  }
+  .auth-screen .btn {
+    height: auto;
+    min-height: 0;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-weight: 700;
+  }
+  .btn-primary {
+    background: linear-gradient(180deg, var(--accent-soft), var(--accent2));
+    border-color: var(--accent2);
+    color: var(--text);
+  }
   @keyframes trackerCardBreath {
     0%, 100% {
       transform: scale(1);
@@ -1115,6 +1338,43 @@
     margin-bottom: 4px;
   }
   @media (max-width: 640px) {
+    .auth-screen {
+      padding: 16px 12px;
+    }
+    .auth-screen .auth-shell {
+      gap: 12px;
+    }
+    .auth-screen .splash-hero {
+      gap: 12px;
+      margin: 0;
+      padding: 0 4px;
+    }
+    .auth-screen .splash-hero-mark {
+      width: 54px;
+      height: 54px;
+      border-radius: 16px;
+    }
+    .auth-screen .splash-hero-title {
+      font-size: 22px;
+    }
+    .auth-screen .splash-hero-sub {
+      font-size: 8px;
+      letter-spacing: 2px;
+    }
+    .auth-screen .login-card {
+      padding: 18px;
+    }
+    .auth-screen .brand-row {
+      gap: 12px;
+      margin-bottom: 14px;
+      align-items: flex-start;
+    }
+    .auth-screen .brand-title {
+      font-size: 22px;
+    }
+    .auth-screen .brand-sub {
+      font-size: 12px;
+    }
     #splash {
       padding: 12px 10px 0;
       max-width: none;
@@ -1329,10 +1589,30 @@
       <div class="splash-error" id="login-error"></div>
     </div>
   </div>
-  <div id="access-denied" class="access-denied">
-    <div class="access-denied-title">No Access</div>
-    <div class="access-denied-msg" id="access-denied-msg">You do not have access to Shift Tracker.</div>
-    <a class="access-denied-btn" href="../index.html">Back to Platform</a>
+</div>
+
+<div id="access-denied" class="auth-screen" style="display:none">
+  <div class="auth-shell">
+    <div class="splash-hero">
+      <div class="splash-hero-mark"><img id="stDeniedHeroLogo" alt="Padeswood Works"></div>
+      <div class="splash-hero-copy">
+        <div class="splash-hero-title">Padeswood Works</div>
+        <div class="splash-hero-sub">HeidelbergMaterials · Shift Tracker</div>
+      </div>
+    </div>
+    <div class="login-card">
+      <div class="brand-row">
+        <div class="brand-mark logo-mark lg" aria-hidden="true"><img id="stDeniedCardLogo" alt="Padeswood Works"></div>
+        <div>
+          <div class="brand-title">No Access</div>
+          <div class="brand-sub">You do not have access to Shift Tracker.</div>
+        </div>
+      </div>
+      <div class="small" id="access-denied-msg">Please contact an administrator if you think this is wrong.</div>
+      <div class="row" style="margin-top:14px">
+        <button type="button" class="btn btn-primary" onclick="window.location.href='../index.html'">Back to Platform</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -2095,6 +2375,8 @@ function stShowError(text) {
 function stSyncSplashBrandLogo() {
   const splashLogo = document.getElementById('stSplashLogo');
   const splashHeroLogo = document.getElementById('stSplashHeroLogo');
+  const deniedHeroLogo = document.getElementById('stDeniedHeroLogo');
+  const deniedCardLogo = document.getElementById('stDeniedCardLogo');
   const bootLogo = document.getElementById('stBootShieldLogo');
   const headerLogo = document.querySelector('.tracker-shell-mark img');
   if (!splashLogo || !headerLogo) return;
@@ -2102,6 +2384,8 @@ function stSyncSplashBrandLogo() {
   if (src) {
     splashLogo.src = src;
     if (splashHeroLogo) splashHeroLogo.src = src;
+    if (deniedHeroLogo) deniedHeroLogo.src = src;
+    if (deniedCardLogo) deniedCardLogo.src = src;
     if (bootLogo) bootLogo.src = src;
   }
 }
@@ -2158,16 +2442,17 @@ function stShowAccessDenied(message) {
   const userChip = document.getElementById('stHeaderUser');
   stCancelLoginReveal();
   stDismissBootShield();
+  stSyncSplashBrandLogo();
   document.body.classList.add('loaded-ready');
   document.body.classList.remove('loading-start');
   sessionStorage.removeItem('auth');
   if (els.splash) {
-    els.splash.style.display = 'block';
+    els.splash.style.display = 'none';
   }
   if (userChip) userChip.style.display = 'none';
   if (els.appWrap) els.appWrap.classList.remove('visible');
   if (els.loginArea) els.loginArea.style.display = 'none';
-  if (els.deniedArea) els.deniedArea.style.display = 'block';
+  if (els.deniedArea) els.deniedArea.style.display = 'flex';
   if (els.deniedMsg) els.deniedMsg.textContent = message || 'You do not have access to this app.';
 }
 
@@ -2181,8 +2466,8 @@ function stApplyHeaderProfile(user, profile, kilnUser) {
 
 async function stProfileAllowed(sb, user) {
   const [profileRes, kilnRes] = await Promise.all([
-    sb.from('pw_profiles').select('*').eq('id', user.id).maybeSingle(),
-    sb.from('kiln_users').select('auth_user_id,locked_name,email,username').eq('auth_user_id', user.id).maybeSingle()
+    sb.from('pw_profiles').select('id,full_name,email,approved,disabled,role,shift_tracker_access,must_reset_password').eq('id', user.id).maybeSingle(),
+    sb.from('kiln_users').select('auth_user_id,locked_name,email,username,is_admin,is_shift_manager,is_burner,is_electrician,is_mechanical,is_readonly,is_locked,shift_log_access,is_cement_analyst,is_day_staff,must_reset_password').eq('auth_user_id', user.id).maybeSingle()
   ]);
   if (profileRes.error) throw profileRes.error;
   if (kilnRes.error && kilnRes.error.code !== 'PGRST116') throw kilnRes.error;
