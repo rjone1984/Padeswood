@@ -1799,8 +1799,6 @@ async function applySharedPalettePreference(){
   const sharedPalette = await loadSharedPalettePreference();
   if (sharedPalette) {
     localStorage.setItem(PALETTE_STORAGE_KEY, sharedPalette);
-  } else {
-    localStorage.removeItem(PALETTE_STORAGE_KEY);
   }
   applyStoredPalette();
 }

@@ -1378,9 +1378,9 @@ body.loading-start.loaded-ready{
       <div class="sub" id="statEntitlementSub">Annual credit-hours allowance</div>
       </div>
       <div class="stat">
-        <div class="label">Credit Used</div>
+        <div class="label">Credits Worked</div>
         <div class="value" id="statUsed">0.0</div>
-        <div class="sub">Approved credit claimed this year</div>
+        <div class="sub">Approved credits worked this year</div>
       </div>
       <div class="stat">
         <div class="label">Pending</div>
@@ -1388,9 +1388,9 @@ body.loading-start.loaded-ready{
         <div class="sub">Claimed hours waiting for a decision</div>
       </div>
       <div class="stat">
-        <div class="label">Credit Left</div>
+        <div class="label">Credit Hours Remaining</div>
         <div class="value" id="statRemaining">0.0</div>
-        <div class="sub">Allowance minus approved credit</div>
+        <div class="sub">Allowance minus approved credits worked</div>
       </div>
       <div class="stat">
         <div class="label">Overtime</div>
@@ -1403,12 +1403,12 @@ body.loading-start.loaded-ready{
         <div class="sub" id="statBreakCoverSub">Approved credit from "No break cover provided"</div>
       </div>
       <div class="stat">
-        <div class="label">Quarter Used</div>
+        <div class="label">Rolling Quarter Worked</div>
         <div class="value" id="statQuarterUsed">0.0</div>
-        <div class="sub">Approved credit claimed in the rolling quarter</div>
+        <div class="sub">Approved credits worked in the rolling quarter</div>
       </div>
       <div class="stat">
-        <div class="label">Quarter Left</div>
+        <div class="label">Rolling Quarter Remaining</div>
         <div class="value" id="statQuarterRemaining">48.0</div>
         <div class="sub">Maximum credit hours still available this quarter</div>
       </div>
@@ -2806,10 +2806,10 @@ function renderTeamOverviewCards(){
       '</summary>'+
       '<div class="staff-body">'+
         '<div class="meta" style="font-size:10px">Annual allowance '+esc(requestHoursText(stats.entitlement))+'</div>'+
-        '<div class="meta" style="font-size:10px">Credit used '+esc(requestHoursText(stats.used))+'</div>'+
-        '<div class="meta" style="font-size:10px">Quarter used '+esc(requestHoursText(quarterUsed))+'</div>'+
-        '<div class="meta" style="font-size:10px">Quarter left '+esc(requestHoursText(quarterRemaining))+'</div>'+
-        '<div class="meta" style="font-size:10px">Credit left '+esc(requestHoursText(stats.remaining))+'</div>'+
+          '<div class="meta" style="font-size:10px">Credits worked '+esc(requestHoursText(stats.used))+'</div>'+
+          '<div class="meta" style="font-size:10px">Rolling Quarter Worked '+esc(requestHoursText(quarterUsed))+'</div>'+
+          '<div class="meta" style="font-size:10px">Rolling Quarter Remaining '+esc(requestHoursText(quarterRemaining))+'</div>'+
+          '<div class="meta" style="font-size:10px">Credit Hours Remaining '+esc(requestHoursText(stats.remaining))+'</div>'+
         '<div class="meta" style="font-size:10px">Approved overtime '+esc(requestHoursText(stats.overtime))+'</div>'+
         '<div class="meta" style="font-size:10px">Pending claimed '+esc(requestHoursText(stats.pending))+'</div>'+
         '<div class="staff-request-audit">'+
@@ -3219,7 +3219,7 @@ function renderSummary(){
   if (quarterRemaining) quarterRemaining.textContent = requestHoursText(quarterRemainingDisplay);
   const quarterUsedSub = quarterUsed ? quarterUsed.parentElement && quarterUsed.parentElement.querySelector('.sub') : null;
   const quarterRemainingSub = quarterRemaining ? quarterRemaining.parentElement && quarterRemaining.parentElement.querySelector('.sub') : null;
-  if (quarterUsedSub) quarterUsedSub.textContent = 'Approved plus pending credit reserved this quarter';
+  if (quarterUsedSub) quarterUsedSub.textContent = 'Approved credits worked plus pending reserved this quarter';
   if (quarterRemainingSub) quarterRemainingSub.textContent = 'Remaining after pending claims are reserved';
   const breakCoverStat = $('statBreakCover');
   if (breakCoverStat) {
