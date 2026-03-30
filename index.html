@@ -364,6 +364,28 @@ body :where(.app-card,.coming-card,.icon-btn,.login-btn,.card-arrow,.palette-opt
   background:transparent;color:var(--tx2);cursor:pointer;display:flex;align-items:center;
   justify-content:center;transition:border-color .18s,color .18s,background .18s;}
 .icon-btn:hover{border-color:var(--ac);color:var(--ac3);background:var(--acd1);}
+
+/* Shared suite button primitives (kept in sync with the other apps). */
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  border:1px solid var(--bd);
+  border-radius:12px;
+  background:var(--sf2);
+  color:var(--tx);
+  text-decoration:none;
+  transition:transform .28s var(--ease-smooth), box-shadow .28s var(--ease-smooth), background .28s var(--ease-smooth), border-color .28s var(--ease-smooth), color .28s var(--ease-smooth), opacity .28s var(--ease-smooth), filter .28s var(--ease-smooth);
+  cursor:pointer;
+  line-height:1;
+}
+.btn{padding:12px 16px;font-family:var(--ff-head);font-weight:700}
+.btn:hover{transform:translateY(-1px);border-color:var(--bd3)}
+.btn-primary{background:linear-gradient(180deg,var(--acd2),var(--acd1));border-color:var(--ac3);color:var(--ac3)}
+.btn-danger{background:var(--redd);border-color:var(--redb);color:var(--red)}
+.btn-ghost{background:var(--sf3)}
 #paletteBtn.active{border-color:var(--ac);color:var(--ac3);background:var(--acd1);box-shadow:0 0 0 1px var(--acd2),0 0 16px var(--acd1);}
 .palette-overlay {
   position: fixed;
@@ -485,6 +507,11 @@ body :where(.app-card,.coming-card,.icon-btn,.login-btn,.card-arrow,.palette-opt
 .palette-actions button {
   min-width: 124px;
 }
+#saveAllBtn {
+  line-height: 1;
+  box-sizing: border-box;
+  min-height: 40px;
+}
 body.basic-mode,
 body.basic-mode::before,
 body.basic-mode::after {
@@ -501,6 +528,10 @@ body.basic-mode * {
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
+body.basic-mode button {
+  color: var(--tx) !important;
+  text-shadow: none !important;
+}
 body.basic-mode :is(.app-card,.coming-card,#mainHeader,.login-card,.lic-inner,.panel,.modal,.toast,.palette-panel,.manager-requests-panel,.header-user,.section-label,.palette-option,.palette-close,.icon-btn,.btn,.btn-ghost,.btn-primary,.btn-secondary,.btn-iso,.button,.card-arrow,.user-chip) {
   background: var(--sf) !important;
   background-image: none !important;
@@ -508,10 +539,10 @@ body.basic-mode :is(.app-card,.coming-card,#mainHeader,.login-card,.lic-inner,.p
   box-shadow: none !important;
 }
 body.basic-mode .btn-primary {
-  background: linear-gradient(135deg, var(--ac), var(--ac2)) !important;
-  color: #fff !important;
-  border-color: var(--ac3) !important;
-  box-shadow: 0 6px 18px rgba(26,122,53,.22) !important;
+  background: var(--sf2) !important;
+  color: var(--tx) !important;
+  border-color: var(--bd2) !important;
+  box-shadow: none !important;
 }
 body.basic-mode.dark .palette-actions {
   background: #10151d !important;
@@ -1396,7 +1427,7 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
   </div>
   <div style="padding:14px 22px;border-top:1px solid var(--bd);display:flex;justify-content:flex-end;gap:10px;flex-shrink:0;background:linear-gradient(180deg, rgba(255,255,255,.02), transparent)">
     <button class="btn btn-ghost" onclick="closeRoleEditor()" style="min-width:96px;height:38px;padding:0 14px;font-size:12px;font-weight:600">Cancel</button>
-    <button class="btn btn-iso" onclick="saveRoleEditor()" style="min-width:112px;height:38px;padding:0 14px;font-size:12px;font-weight:700">Save Changes</button>
+    <button class="btn btn-primary" onclick="saveRoleEditor()" style="min-width:112px;height:38px;padding:0 14px;font-size:12px;font-weight:700">Save Changes</button>
   </div>
 </div>
 
@@ -1584,6 +1615,20 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
   #adminPanel [style*="display:flex;gap:8px;flex-wrap:wrap"] button{
     flex:1 1 100%;
   }
+  #adminPanel [style*="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px"]{
+    display:grid !important;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:6px !important;
+  }
+  #adminPanel [style*="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px"] span{
+    max-width:none !important;
+    white-space:normal !important;
+    line-height:1.35 !important;
+  }
+  #adminPanel [style*="max-width:240px"]{
+    max-width:none !important;
+    white-space:normal !important;
+  }
   #roleEditPanel{
     width:calc(100vw - 16px);
     max-width:calc(100vw - 16px);
@@ -1602,6 +1647,7 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
     -webkit-overflow-scrolling:touch;
   }
   #roleEditPanel [style*="grid-template-columns:repeat(4,minmax(0,1fr))"],
+  #roleEditPanel [style*="grid-template-columns:repeat(3,minmax(0,1fr))"],
   #roleEditPanel [style*="grid-template-columns:1fr 1fr"],
   #roleEditPanel [style*="grid-template-columns:repeat(2,minmax(0,1fr))"]{
     grid-template-columns:1fr !important;
@@ -1643,6 +1689,198 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
   #mainContent{padding-left:10px;padding-right:10px;}
   .platform-hero h1{font-size:19px;}
 }
+
+/* ------------------------------------------------------------------------- */
+/* Apple-Style Refinement Layer (Platform Home Only)                          */
+/* Keep structure/behavior, quiet the background, and remove decorative loops */
+/* ------------------------------------------------------------------------- */
+
+body:not(.basic-mode){
+  background:var(--bg) !important;
+}
+body:not(.basic-mode).light-mode{
+  background:var(--bg) !important;
+}
+body:not(.basic-mode)::before,
+body:not(.basic-mode)::after{
+  background:none !important;
+  background-image:none !important;
+  filter:none !important;
+  opacity:0 !important;
+}
+
+/* Remove decorative animated separators and glow lines. */
+body:not(.basic-mode) :is(.lic-inner,.login-card,#mainHeader,.app-card,.card-icon,.palette-panel,.manager-requests-panel)::before,
+body:not(.basic-mode) :is(.lic-inner,.login-card,#mainHeader,.app-card,.card-icon,.palette-panel,.manager-requests-panel)::after,
+body:not(.basic-mode) #loginScreen::after{
+  background:none !important;
+  background-image:none !important;
+  box-shadow:none !important;
+  filter:none !important;
+  opacity:0 !important;
+  animation:none !important;
+}
+
+/* Calm, consistent surfaces: subtle glass only where it helps (header/panels). */
+body:not(.basic-mode) #mainHeader{
+  background:color-mix(in srgb, var(--sf) 92%, transparent) !important;
+  border-bottom-color:var(--bd2) !important;
+  box-shadow:var(--e1) !important;
+  backdrop-filter:blur(14px) !important;
+  -webkit-backdrop-filter:blur(14px) !important;
+}
+body:not(.basic-mode) .header-logo{
+  box-shadow:none !important;
+}
+body:not(.basic-mode) .header-user{
+  background:var(--sf2) !important;
+  border-color:var(--bd2) !important;
+}
+body:not(.basic-mode) .icon-btn:hover{
+  border-color:var(--bd3) !important;
+  color:var(--tx) !important;
+  background:var(--sf2) !important;
+}
+
+/* App cards: remove heavy glass/glow, keep a clean macOS-like card. */
+body:not(.basic-mode) .app-card{
+  background:var(--sf) !important;
+  border:1px solid var(--bd2) !important;
+  border-radius:18px !important;
+  box-shadow:var(--e1) !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+  transform:none !important;
+}
+body:not(.basic-mode) .app-card:hover{
+  border-color:var(--bd3) !important;
+  box-shadow:var(--e2) !important;
+  transform:translateY(-2px) !important;
+}
+body:not(.basic-mode) .app-card .card-arrow{
+  background:var(--sf2) !important;
+  border-color:var(--bd2) !important;
+  color:var(--tx2) !important;
+}
+body:not(.basic-mode) .app-card:hover .card-arrow{
+  background:var(--sf2) !important;
+  transform:translate(2px,-2px) !important;
+}
+
+/* Icons: keep them crisp and static (no looping float/halo). */
+body:not(.basic-mode) .card-icon,
+body:not(.basic-mode) .card-icon::before,
+body:not(.basic-mode) .card-icon::after,
+body:not(.basic-mode) .card-icon svg,
+body:not(.basic-mode) .card-icon svg *{
+  animation:none !important;
+  filter:none !important;
+  transform:none !important;
+}
+body:not(.basic-mode) .card-icon{
+  background:var(--sf3) !important;
+  border:1px solid var(--bd2) !important;
+  box-shadow:none !important;
+}
+
+/* Coming cards: same surface language. */
+body:not(.basic-mode) .coming-card{
+  background:var(--sf) !important;
+  border:1px dashed var(--bd2) !important;
+  box-shadow:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+
+/* Buttons: keep accent purposeful but remove gradient/glow. */
+body:not(.basic-mode) .btn-primary{
+  background:var(--ac) !important;
+  border-color:var(--ac) !important;
+  color:#fff !important;
+  box-shadow:none !important;
+}
+body:not(.basic-mode) .btn-primary:hover{
+  background:var(--ac2) !important;
+  border-color:var(--ac2) !important;
+}
+body:not(.basic-mode) .btn-ghost{
+  background:var(--sf2) !important;
+  border-color:var(--bd2) !important;
+}
+/* Some admin-only actions use inline gradient styles; normalize them too. */
+body:not(.basic-mode) button[style*="linear-gradient(135deg,var(--ac),var(--ac3))"]{
+  background:var(--ac) !important;
+  box-shadow:none !important;
+}
+body:not(.basic-mode) button[style*="linear-gradient(135deg,var(--ac),var(--ac3))"]:hover{
+  background:var(--ac2) !important;
+}
+
+/* Calm the hero subtitle from accent-green to neutral text. */
+body:not(.basic-mode) .platform-hero p{
+  color:var(--tx2) !important;
+  opacity:.78 !important;
+}
+
+/* Login/licence: flatten heavy glass and remove big shadows. */
+body:not(.basic-mode) .login-card,
+body:not(.basic-mode) .lic-inner{
+  background:var(--sf) !important;
+  border-color:var(--bd2) !important;
+  box-shadow:var(--e2) !important;
+  backdrop-filter:blur(14px) !important;
+  -webkit-backdrop-filter:blur(14px) !important;
+}
+body:not(.basic-mode) .login-logo{
+  box-shadow:none !important;
+}
+body:not(.basic-mode) .login-btn{
+  background:var(--ac) !important;
+  box-shadow:none !important;
+}
+body:not(.basic-mode) .login-btn:hover{
+  opacity:1 !important;
+  background:var(--ac2) !important;
+}
+body:not(.basic-mode) #emailWrap{
+  background:var(--sf3) !important;
+  box-shadow:none !important;
+}
+body:not(.basic-mode) .email-domain-select{
+  background:var(--sf2) !important;
+}
+
+/* Overlays/panels/modals: reduce blur/saturation and keep readability high. */
+body:not(.basic-mode) :is(.palette-overlay,.manager-requests-overlay){
+  background:rgba(0,0,0,.42) !important;
+  backdrop-filter:blur(10px) !important;
+  -webkit-backdrop-filter:blur(10px) !important;
+}
+body:not(.basic-mode) :is(.palette-panel,.manager-requests-panel){
+  background:var(--sf) !important;
+  border-color:var(--bd2) !important;
+  box-shadow:var(--e2) !important;
+  backdrop-filter:blur(14px) !important;
+  -webkit-backdrop-filter:blur(14px) !important;
+}
+body:not(.basic-mode) .palette-option{
+  background:var(--sf2) !important;
+  border-color:var(--bd2) !important;
+  box-shadow:none !important;
+}
+body:not(.basic-mode) .palette-option:hover{
+  border-color:var(--bd3) !important;
+  box-shadow:var(--e1) !important;
+}
+body:not(.basic-mode) .palette-option.active{
+  background:var(--sf2) !important;
+  box-shadow:0 0 0 1px var(--bd2) !important;
+  animation:none !important;
+}
+
+/* Quiet decorative motion (keep functional transitions). */
+body:not(.basic-mode) .db-dot,
+body:not(.basic-mode) .card-icon{animation:none !important;}
 </style>
 <script>
 // ---------------------------------------------------------------------------
@@ -2595,14 +2833,25 @@ function looksLikeShortLoginName(value, email, username) {
   return !/\s/.test(raw) && /^[a-z0-9._-]{3,}$/i.test(raw);
 }
 
+function compactLoginLabel(email, username) {
+  const emailLocal = email && String(email).includes('@') ? String(email).split('@')[0].trim() : '';
+  const loginName = String(username || '').trim();
+  if (loginName && !looksLikeShortLoginName(loginName, email, username)) return loginName;
+  if (emailLocal) return emailLocal;
+  if (loginName) return loginName;
+  return '';
+}
+
 function getSuiteDisplayName(profile, kilnUser, fallback) {
   const lockedName = kilnUser && kilnUser.locked_name ? String(kilnUser.locked_name).trim() : '';
   const fullName = profile && profile.full_name ? String(profile.full_name).trim() : '';
   const email = profile && profile.email ? String(profile.email).trim() : ((kilnUser && kilnUser.email) ? String(kilnUser.email).trim() : '');
   if (fullName && !looksLikeShortLoginName(fullName, email, kilnUser && kilnUser.username)) return fullName;
-  if (email) return email;
   if (lockedName && !looksLikeShortLoginName(lockedName, email, kilnUser && kilnUser.username)) return lockedName;
-  return fallback || '—';
+  const loginLabel = compactLoginLabel(email, kilnUser && kilnUser.username);
+  if (loginLabel) return loginLabel;
+  if (fallback && !String(fallback).includes('@')) return String(fallback).trim();
+  return '—';
 }
 
 function populateHolidayManagerSelect(selectId, selectedId, excludeProfileId) {
@@ -2839,7 +3088,7 @@ async function submitFeedbackRequest() {
   const summaryEl = document.getElementById('feedbackReqSummary');
   const detailsEl = document.getElementById('feedbackReqDetails');
   const msgEl = document.getElementById('feedbackReqMsg');
-  const btn = document.querySelector('#feedbackReqOverlay .btn-iso');
+  const btn = document.querySelector('#feedbackReqOverlay .btn-primary');
   const category = typeEl ? String(typeEl.value || 'feature') : 'feature';
   const app = appEl ? String(appEl.value || 'Platform') : 'Platform';
   const summary = summaryEl ? summaryEl.value.trim() : '';
@@ -4772,7 +5021,7 @@ async function deleteResetReq(btnOrId) {
       </label>
       <div style="display:flex;justify-content:flex-end;gap:10px;flex-shrink:0">
         <button type="button" class="btn btn-ghost" onclick="closeFeedbackRequestModal()" style="min-width:96px;height:38px;padding:0 14px;font-size:12px;font-weight:600">Cancel</button>
-        <button type="button" class="btn btn-iso" onclick="submitFeedbackRequest()" style="min-width:140px;height:38px;padding:0 14px;font-size:12px;font-weight:700">Send Request</button>
+        <button type="button" class="btn btn-primary" onclick="submitFeedbackRequest()" style="min-width:140px;height:38px;padding:0 14px;font-size:12px;font-weight:700">Send Request</button>
       </div>
     </div>
   </div>

@@ -40,6 +40,13 @@
   --glass-2: rgba(22,25,31,.72);
   --glass-3: rgba(22,25,31,.68);
   --glass-4: rgba(22,25,31,.56);
+  /* Alias tokens used by older/shared snippets. */
+  --text: var(--tx);
+  --text2: var(--tx2);
+  --text3: var(--tx3);
+  --text-soft: var(--tx3);
+  --border: var(--bd);
+  --border2: var(--bd2);
 }
 .light-mode{
   --bg:#fbfdff; --sf:#ffffff; --sf2:#f8fbff; --sf3:#f2f7fd; --sf4:#edf3fa;
@@ -1290,6 +1297,10 @@ body.basic-mode * {
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
+body.basic-mode button {
+  color: var(--tx) !important;
+  text-shadow: none !important;
+}
 body.basic-mode :is(.app-card,.coming-card,#mainHeader,.login-card,.lic-inner,.panel,.modal,.toast,.palette-panel,.manager-requests-panel,.header-user,.section-label,.palette-option,.palette-close,.icon-btn,.btn,.btn-ghost,.btn-primary,.btn-secondary,.btn-iso,.button,.card-arrow,.user-chip) {
   background: var(--sf) !important;
   background-image: none !important;
@@ -1297,10 +1308,10 @@ body.basic-mode :is(.app-card,.coming-card,#mainHeader,.login-card,.lic-inner,.p
   box-shadow: none !important;
 }
 body.basic-mode .btn-primary {
-  background: linear-gradient(135deg, var(--ac), var(--ac2)) !important;
-  color: #fff !important;
-  border-color: var(--ac3) !important;
-  box-shadow: 0 6px 18px rgba(26,122,53,.22) !important;
+  background: var(--sf2) !important;
+  color: var(--tx) !important;
+  border-color: var(--bd2) !important;
+  box-shadow: none !important;
 }
 body.basic-mode.dark .palette-actions {
   background: #10151d !important;
@@ -1396,6 +1407,10 @@ body.basic-mode :is(.palette-overlay,.manager-requests-overlay) {
     font-size:12px;
     padding-inline:10px;
     padding-block:0;
+    max-width:100%;
+    overflow:hidden;
+    appearance:none;
+    -webkit-appearance:none;
   }
   .form-actions{margin-top:10px}
   .form-actions .btn{width:100%}
@@ -1444,8 +1459,11 @@ body.basic-mode :is(.palette-overlay,.manager-requests-overlay) {
   .staff-card .staff-request-item .timeline-item{padding:6px 7px}
   .staff-card .staff-request-item .timeline-item .t-note{font-size:10px}
   #activityPanel .activity-layout{
-    grid-template-columns:1fr;
+    display:flex;
+    flex-direction:column;
   }
+  #activityPanel .activity-detail{order:-1}
+  #activityPanel .activity-roster{order:1}
   #activityPanel .activity-stat-grid{
     grid-template-columns:1fr;
   }
@@ -1524,6 +1542,105 @@ body.basic-mode :is(.palette-overlay,.manager-requests-overlay) {
   .timeline-item{padding:8px 10px;border-radius:11px}
   .activity-card{padding:10px 11px}
   .activity-card .detail{font-size:12px}
+}
+
+/* Final Apple-style override layer. Preserve structure/behavior; simplify glass, motion, and backgrounds. */
+body.light-mode:not(.basic-mode){
+  background:var(--bg) !important;
+}
+body:not(.basic-mode)::before,
+body:not(.basic-mode) .boot-shield::before{
+  background:none !important;
+  opacity:0 !important;
+}
+body:not(.basic-mode) .auth-screen .login-card,
+body:not(.basic-mode) .boot-shield-mark,
+body:not(.basic-mode) .splash-hero-mark,
+body:not(.basic-mode) .brand-mark.logo-mark.lg,
+body:not(.basic-mode) .tab-btn.active,
+body:not(.basic-mode) .pill.balance-red,
+body:not(.basic-mode) .pill.balance-amber,
+body:not(.basic-mode) .pill.balance-green{
+  animation:none !important;
+}
+body:not(.basic-mode) .pill.balance-red::after,
+body:not(.basic-mode) .pill.balance-amber::after,
+body:not(.basic-mode) .pill.balance-green::after,
+body:not(.basic-mode) .tab-btn.active::after,
+body:not(.basic-mode) #licenceOverlay .login-card::before,
+body:not(.basic-mode) #licenceOverlay .login-card::after{
+  display:none !important;
+}
+body:not(.basic-mode) :is(.topbar,.hero,.stat,.panel,.login-card,.field,.card-box,.entry-group,.timeline-item,.activity-card,.toast,.palette-panel,.modal,.palette-actions,.request-target-box){
+  background:var(--sf) !important;
+  background-image:none !important;
+  border-color:var(--bd2) !important;
+  box-shadow:var(--e1) !important;
+  backdrop-filter:blur(12px) !important;
+  -webkit-backdrop-filter:blur(12px) !important;
+}
+body:not(.basic-mode) :is(.topbar,.palette-panel,.modal,.toast){
+  backdrop-filter:blur(14px) !important;
+  -webkit-backdrop-filter:blur(14px) !important;
+}
+body:not(.basic-mode) :is(.btn,.icon-btn,.tab-btn,.chip):hover{
+  transform:none !important;
+  box-shadow:none !important;
+}
+body:not(.basic-mode) .topbar .back-platform-btn:hover{
+  border-color:var(--bd3) !important;
+  color:var(--tx) !important;
+  background:var(--sf2) !important;
+  box-shadow:none !important;
+  transform:none !important;
+}
+body:not(.basic-mode) .btn-primary{
+  background:var(--ac) !important;
+  color:#fff !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+}
+body:not(.basic-mode) .btn-primary:hover{
+  background:var(--ac2) !important;
+}
+body:not(.basic-mode) .btn-ghost{
+  background:var(--sf2) !important;
+}
+body:not(.basic-mode) .empty{
+  background:var(--sf) !important;
+}
+body:not(.basic-mode){
+  background:var(--bg) !important;
+}
+body:not(.basic-mode)::before,
+body:not(.basic-mode)::after{
+  background:none !important;
+  opacity:0 !important;
+  filter:none !important;
+}
+body:not(.basic-mode) :is(.topbar,.app-card,.login-card,.panel,.modal,.toast,.palette-panel,.manager-requests-panel,.queue-card,.activity-detail,.activity-roster-btn,.activity-stat,.activity-section,.activity-mini-item,.btn,.btn-ghost,.btn-primary,.btn-iso,.icon-btn,.user-chip,.brand-row,.brand-mark,.splash-hero-mark){
+  background:var(--sf) !important;
+  background-image:none !important;
+  border-color:var(--bd2) !important;
+  box-shadow:0 8px 24px rgba(15,23,42,.06) !important;
+  backdrop-filter:blur(12px) !important;
+  -webkit-backdrop-filter:blur(12px) !important;
+}
+body:not(.basic-mode) :is(.queue-card,.activity-detail,.activity-stat,.activity-mini-item){
+  border-radius:14px !important;
+}
+body:not(.basic-mode) :is(.queue-card,.activity-detail,.activity-stat,.activity-mini-item)::before,
+body:not(.basic-mode) :is(.queue-card,.activity-detail,.activity-stat,.activity-mini-item)::after{
+  animation:none !important;
+  background:none !important;
+}
+body:not(.basic-mode) .btn-primary{
+  background:var(--ac) !important;
+  color:#fff !important;
+  box-shadow:none !important;
+}
+body:not(.basic-mode) .btn-primary:hover{
+  background:var(--ac2) !important;
 }
 </style>
 </head>
@@ -2051,14 +2168,23 @@ function looksLikeShortLoginName(value, email, username){
   if (loginName && normalized === loginName) return true;
   return !/\s/.test(raw) && /^[a-z0-9._-]{3,}$/i.test(raw);
 }
+function compactLoginLabel(email, username){
+  const emailLocal = email && String(email).includes('@') ? String(email).split('@')[0].trim() : '';
+  const loginName = String(username || '').trim();
+  if (loginName && !looksLikeShortLoginName(loginName, email, username)) return loginName;
+  if (emailLocal) return emailLocal;
+  if (loginName) return loginName;
+  return '';
+}
 function personDisplayNameFromRecords(profile, kilnUser, fallback){
   const lockedName = kilnUser && kilnUser.locked_name ? String(kilnUser.locked_name).trim() : '';
   const fullName = profile && profile.full_name ? String(profile.full_name).trim() : '';
   const email = (profile && profile.email) ? String(profile.email).trim() : ((kilnUser && kilnUser.email) ? String(kilnUser.email).trim() : '');
   if (fullName && !looksLikeShortLoginName(fullName, email, kilnUser && kilnUser.username)) return fullName;
-  if (email) return email;
   if (lockedName && !looksLikeShortLoginName(lockedName, email, kilnUser && kilnUser.username)) return lockedName;
-  if (fallback) return String(fallback).trim();
+  const loginLabel = compactLoginLabel(email, kilnUser && kilnUser.username);
+  if (loginLabel) return loginLabel;
+  if (fallback && !String(fallback).includes('@')) return String(fallback).trim();
   return '—';
 }
 function holidayManagerDisplayNameFromRecords(profile, kilnUser){
@@ -3158,6 +3284,10 @@ function renderActivityFeed(){
 function setSelectedCreditActivityUser(userId){
   selectedCreditActivityUserId = String(userId || '');
   renderHolidayApp();
+  if (window.matchMedia && window.matchMedia('(max-width: 760px)').matches) {
+    const detail = document.querySelector('#activityPanel .activity-detail');
+    if (detail) detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 }
 function renderTeamOverviewCards(){
   const box = $('teamOverviewCards');

@@ -64,22 +64,22 @@
     --border: #2f3a4a;
     --border2: #252c38;
     --shadow: rgba(0,0,0,0.32);
-    --accent: #1a7a35;
-    --accent2: #2ecc5c;
-    --accent-soft: rgba(26,122,53,.10);
-    --accent-soft-2: rgba(26,122,53,.18);
-    --accent-border: rgba(26,122,53,.28);
-    --palette-card-bg-1: rgba(46,204,92,.18);
-    --palette-card-bg-2: rgba(26,122,53,.10);
-    --palette-card-border: rgba(94,226,123,.22);
-    --palette-card-glow-1: rgba(94,226,123,.14);
-    --palette-card-glow-2: rgba(94,226,123,.08);
-    --tracker-back-accent: #1a7a35;
-    --tracker-back-accent2: #2ecc5c;
-    --tracker-back-soft: rgba(26,122,53,.10);
-    --tracker-back-soft-2: rgba(26,122,53,.18);
-    --tracker-back-border: rgba(26,122,53,.28);
-    --tracker-back-glow: rgba(26,122,53,.34);
+    --accent: #4b5563;
+    --accent2: #64748b;
+    --accent-soft: rgba(100,116,139,.10);
+    --accent-soft-2: rgba(100,116,139,.18);
+    --accent-border: rgba(100,116,139,.28);
+    --palette-card-bg-1: rgba(100,116,139,.18);
+    --palette-card-bg-2: rgba(75,85,99,.10);
+    --palette-card-border: rgba(148,163,184,.22);
+    --palette-card-glow-1: rgba(148,163,184,.14);
+    --palette-card-glow-2: rgba(148,163,184,.08);
+    --tracker-back-accent: #4b5563;
+    --tracker-back-accent2: #64748b;
+    --tracker-back-soft: rgba(100,116,139,.10);
+    --tracker-back-soft-2: rgba(100,116,139,.18);
+    --tracker-back-border: rgba(100,116,139,.28);
+    --tracker-back-glow: rgba(100,116,139,.34);
     --danger-soft: rgba(240,82,79,.10);
     --danger-border: rgba(240,82,79,.28);
     --glass-1: rgba(22,25,31,.72);
@@ -91,9 +91,8 @@
     --glass-7: rgba(22,25,31,.80);
   }
 
-  body:not(.dark) {
-    background:
-      radial-gradient(circle at top, rgba(255,255,255,.96), rgba(248,251,255,1) 42%, rgba(245,248,252,1) 100%);
+  body {
+    background: var(--bg);
   }
   body:not(.dark) .card,
   body:not(.dark) .nav-btn,
@@ -137,18 +136,7 @@
       rgba(255,255,255,.96);
     border-color: rgba(207,219,233,.9);
   }
-  body:not(.dark) .card {
-    background:
-      radial-gradient(120% 140% at 0% 0%, rgba(26,122,53,.05), transparent 42%),
-      linear-gradient(180deg, rgba(255,255,255,.98), rgba(255,255,255,.88)),
-      rgba(255,255,255,.98);
-    border-color: rgba(207,219,233,.88);
-  }
-  body:not(.dark) .ios-banner {
-    background:
-      linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.84)),
-      rgba(255,255,255,.96);
-  }
+  body:not(.dark) .card { border-color: rgba(207,219,233,.88); }
 
   body {
     background: var(--bg); color: var(--text);
@@ -176,9 +164,154 @@
     0%,100% { transform:translateY(0) scale(1); filter:saturate(1); }
     50% { transform:translateY(-1px) scale(1.015); filter:saturate(1.05); }
   }
+  /* Apple-style refinement: quiet the background, flatten surfaces, and remove decorative looping motion. */
+  body::before {
+    background: none !important;
+    opacity: 0 !important;
+  }
+  .boot-shield::before,
+  #licenceOverlay > div::before,
+  #licenceOverlay > div::after,
+  #splash-login > div::before,
+  .card::before {
+    background: none !important;
+    animation: none !important;
+    opacity: 0 !important;
+  }
+  .tracker-shell,
+  .boot-shield-card,
+  .splash-hero-mark,
+  .splash-brand-mark,
+  .card,
+  .nav-btn,
+  .tab,
+  .today-btn,
+  input[type="date"],
+  input[type="text"],
+  textarea,
+  .ios-banner {
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(15,23,42,.06);
+  }
+  .tracker-shell,
+  .boot-shield-card,
+  .card,
+  .ios-banner {
+    background: color-mix(in srgb, var(--bg2) 94%, transparent);
+    border: 1px solid var(--border2);
+  }
+  .splash-hero-mark,
+  .splash-brand-mark {
+    background: color-mix(in srgb, var(--bg2) 94%, transparent);
+    border: 1px solid var(--border2);
+    box-shadow: 0 8px 20px rgba(15,23,42,.06);
+  }
+  .nav-btn,
+  .tab,
+  .today-btn,
+  input[type="date"],
+  input[type="text"],
+  textarea {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    box-shadow: none;
+  }
+  .tab.active {
+    background: var(--bg2);
+    color: var(--text);
+    border-color: var(--border2);
+    box-shadow: 0 1px 2px rgba(15,23,42,.04);
+  }
+  .card {
+    background: var(--bg2);
+    border-color: var(--border2);
+    box-shadow: 0 10px 28px rgba(15,23,42,.06);
+  }
+  .action-btn,
+  .share-btn {
+    background: var(--accent);
+    box-shadow: none;
+    border-radius: 10px;
+  }
+  .action-btn:hover,
+  .share-btn:hover {
+    background: var(--accent2);
+  }
+  .db-dot,
+  .splash-dot {
+    animation: none !important;
+  }
+  .page,
+  .card,
+  .nav-btn,
+  .tab,
+  .today-btn,
+  .action-btn,
+  .share-btn,
+  .pill,
+  .boot-shield-card,
+  .splash-hero-mark,
+  .splash-brand-mark {
+    transition-duration: 0.22s;
+  }
+  body [style*="trackerCardGlow"],
+  body [style*="heroZzzFloat"],
+  body [style*="holidayCardBreath"],
+  body [style*="holidayLogoFloat"],
+  body [style*="chipBreath"],
+  body [style*="lineFlow"],
+  body [style*="pageIn"],
+  body .hero-emoji-wrap,
+  body .hero-emoji-wrap *,
+  body .plane-smoke {
+    animation: none !important;
+  }
   @media (prefers-reduced-motion: reduce) {
     *,*::before,*::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; scroll-behavior:auto !important; }
     body { animation:none !important; }
+  }
+  /* Basic palette: keep the suite layout, but strip decorative motion/tint. */
+  body.basic-mode { animation:none !important; }
+  body.basic-mode :where(.hero-emoji-wrap,.hero-emoji-wrap::before,.hero-emoji-wrap::after,.plane-smoke){ animation:none !important; }
+  body.basic-mode :where(.card,.pill,.badge,.nav-btn,.tab,.action-btn,.share-btn,.today-btn,.tracker-shell-back,.tracker-shell-icon,.splash-btn),
+  body.basic-mode :where(.card,.pill,.badge,.nav-btn,.tab,.action-btn,.share-btn,.today-btn,.tracker-shell-back,.tracker-shell-icon,.splash-btn)::before,
+  body.basic-mode :where(.card,.pill,.badge,.nav-btn,.tab,.action-btn,.share-btn,.today-btn,.tracker-shell-back,.tracker-shell-icon,.splash-btn)::after{
+    transition:none !important;
+  }
+  body.basic-mode .tracker-shell-icon {
+    background: var(--glass-2) !important;
+    border-color: var(--border2) !important;
+    color: var(--text2) !important;
+    box-shadow: none !important;
+  }
+  body.basic-mode .tracker-shell-icon:hover,
+  body.basic-mode .tracker-shell-icon:active,
+  body.basic-mode .tracker-shell-icon.theme,
+  body.basic-mode .tracker-shell-icon.theme:hover,
+  body.basic-mode .tracker-shell-icon.theme:active,
+  body.basic-mode .tracker-shell-icon.break-labels.active,
+  body.basic-mode .tracker-shell-icon.break-labels.active:hover {
+    background: var(--glass-2) !important;
+    border-color: var(--border2) !important;
+    color: var(--text2) !important;
+    box-shadow: none !important;
+  }
+  body.basic-mode .boot-shield::before { background-image:none !important; }
+  body.basic-mode .action-btn,
+  body.basic-mode .share-btn { box-shadow: 0 1px 3px var(--shadow) !important; }
+  body.basic-mode:not(.dark) .card {
+    background:
+      radial-gradient(140% 120% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
+      linear-gradient(180deg, rgba(255,255,255,.98), rgba(255,255,255,.88)),
+      rgba(255,255,255,.98);
+  }
+  body.basic-mode *,
+  body.basic-mode *::before,
+  body.basic-mode *::after {
+    animation:none !important;
+    transition:none !important;
   }
   .boot-shield {
     position: fixed;
@@ -341,7 +474,8 @@
     height:8px;
     border-radius:50%;
     display:inline-block;
-    background:var(--accent2);
+    /* Keep the connected indicator green in both themes. */
+    background:#2ecc5c;
     box-shadow:0 0 0 1px rgba(255,255,255,.05), 0 0 0 4px rgba(46,204,92,.08), 0 0 12px rgba(46,204,92,.28);
     vertical-align:middle;
     animation:dbDotPulse 3.2s ease-in-out infinite;
@@ -1626,6 +1760,104 @@
       font-size: 13px;
     }
   }
+  /* Final Apple-style override layer. Keep structure and behavior, but flatten the visual system. */
+  body:not(.basic-mode) {
+    background: var(--bg) !important;
+  }
+  body:not(.basic-mode)::before {
+    background: none !important;
+    opacity: 0 !important;
+  }
+  body:not(.basic-mode) .boot-shield::before,
+  body:not(.basic-mode) #licenceOverlay > div::before,
+  body:not(.basic-mode) #licenceOverlay > div::after,
+  body:not(.basic-mode) #splash-login > div::before,
+  body:not(.basic-mode) .card::before {
+    background: none !important;
+    opacity: 0 !important;
+    animation: none !important;
+  }
+  body:not(.basic-mode) .tracker-shell,
+  body:not(.basic-mode) .boot-shield-card,
+  body:not(.basic-mode) #splash-login > div,
+  body:not(.basic-mode) .card,
+  body:not(.basic-mode) .splash-hero-mark,
+  body:not(.basic-mode) .splash-brand-mark,
+  body:not(.basic-mode) .nav-btn,
+  body:not(.basic-mode) .tab,
+  body:not(.basic-mode) .today-btn,
+  body:not(.basic-mode) input[type="date"],
+  body:not(.basic-mode) input[type="text"],
+  body:not(.basic-mode) textarea,
+  body:not(.basic-mode) .ios-banner {
+    background: var(--bg2) !important;
+    border: 1px solid var(--border2) !important;
+    box-shadow: 0 8px 24px rgba(15,23,42,.06) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+  }
+  body:not(.basic-mode) .card {
+    border-radius: 14px !important;
+  }
+  body:not(.basic-mode) .nav-btn,
+  body:not(.basic-mode) .tab,
+  body:not(.basic-mode) .today-btn,
+  body:not(.basic-mode) input[type="date"],
+  body:not(.basic-mode) input[type="text"],
+  body:not(.basic-mode) textarea {
+    box-shadow: none !important;
+  }
+  body:not(.basic-mode) .tab.active {
+    background: var(--bg2) !important;
+    color: var(--text) !important;
+    border-color: var(--border2) !important;
+    box-shadow: 0 1px 2px rgba(15,23,42,.04) !important;
+    animation: none !important;
+  }
+  body:not(.basic-mode) .action-btn,
+  body:not(.basic-mode) .share-btn {
+    background: var(--accent) !important;
+    box-shadow: none !important;
+    border-radius: 10px !important;
+  }
+  body:not(.basic-mode) .action-btn:hover,
+  body:not(.basic-mode) .share-btn:hover {
+    background: var(--accent2) !important;
+  }
+  body:not(.basic-mode) .db-dot,
+  body:not(.basic-mode) .splash-dot,
+  body:not(.basic-mode) .boot-shield-mark,
+  body:not(.basic-mode) .splash-hero-mark,
+  body:not(.basic-mode) .splash-brand-mark {
+    animation: none !important;
+  }
+  body:not(.basic-mode) .page,
+  body:not(.basic-mode) .card,
+  body:not(.basic-mode) .nav-btn,
+  body:not(.basic-mode) .tab,
+  body:not(.basic-mode) .today-btn,
+  body:not(.basic-mode) .action-btn,
+  body:not(.basic-mode) .share-btn,
+  body:not(.basic-mode) .pill,
+  body:not(.basic-mode) .boot-shield-card,
+  body:not(.basic-mode) .splash-hero-mark,
+  body:not(.basic-mode) .splash-brand-mark {
+    transition-duration: 0.22s;
+  }
+  body:not(.basic-mode) [style*="trackerCardGlow"],
+  body:not(.basic-mode) [style*="heroZzzFloat"],
+  body:not(.basic-mode) [style*="holidayCardBreath"],
+  body:not(.basic-mode) [style*="holidayLogoFloat"],
+  body:not(.basic-mode) [style*="chipBreath"],
+  body:not(.basic-mode) [style*="lineFlow"],
+  body:not(.basic-mode) [style*="pageIn"],
+  body:not(.basic-mode) [style*="splashPop"],
+  body:not(.basic-mode) [style*="splashFade"],
+  body:not(.basic-mode) .hero-emoji-wrap,
+  body:not(.basic-mode) .hero-emoji-wrap *,
+  body:not(.basic-mode) .plane-smoke {
+    animation: none !important;
+  }
 </style>
 </head>
 <body class="loading-start">
@@ -1737,6 +1969,7 @@
       <div class="tracker-shell-user" id="stHeaderUser">
         <span class="tracker-shell-user-email" id="stHeaderEmail">—</span>
       </div>
+      <button type="button" class="tracker-shell-icon theme" id="stThemeBtn" title="Switch to light mode" aria-label="Switch to light mode" onclick="toggleTrackerTheme()"></button>
       <span class="db-dot" title="Database connected" aria-label="Database connected" style="flex:0 0 auto"></span>
       <button type="button" class="tracker-shell-icon logout" id="stLogoutBtn" title="Sign out">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
@@ -1928,10 +2161,33 @@ function trackerGetStoredPalettePreset(){
 }
 function trackerApplyBackButtonPalette(){
   const preset = trackerGetStoredPalettePreset();
-  const pal = TRACKER_PALETTE_PRESETS[preset] || TRACKER_PALETTE_PRESETS.default;
+  const effectivePreset = preset === 'default' && isDarkThemeEnabled() ? 'slate' : preset;
+  const pal = TRACKER_PALETTE_PRESETS[effectivePreset] || TRACKER_PALETTE_PRESETS.default;
   const button = document.querySelector('.tracker-shell-back');
   if(!button) return;
+  document.body.classList.toggle('basic-mode', preset === 'basic');
   button.classList.toggle('tracker-shell-back-basic', preset === 'basic');
+  // Apply the suite palette tokens so dark/default uses the neutral suite tint instead of the old green glass.
+  const rootStyle = document.documentElement.style;
+  const bodyStyle = document.body.style;
+  const vars = {
+    '--accent': pal.accent,
+    '--accent2': pal.accent2,
+    '--accent-soft': trackerRgbaFromHex(pal.accent, .10),
+    '--accent-soft-2': trackerRgbaFromHex(pal.accent, .18),
+    '--accent-border': trackerRgbaFromHex(pal.accent, .28),
+    '--palette-card-bg-1': trackerRgbaFromHex(pal.accent2, .22),
+    '--palette-card-bg-2': trackerRgbaFromHex(pal.accent, .12),
+    '--palette-card-border': trackerRgbaFromHex(pal.accent3, .26),
+    '--palette-card-glow-1': trackerRgbaFromHex(pal.accent3, .18),
+    '--palette-card-glow-2': trackerRgbaFromHex(pal.accent3, .10)
+  };
+  for (const [k, v] of Object.entries(vars)) {
+    if (v) {
+      rootStyle.setProperty(k, v);
+      bodyStyle.setProperty(k, v);
+    }
+  }
   button.style.setProperty('--tracker-back-accent', pal.accent, 'important');
   button.style.setProperty('--tracker-back-accent2', pal.accent2, 'important');
   button.style.setProperty('--tracker-back-soft', trackerRgbaFromHex(pal.accent, .08), 'important');
@@ -2020,6 +2276,7 @@ function renderTodayView(active){
   const nx=getNextStatusChange(active,viewDate),nxM=meta(nx.status);
   const nb=getDaysUntilLongBreak(active);
   const wrap=h("div",{class:"page"});
+  const isBasic = trackerGetStoredPalettePreset()==='basic';
 
   const nav=h("div",{style:{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"12px",gap:"8px"}});
   nav.appendChild(h("button",{class:"nav-btn",style:{padding:"6px 14px"},onClick:()=>set({viewOffset:offset-1})},"‹"));
@@ -2030,7 +2287,7 @@ function renderTodayView(active){
   nav.appendChild(h("button",{class:"nav-btn",style:{padding:"6px 14px"},onClick:()=>set({viewOffset:offset+1})},"›"));
   wrap.appendChild(nav);
 
-  const hero=h("div",{class:"card",style:{background:`linear-gradient(135deg,${active.color}20,${active.color}06)`,border:`2px solid ${active.color}33`,textAlign:"center",padding:"28px 20px",marginBottom:"12px",position:"relative",overflow:"hidden",animation:"trackerCardGlow 6.8s var(--ease-smooth) infinite"}});
+  const hero=h("div",{class:"card",style:{background:`linear-gradient(135deg,${active.color}20,${active.color}06)`,border:`2px solid ${active.color}33`,textAlign:"center",padding:"28px 20px",marginBottom:"12px",position:"relative",overflow:"hidden",animation:isBasic?"none":"trackerCardGlow 6.8s var(--ease-smooth) infinite"}});
   hero.appendChild(h("div",{style:{position:"absolute",top:"-30px",right:"-30px",width:"120px",height:"120px",borderRadius:"50%",background:`${active.color}10`,pointerEvents:"none"}}));
   const heroEmojiClass =
     tM.emoji === "☀️" ? "sun" :
@@ -2044,7 +2301,7 @@ function renderTodayView(active){
     heroEmojiWrap.appendChild(h("span",{class:"plane-smoke"}));
     heroEmojiWrap.appendChild(h("span",{class:"plane-smoke"}));
   }
-  heroEmojiWrap.appendChild(h("div",{class:"hero-emoji",style:{animation:"splashPop 0.4s cubic-bezier(0.34,1.56,0.64,1) both"}},tM.emoji));
+  heroEmojiWrap.appendChild(h("div",{class:"hero-emoji",style:{animation:isBasic?"none":"splashPop 0.4s cubic-bezier(0.34,1.56,0.64,1) both"}},tM.emoji));
   hero.appendChild(heroEmojiWrap);
   hero.appendChild(h("div",{style:{fontSize:"24px",fontWeight:"700",color:"var(--text)",letterSpacing:"-0.02em",marginBottom:"4px"}},tM.label));
   hero.appendChild(h("div",{class:"mono",style:{fontSize:"11px",color:"var(--text3)",marginBottom:"18px"}},describeCyclePosition(active,viewDate)));
@@ -2134,23 +2391,23 @@ function renderCalendarView(){
     h("button",{class:"nav-btn",onClick:()=>month===11?set({year:year+1,month:0}):set({month:month+1})},"›")
   ));
 
-  const hdr=h("div",{style:{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:"2px",marginBottom:"5px"}});
+  const hdr=h("div",{style:{display:"grid",gridTemplateColumns:"repeat(7,minmax(0,1fr))",gap:"2px",marginBottom:"5px"}});
   for(const d of ["Mo","Tu","We","Th","Fr","Sa","Su"])
     hdr.appendChild(h("div",{class:"mono",style:{textAlign:"center",fontSize:"9px",color:"var(--text3)",padding:"2px 0"}},d));
   cal.appendChild(hdr);
 
-  const grid=h("div",{style:{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:"2px"}});
+  const grid=h("div",{style:{display:"grid",gridTemplateColumns:"repeat(7,minmax(0,1fr))",gap:"2px",gridAutoRows:"minmax(58px,auto)",alignItems:"stretch"}});
   days.forEach(date=>{
-    if(!date){grid.appendChild(h("div",{}));return;}
+    if(!date){grid.appendChild(h("div",{style:{minHeight:"58px"}}));return;}
     const isToday=daysBetween(TODAY,date)===0;
     const fSt=status(active,date),fM=meta(fSt);
     const hasNote=loadNotes()[active.id]&&loadNotes()[active.id][dateStorageKey(date)];
-    const cell=h("div",{style:{borderRadius:"7px",background:isToday?active.color+"18":fM.bg+"bb",border:`1px solid ${isToday?active.color:fM.br+"88"}`,padding:"3px 2px 4px",minHeight:"58px",position:"relative",cursor:"pointer",transition:"transform .12s, box-shadow .12s, border-color .12s"},title:formatLongDate(date),onClick:()=>set({tab:"Today",viewOffset:daysBetween(TODAY,date)})});
+    const cell=h("div",{style:{borderRadius:"7px",background:isToday?active.color+"18":fM.bg+"bb",border:`1px solid ${isToday?active.color:fM.br+"88"}`,padding:"3px 2px 4px",minHeight:"58px",height:"100%",position:"relative",cursor:"pointer",transition:"transform .12s, box-shadow .12s, border-color .12s",display:"flex",flexDirection:"column"},title:formatLongDate(date),onClick:()=>set({tab:"Today",viewOffset:daysBetween(TODAY,date)})});
     cell.onmouseenter=function(){ this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,.08)'; };
     cell.onmouseleave=function(){ this.style.transform='none'; this.style.boxShadow='none'; };
     if(hasNote) cell.appendChild(h("div",{style:{position:"absolute",top:"2px",right:"3px",fontSize:"8px"}},"📝"));
     cell.appendChild(h("div",{class:"mono",style:{textAlign:"center",fontSize:"10px",fontWeight:isToday?"700":"400",color:isToday?active.color:"var(--text2)",marginBottom:"2px"}},String(date.getDate())));
-    const bdgs=h("div",{style:{display:"flex",flexDirection:"column",gap:"2px",padding:"0 1px"}});
+    const bdgs=h("div",{style:{display:"flex",flexDirection:"column",gap:"2px",padding:"0 1px",flex:"1"}});
     for(const sh of SHIFTS){
       const st=status(sh,date);
       bdgs.appendChild(buildShiftBadge(meta(st),sh.id,sh.color,sh.id===focus,S.breakLabelsTrial ? getLongBreakPhaseShort(sh,date) : ""));
@@ -2181,7 +2438,12 @@ function renderSummaryView(){
   for(let i=0;i<30;i++){
     const date=addDays(TODAY,i),st=status(active,date),m=meta(st);
     const isToday=i===0,note=getSavedNote(active.id,dateStorageKey(date));
-    const row=h("div",{style:{display:"flex",alignItems:"center",gap:"10px",padding:"9px 12px",borderRadius:"10px",background:isToday?active.color+"12":"var(--bg4)",border:`1px solid ${isToday?active.color+"44":"var(--border2)"}`,animation:`pageIn 0.3s ease both`,animationDelay:`${Math.min(i*0.02,0.3)}s`,cursor:"pointer",transition:"transform .12s, box-shadow .12s, border-color .12s"},onClick:()=>set({tab:"Today",viewOffset:daysBetween(TODAY,date)})});
+    const rowStyle={display:"flex",alignItems:"center",gap:"10px",padding:"9px 12px",borderRadius:"10px",background:isToday?active.color+"12":"var(--bg4)",border:`1px solid ${isToday?active.color+"44":"var(--border2)"}`,cursor:"pointer",transition:"transform .12s, box-shadow .12s, border-color .12s"};
+    if(trackerGetStoredPalettePreset()!=='basic'){
+      rowStyle.animation=`pageIn 0.3s ease both`;
+      rowStyle.animationDelay=`${Math.min(i*0.02,0.3)}s`;
+    }
+    const row=h("div",{style:rowStyle,onClick:()=>set({tab:"Today",viewOffset:daysBetween(TODAY,date)})});
     row.onmouseenter=function(){ this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,.08)'; };
     row.onmouseleave=function(){ this.style.transform='none'; this.style.boxShadow='none'; };
     row.appendChild(h("div",{class:"mono",style:{fontSize:"11px",color:isToday?active.color:"var(--text2)",minWidth:"78px",fontWeight:isToday?"700":"400"}},formatShortDate(date)));
@@ -2224,7 +2486,12 @@ function renderSearchView(){
     const card=h("div",{class:"card",style:{padding:"10px"}});
     SHIFTS.forEach((sh,i)=>{
       const st=status(sh,date),m2=meta(st),note=getSavedNote(sh.id,dateStorageKey(date));
-      const row=h("div",{style:{display:"flex",alignItems:"center",gap:"10px",padding:"9px 0",borderBottom:i<SHIFTS.length-1?"1px solid var(--border2)":"none",animation:`pageIn 0.25s ease both`,animationDelay:`${i*0.06}s`}});
+      const rowStyle={display:"flex",alignItems:"center",gap:"10px",padding:"9px 0",borderBottom:i<SHIFTS.length-1?"1px solid var(--border2)":"none"};
+      if(trackerGetStoredPalettePreset()!=='basic'){
+        rowStyle.animation=`pageIn 0.25s ease both`;
+        rowStyle.animationDelay=`${i*0.06}s`;
+      }
+      const row=h("div",{style:rowStyle});
       row.appendChild(h("div",{style:{width:"28px",height:"28px",borderRadius:"8px",background:sh.color+"18",border:`2px solid ${sh.color}`,display:"flex",alignItems:"center",justifyContent:"center",fontWeight:"700",fontSize:"14px",color:sh.color}},sh.id));
       row.appendChild(h("div",{style:{flex:"1"}},
         h("div",{style:{fontSize:"13px",fontWeight:"600",color:"var(--text)"}},m2.label),
@@ -2272,11 +2539,7 @@ function renderTrackerApp(){
     ));
   }
 
-  app.appendChild(h("div",{style:{display:"flex",alignItems:"center",justifyContent:"space-between",gap:"10px",marginBottom:"14px",flexWrap:"wrap"}},
-    h("h1",{style:{fontSize:"20px",fontWeight:"700",letterSpacing:"-0.03em",color:"var(--text)",margin:0}},"Shift Tracker"),
-    h("button",{class:"btn-icon",id:"stThemeBtn",type:"button",title:"Switch to light mode","aria-label":"Switch to light mode",onClick:()=>toggleTrackerTheme(),style:{width:"34px",height:"34px",borderRadius:"8px",border:"1px solid var(--border)",background:"var(--bg3)",color:"var(--text2)",display:"inline-flex",alignItems:"center",justifyContent:"center",cursor:"pointer",transition:"transform .16s ease,border-color .16s ease,background .16s ease,color .16s ease,box-shadow .16s ease"}})
-  ));
-  syncTrackerThemeButton();
+  app.appendChild(h("h1",{style:{fontSize:"20px",fontWeight:"700",letterSpacing:"-0.03em",color:"var(--text)",margin:"0 0 14px"}},"Shift Tracker"));
 
   const pills=h("div",{style:{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:"6px",marginBottom:"12px"}});
   for(const sh of SHIFTS){
@@ -2360,8 +2623,10 @@ function stDisplayName(profile, kilnUser, user){
   );
   if (sessionFullName && !sessionLooksShort) return sessionFullName;
   if (fullName && !fullLooksShort) return fullName;
-  if (email) return email;
   if (lockedName && !looksShort) return lockedName;
+  if (username) return username;
+  if (sessionUserName) return sessionUserName;
+  if (emailLocal) return emailLocal;
   return '—';
 }
 

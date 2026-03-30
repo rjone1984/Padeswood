@@ -830,47 +830,50 @@ body.basic-mode .topbar .back-platform-btn:hover {
 .page-day-jump:active { transform:translateY(0) scale(.98) }
 .page-day-jump svg { width:13px; height:13px }
 .page-period-jump {
-  height:28px;
-  padding:0 10px;
-  border-radius:999px;
+  min-height:28px;
+  padding:5px 10px;
+  border-radius:20px;
   border:1px solid var(--bd);
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,0)),
-    var(--sf2);
+  background:var(--sf2);
   color:var(--tx2);
   display:inline-flex; align-items:center; justify-content:center;
   cursor:pointer;
   font-family:var(--ff-mono);
   font-size:10px;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  transition:transform .14s, border-color .14s, background .14s, color .14s, box-shadow .14s;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+  font-weight:600;
+  letter-spacing:.2px;
+  transition:all .12s;
+  white-space:nowrap;
 }
 .page-period-jump:hover {
-  color:var(--tx);
   border-color:var(--bd2);
+  color:var(--tx);
+  background:var(--sf);
   transform:translateY(-1px);
-  box-shadow:0 10px 22px -18px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.05);
 }
 .page-period-jump.active {
+  border-color:var(--bd2);
   color:var(--tx);
-  border-color:var(--ac);
-  background:
-    linear-gradient(180deg, rgba(46,204,92,.16), rgba(46,204,92,.06)),
-    var(--sf2);
-  box-shadow:
-    0 0 0 1px rgba(46,204,92,.16),
-    inset 0 1px 0 rgba(255,255,255,.05);
+  background:var(--sf);
+  box-shadow:none;
 }
 .page-period-jump.active:hover {
-  border-color:var(--ac);
-  box-shadow:
-    0 0 0 1px rgba(46,204,92,.2),
-    0 10px 22px -18px rgba(0,0,0,.45),
-    inset 0 1px 0 rgba(255,255,255,.05);
+  border-color:var(--bd2);
+  background:var(--sf);
 }
 .page-period-jump:active { transform:translateY(0) scale(.98) }
+body.basic-mode .page-period-jump:hover {
+  border-color:var(--bd2);
+  color:var(--tx);
+  background:var(--sf2);
+}
+body.basic-mode .page-period-jump.active,
+body.basic-mode .page-period-jump.active:hover {
+  border-color:var(--bd2);
+  color:var(--tx);
+  background:var(--sf2);
+  box-shadow:none;
+}
 .overview-step-jump {
   width:24px;
   min-width:24px;
@@ -921,6 +924,16 @@ body.basic-mode .topbar .back-platform-btn:hover {
   letter-spacing:.08em;
   text-transform:uppercase;
   margin-right:4px;
+}
+
+/* Overview tables: on mobile, avoid squashing by allowing horizontal scroll and slightly larger type.
+   Scoped to Overview only to keep the established log/table style elsewhere unchanged. */
+#ovBody .tbl-wrap { -webkit-overflow-scrolling:touch; }
+#ovBody table.log { font-size:12px; table-layout:fixed; width:100%; }
+@media(max-width:640px){
+  #ovBody table.log { table-layout:auto; width:max-content; min-width:100%; font-size:13px; }
+  #ovBody table.log thead th { font-size:9.5px; letter-spacing:1px; }
+  #ovBody .section-div { font-size:10px; letter-spacing:1.2px; }
 }
 .page-status { display:flex; align-items:center; gap:8px; margin-top:7px }
 
@@ -2237,6 +2250,7 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay,.search-
   .overview-period-group .page-period-jump {
     flex:1 1 0;
     min-width:0;
+    min-height:32px;
   }
   .overview-date-group {
     flex-wrap:wrap;
@@ -2251,12 +2265,12 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay,.search-
   .overview-date-picker {
     flex:1 1 0;
     min-width:0;
-    height:28px;
-    font-size:9px;
+    height:32px;
+    font-size:11px;
   }
   .page-date {
     margin-top:0;
-    font-size:9px;
+    font-size:10px;
   }
   .page-status {
     margin-top:4px;
@@ -2314,7 +2328,7 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay,.search-
   .overview-period-group .page-period-jump,
   .overview-date-picker,
   .overview-step-jump {
-    min-height:28px;
+    min-height:32px;
   }
   .overview-filter-bar button {
     flex-basis:100%;
@@ -2402,6 +2416,112 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay,.search-
   border-radius:0 2px 2px 0;
   transition: width 0.4s ease;
   box-shadow: 0 0 8px var(--acgl);
+}
+
+/* Final Apple-style override layer.
+   Preserve structure/behavior; calm the background, glass, and decorative motion.
+   Keep Basic palette behavior intact by scoping to :not(.basic-mode). */
+body:not(.basic-mode) {
+  background: var(--bg) !important;
+}
+body:not(.basic-mode)::before {
+  background: none !important;
+  opacity: 0 !important;
+}
+body:not(.basic-mode) .boot-shield::before,
+body:not(.basic-mode) #splash::after,
+body:not(.basic-mode) #licenceOverlay > div::before,
+body:not(.basic-mode) #licenceOverlay > div::after,
+body:not(.basic-mode) .splash-card::before,
+body:not(.basic-mode) .access-denied::before,
+body:not(.basic-mode) .shift-panel-head::before,
+body:not(.basic-mode) .modal::before {
+  background: none !important;
+  opacity: 0 !important;
+  filter: none !important;
+  animation: none !important;
+}
+
+body:not(.basic-mode) .topbar,
+body:not(.basic-mode) .dual-nav {
+  background: color-mix(in srgb, var(--sf) 86%, transparent) !important;
+  border-color: var(--bd) !important;
+  box-shadow: var(--e1) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+}
+body.light-mode:not(.basic-mode) .topbar,
+body.light-mode:not(.basic-mode) .dual-nav {
+  background: color-mix(in srgb, var(--sf) 88%, transparent) !important;
+}
+
+body:not(.basic-mode) .page-header {
+  background: var(--bg) !important;
+}
+
+body:not(.basic-mode) .dual-nav-label,
+body:not(.basic-mode) .day-nav {
+  background: var(--sf2) !important;
+  box-shadow: none !important;
+}
+
+body:not(.basic-mode) .day-tab:hover {
+  transform: none !important;
+  background: var(--sf) !important;
+  border-color: var(--bd2) !important;
+}
+body:not(.basic-mode) .day-tab.active {
+  background: var(--row-accent-soft) !important;
+  border-color: var(--row-accent-line) !important;
+  box-shadow: none !important;
+  animation: none !important;
+}
+
+body:not(.basic-mode) .topbar .back-platform-btn:hover {
+  transform: none !important;
+  box-shadow: none !important;
+  background: var(--sf2) !important;
+  border-color: var(--bd2) !important;
+  color: var(--tx) !important;
+}
+
+body:not(.basic-mode) :is(.card,.panel,.modal,.toast,.search-modal,.reports-wrap,.matrix-card,.shift-panel,.stat-card,.user-row,.alert-row,.splash-card,.login-card,.access-denied,.boot-shield-card) {
+  background: var(--sf) !important;
+  border-color: var(--bd) !important;
+  box-shadow: var(--e1) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Align pill/button language with AI reporting (no animated gradients). */
+body:not(.basic-mode) .search-scope-btn.active {
+  background: var(--acd1) !important;
+  border-color: var(--acd3) !important;
+  color: var(--ac) !important;
+  animation: none !important;
+}
+body:not(.basic-mode) .search-scope-btn:hover {
+  background: var(--acd1) !important;
+  border-color: var(--ac) !important;
+  color: var(--ac) !important;
+}
+
+/* Reduce hover lift/glow on primary actions. */
+body:not(.basic-mode) .btn-primary:hover {
+  transform: none !important;
+  box-shadow: 0 1px 8px var(--acd3) !important;
+}
+
+/* Remove decorative status pulsing while keeping state colors. */
+body:not(.basic-mode) .modal-tab-badge,
+body:not(.basic-mode) .db-dot {
+  animation: none !important;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.05) !important;
+}
+
+/* Keep the loader calm. */
+body:not(.basic-mode) .splash-loader-bar {
+  box-shadow: none !important;
 }
 </style>
 </head>
@@ -3357,16 +3477,18 @@ async function loadCurrentProfileDisplayName(authUserId){
 function resolveCurrentUserDisplayName(match, sessionUser, profileDisplayName){
   const fullNameLabel = String(profileDisplayName || '').trim();
   const sessionNameLabel = String((sessionUser && sessionUser.user_metadata && sessionUser.user_metadata.full_name) || (sessionUser && sessionUser.user_metadata && sessionUser.user_metadata.name) || '').trim();
-  const emailLabel = String((sessionUser && sessionUser.email) || match.email || '').trim();
   const loginLabel = String(match.locked_name || '').trim();
   const usernameLabel = String(match.username || '').trim();
+  const emailLabel = String((sessionUser && sessionUser.email) || match.email || '').trim();
+  const emailLocal = emailLabel && emailLabel.includes('@') ? emailLabel.split('@')[0].trim() : '';
   if (fullNameLabel) return fullNameLabel;
   if (sessionNameLabel) return sessionNameLabel;
-  if (emailLabel && emailLabel.includes('@')) return emailLabel;
   if (loginLabel && !((!/\s/.test(loginLabel) && /^[a-z0-9._-]{3,}$/i.test(loginLabel)) || (emailLabel && loginLabel.toLowerCase() === emailLabel.split('@')[0].trim().toLowerCase()) || (usernameLabel && loginLabel.toLowerCase() === usernameLabel.toLowerCase()))) {
     return loginLabel;
   }
-  return emailLabel || loginLabel || usernameLabel || '—';
+  if (usernameLabel) return usernameLabel;
+  if (emailLocal) return emailLocal;
+  return loginLabel || '—';
 }
 
 function syncStickyHeaderOffset(){
@@ -7540,8 +7662,8 @@ async function renderFeedback(){
   function rangeBtns(activeRange, callbackName, prefix){
     return ['week','month','year','all'].map(function(r){
       const label = r==='week'?'This Week':r==='month'?'This Month':r==='year'?'This Year':'All Time';
-      const cls = 'btn ' + (activeRange===r?'btn-primary':'btn-ghost');
-      return '<button onclick="'+callbackName+'(\''+r+'\')" id="'+prefix+r+'" class="'+cls+'" style="padding:5px 12px;font-size:11px;font-family:var(--ff-mono)">'+label+'</button>';
+      const cls = 'search-scope-btn' + (activeRange===r ? ' active' : '');
+      return '<button type="button" onclick="'+callbackName+'(\''+r+'\')" id="'+prefix+r+'" class="'+cls+'">'+label+'</button>';
     }).join('');
   }
 
@@ -7624,12 +7746,10 @@ async function setFeedbackRange(range){
     const fbBtn = document.getElementById('fbRange-'+r);
     const rsBtn = document.getElementById('resRange-'+r);
     if(fbBtn){
-      fbBtn.className = 'btn ' + (_feedbackRange===r?'btn-primary':'btn-ghost');
-      fbBtn.style.cssText = 'padding:5px 12px;font-size:11px;font-family:var(--ff-mono)';
+      fbBtn.className = 'search-scope-btn' + (_feedbackRange===r ? ' active' : '');
     }
     if(rsBtn){
-      rsBtn.className = 'btn ' + (_resolvedRange===r?'btn-primary':'btn-ghost');
-      rsBtn.style.cssText = 'padding:5px 12px;font-size:11px;font-family:var(--ff-mono)';
+      rsBtn.className = 'search-scope-btn' + (_resolvedRange===r ? ' active' : '');
     }
   });
   await loadFeedbackIssues();
@@ -7643,12 +7763,10 @@ async function setResolvedRange(range){
     const fbBtn = document.getElementById('fbRange-'+r);
     const rsBtn = document.getElementById('resRange-'+r);
     if(fbBtn){
-      fbBtn.className = 'btn ' + (_feedbackRange===r?'btn-primary':'btn-ghost');
-      fbBtn.style.cssText = 'padding:5px 12px;font-size:11px;font-family:var(--ff-mono)';
+      fbBtn.className = 'search-scope-btn' + (_feedbackRange===r ? ' active' : '');
     }
     if(rsBtn){
-      rsBtn.className = 'btn ' + (_resolvedRange===r?'btn-primary':'btn-ghost');
-      rsBtn.style.cssText = 'padding:5px 12px;font-size:11px;font-family:var(--ff-mono)';
+      rsBtn.className = 'search-scope-btn' + (_resolvedRange===r ? ' active' : '');
     }
   });
   await loadResolvedIssues();
@@ -8810,16 +8928,19 @@ function renderOverview(){
     filterBar.className = 'overview-filter-bar';
     filterBar.innerHTML = '<span class="overview-filter-label">Include:</span>';
     [['burners','Kiln Burners','var(--role-burner)'],['managers','Shift Managers','var(--role-manager)'],['electricians','Electricians','var(--role-electrician)'],['mechanicals','Mechanical','var(--role-mechanical)'],['analysts','Cement Analysts','var(--role-analyst)']].forEach(function(t){
-      const key=t[0],label=t[1],col=t[2];
+      const key=t[0],label=t[1];
       const btn=document.createElement('button');
-      function refreshBtn(){ if(F[key]){btn.style.cssText='padding:5px 13px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;transition:all .28s var(--ease-smooth);border:1.5px solid '+col+';background:'+col+'22;color:'+col+';';}else{btn.style.cssText='padding:5px 13px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;transition:all .28s var(--ease-smooth);border:1.5px solid var(--bd);background:transparent;color:var(--tx3);';} }
-      btn.textContent=label; refreshBtn();
+      btn.type='button';
+      btn.className='page-period-jump';
+      btn.textContent=label;
+      function refreshBtn(){ btn.classList.toggle('active', !!F[key]); }
+      refreshBtn();
       btn.onclick=function(){ F[key]=!F[key]; refreshBtn(); renderOverviewBody(); };
       filterBar.appendChild(btn);
     });
     mc.appendChild(filterBar);
   }
-  const body=document.createElement('div'); body.id='ovBody'; mc.appendChild(body);
+  const body=document.createElement('div'); body.id='ovBody'; body.className='overview-wrap'; mc.appendChild(body);
   renderOverviewBody();
 }
 
@@ -8849,7 +8970,7 @@ function renderOverviewBody(){
       const width = typeof w === 'number' ? (w + 'px') : String(w);
       return '<col style="width:'+width+'">';
     }).join('');
-    return '<div class="log-section"><div class="tbl-wrap"><table class="log" style="font-size:12px;table-layout:fixed;width:100%">'
+    return '<div class="log-section"><div class="tbl-wrap"><table class="log">'
       +'<colgroup>'+cols+'</colgroup>'
       +'<thead><tr>'+heads.map(function(h){return '<th>'+h+'</th>';}).join('')+'</tr></thead>'
       +'<tbody>'+rows.join('')+'</tbody></table></div></div>';
