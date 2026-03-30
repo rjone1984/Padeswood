@@ -763,11 +763,11 @@ body.app-ready #app {
 
 .page-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:18px }
 .page-header.day-header {
-  padding-left:8px;
-  padding-right:10px;
+  padding-left:16px;
+  padding-right:14px;
 }
-.page-header.day-header .page-title-wrap { padding-left:4px; }
-.page-header.day-header .page-date { padding-left:4px; }
+.page-header.day-header .page-title-wrap { padding-left:6px; }
+.page-header.day-header .page-date { padding-left:6px; }
 .page-title-wrap { display:flex; align-items:center; gap:10px }
 .page-title  { font-family:var(--ff-head); font-size:22px; font-weight:700; color:var(--tx); letter-spacing:-.5px }
 .page-nav-group { display:flex; flex-direction:column; align-items:flex-start; gap:6px; flex-wrap:wrap }
@@ -2078,8 +2078,8 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
     gap:10px;
   }
   .page-header.day-header {
-    padding-left:10px;
-    padding-right:8px;
+    padding-left:14px;
+    padding-right:10px;
   }
   .page-title-wrap {
     width:100%;
@@ -7435,7 +7435,7 @@ async function renderFeedback(){
     +' oninput="_ongoingSearch=this.value;loadFeedbackIssues()"'
     +' style="width:100%;padding:9px 14px 9px 36px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none;box-sizing:border-box">'
     +'</div>'
-    +'<div id="fbList" style="display:flex;flex-direction:column;gap:10px">'
+    +'<div id="fbList" style="display:flex;flex-direction:column;gap:10px;min-height:220px">'
     +'<div style="text-align:center;padding:40px;color:var(--tx3);font-family:var(--ff-mono);font-size:12px">Loading...</div>'
     +'</div>'
     +'</div>'
@@ -7451,7 +7451,7 @@ async function renderFeedback(){
     +' oninput="_resolvedSearch=this.value;loadResolvedIssues()"'
     +' style="width:100%;padding:9px 14px 9px 36px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none;box-sizing:border-box">'
     +'</div>'
-    +'<div id="fbResolvedList" style="display:flex;flex-direction:column;gap:10px">'
+    +'<div id="fbResolvedList" style="display:flex;flex-direction:column;gap:10px;min-height:220px">'
     +'<div style="text-align:center;padding:40px;color:var(--tx3);font-family:var(--ff-mono);font-size:12px">Loading...</div>'
     +'</div>'
     +'</div>';
@@ -7773,7 +7773,7 @@ async function loadResolvedIssues(){
   if(countEl) countEl.textContent = filtered.length + ' resolved';
 
   if(!filtered.length){
-    renderFeedbackEmptyState(list, q ? 'No results match your search' : 'No resolved issues for this period', false);
+    renderFeedbackEmptyState(list, q ? 'No results match your search' : 'No resolved issues for this period', !q);
     return;
   }
 

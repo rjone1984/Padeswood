@@ -1112,15 +1112,8 @@ body.loading-start.loaded-ready{
           <div class="panel-sub">Holiday requests only. Pick a start date, then choose how much time off you need and the end date will calculate itself.</div>
         </div>
       </div>
+      <div id="holidayReqMsg" style="display:none;margin:0 0 12px;font-size:12px;padding:8px 12px;border-radius:var(--rsm)"></div>
       <div class="form-grid">
-        <div class="field form-card">
-          <label for="reqStart">Start date</label>
-          <input id="reqStart" class="input" type="date" onchange="syncRequestedDays()">
-        </div>
-        <div class="field form-card">
-          <label for="reqEnd">End date</label>
-          <input id="reqEnd" class="input" type="date" readonly>
-        </div>
         <div class="field form-card">
           <label for="reqUnit">Request as</label>
           <select id="reqUnit" class="select" onchange="syncRequestedDays()">
@@ -1131,6 +1124,14 @@ body.loading-start.loaded-ready{
         <div class="field form-card">
           <label for="reqDays">Amount</label>
           <input id="reqDays" class="input" type="number" min="0.5" step="0.5" value="0" onchange="syncRequestedDays()">
+        </div>
+        <div class="field form-card">
+          <label for="reqStart">Start date</label>
+          <input id="reqStart" class="input" type="date" onchange="syncRequestedDays()">
+        </div>
+        <div class="field form-card">
+          <label for="reqEnd">End date</label>
+          <input id="reqEnd" class="input" type="date" readonly>
         </div>
         <div class="field full form-card">
           <label for="reqReason">Reason / notes</label>
@@ -1675,15 +1676,17 @@ async function addRetrospectiveHoliday(userId, startId, endId, amountId, unitId,
   if (new Date(start + 'T00:00:00') > new Date(end + 'T00:00:00')) { setToast('The end date must be after the start date.'); return; }
   const today = toLocalDateString(new Date());
   if (end > today) { setToast('Retrospective holiday must be for dates in the past.'); return; }
-  if (!reason) { setToast('Please add a reason or note.'); return; }
+  if (!reason) { showHolidayRequestError('Please add a reason or note.'); return; }
+  const reasonReview = reviewHolidayTextSafety(reason);
+  if (!reasonReview.ok) { showHolidayRequestError(reasonReview.reason); return; }
   const fallbackAmount = unit === 'hours' ? countWeekdays(start, end) * SHIFT_HOURS : countWeekdays(start, end);
   const amount = amountRaw > 0 ? amountRaw : fallbackAmount;
-  if (amount <= 0) { setToast('Please enter at least one day or hour.'); return; }
+  if (amount <= 0) { showHolidayRequestError('Please enter at least one day or hour.'); return; }
   const days = unit === 'hours' ? amount / SHIFT_HOURS : amount;
   const stats = statsForUser(userId, selectedYear);
   const needed = unit === 'hours' ? amount : days * SHIFT_HOURS;
   if (stats.remaining < needed) {
-    setToast('Not enough holiday balance remaining for this retrospective entry.');
+    showHolidayRequestError('Not enough holiday balance remaining for this retrospective entry.');
     return;
   }
   const targetName = holidayManagerDisplayNameForUser(userId);
@@ -1732,6 +1735,54 @@ function setToast(msg, ms){
   t.classList.add('show');
   clearTimeout(window.__holidayToastTimer);
   window.__holidayToastTimer = setTimeout(() => t.classList.remove('show'), ms || 2200);
+}
+
+function showHolidayRequestError(msg) {
+  const el = $('holidayReqMsg');
+  if (!el) {
+    setToast(msg);
+    return;
+  }
+  el.textContent = msg;
+  el.style.display = 'block';
+  el.style.background = 'var(--redd)';
+  el.style.color = 'var(--red)';
+  el.style.border = '1px solid var(--redb)';
+  el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function clearHolidayRequestError() {
+  const el = $('holidayReqMsg');
+  if (!el) return;
+  el.style.display = 'none';
+  el.textContent = '';
+}
+
+function reviewHolidayTextSafety(text) {
+  const normalized = String(text || '')
+    .toLowerCase()
+    .replace(/[^\w\s']/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (!normalized) return { ok: true, reason: '' };
+  const blockedPatterns = [
+    { label: 'swearing', re: /\b(fuck|fucker|fucking|shit|shithead|bitch|cunt|wanker|arsehole|asshole|dickhead|prick|bastard|bullshit|bollocks|crap)\b/i },
+    { label: 'insults', re: /\b(idiot|moron|stupid|useless|pathetic|trash|twat|loser|clown)\b/i },
+    { label: 'threats', re: /\b(kill yourself|go die|die in a fire|beat you up|hurt you)\b/i },
+    { label: 'slurs', re: /\b(nigger|faggot|retard|spastic)\b/i }
+  ];
+  const hits = [];
+  blockedPatterns.forEach(function(item) {
+    if (item.re.test(normalized)) hits.push(item.label);
+  });
+  if (hits.length) {
+    const uniqueHits = Array.from(new Set(hits));
+    return {
+      ok: false,
+      reason: 'Please remove swearing, insults, threats, or slurs before sending. The local safety check flagged: ' + uniqueHits.join(', ') + '.'
+    };
+  }
+  return { ok: true, reason: '' };
 }
 
 function getStoredThemePref(){
@@ -2748,9 +2799,12 @@ async function submitHolidayRequest(){
   const daysRaw = num($('reqDays').value, 0);
   const unit = $('reqUnit').value === 'hours' ? 'hours' : 'days';
   const reason = $('reqReason').value.trim();
+  clearHolidayRequestError();
   if (!start || !end) { setToast('Please choose both dates.'); return; }
   if (new Date(start) > new Date(end)) { setToast('The end date must be after the start date.'); return; }
-  if (!reason) { setToast('Please add a reason or note.'); return; }
+  if (!reason) { showHolidayRequestError('Please add a reason or note.'); return; }
+  const reasonReview = reviewHolidayTextSafety(reason);
+  if (!reasonReview.ok) { showHolidayRequestError(reasonReview.reason); return; }
   const managerName = holidayManagerDisplayNameForUser(currentUser.id);
   const confirmText = managerName === 'No manager assigned'
     ? 'No manager is assigned yet. Submit this holiday request for admin review?'

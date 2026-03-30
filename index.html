@@ -2722,6 +2722,7 @@ async function submitFeedbackRequest() {
       msgEl.style.background = 'var(--redd)';
       msgEl.style.color = 'var(--red)';
       msgEl.style.border = '1px solid var(--redb)';
+      msgEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
     return;
   }
@@ -2732,6 +2733,7 @@ async function submitFeedbackRequest() {
       msgEl.style.background = 'var(--redd)';
       msgEl.style.color = 'var(--red)';
       msgEl.style.border = '1px solid var(--redb)';
+      msgEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
     return;
   }
@@ -2743,6 +2745,7 @@ async function submitFeedbackRequest() {
       msgEl.style.background = 'var(--redd)';
       msgEl.style.color = 'var(--red)';
       msgEl.style.border = '1px solid var(--redb)';
+      msgEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
     if (btn) {
       btn.disabled = false;
@@ -2779,6 +2782,7 @@ async function submitFeedbackRequest() {
       msgEl.style.background = 'var(--redd)';
       msgEl.style.color = 'var(--red)';
       msgEl.style.border = '1px solid var(--redb)';
+      msgEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   } finally {
     if (btn) {
@@ -4606,6 +4610,7 @@ async function deleteResetReq(btnOrId) {
       <div style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono);line-height:1.6">
         Use this to request a new feature or report a bug. Only apps you can access are shown in the app picker. The admin account will see it inside Platform and can mark it complete when done.
       </div>
+      <div id="feedbackReqMsg" style="display:none;font-size:12px;padding:8px 12px;border-radius:var(--rsm)"></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
         <label style="display:flex;flex-direction:column;gap:6px">
           <div style="font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3)">App</div>
@@ -4634,7 +4639,6 @@ async function deleteResetReq(btnOrId) {
         <div style="font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3)">Details</div>
         <textarea id="feedbackReqDetails" rows="7" placeholder="Describe the bug or feature request" style="flex:1;min-height:140px;padding:10px 12px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;line-height:1.6;outline:none;resize:vertical"></textarea>
       </label>
-      <div id="feedbackReqMsg" style="display:none;font-size:12px;padding:8px 12px;border-radius:var(--rsm)"></div>
       <div style="display:flex;justify-content:flex-end;gap:10px;flex-shrink:0">
         <button type="button" class="btn btn-ghost" onclick="closeFeedbackRequestModal()" style="min-width:96px;height:38px;padding:0 14px;font-size:12px;font-weight:600">Cancel</button>
         <button type="button" class="btn btn-iso" onclick="submitFeedbackRequest()" style="min-width:140px;height:38px;padding:0 14px;font-size:12px;font-weight:700">Send Request</button>
