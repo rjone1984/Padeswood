@@ -6301,15 +6301,203 @@ async function loadAnalystWeeksForScope(scopeMondays){
   }
 }
 
+function clearNodeChildren(el){
+  if(!el) return;
+  while(el.firstChild) el.removeChild(el.firstChild);
+}
+
+function setPlainPanelMessage(el, text, styleText){
+  clearNodeChildren(el);
+  const msg = document.createElement('div');
+  msg.style.cssText = styleText;
+  msg.textContent = text;
+  el.appendChild(msg);
+  return msg;
+}
+
+function buildSearchResultItem(result){
+  const item = document.createElement('div');
+  item.className = 'search-result-item';
+  item.dataset.week = result.weekKey || '';
+  item.dataset.day = result.day || '';
+  item.addEventListener('click', function(){ handleSearchClick(item); });
+
+  const weekCol = document.createElement('div');
+  weekCol.className = 'sr-week';
+  weekCol.appendChild(document.createTextNode(result.weekKey !== 'current' ? 'w/c ' + result.weekKey : 'current week'));
+  weekCol.appendChild(document.createElement('br'));
+
+  const dayEl = document.createElement('span');
+  dayEl.className = 'sr-day';
+  dayEl.textContent = result.day || '';
+  weekCol.appendChild(dayEl);
+
+  const body = document.createElement('div');
+  body.style.cssText = 'flex:1;min-width:0';
+
+  const shiftLine = document.createElement('div');
+  shiftLine.className = 'sr-shift';
+  shiftLine.textContent = (result.shift || '') + ' Shift' + (result.burner ? ' · ' + result.burner : '');
+
+  const textLine = document.createElement('div');
+  textLine.className = 'sr-text';
+  if(result.equipment && result.equipment !== 'Note'){
+    const equip = document.createElement('span');
+    equip.className = 'sr-equip';
+    equip.textContent = result.equipment;
+    textLine.appendChild(equip);
+  }
+  textLine.appendChild(document.createTextNode(String(result.issue || '').substring(0, 100)));
+
+  body.appendChild(shiftLine);
+  body.appendChild(textLine);
+  item.appendChild(weekCol);
+  item.appendChild(body);
+  return item;
+}
+
+function renderSearchResults(box, rows){
+  clearNodeChildren(box);
+  const frag = document.createDocumentFragment();
+  rows.slice(0, 50).forEach(function(row){
+    frag.appendChild(buildSearchResultItem(row));
+  });
+  box.appendChild(frag);
+}
+
+function buildFeedbackMetaChip(text){
+  const chip = document.createElement('span');
+  chip.textContent = text;
+  return chip;
+}
+
+function renderFeedbackEmptyState(list, message, showCheck){
+  clearNodeChildren(list);
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'text-align:center;padding:' + (showCheck ? '60px 20px' : '40px') + ';color:var(--tx3);font-family:var(--ff-mono);font-size:12px;border:1px dashed var(--bd);border-radius:var(--r)';
+  if(showCheck){
+    const icon = document.createElement('div');
+    icon.style.cssText = 'font-size:28px;margin-bottom:12px';
+    icon.textContent = '✓';
+    wrap.appendChild(icon);
+  }
+  wrap.appendChild(document.createTextNode(message));
+  list.appendChild(wrap);
+}
+
+function buildFeedbackIssueCard(issue, idx, mode){
+  const resolvedMode = mode === 'resolved';
+  const canManage = canManageFeedbackIssue(issue);
+  const card = document.createElement('div');
+  card.id = (resolvedMode ? 'res-item-' : 'fb-item-') + idx;
+  card.style.cssText = resolvedMode
+    ? 'background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:14px 18px;box-shadow:var(--e1)'
+    : 'background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:16px 18px;display:flex;align-items:flex-start;gap:14px;box-shadow:var(--e1)';
+
+  const outer = resolvedMode ? document.createElement('div') : card;
+  if(resolvedMode){
+    outer.style.cssText = 'display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap';
+    card.appendChild(outer);
+  }
+
+  const body = document.createElement('div');
+  body.style.cssText = 'flex:1;min-width:0';
+
+  const header = document.createElement('div');
+  header.style.cssText = 'display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:' + (resolvedMode ? '6px' : '8px');
+
+  const title = document.createElement('span');
+  title.style.cssText = 'font-family:var(--ff-head);font-weight:700;font-size:14px;color:' + (issue.equipment ? 'var(--tx)' : 'var(--tx3)');
+  title.textContent = issue.equipment || 'No equipment';
+  header.appendChild(title);
+
+  const statusPill = document.createElement('span');
+  if(resolvedMode){
+    statusPill.style.cssText = 'display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;font-family:var(--ff-mono);background:var(--grnd);color:var(--grn);border:1px solid var(--grnb)';
+    statusPill.textContent = 'Resolved';
+  } else {
+    const stCol = issue.status === 'Ongoing' ? 'var(--red)' : 'var(--tx3)';
+    const stBg = issue.status === 'Ongoing' ? 'var(--redd)' : 'transparent';
+    const stBd = issue.status === 'Ongoing' ? 'var(--redb)' : 'var(--bd)';
+    statusPill.style.cssText = 'display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;font-family:var(--ff-mono);background:' + stBg + ';color:' + stCol + ';border:1px solid ' + stBd;
+    statusPill.textContent = issue.status || 'Unmarked';
+  }
+  header.appendChild(statusPill);
+
+  const issueLine = document.createElement('div');
+  issueLine.style.cssText = 'font-size:13px;color:' + (issue.issue ? 'var(--tx2)' : 'var(--tx3)') + ';margin-bottom:' + (resolvedMode ? '6px' : '10px') + ';line-height:1.5';
+  issueLine.textContent = issue.issue || 'No description';
+
+  const meta = document.createElement('div');
+  meta.style.cssText = 'display:flex;gap:14px;flex-wrap:wrap;font-size:10px;font-family:var(--ff-mono);color:var(--tx3)';
+  meta.appendChild(buildFeedbackMetaChip('📅 ' + issue.shiftDate.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})));
+  meta.appendChild(buildFeedbackMetaChip('🔄 ' + (issue.si === 0 ? 'Day' : 'Night') + ' Shift'));
+  if(issue.day) meta.appendChild(buildFeedbackMetaChip('📆 ' + issue.day));
+  if(issue.burner) meta.appendChild(buildFeedbackMetaChip('👷 ' + issue.burner));
+  if(!resolvedMode && issue.statusBy){
+    meta.appendChild(buildFeedbackMetaChip('✓ ' + issue.statusBy + (issue.statusAt ? ' · ' + issue.statusAt : '')));
+  }
+
+  body.appendChild(header);
+  body.appendChild(issueLine);
+  body.appendChild(meta);
+
+  if(resolvedMode && issue.resolvedBy){
+    const audit = document.createElement('div');
+    audit.style.cssText = 'margin-top:10px;padding-top:10px;border-top:1px solid var(--bd)';
+    const auditText = document.createElement('div');
+    auditText.style.cssText = 'font-size:10px;font-family:var(--ff-mono);color:var(--grn)';
+    auditText.appendChild(document.createTextNode('✓ Resolved by '));
+    const strong = document.createElement('strong');
+    strong.textContent = issue.resolvedBy;
+    auditText.appendChild(strong);
+    if(issue.resolvedAt) auditText.appendChild(document.createTextNode(' · ' + issue.resolvedAt));
+    audit.appendChild(auditText);
+    body.appendChild(audit);
+  }
+
+  outer.appendChild(body);
+
+  if(canManage){
+    const actions = document.createElement('div');
+    actions.style.cssText = 'flex-shrink:0' + (resolvedMode ? ';margin-top:2px' : '');
+    const btn = document.createElement('button');
+    btn.className = 'fb-action-btn ' + (resolvedMode ? 'reopen' : 'resolve');
+    btn.type = 'button';
+    btn.textContent = resolvedMode ? '↩ Reopen' : '✓ Mark Resolved';
+    btn.addEventListener('click', function(){
+      if(resolvedMode) reopenFeedbackIssue(idx);
+      else resolveFeedbackIssue(idx);
+    });
+    actions.appendChild(btn);
+    outer.appendChild(actions);
+  }
+
+  return card;
+}
+
+function renderFeedbackIssueCards(list, issues, mode){
+  clearNodeChildren(list);
+  const frag = document.createDocumentFragment();
+  issues.forEach(function(issue, idx){
+    frag.appendChild(buildFeedbackIssueCard(issue, idx, mode));
+  });
+  list.appendChild(frag);
+}
+
 async function runSearch(){
   const q = document.getElementById('searchModalInput').value.trim().toLowerCase();
   const box = document.getElementById('searchModalResults');
   const status = document.getElementById('searchStatus');
   const roleScopes = getRoleScopedDataAccess();
   const needsMainLogData = roleScopes.burners;
-  if(!q){ box.innerHTML = '<div style="text-align:center;padding:40px;color:var(--tx3);font-family:var(--ff-mono);font-size:11px">Start typing to search</div>'; status.textContent=''; return; }
+  if(!q){
+    setPlainPanelMessage(box, 'Start typing to search', 'text-align:center;padding:40px;color:var(--tx3);font-family:var(--ff-mono);font-size:11px');
+    status.textContent = '';
+    return;
+  }
 
-  box.innerHTML = '<div style="text-align:center;padding:30px;color:var(--tx3);font-family:var(--ff-mono);font-size:11px">Searching...</div>';
+  setPlainPanelMessage(box, 'Searching...', 'text-align:center;padding:30px;color:var(--tx3);font-family:var(--ff-mono);font-size:11px');
   status.textContent = '';
 
   let weeksData = []; // [{weekKey, state, weekSmState, weekCaState, weekElState, weekMechState}]
@@ -6422,7 +6610,7 @@ async function runSearch(){
         }
       }
     } catch(e){
-      box.innerHTML = '<div style="text-align:center;padding:30px;color:var(--red);font-family:var(--ff-mono);font-size:11px">Failed to load data</div>';
+      setPlainPanelMessage(box, 'Failed to load data', 'text-align:center;padding:30px;color:var(--red);font-family:var(--ff-mono);font-size:11px');
       return;
     }
   }
@@ -6506,20 +6694,11 @@ async function runSearch(){
   status.textContent = unique.length ? `${unique.length} result${unique.length!==1?'s':''}` : '';
 
   if(!unique.length){
-    box.innerHTML = '<div style="text-align:center;padding:40px;color:var(--tx3);font-family:var(--ff-mono);font-size:11px">No results found</div>';
+    setPlainPanelMessage(box, 'No results found', 'text-align:center;padding:40px;color:var(--tx3);font-family:var(--ff-mono);font-size:11px');
     return;
   }
 
-  box.innerHTML = unique.slice(0,50).map(r => {
-    const weekLabel = r.weekKey !== 'current' ? 'w/c '+esc(r.weekKey) : 'current week';
-    return `<div class="search-result-item" data-week="${esc(r.weekKey)}" data-day="${esc(r.day)}" onclick="handleSearchClick(this)">
-      <div class="sr-week">${weekLabel}<br><span class="sr-day">${esc(r.day)}</span></div>
-      <div style="flex:1;min-width:0">
-        <div class="sr-shift">${esc(r.shift)} Shift${r.burner?' · '+esc(r.burner):''}</div>
-        <div class="sr-text">${r.equipment&&r.equipment!=='Note'?`<span class="sr-equip">${esc(r.equipment)}</span>`:''}${esc((r.issue||'').substring(0,100))}</div>
-      </div>
-    </div>`;
-  }).join('');
+  renderSearchResults(box, unique);
 }
 
 async function navigateToResult(weekKey, day){
@@ -7368,50 +7547,12 @@ async function loadFeedbackIssues(){
   if(countEl) countEl.textContent = filtered.length + ' issue' + (filtered.length!==1?'s':'') + (q?' matched':' found');
 
   if(!filtered.length){
-    list.innerHTML = q
-      ? '<div style="text-align:center;padding:40px;color:var(--tx3);font-family:var(--ff-mono);font-size:12px;border:1px dashed var(--bd);border-radius:var(--r)">No results match your search</div>'
-      : '<div style="text-align:center;padding:60px 20px;color:var(--tx3);font-family:var(--ff-mono);font-size:12px;border:1px dashed var(--bd);border-radius:var(--r)">'
-        +'<div style="font-size:28px;margin-bottom:12px">✓</div>'
-        +'No ongoing issues for this period'
-        +'</div>';
+    renderFeedbackEmptyState(list, q ? 'No results match your search' : 'No ongoing issues for this period', !q);
     return;
   }
 
   window._fbIssues = filtered;
-
-  list.innerHTML = filtered.map(function(iss, idx){
-    const canResolve = canManageFeedbackIssue(iss);
-    const stCol = iss.status==='Ongoing'?'var(--red)':'var(--tx3)';
-    const stBg  = iss.status==='Ongoing'?'var(--redd)':'transparent';
-    const stBd  = iss.status==='Ongoing'?'var(--redb)':'var(--bd)';
-    const stLabel = iss.status || 'Unmarked';
-    const dateStr = iss.shiftDate.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
-    const resolveBtn = canResolve
-      ? '<button class="fb-action-btn resolve" onclick="resolveFeedbackIssue('+idx+')">✓ Mark Resolved</button>'
-      : '';
-    const equipHtml = esc(iss.equipment) || '<span style="color:var(--tx3)">No equipment</span>';
-    const issueHtml = esc(iss.issue) || '<span style="color:var(--tx3)">No description</span>';
-    const burnerHtml = iss.burner ? '<span>👷 '+esc(iss.burner)+'</span>' : '';
-    const resolvedHtml = iss.statusBy ? '<span>✓ '+esc(iss.statusBy)+(iss.statusAt?' · '+esc(iss.statusAt):'')+'</span>' : '';
-
-    return '<div id="fb-item-'+idx+'" style="background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:16px 18px;display:flex;align-items:flex-start;gap:14px;box-shadow:var(--e1)">'
-      +'<div style="flex:1;min-width:0">'
-      +'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px">'
-      +'<span style="font-family:var(--ff-head);font-weight:700;font-size:14px;color:var(--tx)">'+equipHtml+'</span>'
-      +'<span style="display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;font-family:var(--ff-mono);background:'+stBg+';color:'+stCol+';border:1px solid '+stBd+'">'+stLabel+'</span>'
-      +'</div>'
-      +'<div style="font-size:13px;color:var(--tx2);margin-bottom:10px;line-height:1.5">'+issueHtml+'</div>'
-      +'<div style="display:flex;gap:14px;flex-wrap:wrap;font-size:10px;font-family:var(--ff-mono);color:var(--tx3)">'
-      +'<span>📅 '+dateStr+'</span>'
-      +'<span>🔄 '+(iss.si===0?'Day Shift':'Night Shift')+'</span>'
-      +'<span>📆 '+iss.day+'</span>'
-      +burnerHtml
-      +resolvedHtml
-      +'</div>'
-      +'</div>'
-      +'<div style="flex-shrink:0">'+resolveBtn+'</div>'
-      +'</div>';
-  }).join('');
+  renderFeedbackIssueCards(list, filtered, 'ongoing');
 }
 
 async function resolveFeedbackIssue(idx){
@@ -7580,50 +7721,12 @@ async function loadResolvedIssues(){
   if(countEl) countEl.textContent = filtered.length + ' resolved';
 
   if(!filtered.length){
-    list.innerHTML = q
-      ? '<div style="text-align:center;padding:40px;color:var(--tx3);font-family:var(--ff-mono);font-size:12px;border:1px dashed var(--bd);border-radius:var(--r)">No results match your search</div>'
-      : '<div style="text-align:center;padding:60px 20px;color:var(--tx3);font-family:var(--ff-mono);font-size:12px;border:1px dashed var(--bd);border-radius:var(--r)">No resolved issues for this period</div>';
+    renderFeedbackEmptyState(list, q ? 'No results match your search' : 'No resolved issues for this period', false);
     return;
   }
 
   window._fbResolved = filtered;
-
-  list.innerHTML = filtered.map(function(iss, idx){
-    const canReopen = canManageFeedbackIssue(iss);
-    const equipHtml = esc(iss.equipment) || '<span style="color:var(--tx3)">No equipment</span>';
-    const issueHtml = esc(iss.issue)     || '<span style="color:var(--tx3)">No description</span>';
-    const dateStr   = iss.shiftDate.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
-
-    const reopenBtn = canReopen
-      ? '<button class="fb-action-btn reopen" onclick="reopenFeedbackIssue('+idx+')">↩ Reopen</button>'
-      : '';
-
-    const auditHtml = iss.resolvedBy
-      ? '<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--bd)">'
-        +'<div style="font-size:10px;font-family:var(--ff-mono);color:var(--grn)">✓ Resolved by <strong>'+esc(iss.resolvedBy)+'</strong>'+(iss.resolvedAt?' · '+esc(iss.resolvedAt):'')+'</div>'
-        +'</div>'
-      : '';
-
-    return '<div id="res-item-'+idx+'" style="background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:14px 18px;box-shadow:var(--e1)">'
-      +'<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">'
-      +'<div style="flex:1;min-width:0">'
-      +'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px">'
-      +'<span style="font-family:var(--ff-head);font-weight:700;font-size:14px;color:var(--tx)">'+equipHtml+'</span>'
-      +'<span style="display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;font-family:var(--ff-mono);background:var(--grnd);color:var(--grn);border:1px solid var(--grnb)">Resolved</span>'
-      +'</div>'
-      +'<div style="font-size:13px;color:var(--tx2);margin-bottom:6px;line-height:1.5">'+issueHtml+'</div>'
-      +'<div style="display:flex;gap:14px;flex-wrap:wrap;font-size:10px;font-family:var(--ff-mono);color:var(--tx3)">'
-      +'<span>📅 '+dateStr+'</span>'
-      +(iss.day ? '<span>📆 '+esc(iss.day)+'</span>' : '')
-      +'<span>🔄 '+(iss.si===0?'Day':'Night')+' Shift</span>'
-      +(iss.burner ? '<span>👷 '+esc(iss.burner)+'</span>' : '')
-      +'</div>'
-      +auditHtml
-      +'</div>'
-      +'<div style="flex-shrink:0;margin-top:2px">'+reopenBtn+'</div>'
-      +'</div>'
-      +'</div>';
-  }).join('');
+  renderFeedbackIssueCards(list, filtered, 'resolved');
 }
 
 
@@ -8221,10 +8324,18 @@ function renderManageTab(tab){
     cont.innerHTML=`
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap">
         <p style="font-size:12px;color:var(--text-soft);margin:0;line-height:1.6">Add or remove equipment. Changes apply to all dropdowns immediately.</p>
-        ${isAdmin ? '<button onclick="clearEquipmentList()" class="btn btn-ghost" style="font-size:11px;color:var(--red);border-color:var(--redb);padding:4px 8px;flex-shrink:0">Delete List</button>' : ''}
+        ${isAdmin ? '<button id="clearEquipmentListBtn" type="button" class="btn btn-ghost" style="font-size:11px;color:var(--red);border-color:var(--redb);padding:4px 8px;flex-shrink:0">Delete List</button>' : ''}
       </div>
       <div class="eq-list" id="eqList"></div>
-      <div class="add-eq-row"><input type="text" id="newEqInput" placeholder="New equipment name..." onkeydown="if(event.key==='Enter')addEquipmentItem()"><button class="btn btn-primary" onclick="addEquipmentItem()">Add</button></div>`;
+      <div class="add-eq-row"><input type="text" id="newEqInput" placeholder="New equipment name..."><button id="addEquipmentItemBtn" type="button" class="btn btn-primary">Add</button></div>`;
+    const clearBtn = document.getElementById('clearEquipmentListBtn');
+    if(clearBtn) clearBtn.addEventListener('click', clearEquipmentList);
+    const eqInput = document.getElementById('newEqInput');
+    if(eqInput) eqInput.addEventListener('keydown', function(event){
+      if(event.key === 'Enter') addEquipmentItem();
+    });
+    const addEqBtn = document.getElementById('addEquipmentItemBtn');
+    if(addEqBtn) addEqBtn.addEventListener('click', addEquipmentItem);
     renderEqList();
   } else {
     const isDeletable = true;
@@ -8233,10 +8344,18 @@ function renderManageTab(tab){
     cont.innerHTML=`
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
         <p style="font-size:12px;color:var(--text-soft);margin:0;line-height:1.6">Manage ${esc(label.toLowerCase())} list. ${isBurners?'Toggle trainee status to change how names appear in the log.':''} Entries stay in alphabetical order.</p>
-        ${isDeletable?`<button onclick="deleteCustomList('${esc(tab)}')" class="btn btn-ghost" style="font-size:11px;color:var(--red);border-color:var(--redb);padding:4px 8px;flex-shrink:0">Delete List</button>`:''}
+        ${isDeletable?'<button id="deleteCustomListBtn" type="button" class="btn btn-ghost" style="font-size:11px;color:var(--red);border-color:var(--redb);padding:4px 8px;flex-shrink:0">Delete List</button>':''}
       </div>
       <div class="people-list" id="peopleList"></div>
-      <div class="add-person-row"><input type="text" id="newPersonInput" placeholder="New ${esc(label.toLowerCase())} name..." onkeydown="if(event.key==='Enter')addPerson('${tab}')"><button class="btn btn-primary" onclick="addPerson('${tab}')">Add</button></div>`;
+      <div class="add-person-row"><input type="text" id="newPersonInput" placeholder="New ${esc(label.toLowerCase())} name..."><button id="addPersonBtn" type="button" class="btn btn-primary">Add</button></div>`;
+    const deleteBtn = document.getElementById('deleteCustomListBtn');
+    if(deleteBtn) deleteBtn.addEventListener('click', function(){ deleteCustomList(tab); });
+    const personInput = document.getElementById('newPersonInput');
+    if(personInput) personInput.addEventListener('keydown', function(event){
+      if(event.key === 'Enter') addPerson(tab);
+    });
+    const addPersonBtn = document.getElementById('addPersonBtn');
+    if(addPersonBtn) addPersonBtn.addEventListener('click', function(){ addPerson(tab); });
     renderPeopleList(tab);
   }
 
@@ -8247,7 +8366,7 @@ function renderManageTab(tab){
       + '<p style="font-size:12px;color:var(--tx3);margin:0;line-height:1.6">'
       + 'Add facts about your plant that the AI should always know — equipment specs, quality targets, shift patterns, anything relevant. '
       + 'Each entry is a single piece of information. The AI will only use what is recorded here and in the logs — it will not guess.</p>'
-      + (isAdmin && entries.length ? '<button onclick="clearAiKnowledgeEntries()" class="btn btn-ghost" style="font-size:11px;color:var(--red);border-color:var(--redb);padding:4px 8px;flex-shrink:0">Clear All</button>' : '')
+      + (isAdmin && entries.length ? '<button id="clearAiKnowledgeBtn" type="button" class="btn btn-ghost" style="font-size:11px;color:var(--red);border-color:var(--redb);padding:4px 8px;flex-shrink:0">Clear All</button>' : '')
       + '</div>'
       + '<div id="aiKnowledgeList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px">';
     if(entries.length === 0){
@@ -8257,7 +8376,7 @@ function renderManageTab(tab){
         html += '<div style="display:flex;align-items:flex-start;gap:8px;background:var(--sf2);border:1px solid var(--bd);border-radius:6px;padding:10px 12px">'
           + '<div style="flex:1;font-size:12px;line-height:1.5;color:var(--tx)">' + esc(entry) + '</div>'
           + '<div style="display:flex;gap:4px;flex-shrink:0">'
-          + '<button onclick="deleteAiKnowledgeEntry(' + i + ')" style="background:none;border:1px solid var(--redb);cursor:pointer;color:var(--red,#dc2626);padding:2px 8px;border-radius:4px;font-size:10px;font-family:var(--ff-mono);letter-spacing:1px;text-transform:uppercase;line-height:1" title="Remove this entry">Remove</button>'
+          + '<button data-ai-delete-index="' + i + '" type="button" style="background:none;border:1px solid var(--redb);cursor:pointer;color:var(--red,#dc2626);padding:2px 8px;border-radius:4px;font-size:10px;font-family:var(--ff-mono);letter-spacing:1px;text-transform:uppercase;line-height:1" title="Remove this entry">Remove</button>'
           + '</div>'
           + '</div>';
       });
@@ -8268,13 +8387,22 @@ function renderManageTab(tab){
       + 'placeholder="e.g. Kiln 1 — 4-stage preheater, inline calciner, rated 2200 t/day" '
       + 'style="flex:1;padding:8px 10px;border:1px solid var(--bd);border-radius:6px;'
       + 'background:var(--bg);color:var(--tx);font-size:12px;resize:vertical;font-family:inherit;line-height:1.5"></textarea>'
-      + '<button class="btn btn-primary" onclick="addAiKnowledgeEntry()" '
+      + '<button id="addAiKnowledgeBtn" type="button" class="btn btn-primary" '
       + 'style="flex-shrink:0;height:auto;padding:8px 14px;align-self:flex-end">Add</button>'
       + '</div>'
       + '<div style="margin-top:8px;font-size:11px;color:var(--tx3)">'
       + entries.length + ' entr' + (entries.length===1?'y':'ies') + ' in knowledge base</div>'
       + '</div>';
     cont.innerHTML = html;
+    const clearAiBtn = document.getElementById('clearAiKnowledgeBtn');
+    if(clearAiBtn) clearAiBtn.addEventListener('click', clearAiKnowledgeEntries);
+    const addAiBtn = document.getElementById('addAiKnowledgeBtn');
+    if(addAiBtn) addAiBtn.addEventListener('click', addAiKnowledgeEntry);
+    cont.querySelectorAll('[data-ai-delete-index]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        deleteAiKnowledgeEntry(Number(btn.getAttribute('data-ai-delete-index')));
+      });
+    });
     return;
   }
 

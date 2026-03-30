@@ -3333,6 +3333,20 @@ function getSelectedAccessRequestTargets() {
   });
 }
 
+function setForcePwNotice(message, summary, moreCount) {
+  const notice = document.getElementById('forcePwNotice');
+  if (!notice) return;
+  notice.textContent = message || '';
+  if (!summary) return;
+  const extra = document.createElement('div');
+  extra.style.marginTop = '6px';
+  extra.style.color = 'var(--tx3)';
+  extra.style.fontSize = '11px';
+  extra.style.lineHeight = '1.5';
+  extra.textContent = 'Selected: ' + summary + (moreCount > 0 ? ' · +' + moreCount + ' more' : '');
+  notice.appendChild(extra);
+}
+
 function openBulkAccessRequestPwModal() {
   if (!canManagePlatformUsers()) {
     showPlatformToast('Admin only');
@@ -3350,9 +3364,13 @@ function openBulkAccessRequestPwModal() {
   document.getElementById('forcePwTitle').textContent = 'Bulk Activate Users';
   document.getElementById('forcePwSub').textContent = 'Create one shared password for ' + targets.length + ' selected account' + (targets.length !== 1 ? 's' : '');
   const summary = targets.slice(0, 4).map(function(req) {
-    return esc(req.full_name || req.email || 'Unnamed user');
+    return req.full_name || req.email || 'Unnamed user';
   }).join(' · ');
-  document.getElementById('forcePwNotice').innerHTML = 'This will approve the selected access requests and create each account with the same password.' + (summary ? '<div style="margin-top:6px;color:var(--tx3);font-size:11px;line-height:1.5">Selected: ' + summary + (targets.length > 4 ? ' · +' + (targets.length - 4) + ' more' : '') + '</div>' : '');
+  setForcePwNotice(
+    'This will approve the selected access requests and create each account with the same password.',
+    summary,
+    targets.length > 4 ? (targets.length - 4) : 0
+  );
   document.getElementById('forcePwBtn').textContent = 'Activate Selected';
   document.getElementById('forcePwCancelBtn').textContent = 'Cancel';
   document.getElementById('forcePwNew').value = '';
