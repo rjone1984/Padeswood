@@ -37,6 +37,12 @@
     --palette-card-border: rgba(46,204,92,.24);
     --palette-card-glow-1: rgba(46,204,92,.18);
     --palette-card-glow-2: rgba(46,204,92,.10);
+    --tracker-back-accent: #1a7a35;
+    --tracker-back-accent2: #22a847;
+    --tracker-back-soft: rgba(26,122,53,.10);
+    --tracker-back-soft-2: rgba(26,122,53,.18);
+    --tracker-back-border: rgba(26,122,53,.28);
+    --tracker-back-glow: rgba(26,122,53,.34);
     --danger-soft: rgba(240,82,79,.10);
     --danger-border: rgba(240,82,79,.28);
     --glass-1: rgba(255,255,255,.96);
@@ -68,6 +74,12 @@
     --palette-card-border: rgba(46,204,92,.20);
     --palette-card-glow-1: rgba(46,204,92,.14);
     --palette-card-glow-2: rgba(46,204,92,.08);
+    --tracker-back-accent: #1a7a35;
+    --tracker-back-accent2: #2ecc5c;
+    --tracker-back-soft: rgba(26,122,53,.10);
+    --tracker-back-soft-2: rgba(26,122,53,.18);
+    --tracker-back-border: rgba(26,122,53,.28);
+    --tracker-back-glow: rgba(26,122,53,.34);
     --danger-soft: rgba(240,82,79,.10);
     --danger-border: rgba(240,82,79,.28);
     --glass-1: rgba(22,25,31,.72);
@@ -1085,23 +1097,34 @@
     width: 32px;
     height: 32px;
     border-radius: 7px;
-    border: 1px solid var(--border2);
+    border: 1px solid var(--tracker-back-border);
     background:
-      radial-gradient(circle at 30% 20%, color-mix(in srgb, var(--palette-card-glow-1) 42%, transparent) 0%, transparent 56%),
-      var(--glass-2);
-    color: var(--text2);
+      radial-gradient(circle at 30% 20%, color-mix(in srgb, var(--tracker-back-glow) 42%, transparent) 0%, transparent 56%),
+      linear-gradient(180deg, color-mix(in srgb, var(--tracker-back-soft) 78%, var(--glass-2)), var(--glass-2));
+    color: var(--tracker-back-accent);
     text-decoration: none;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--tracker-back-border) 55%, transparent);
     transition: border-color .18s, color .18s, background-color .18s, box-shadow .18s, transform .18s;
   }
+  body.dark .tracker-shell-back {
+    border-color: color-mix(in srgb, var(--tracker-back-accent2) 34%, var(--border));
+    background:
+      radial-gradient(circle at 30% 20%, color-mix(in srgb, var(--tracker-back-glow) 62%, transparent) 0%, transparent 58%),
+      linear-gradient(180deg, color-mix(in srgb, var(--tracker-back-soft-2) 88%, var(--glass-2)), color-mix(in srgb, var(--tracker-back-soft) 70%, var(--glass-2)));
+    color: var(--tracker-back-accent2);
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--tracker-back-border) 68%, transparent),
+      0 0 18px color-mix(in srgb, var(--tracker-back-glow) 45%, transparent);
+  }
   .tracker-shell-back:hover {
-    border-color: var(--accent);
+    border-color: var(--tracker-back-accent);
     color: #fff;
-    background: linear-gradient(180deg, var(--accent2), var(--accent));
-    box-shadow: 0 0 0 3px var(--accent-soft), 0 0 22px rgba(33,194,122,.34);
+    background: linear-gradient(180deg, var(--tracker-back-accent2), var(--tracker-back-accent));
+    box-shadow: 0 0 0 3px var(--tracker-back-soft), 0 0 22px var(--tracker-back-glow);
     transform: translateY(-1px) scale(1.06);
   }
   .tracker-shell-mark {
@@ -1842,6 +1865,69 @@ function updateTrackerDate(){
 }
 updateTrackerDate();
 
+const TRACKER_PALETTE_STORAGE_KEY = 'pw_palette_scheme';
+const TRACKER_PALETTE_PRESETS = {
+  default: { accent: '#1a7a35', accent2: '#22a847', accent3: '#2ecc5c' },
+  ocean: { accent: '#0f766e', accent2: '#14b8a6', accent3: '#2dd4bf' },
+  sky: { accent: '#2563eb', accent2: '#3b82f6', accent3: '#60a5fa' },
+  violet: { accent: '#6d28d9', accent2: '#8b5cf6', accent3: '#a78bfa' },
+  amber: { accent: '#b45309', accent2: '#d97706', accent3: '#f59e0b' },
+  slate: { accent: '#334155', accent2: '#475569', accent3: '#64748b' }
+};
+function trackerHexToRgb(hex){
+  const raw = String(hex || '').trim().replace(/^#/, '');
+  if(raw.length === 3){
+    return { r: parseInt(raw[0] + raw[0], 16), g: parseInt(raw[1] + raw[1], 16), b: parseInt(raw[2] + raw[2], 16) };
+  }
+  if(raw.length === 6){
+    return { r: parseInt(raw.slice(0, 2), 16), g: parseInt(raw.slice(2, 4), 16), b: parseInt(raw.slice(4, 6), 16) };
+  }
+  return null;
+}
+function trackerRgbaFromHex(hex, alpha){
+  const rgb = trackerHexToRgb(hex);
+  if(!rgb) return '';
+  return `rgba(${rgb.r},${rgb.g},${rgb.b},${alpha})`;
+}
+function trackerGetStoredPalettePreset(){
+  const key = localStorage.getItem(TRACKER_PALETTE_STORAGE_KEY);
+  return TRACKER_PALETTE_PRESETS[key] ? key : 'default';
+}
+function trackerApplyBackButtonPalette(){
+  const preset = trackerGetStoredPalettePreset();
+  const pal = TRACKER_PALETTE_PRESETS[preset] || TRACKER_PALETTE_PRESETS.default;
+  const button = document.querySelector('.tracker-shell-back');
+  if(!button) return;
+  button.style.setProperty('--tracker-back-accent', pal.accent, 'important');
+  button.style.setProperty('--tracker-back-accent2', pal.accent2, 'important');
+  button.style.setProperty('--tracker-back-soft', trackerRgbaFromHex(pal.accent, .10), 'important');
+  button.style.setProperty('--tracker-back-soft-2', trackerRgbaFromHex(pal.accent, .18), 'important');
+  button.style.setProperty('--tracker-back-border', trackerRgbaFromHex(pal.accent3, .28), 'important');
+  button.style.setProperty('--tracker-back-glow', trackerRgbaFromHex(pal.accent3, .34), 'important');
+}
+async function trackerLoadSharedPalette(user){
+  if(!stSb || !user || !user.id) return null;
+  try{
+    const { data } = await stSb.from('kiln_config')
+      .select('value')
+      .eq('key', 'palette_uid_' + user.id)
+      .maybeSingle();
+    if(data && data.value && TRACKER_PALETTE_PRESETS[data.value]) return data.value;
+  }catch(e){}
+  return null;
+}
+async function trackerSyncBackButtonPaletteFromUser(user){
+  const sharedPalette = await trackerLoadSharedPalette(user);
+  if(sharedPalette){
+    localStorage.setItem(TRACKER_PALETTE_STORAGE_KEY, sharedPalette);
+  }
+  trackerApplyBackButtonPalette();
+}
+window.addEventListener('storage', function(e){
+  if(e.key === TRACKER_PALETTE_STORAGE_KEY) trackerApplyBackButtonPalette();
+});
+trackerApplyBackButtonPalette();
+
 function getDefaultFocusShift(){
   const hour=new Date().getHours();
   const target=(hour>=6&&hour<18)?"D":"N";
@@ -2132,6 +2218,7 @@ function renderTrackerApp(){
   document.body.classList.toggle("dark",dark);
   document.getElementById("app-wrap").classList.toggle("dark",dark);
   document.getElementById("theme-meta").content=dark?"#0f172a":"#f0f4f8";
+  trackerApplyBackButtonPalette();
   syncTrackerThemeButton();
   const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
   const isStandalone=window.navigator.standalone||matchMedia("(display-mode:standalone)").matches;
@@ -2582,6 +2669,7 @@ async function initShiftTrackerSupabaseAuth() {
       stCurrentKilnUser = profileState.kilnUser || null;
       stApplyHeaderProfile(user, profileState.profile, profileState.kilnUser);
       await stSyncThemeFromUser(user);
+      await trackerSyncBackButtonPaletteFromUser(user);
       stRevealApp();
       return true;
     } catch (e) {
@@ -2623,6 +2711,7 @@ async function initShiftTrackerSupabaseAuth() {
       stCurrentKilnUser = profileState.kilnUser || null;
       stApplyHeaderProfile(user, profileState.profile, profileState.kilnUser);
       await stSyncThemeFromUser(user);
+      await trackerSyncBackButtonPaletteFromUser(user);
       stRevealApp();
     } catch (e) {
       stShowError(e.message || 'Sign-in failed.');
