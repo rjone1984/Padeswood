@@ -28,17 +28,17 @@
     --border2: #e7edf5;
     --shadow: rgba(15,23,42,0.05);
     --accent: #1a7a35;
-    --accent2: #22a847;
+    --accent2: #2ecc5c;
     --accent-soft: rgba(26,122,53,.10);
     --accent-soft-2: rgba(26,122,53,.18);
     --accent-border: rgba(26,122,53,.28);
-    --palette-card-bg-1: rgba(34,168,71,.24);
-    --palette-card-bg-2: rgba(21,92,40,.12);
-    --palette-card-border: rgba(46,204,92,.24);
-    --palette-card-glow-1: rgba(46,204,92,.18);
-    --palette-card-glow-2: rgba(46,204,92,.10);
+    --palette-card-bg-1: rgba(46,204,92,.22);
+    --palette-card-bg-2: rgba(26,122,53,.12);
+    --palette-card-border: rgba(94,226,123,.26);
+    --palette-card-glow-1: rgba(94,226,123,.18);
+    --palette-card-glow-2: rgba(94,226,123,.10);
     --tracker-back-accent: #1a7a35;
-    --tracker-back-accent2: #22a847;
+    --tracker-back-accent2: #2ecc5c;
     --tracker-back-soft: rgba(26,122,53,.10);
     --tracker-back-soft-2: rgba(26,122,53,.18);
     --tracker-back-border: rgba(26,122,53,.28);
@@ -69,11 +69,11 @@
     --accent-soft: rgba(26,122,53,.10);
     --accent-soft-2: rgba(26,122,53,.18);
     --accent-border: rgba(26,122,53,.28);
-    --palette-card-bg-1: rgba(34,168,71,.18);
-    --palette-card-bg-2: rgba(21,92,40,.10);
-    --palette-card-border: rgba(46,204,92,.20);
-    --palette-card-glow-1: rgba(46,204,92,.14);
-    --palette-card-glow-2: rgba(46,204,92,.08);
+    --palette-card-bg-1: rgba(46,204,92,.18);
+    --palette-card-bg-2: rgba(26,122,53,.10);
+    --palette-card-border: rgba(94,226,123,.22);
+    --palette-card-glow-1: rgba(94,226,123,.14);
+    --palette-card-glow-2: rgba(94,226,123,.08);
     --tracker-back-accent: #1a7a35;
     --tracker-back-accent2: #2ecc5c;
     --tracker-back-soft: rgba(26,122,53,.10);
@@ -1719,9 +1719,6 @@
         <span class="tracker-shell-user-email" id="stHeaderEmail">—</span>
       </div>
       <span class="db-dot" title="Database connected" aria-label="Database connected" style="flex:0 0 auto"></span>
-      <button type="button" class="tracker-shell-icon" id="stThemeBtn" title="Toggle theme" aria-label="Toggle theme">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/></svg>
-      </button>
       <button type="button" class="tracker-shell-icon logout" id="stLogoutBtn" title="Sign out">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
       </button>
@@ -1852,30 +1849,27 @@ function collectSavedNotes(){
   return list.sort((a,b)=>a.date-b.date);
 }
 function syncThemeAlias(){
-  const shared = localStorage.getItem("pw_theme");
-  if(shared==="light" || shared==="dark"){
-    localStorage.setItem("dark", shared==="dark" ? "1" : "0");
-    return shared==="dark";
-  }
-  const kiln = localStorage.getItem("kbl_theme");
-  if(kiln==="light" || kiln==="dark"){
-    localStorage.setItem("pw_theme", kiln);
-    localStorage.setItem("dark", kiln==="dark" ? "1" : "0");
-    return kiln==="dark";
-  }
-  const legacy = localStorage.getItem("dark");
-  if(legacy==="1" || legacy==="0"){
-    const dark = legacy==="1";
-    localStorage.setItem("pw_theme", dark?"dark":"light");
-    localStorage.setItem("kbl_theme", dark?"dark":"light");
-    return dark;
-  }
-  return null;
+  const stored = localStorage.getItem("pw_theme") || localStorage.getItem("kbl_theme") || (localStorage.getItem("dark") === "1" ? "dark" : null);
+  const dark = stored ? stored !== "light" : true;
+  localStorage.setItem("pw_theme", dark ? "dark" : "light");
+  localStorage.setItem("kbl_theme", dark ? "dark" : "light");
+  localStorage.setItem("dark", dark ? "1" : "0");
+  return dark;
 }
-function isDarkThemeEnabled(){ const synced=syncThemeAlias(); if(synced!==null) return synced; return localStorage.getItem("dark")==="1" || localStorage.getItem("pw_theme")==="dark"; }
-function persistDarkThemeState(v){ const theme=v?"dark":"light"; localStorage.setItem("dark",v?"1":"0"); localStorage.setItem("pw_theme",theme); localStorage.setItem("kbl_theme",theme); }
-function prefersLightTheme(){ const s=localStorage.getItem("pw_theme") || localStorage.getItem("kbl_theme"); if(s==="light"||s==="dark"){ localStorage.setItem("dark",s==="dark"?"1":"0"); localStorage.setItem("pw_theme",s); localStorage.setItem("kbl_theme",s); return s==="light"; } return localStorage.getItem("pw_theme")==="light"; }
-function persistLightThemeState(v){ const theme=v?"light":"dark"; localStorage.setItem("pw_theme",theme); localStorage.setItem("kbl_theme",theme); localStorage.setItem("dark",v?"0":"1"); }
+function isDarkThemeEnabled(){ return syncThemeAlias(); }
+function persistDarkThemeState(v){
+  const dark = !!v;
+  localStorage.setItem("dark", dark ? "1" : "0");
+  localStorage.setItem("pw_theme", dark ? "dark" : "light");
+  localStorage.setItem("kbl_theme", dark ? "dark" : "light");
+}
+function prefersLightTheme(){ return !syncThemeAlias(); }
+function persistLightThemeState(v){
+  const light = !!v;
+  localStorage.setItem("pw_theme", light ? "light" : "dark");
+  localStorage.setItem("kbl_theme", light ? "light" : "dark");
+  localStorage.setItem("dark", light ? "0" : "1");
+}
 function updateTrackerDate(){
   const el = document.getElementById('stHeaderDate');
   if(!el) return;
@@ -1885,11 +1879,12 @@ updateTrackerDate();
 
 const TRACKER_PALETTE_STORAGE_KEY = 'pw_palette_scheme';
 const TRACKER_PALETTE_PRESETS = {
-  default: { accent: '#1a7a35', accent2: '#22a847', accent3: '#2ecc5c' },
+  default: { accent: '#1a7a35', accent2: '#2ecc5c', accent3: '#5ee27b' },
   ocean: { accent: '#0f766e', accent2: '#14b8a6', accent3: '#2dd4bf' },
   sky: { accent: '#2563eb', accent2: '#3b82f6', accent3: '#60a5fa' },
   violet: { accent: '#6d28d9', accent2: '#8b5cf6', accent3: '#a78bfa' },
   amber: { accent: '#b45309', accent2: '#d97706', accent3: '#f59e0b' },
+  basic: { accent: '#4b5563', accent2: '#6b7280', accent3: '#9ca3af' },
   slate: { accent: '#334155', accent2: '#475569', accent3: '#64748b' }
 };
 function trackerHexToRgb(hex){
@@ -1909,6 +1904,7 @@ function trackerRgbaFromHex(hex, alpha){
 }
 function trackerGetStoredPalettePreset(){
   const key = localStorage.getItem(TRACKER_PALETTE_STORAGE_KEY);
+  if(key === 'plain') return 'basic';
   return TRACKER_PALETTE_PRESETS[key] ? key : 'default';
 }
 function trackerApplyBackButtonPalette(){
@@ -1918,10 +1914,10 @@ function trackerApplyBackButtonPalette(){
   if(!button) return;
   button.style.setProperty('--tracker-back-accent', pal.accent, 'important');
   button.style.setProperty('--tracker-back-accent2', pal.accent2, 'important');
-  button.style.setProperty('--tracker-back-soft', trackerRgbaFromHex(pal.accent, .10), 'important');
-  button.style.setProperty('--tracker-back-soft-2', trackerRgbaFromHex(pal.accent, .18), 'important');
-  button.style.setProperty('--tracker-back-border', trackerRgbaFromHex(pal.accent3, .28), 'important');
-  button.style.setProperty('--tracker-back-glow', trackerRgbaFromHex(pal.accent3, .34), 'important');
+  button.style.setProperty('--tracker-back-soft', trackerRgbaFromHex(pal.accent, .08), 'important');
+  button.style.setProperty('--tracker-back-soft-2', trackerRgbaFromHex(pal.accent, .14), 'important');
+  button.style.setProperty('--tracker-back-border', trackerRgbaFromHex(pal.accent3, .18), 'important');
+  button.style.setProperty('--tracker-back-glow', trackerRgbaFromHex(pal.accent3, .24), 'important');
 }
 async function trackerLoadSharedPalette(user){
   if(!stSb || !user || !user.id) return null;
@@ -1930,7 +1926,10 @@ async function trackerLoadSharedPalette(user){
       .select('value')
       .eq('key', 'palette_uid_' + user.id)
       .maybeSingle();
-    if(data && data.value && TRACKER_PALETTE_PRESETS[data.value]) return data.value;
+    if(data && data.value){
+      if(data.value === 'plain') return 'basic';
+      if(TRACKER_PALETTE_PRESETS[data.value]) return data.value;
+    }
   }catch(e){}
   return null;
 }
@@ -2253,9 +2252,11 @@ function renderTrackerApp(){
     ));
   }
 
-  app.appendChild(h("div",{style:{marginBottom:"14px"}},
-    h("h1",{style:{fontSize:"20px",fontWeight:"700",letterSpacing:"-0.03em",color:"var(--text)"}},"Shift Tracker")
+  app.appendChild(h("div",{style:{display:"flex",alignItems:"center",justifyContent:"space-between",gap:"10px",marginBottom:"14px",flexWrap:"wrap"}},
+    h("h1",{style:{fontSize:"20px",fontWeight:"700",letterSpacing:"-0.03em",color:"var(--text)",margin:0}},"Shift Tracker"),
+    h("button",{class:"btn-icon",id:"stThemeBtn",type:"button",title:"Switch to light mode","aria-label":"Switch to light mode",onClick:()=>toggleTrackerTheme(),style:{width:"34px",height:"34px",borderRadius:"8px",border:"1px solid var(--border)",background:"var(--bg3)",color:"var(--text2)",display:"inline-flex",alignItems:"center",justifyContent:"center",cursor:"pointer",transition:"transform .16s ease,border-color .16s ease,background .16s ease,color .16s ease,box-shadow .16s ease"}})
   ));
+  syncTrackerThemeButton();
 
   const pills=h("div",{style:{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:"6px",marginBottom:"12px"}});
   for(const sh of SHIFTS){
@@ -2367,26 +2368,18 @@ async function stLoadSharedTheme(user){
 }
 
 async function toggleTrackerTheme(){
-  const dark=!S.dark;
-  persistDarkThemeState(dark);
-  persistLightThemeState(!dark);
-  if(stCurrentUser) await stPersistSharedTheme(stCurrentUser, !dark);
-  set({dark});
+  const nextLight = isDarkThemeEnabled();
+  persistLightThemeState(nextLight);
+  persistDarkThemeState(!nextLight);
+  if(stCurrentUser) await stPersistSharedTheme(stCurrentUser, nextLight);
+  set({dark: !nextLight});
 }
 
 function initShiftTrackerUi(){
-  if(prefersLightTheme()){
-    document.body.classList.remove('dark');
-    document.getElementById('app-wrap').classList.remove('dark');
-  }else if(isDarkThemeEnabled()){
-    document.body.classList.add('dark');
-    document.getElementById('app-wrap').classList.add('dark');
-  }
-  const themeBtn=document.getElementById('stThemeBtn');
-  if(themeBtn && !themeBtn.dataset.bound){
-    themeBtn.dataset.bound='1';
-    themeBtn.addEventListener('click',toggleTrackerTheme);
-  }
+  const dark = isDarkThemeEnabled();
+  document.body.classList.toggle('dark', dark);
+  document.getElementById('app-wrap').classList.toggle('dark', dark);
+  document.getElementById('theme-meta').content = dark ? "#111418" : "#f0f4f8";
   renderTrackerApp();
 }
 

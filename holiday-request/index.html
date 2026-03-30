@@ -20,13 +20,13 @@
   --ease-smooth:cubic-bezier(.22,1,.36,1);
   --bg:#111418; --sf:#16191f; --sf2:#1c2028; --sf3:#222830; --sf4:#282f3a;
   --bd:#252c38; --bd2:#2f3a4a; --bd3:#3d4e62;
-  --ac:#1a7a35; --ac2:#22a847; --ac3:#2ecc5c;
+  --ac:#1a7a35; --ac2:#2ecc5c; --ac3:#5ee27b;
   --acd1:rgba(26,122,53,.10); --acd2:rgba(26,122,53,.18); --acd3:rgba(26,122,53,.28);
-  --palette-card-bg-1: rgba(34,168,71,.24);
-  --palette-card-bg-2: rgba(21,92,40,.12);
-  --palette-card-border: rgba(46,204,92,.24);
-  --palette-card-glow-1: rgba(46,204,92,.18);
-  --palette-card-glow-2: rgba(46,204,92,.10);
+  --palette-card-bg-1: rgba(46,204,92,.22);
+  --palette-card-bg-2: rgba(26,122,53,.12);
+  --palette-card-border: rgba(94,226,123,.26);
+  --palette-card-glow-1: rgba(94,226,123,.18);
+  --palette-card-glow-2: rgba(94,226,123,.10);
   --tx:#dde4ee; --tx2:#9aa9be; --tx3:#6f8097;
   --red:#f0524f; --redd:rgba(240,82,79,.10); --redb:rgba(240,82,79,.28);
   --grn:#21c27a; --grnd:rgba(33,194,122,.10); --grnb:rgba(33,194,122,.28);
@@ -35,7 +35,7 @@
   --r:10px; --rsm:7px; --rxs:5px;
   --e1:0 1px 3px rgba(0,0,0,.55),0 1px 2px rgba(0,0,0,.4);
   --e2:0 4px 18px rgba(0,0,0,.6); --e3:0 20px 56px rgba(0,0,0,.72);
-  --eac:0 4px 22px rgba(26,122,53,.35);
+  --eac:0 4px 22px rgba(51,65,85,.30);
   --glass-1: rgba(22,25,31,.82);
   --glass-2: rgba(22,25,31,.72);
   --glass-3: rgba(22,25,31,.68);
@@ -44,13 +44,13 @@
 .light-mode{
   --bg:#fbfdff; --sf:#ffffff; --sf2:#f8fbff; --sf3:#f2f7fd; --sf4:#edf3fa;
   --bd:#dce5f0; --bd2:#cdd8e6; --bd3:#a9bbd3;
-  --ac:#155c28; --ac2:#1a7a35; --ac3:#22a847;
-  --acd1:rgba(21,92,40,.07); --acd2:rgba(21,92,40,.14); --acd3:rgba(21,92,40,.24);
-  --palette-card-bg-1: rgba(34,168,71,.18);
-  --palette-card-bg-2: rgba(21,92,40,.10);
-  --palette-card-border: rgba(46,204,92,.20);
-  --palette-card-glow-1: rgba(46,204,92,.14);
-  --palette-card-glow-2: rgba(46,204,92,.08);
+  --ac:#1a7a35; --ac2:#2ecc5c; --ac3:#5ee27b;
+  --acd1:rgba(26,122,53,.07); --acd2:rgba(26,122,53,.14); --acd3:rgba(26,122,53,.24);
+  --palette-card-bg-1: rgba(46,204,92,.18);
+  --palette-card-bg-2: rgba(26,122,53,.10);
+  --palette-card-border: rgba(94,226,123,.22);
+  --palette-card-glow-1: rgba(94,226,123,.14);
+  --palette-card-glow-2: rgba(94,226,123,.08);
   --tx:#0d1526; --tx2:#405063; --tx3:#74839a;
   --red:#d93f3c; --redd:rgba(217,63,60,.07); --redb:rgba(217,63,60,.22);
   --grn:#15924f; --grnd:rgba(21,146,79,.07); --grnb:rgba(21,146,79,.22);
@@ -58,7 +58,7 @@
   --pur:#7a50c8; --purd:rgba(122,80,200,.07); --purb:rgba(122,80,200,.22);
   --e1:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
   --e2:0 4px 18px rgba(0,0,0,.07); --e3:0 20px 56px rgba(0,0,0,.10);
-  --eac:0 4px 22px rgba(10,138,134,.16);
+  --eac:0 4px 22px rgba(51,65,85,.16);
   --glass-1: rgba(255,255,255,.96);
   --glass-2: rgba(255,255,255,.82);
   --glass-3: rgba(255,255,255,.92);
@@ -798,23 +798,259 @@ body.loading-start.loaded-ready{
   letter-spacing:1px;
   color:var(--tx3);
 }
-.activity-feed{display:grid;gap:10px}
+.activity-feed{display:grid;gap:12px}
 .activity-card{
+  position:relative;
   border:1px solid var(--bd);
-  border-radius:14px;
+  border-radius:18px;
   background:
     radial-gradient(140% 100% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
     radial-gradient(120% 100% at 100% 0%, var(--palette-card-glow-2), transparent 48%),
-    var(--sf2);
-  padding:12px 14px;
+    linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  padding:14px 15px 14px 18px;
+  display:grid;
+  gap:8px;
+  box-shadow:var(--e1), var(--eac);
+  overflow:hidden;
+}
+.activity-card::before{
+  content:'';
+  position:absolute;
+  inset:0 auto 0 0;
+  width:4px;
+  background:var(--activity-accent,var(--ac3));
+  opacity:.85;
+}
+.activity-card.activity-approved{--activity-accent:var(--grn)}
+.activity-card.activity-pending{--activity-accent:var(--amb)}
+.activity-card.activity-denied{--activity-accent:var(--red)}
+.activity-card.activity-cancelled{--activity-accent:var(--red)}
+.activity-card .row-top{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+  align-items:flex-start;
+}
+.activity-card .meta-line{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+.activity-card .when{
+  font-size:11px;
+  color:var(--tx3);
+  font-family:var(--ff-mono);
+  white-space:nowrap;
+}
+.activity-card .actor{font-weight:700}
+.activity-card .headline{
+  font-size:14px;
+  font-weight:800;
+  color:var(--tx);
+  line-height:1.25;
+}
+.activity-card .detail{
+  font-size:12px;
+  color:var(--tx2);
+  line-height:1.45;
+}
+.activity-card .note{
+  padding:10px 11px;
+  border-radius:12px;
+  border:1px solid var(--bd);
+  background:var(--sf3);
+}
+#activityPanel .activity-layout{
+  display:grid;
+  grid-template-columns:minmax(240px,320px) minmax(0,1fr);
+  gap:14px;
+  align-items:start;
+}
+#activityPanel .activity-roster{
+  display:grid;
+  gap:10px;
+}
+#activityPanel .activity-roster-btn{
+  width:100%;
   display:grid;
   gap:6px;
+  text-align:left;
+  padding:14px 15px;
+  border:1px solid var(--bd);
+  border-radius:18px;
+  background:
+    radial-gradient(140% 100% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
+    radial-gradient(120% 100% at 100% 0%, var(--palette-card-glow-2), transparent 48%),
+    linear-gradient(180deg,var(--glass-1),var(--glass-2));
   box-shadow:var(--e1), var(--eac);
 }
-.activity-card .row-top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center}
-.activity-card .when{font-size:11px;color:var(--tx3);font-family:var(--ff-mono)}
-.activity-card .actor{font-weight:700}
-.activity-card .detail{font-size:13px;color:var(--tx2)}
+#activityPanel .activity-roster-btn.active{
+  border-color:var(--ac3);
+  box-shadow:0 0 0 3px var(--acd1), var(--e1), var(--eac);
+  transform:translateY(-1px);
+}
+#activityPanel .activity-roster-btn .name{
+  font-family:var(--ff-head);
+  font-size:15px;
+  font-weight:800;
+  color:var(--tx);
+  line-height:1.15;
+}
+#activityPanel .activity-roster-btn .sub{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+#activityPanel .activity-roster-btn .mini{
+  font-size:11px;
+  color:var(--tx2);
+  line-height:1.4;
+}
+#activityPanel .activity-detail{
+  border:1px solid var(--bd);
+  border-radius:20px;
+  background:
+    radial-gradient(140% 100% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
+    radial-gradient(120% 100% at 100% 0%, var(--palette-card-glow-2), transparent 48%),
+    linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  box-shadow:var(--e1), var(--eac);
+  padding:16px;
+  display:grid;
+  gap:14px;
+}
+#activityPanel .activity-detail-head{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+  align-items:flex-start;
+}
+#activityPanel .activity-detail-name{
+  font-family:var(--ff-head);
+  font-size:22px;
+  font-weight:800;
+  line-height:1.05;
+  color:var(--tx);
+}
+#activityPanel .activity-detail-sub{
+  margin-top:5px;
+  font-size:12px;
+  color:var(--tx2);
+}
+#activityPanel .activity-stat-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;
+}
+#activityPanel .activity-stat{
+  border:1px solid var(--bd);
+  border-radius:14px;
+  background:var(--sf3);
+  padding:10px 12px;
+  display:grid;
+  gap:4px;
+}
+#activityPanel .activity-stat .label{
+  font-size:9px;
+  font-family:var(--ff-mono);
+  text-transform:uppercase;
+  letter-spacing:1px;
+  color:var(--tx3);
+}
+#activityPanel .activity-stat .value{
+  font-family:var(--ff-head);
+  font-size:16px;
+  font-weight:800;
+  color:var(--tx);
+}
+#activityPanel .activity-stat .sub{
+  font-size:11px;
+  color:var(--tx2);
+}
+#activityPanel .activity-section{
+  display:grid;
+  gap:10px;
+  padding:12px;
+  border:1px solid var(--bd);
+  border-radius:16px;
+  background:var(--sf3);
+}
+#activityPanel .activity-section-title{
+  font-size:10px;
+  font-family:var(--ff-mono);
+  text-transform:uppercase;
+  letter-spacing:1.2px;
+  color:var(--tx3);
+}
+#activityPanel .activity-mini-list{
+  display:grid;
+  gap:8px;
+}
+#activityPanel .activity-mini-item{
+  display:grid;
+  gap:4px;
+  padding:10px 11px;
+  border:1px solid var(--bd);
+  border-radius:14px;
+  background:linear-gradient(180deg,var(--glass-1),var(--glass-3));
+}
+#activityPanel .activity-mini-item .top{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+#activityPanel .activity-mini-item .title{
+  font-size:12px;
+  font-weight:800;
+  color:var(--tx);
+}
+#activityPanel .activity-mini-item .meta{
+  font-size:11px;
+  color:var(--tx2);
+  line-height:1.4;
+}
+#activityPanel .activity-collapsible{
+  border:1px solid var(--bd);
+  border-radius:16px;
+  overflow:hidden;
+  background:var(--sf3);
+}
+#activityPanel .activity-collapsible summary{
+  list-style:none;
+  cursor:pointer;
+  padding:12px 14px;
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:center;
+}
+#activityPanel .activity-collapsible summary::-webkit-details-marker{display:none}
+#activityPanel .activity-collapsible .content{
+  border-top:1px solid var(--bd);
+  padding:12px 14px 14px;
+  display:grid;
+  gap:12px;
+}
+.activity-card .actor-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:4px 8px;
+  border-radius:999px;
+  border:1px solid var(--bd);
+  background:var(--sf3);
+  color:var(--tx2);
+  font-size:11px;
+  font-family:var(--ff-mono);
+}
+@media (max-width: 980px){
+  #activityPanel .activity-layout{grid-template-columns:1fr}
+  #activityPanel .activity-stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
 .toast{
   position:fixed;left:50%;bottom:22px;transform:translateX(-50%);
   padding:10px 16px;border-radius:12px;background:var(--sf);border:1px solid var(--bd);
@@ -835,6 +1071,7 @@ body.loading-start.loaded-ready{
 .palette-overlay.open{display:flex}
 .palette-panel{
   width:min(720px,100%);
+  max-height:min(84vh, 760px);
   border-radius:22px;border:1px solid var(--bd);
   background:
     radial-gradient(140% 100% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
@@ -843,11 +1080,14 @@ body.loading-start.loaded-ready{
   box-shadow:var(--e3), var(--eac);
   padding:18px;
   margin-top:clamp(4px, 1vh, 12px);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
 }
-.palette-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+.palette-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px;flex-shrink:0}
 .palette-title{font-family:var(--ff-head);font-size:18px;font-weight:800}
 .palette-close{border:1px solid var(--bd);background:var(--sf2);color:var(--tx);border-radius:12px;padding:10px 14px;cursor:pointer}
-.palette-body{display:grid;gap:14px}
+.palette-body{display:grid;gap:14px;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .palette-help{color:var(--tx2);font-size:13px;line-height:1.55}
 .palette-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .palette-option{
@@ -860,8 +1100,45 @@ body.loading-start.loaded-ready{
 .palette-meta{display:grid;gap:2px}
 .palette-name{font-weight:800;font-family:var(--ff-head)}
 .palette-desc{color:var(--tx2);font-size:12px;line-height:1.45}
-.palette-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:14px;flex-wrap:wrap}
+.palette-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px;flex-wrap:wrap;align-items:center}
+.palette-actions button{min-width:124px}
+body.basic-mode,
+body.basic-mode::before,
+body.basic-mode::after {
+  background-image: none !important;
+}
+body.basic-mode,
+body.basic-mode *,
+body.basic-mode *::before,
+body.basic-mode *::after {
+  animation: none !important;
+  transition: none !important;
+}
+body.basic-mode * {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+body.basic-mode :is(.app-card,.coming-card,#mainHeader,.login-card,.lic-inner,.panel,.modal,.toast,.palette-panel,.manager-requests-panel,.header-user,.section-label,.palette-option,.palette-close,.icon-btn,.btn,.btn-ghost,.btn-primary,.btn-secondary,.btn-iso,.button,.card-arrow,.user-chip) {
+  background: var(--sf) !important;
+  background-image: none !important;
+  border-color: var(--bd2) !important;
+  box-shadow: none !important;
+}
+body.basic-mode .btn-primary {
+  background: linear-gradient(135deg, var(--ac), var(--ac2)) !important;
+  color: #fff !important;
+  border-color: var(--ac3) !important;
+  box-shadow: 0 6px 18px rgba(26,122,53,.22) !important;
+}
+body.basic-mode :is(.palette-overlay,.manager-requests-overlay) {
+  background: rgba(5,10,18,.88) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
 @media (max-width: 720px){
+  .palette-panel{
+    max-height: calc(100dvh - 24px);
+  }
   .palette-overlay{
     padding-top:10px;
     align-items:flex-start;
@@ -1045,8 +1322,14 @@ body.loading-start.loaded-ready{
     <div class="topbar-right">
       <span class="status-dot" aria-hidden="true"></span>
       <span class="pill visually-hidden" id="syncLabel" aria-live="polite">Synced</span>
-      <button class="icon-btn" type="button" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle theme">
-        <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <button class="icon-btn" type="button" id="themeBtn" onclick="toggleTheme()" title="Switch to light mode" aria-label="Switch to light mode">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+          <circle cx="12" cy="12" r="4"/>
+          <path d="M12 2v2"/><path d="M12 20v2"/>
+          <path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/>
+          <path d="M2 12h2"/><path d="M20 12h2"/>
+          <path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/>
+        </svg>
       </button>
       <button class="icon-btn" type="button" onclick="openPaletteModal()" title="Choose colour scheme" aria-label="Choose colour scheme">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
@@ -1227,9 +1510,13 @@ body.loading-start.loaded-ready{
     <div class="palette-body">
       <div class="palette-help">Choose a general colour scheme for this browser only. It will carry across the Platform, Shift Tracker, Logs, Holiday Requests, and Credit Hours apps, and you can reset it at any time.</div>
       <div class="palette-grid" id="paletteGrid">
+        <button type="button" class="palette-option" data-palette="basic" onclick="setPalettePreset('basic')">
+          <span class="palette-sample"><span style="background:#2f343c"></span><span style="background:#49515a"></span><span style="background:#6b7280"></span><span style="background:#d1d5db"></span></span>
+          <span class="palette-meta"><span class="palette-name">Basic</span><span class="palette-desc">A flat grayscale view with the glass and motion stripped back.</span></span>
+        </button>
         <button type="button" class="palette-option" data-palette="default" onclick="setPalettePreset('default')">
-          <span class="palette-sample"><span style="background:#1a7a35"></span><span style="background:#22a847"></span><span style="background:#2ecc5c"></span><span style="background:#155c28"></span></span>
-          <span class="palette-meta"><span class="palette-name">Default Green</span><span class="palette-desc">The current suite look, kept as the fallback.</span></span>
+          <span class="palette-sample"><span style="background:#1a7a35"></span><span style="background:#2ecc5c"></span><span style="background:#5ee27b"></span><span style="background:#0b4f24"></span></span>
+          <span class="palette-meta"><span class="palette-name">Green</span><span class="palette-desc">The original Padeswood green scheme.</span></span>
         </button>
         <button type="button" class="palette-option" data-palette="ocean" onclick="setPalettePreset('ocean')">
           <span class="palette-sample"><span style="background:#0f766e"></span><span style="background:#14b8a6"></span><span style="background:#2dd4bf"></span><span style="background:#0b4f4a"></span></span>
@@ -1249,7 +1536,7 @@ body.loading-start.loaded-ready{
         </button>
         <button type="button" class="palette-option" data-palette="slate" onclick="setPalettePreset('slate')">
           <span class="palette-sample"><span style="background:#334155"></span><span style="background:#475569"></span><span style="background:#64748b"></span><span style="background:#0f172a"></span></span>
-          <span class="palette-meta"><span class="palette-name">Slate</span><span class="palette-desc">A calmer neutral scheme if you want less colour.</span></span>
+          <span class="palette-meta"><span class="palette-name">Graphite</span><span class="palette-desc">A darker neutral scheme if you want less colour.</span></span>
         </button>
       </div>
     </div>
@@ -1289,61 +1576,71 @@ const PALETTE_PRESETS = {
   default: {
     label: 'Default Green',
     vars: {
-      '--ac':'#1a7a35','--ac2':'#22a847','--ac3':'#2ecc5c',
-      '--acd1':'rgba(26,122,53,.10)','--acd2':'rgba(26,122,53,.18)','--acd3':'rgba(26,122,53,.28)',
-      '--palette-card-bg-1':'rgba(34,168,71,.24)','--palette-card-bg-2':'rgba(21,92,40,.12)',
-      '--palette-card-border':'rgba(46,204,92,.24)','--palette-card-glow-1':'rgba(46,204,92,.18)','--palette-card-glow-2':'rgba(46,204,92,.10)',
-      '--eac':'0 4px 22px rgba(26,122,53,.35)'
+      '--ac':'#1a7a35','--ac2':'#2ecc5c','--ac3':'#5ee27b',
+      '--acd1':'rgba(26,122,53,.08)','--acd2':'rgba(26,122,53,.14)','--acd3':'rgba(26,122,53,.22)',
+      '--palette-card-bg-1':'rgba(46,204,92,.18)','--palette-card-bg-2':'rgba(26,122,53,.08)',
+      '--palette-card-border':'rgba(94,226,123,.18)','--palette-card-glow-1':'rgba(94,226,123,.12)','--palette-card-glow-2':'rgba(94,226,123,.06)',
+      '--eac':'0 4px 22px rgba(26,122,53,.25)'
     }
   },
   ocean: {
     label: 'Ocean',
     vars: {
       '--ac':'#0f766e','--ac2':'#14b8a6','--ac3':'#2dd4bf',
-      '--acd1':'rgba(15,118,110,.10)','--acd2':'rgba(15,118,110,.18)','--acd3':'rgba(15,118,110,.28)',
-      '--palette-card-bg-1':'rgba(20,184,166,.22)','--palette-card-bg-2':'rgba(15,118,110,.12)',
-      '--palette-card-border':'rgba(45,212,191,.26)','--palette-card-glow-1':'rgba(45,212,191,.18)','--palette-card-glow-2':'rgba(45,212,191,.10)',
-      '--eac':'0 4px 22px rgba(15,118,110,.30)'
+      '--acd1':'rgba(15,118,110,.08)','--acd2':'rgba(15,118,110,.14)','--acd3':'rgba(15,118,110,.22)',
+      '--palette-card-bg-1':'rgba(20,184,166,.18)','--palette-card-bg-2':'rgba(15,118,110,.08)',
+      '--palette-card-border':'rgba(45,212,191,.18)','--palette-card-glow-1':'rgba(45,212,191,.12)','--palette-card-glow-2':'rgba(45,212,191,.06)',
+      '--eac':'0 4px 22px rgba(15,118,110,.25)'
     }
   },
   sky: {
     label: 'Sky',
     vars: {
       '--ac':'#2563eb','--ac2':'#3b82f6','--ac3':'#60a5fa',
-      '--acd1':'rgba(37,99,235,.10)','--acd2':'rgba(37,99,235,.18)','--acd3':'rgba(37,99,235,.28)',
-      '--palette-card-bg-1':'rgba(59,130,246,.22)','--palette-card-bg-2':'rgba(37,99,235,.12)',
-      '--palette-card-border':'rgba(96,165,250,.26)','--palette-card-glow-1':'rgba(96,165,250,.18)','--palette-card-glow-2':'rgba(96,165,250,.10)',
-      '--eac':'0 4px 22px rgba(37,99,235,.30)'
+      '--acd1':'rgba(37,99,235,.08)','--acd2':'rgba(37,99,235,.14)','--acd3':'rgba(37,99,235,.22)',
+      '--palette-card-bg-1':'rgba(59,130,246,.18)','--palette-card-bg-2':'rgba(37,99,235,.08)',
+      '--palette-card-border':'rgba(96,165,250,.18)','--palette-card-glow-1':'rgba(96,165,250,.12)','--palette-card-glow-2':'rgba(96,165,250,.06)',
+      '--eac':'0 4px 22px rgba(37,99,235,.25)'
     }
   },
   violet: {
     label: 'Violet',
     vars: {
       '--ac':'#6d28d9','--ac2':'#8b5cf6','--ac3':'#a78bfa',
-      '--acd1':'rgba(109,40,217,.10)','--acd2':'rgba(109,40,217,.18)','--acd3':'rgba(109,40,217,.28)',
-      '--palette-card-bg-1':'rgba(139,92,246,.22)','--palette-card-bg-2':'rgba(109,40,217,.12)',
-      '--palette-card-border':'rgba(167,139,250,.26)','--palette-card-glow-1':'rgba(167,139,250,.18)','--palette-card-glow-2':'rgba(167,139,250,.10)',
-      '--eac':'0 4px 22px rgba(109,40,217,.30)'
+      '--acd1':'rgba(109,40,217,.08)','--acd2':'rgba(109,40,217,.14)','--acd3':'rgba(109,40,217,.22)',
+      '--palette-card-bg-1':'rgba(139,92,246,.18)','--palette-card-bg-2':'rgba(109,40,217,.08)',
+      '--palette-card-border':'rgba(167,139,250,.18)','--palette-card-glow-1':'rgba(167,139,250,.12)','--palette-card-glow-2':'rgba(167,139,250,.06)',
+      '--eac':'0 4px 22px rgba(109,40,217,.25)'
     }
   },
   amber: {
     label: 'Amber',
     vars: {
       '--ac':'#b45309','--ac2':'#d97706','--ac3':'#f59e0b',
-      '--acd1':'rgba(180,83,9,.10)','--acd2':'rgba(180,83,9,.18)','--acd3':'rgba(180,83,9,.28)',
-      '--palette-card-bg-1':'rgba(245,158,11,.22)','--palette-card-bg-2':'rgba(180,83,9,.12)',
-      '--palette-card-border':'rgba(245,158,11,.26)','--palette-card-glow-1':'rgba(245,158,11,.18)','--palette-card-glow-2':'rgba(245,158,11,.10)',
-      '--eac':'0 4px 22px rgba(180,83,9,.30)'
+      '--acd1':'rgba(180,83,9,.08)','--acd2':'rgba(180,83,9,.14)','--acd3':'rgba(180,83,9,.22)',
+      '--palette-card-bg-1':'rgba(245,158,11,.18)','--palette-card-bg-2':'rgba(180,83,9,.08)',
+      '--palette-card-border':'rgba(245,158,11,.18)','--palette-card-glow-1':'rgba(245,158,11,.12)','--palette-card-glow-2':'rgba(245,158,11,.06)',
+      '--eac':'0 4px 22px rgba(180,83,9,.25)'
+    }
+  },
+  basic: {
+    label: 'Basic',
+    vars: {
+      '--ac':'#4b5563','--ac2':'#6b7280','--ac3':'#9ca3af',
+      '--acd1':'rgba(75,85,99,.08)','--acd2':'rgba(75,85,99,.14)','--acd3':'rgba(75,85,99,.22)',
+      '--palette-card-bg-1':'rgba(107,114,128,.18)','--palette-card-bg-2':'rgba(75,85,99,.08)',
+      '--palette-card-border':'rgba(156,163,175,.18)','--palette-card-glow-1':'rgba(156,163,175,.10)','--palette-card-glow-2':'rgba(156,163,175,.05)',
+      '--eac':'0 4px 22px rgba(75,85,99,.20)'
     }
   },
   slate: {
-    label: 'Slate',
+    label: 'Graphite',
     vars: {
       '--ac':'#334155','--ac2':'#475569','--ac3':'#64748b',
-      '--acd1':'rgba(51,65,85,.10)','--acd2':'rgba(51,65,85,.18)','--acd3':'rgba(51,65,85,.28)',
-      '--palette-card-bg-1':'rgba(71,85,105,.22)','--palette-card-bg-2':'rgba(51,65,85,.12)',
-      '--palette-card-border':'rgba(100,116,139,.26)','--palette-card-glow-1':'rgba(100,116,139,.18)','--palette-card-glow-2':'rgba(100,116,139,.10)',
-      '--eac':'0 4px 22px rgba(51,65,85,.30)'
+      '--acd1':'rgba(51,65,85,.08)','--acd2':'rgba(51,65,85,.14)','--acd3':'rgba(51,65,85,.22)',
+      '--palette-card-bg-1':'rgba(71,85,105,.18)','--palette-card-bg-2':'rgba(51,65,85,.08)',
+      '--palette-card-border':'rgba(100,116,139,.18)','--palette-card-glow-1':'rgba(100,116,139,.12)','--palette-card-glow-2':'rgba(100,116,139,.06)',
+      '--eac':'0 4px 22px rgba(51,65,85,.25)'
     }
   }
 };
@@ -1366,6 +1663,7 @@ let allHolidayRequests = [];
 let allHolidayEvents = [];
 let allHolidayProfileEvents = [];
 let selectedYear = new Date().getFullYear();
+let selectedHolidayActivityUserId = null;
 let loginReady = false;
 let focusApprovalsOnRender = new URLSearchParams(window.location.search).get('focus') === 'approvals';
 const SHIFT_HOURS = 12;
@@ -1750,6 +2048,9 @@ function setToast(msg, ms){
   clearTimeout(window.__holidayToastTimer);
   window.__holidayToastTimer = setTimeout(() => t.classList.remove('show'), ms || 2200);
 }
+function promptCancellationReason(title){
+  return String(window.prompt(title || 'Please enter a reason for cancelling this holiday.') || '').trim();
+}
 
 function showHolidayRequestError(msg) {
   const el = $('holidayReqMsg');
@@ -1815,34 +2116,17 @@ function reviewHolidayTextSafety(text) {
 }
 
 function getStoredThemePref(){
-  const stored = localStorage.getItem('pw_theme');
-  if (stored === 'light' || stored === 'dark') return stored;
-  const legacy = localStorage.getItem('kbl_theme');
-  if (legacy === 'light' || legacy === 'dark') {
-    localStorage.setItem('pw_theme', legacy);
-    return legacy;
-  }
-  const darkFlag = localStorage.getItem('dark');
-  if (darkFlag === '1' || darkFlag === '0') {
-    const theme = darkFlag === '1' ? 'dark' : 'light';
-    localStorage.setItem('pw_theme', theme);
-    localStorage.setItem('kbl_theme', theme);
-    return theme;
-  }
-  return null;
+  return localStorage.getItem('pw_theme') || localStorage.getItem('kbl_theme') || null;
 }
 function applyTheme(isLight){
-  document.body.classList.toggle('light-mode', !!isLight);
-  const themeIcon = $('themeIcon');
-  if (themeIcon) {
-    themeIcon.innerHTML = isLight
-      ? '<circle cx="12" cy="12" r="4" stroke="currentColor"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>'
-      : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
-  }
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', isLight ? '#fbfdff' : '#111418');
-  localStorage.setItem('pw_theme', isLight ? 'light' : 'dark');
-  localStorage.setItem('kbl_theme', isLight ? 'light' : 'dark');
-  localStorage.setItem('dark', isLight ? '0' : '1');
+  const light = !!isLight;
+  document.body.classList.toggle('light-mode', light);
+  document.body.classList.toggle('dark', !light);
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', light ? '#f0f4f8' : '#111418');
+  localStorage.setItem('pw_theme', light ? 'light' : 'dark');
+  localStorage.setItem('kbl_theme', light ? 'light' : 'dark');
+  localStorage.setItem('dark', light ? '0' : '1');
+  syncThemeButton();
 }
 async function persistSharedThemePreference(isLight){
   if (!sb || !currentUser || !currentUser.id) return;
@@ -1865,9 +2149,19 @@ async function loadSharedThemePreference(){
   return null;
 }
 function toggleTheme(){
-  const nextIsLight = !document.body.classList.contains('light-mode');
-  applyTheme(nextIsLight);
-  persistSharedThemePreference(nextIsLight);
+  const nextLight = !document.body.classList.contains('light-mode');
+  applyTheme(nextLight);
+  persistSharedThemePreference(nextLight);
+}
+function syncThemeButton(){
+  const btn = document.getElementById('themeBtn');
+  if (!btn) return;
+  const isLight = document.body.classList.contains('light-mode');
+  btn.innerHTML = isLight
+    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>'
+    : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/></svg>';
+  btn.title = isLight ? 'Switch to dark mode' : 'Switch to light mode';
+  btn.setAttribute('aria-label', btn.title);
 }
 function setPaletteVars(vars){
   const targets = [document.documentElement, document.body].filter(Boolean);
@@ -1883,6 +2177,7 @@ function clearPaletteVars(){
 }
 function getStoredPalettePreset(){
   const key = localStorage.getItem(PALETTE_STORAGE_KEY);
+  if (key === 'plain') return 'basic';
   return PALETTE_PRESETS[key] ? key : 'default';
 }
 async function persistSharedPalettePreference(key){
@@ -1909,7 +2204,10 @@ async function loadSharedPalettePreference(){
       .select('value')
       .eq('key', 'palette_uid_' + currentUser.id)
       .maybeSingle();
-    if (data && data.value && PALETTE_PRESETS[data.value]) return data.value;
+    if (data && data.value) {
+      if (data.value === 'plain') return 'basic';
+      if (PALETTE_PRESETS[data.value]) return data.value;
+    }
   } catch (e) {}
   return null;
 }
@@ -1930,6 +2228,8 @@ function applyStoredPalette(){
   const preset = getStoredPalettePreset();
   if (preset === 'default') clearPaletteVars();
   else setPaletteVars(PALETTE_PRESETS[preset].vars);
+  document.body.classList.toggle('basic-mode', preset === 'basic');
+  document.documentElement.classList.toggle('basic-mode', preset === 'basic');
   updatePaletteUi();
 }
 function setPalettePreset(key){
@@ -2249,12 +2549,58 @@ function renderActivityFeed(){
   feed.innerHTML = events.map(ev => {
     const req = allHolidayRequests.find(r => r.id === ev.request_id);
     const title = req ? (formatDateOnly(req.start_date) + ' → ' + formatDateOnly(req.end_date) + ' · ' + requestSummaryText(req)) : 'Request';
-    return '<div class="activity-card" style="padding:10px 12px">'+
-      '<div class="row-top"><div><span class="pill '+requestStatusClass(ev.new_status || ev.action.toLowerCase())+'">'+esc(ev.action)+'</span> '+(req ? makeKindPill(req) : '')+' <span class="actor">'+esc(actorDisplayNameForEvent(ev))+'</span></div><div class="when">'+esc(formatDateTime(ev.created_at))+'</div></div>'+
-      '<div class="detail" style="font-size:12px">'+esc(title)+'</div>'+
-      '<div class="detail" style="font-size:11px">'+esc(requestDisplayReason(ev.note || '—'))+'</div>'+
+    const statusClass = requestStatusClass(ev.new_status || ev.action.toLowerCase());
+    return '<div class="activity-card activity-'+statusClass+'">'+
+      '<div class="row-top">'+
+        '<div class="meta-line">'+
+          '<span class="pill '+statusClass+'">'+esc(ev.action)+'</span>'+
+          (req ? makeKindPill(req) : '')+
+          '<span class="actor-pill"><span class="actor">'+esc(actorDisplayNameForEvent(ev))+'</span></span>'+
+        '</div>'+
+        '<div class="when">'+esc(formatDateTime(ev.created_at))+'</div>'+
+      '</div>'+
+      '<div class="headline">'+esc(title)+'</div>'+
+      '<div class="note">'+esc(requestDisplayReason(ev.note || '—'))+'</div>'+
     '</div>';
   }).join('');
+}
+function setHolidayActivityUser(userId){
+  selectedHolidayActivityUserId = String(userId || '');
+  renderHolidayApp();
+}
+function renderHolidayRequestMiniItem(req){
+  const events = eventsForRequest(req.id);
+  const latest = events.length ? events[events.length - 1] : null;
+  const statusClass = requestStatusClass(req.status);
+  return '<div class="activity-mini-item">'+
+    '<div class="top">'+
+      '<div class="title">'+makeKindPill(req)+' <span style="margin-left:6px">'+esc(requestSummaryText(req))+'</span></div>'+
+      '<span class="pill '+statusClass+'">'+esc(req.status.charAt(0).toUpperCase() + req.status.slice(1))+'</span>'+
+    '</div>'+
+    '<div class="meta">'+esc(formatDateTime(req.requested_at))+(req.decided_at ? ' · decided '+esc(formatDateTime(req.decided_at)) : '')+'</div>'+
+    '<div class="meta">'+esc(requestDisplayReason(req.reason) || '—')+'</div>'+
+    '<div class="meta">'+esc(requestDisplayReason((latest && latest.note) || req.manager_note || '—'))+'</div>'+
+  '</div>';
+}
+function renderHolidayAllowanceMiniItem(ev){
+  const allowanceText = typeof ev.new_annual_allowance_days !== 'undefined'
+    ? requestWholeHoursText(num(ev.old_annual_allowance_days, 0)) + ' → ' + requestWholeHoursText(num(ev.new_annual_allowance_days, 0)) + ' allowance'
+    : '';
+  const carryText = typeof ev.new_carryover_days !== 'undefined'
+    ? requestWholeHoursText(num(ev.old_carryover_days, 0)) + ' → ' + requestWholeHoursText(num(ev.new_carryover_days, 0)) + ' carryover'
+    : '';
+  const extrasText = typeof ev.new_extras_days !== 'undefined'
+    ? allowanceExtrasText(num(ev.old_extras_days, 0)) + ' → ' + allowanceExtrasText(num(ev.new_extras_days, 0)) + ' extras'
+    : '';
+  const changeText = [allowanceText, carryText, extrasText].filter(Boolean).join(' · ') || 'Allowance updated';
+  return '<div class="activity-mini-item">'+
+    '<div class="top">'+
+      '<div class="title">'+esc(changeText)+'</div>'+
+      '<span class="pill approved">Logged</span>'+
+    '</div>'+
+    '<div class="meta">'+esc(ev.actor_name || 'Unknown')+' · '+esc(formatDateTime(ev.created_at))+'</div>'+
+    '<div class="meta">'+esc(requestDisplayReason(ev.note || '—'))+'</div>'+
+  '</div>';
 }
 function renderTeamOverviewCards(){
   const box = $('teamOverviewCards');
@@ -2273,103 +2619,119 @@ function renderTeamOverviewCards(){
     box.innerHTML = '<div class="empty">No staff assigned yet.</div>';
     return;
   }
-  box.innerHTML = activeProfiles.map(p => {
-    const hp = holidayProfileFor(p.id);
-    const ku = kilnUserFor(p.id);
+  if (!selectedHolidayActivityUserId || !activeProfiles.some(function(p){ return String(p.id) === String(selectedHolidayActivityUserId); })) {
+    selectedHolidayActivityUserId = String(activeProfiles[0].id);
+  }
+  const selectedProfile = activeProfiles.find(function(p){ return String(p.id) === String(selectedHolidayActivityUserId); }) || activeProfiles[0];
+  const selectedHp = holidayProfileFor(selectedProfile.id);
+  const selectedKu = kilnUserFor(selectedProfile.id);
+  const selectedStats = statsForUser(selectedProfile.id, selectedYear);
+  const selectedDisplayName = personDisplayNameFromRecords(selectedProfile, selectedKu, 'Unknown');
+  const selectedManagerName = holidayManagerDisplayNameForUser(selectedProfile.id);
+  const selectedEditable = canEditAllowanceFor(selectedProfile);
+  const selectedEntitlementValue = num(selectedHp && selectedHp.annual_allowance_days, 72);
+  const selectedCarryoverValue = num(selectedHp && selectedHp.carryover_days, 0);
+  const selectedExtrasValue = num(selectedHp && selectedHp.entitlement_extras_days, 0);
+  const selectedRemainingDays = selectedStats.remaining / SHIFT_HOURS;
+  const selectedRemainingClass = balanceTrafficLightClass(selectedRemainingDays);
+  const selectedRequestHistory = requestsForUser(selectedProfile.id)
+    .filter(function(r){ return requestMatchesYear(r, selectedYear); })
+    .slice(0, 3);
+  const selectedAllowanceHistory = profileEventsForUser(selectedProfile.id)
+    .filter(function(e){ return e && requestMatchesYear({ start_date: e.created_at }, selectedYear); })
+    .slice(0, 3);
+  const rosterHtml = activeProfiles.map(function(p){
     const stats = statsForUser(p.id, selectedYear);
-    const displayName = personDisplayNameFromRecords(p, ku, 'Unknown');
-    const managerName = holidayManagerDisplayNameForUser(p.id);
-    const editable = canEditAllowanceFor(p);
-    const entitlementValue = num(hp && hp.annual_allowance_days, 72);
-    const carryoverValue = num(hp && hp.carryover_days, 0);
-    const extrasValue = num(hp && hp.entitlement_extras_days, 0);
     const remainingDays = stats.remaining / SHIFT_HOURS;
     const remainingClass = balanceTrafficLightClass(remainingDays);
-    const allowanceHistory = profileEventsForUser(p.id)
-      .filter(function(e){ return e && requestMatchesYear({ start_date: e.created_at }, selectedYear); })
-      .slice(0, 3);
-    const requestHistory = requestsForUser(p.id)
-      .filter(function(r){ return requestMatchesYear(r, selectedYear); })
-      .slice(0, 4);
-    const showManagerLabel = isHolidayAdmin;
-    return '<details class="staff-card">'+
-      '<summary>'+
-        '<div class="staff-summary-left">'+
-          '<div class="name" style="font-size:13px">'+esc(displayName)+'</div>'+
-        '</div>'+
-        '<div class="staff-summary-right">'+
-          '<span class="pill">'+esc(requestDaysText(stats.used / SHIFT_HOURS))+' taken</span>'+
-          '<span class="pill '+remainingClass+'">'+esc(requestDaysText(remainingDays))+' left</span>'+
-          '<span class="pill">'+esc(requestDaysText(stats.pending / SHIFT_HOURS))+' pending</span>'+
-          '<span class="pill">'+esc(requestDaysText(stats.projected / SHIFT_HOURS))+' projected</span>'+
-          (showManagerLabel ? '<span class="pill">'+esc(managerName)+'</span>' : '')+
-        '</div>'+
-      '</summary>'+
-      '<div class="staff-body">'+
-        '<div class="meta" style="font-size:10px">Entitlement '+esc(requestWholeHoursText(stats.entitlement))+' / '+esc(requestDaysText(stats.entitlement / SHIFT_HOURS))+'</div>'+
-        '<div class="meta" style="font-size:10px">Used '+esc(requestWholeHoursText(stats.used))+' / '+esc(requestDaysText(stats.used / SHIFT_HOURS))+'</div>'+
-        '<div class="meta" style="font-size:10px">Pending '+esc(requestWholeHoursText(stats.pending))+' / '+esc(requestDaysText(stats.pending / SHIFT_HOURS))+'</div>'+
-        '<div class="meta" style="font-size:10px">Remaining '+esc(requestWholeHoursText(stats.remaining))+' / '+esc(requestDaysText(stats.remaining / SHIFT_HOURS))+'</div>'+
-        '<div class="meta" style="font-size:10px">Projected '+esc(requestWholeHoursText(stats.projected))+' / '+esc(requestDaysText(stats.projected / SHIFT_HOURS))+'</div>'+
-        '<div class="meta" style="font-size:10px">Carryover '+esc(requestWholeHoursText(carryoverValue))+'</div>'+
-        '<div class="meta" style="font-size:10px">Extras '+esc(allowanceExtrasText(extrasValue))+'</div>'+
-        '<div class="staff-section">'+
-          '<div class="staff-section-title">Entitlement adjustment</div>'+
-          '<div class="staff-section-sub">Add or remove holiday entitlement and carryover for this staff member. Every save is written to the audit trail.</div>'+
-          '<div class="field"><label class="small" style="margin-bottom:4px">Annual entitlement</label><input class="input" style="height:34px;font-size:11px" type="number" min="0" step="0.5" id="teamAllow_'+esc(p.id)+'" value="'+esc(entitlementValue)+'"'+(editable ? '' : ' disabled')+'><div class="field-note">Set the base holiday allowance for this year.</div></div>'+
-          '<div class="field"><label class="small" style="margin-bottom:4px">Carryover after 31 Dec</label><input class="input" style="height:34px;font-size:11px" type="number" min="0" step="0.5" id="teamCarry_'+esc(p.id)+'" value="'+esc(carryoverValue)+'"'+((editable && carryoverOpen) ? '' : ' disabled')+' title="'+esc(carryoverOpen ? 'Carryover can be adjusted now' : 'Carryover can only be adjusted after 31 December')+'"><div class="field-note">'+esc(carryoverOpen ? 'Adjust carried-over holiday for the new year.' : 'Carryover can only be changed after 31 December.')+'</div></div>'+
-          '<div class="field"><label class="small" style="margin-bottom:4px">Extras</label><div class="row" style="gap:8px;align-items:flex-end">'+
-            '<select class="select" id="teamExtrasUnit_'+esc(p.id)+'" style="width:120px;height:34px;font-size:11px" onchange="syncExtrasUnit(\'teamExtrasUnit_'+esc(p.id)+'\', \'teamExtras_'+esc(p.id)+'\')"'+(editable ? '' : ' disabled')+'>'+
-              '<option value="days">Days</option>'+
-              '<option value="hours">Hours</option>'+
-            '</select>'+
-            '<input class="input" style="height:34px;font-size:11px;flex:1" type="number" min="-999" max="999" step="0.5" id="teamExtras_'+esc(p.id)+'" value="'+esc(extrasValue)+'"'+(editable ? '' : ' disabled')+'>'+
-          '</div><div class="field-note">Positive numbers add entitlement. Negative numbers take it away.</div></div>'+
-          '<div class="field"><label class="small" style="margin-bottom:4px">Reason / note for entitlement change</label><textarea class="textarea allowance-reason" id="teamReason_'+esc(p.id)+'" placeholder="Explain why this allowance or carryover is being changed."'+(editable ? '' : ' disabled')+'></textarea><div class="field-note">This is stored in the allowance audit trail.</div></div>'+
-        '</div>'+
-        '<div style="display:flex;justify-content:flex-end"><button class="btn btn-ghost" style="height:32px;padding:0 10px;font-size:10px" type="button" onclick="saveTeamAllowance(\''+esc(p.id)+'\')"'+(editable ? '' : ' disabled')+'>Save entitlements</button></div>'+
-        '<div class="staff-history">'+
-          '<div class="staff-history-title">Allowance audit</div>'+
-          (allowanceHistory.length ? allowanceHistory.map(function(ev){
-            const allowanceText = typeof ev.new_annual_allowance_days !== 'undefined'
-              ? requestWholeHoursText(num(ev.old_annual_allowance_days, 0)) + ' → ' + requestWholeHoursText(num(ev.new_annual_allowance_days, 0)) + ' allowance'
-              : '';
-            const carryText = typeof ev.new_carryover_days !== 'undefined'
-              ? requestWholeHoursText(num(ev.old_carryover_days, 0)) + ' → ' + requestWholeHoursText(num(ev.new_carryover_days, 0)) + ' carryover'
-              : '';
-            const extrasText = typeof ev.new_extras_days !== 'undefined'
-              ? allowanceExtrasText(num(ev.old_extras_days, 0)) + ' → ' + allowanceExtrasText(num(ev.new_extras_days, 0)) + ' extras'
-              : '';
-            const changeText = [allowanceText, carryText, extrasText].filter(Boolean).join(' · ') || 'Allowance updated';
-            return '<div class="staff-history-item">'+
-              '<div class="left">'+
-                '<div class="title">'+esc(changeText)+'</div>'+
-                '<div class="meta">'+esc(ev.actor_name || 'Unknown')+' · '+esc(formatDateTime(ev.created_at))+'</div>'+
-                '<div class="meta">'+esc(requestDisplayReason(ev.note || '—'))+'</div>'+
-              '</div>'+
-              '<span class="pill approved">Logged</span>'+
-            '</div>';
-          }).join('') : '<div class="small">No allowance changes logged yet.</div>')+
-        '</div>'+
-        (editable ? (
-          '<div class="staff-section">'+
-            '<div class="staff-section-title">Retrospective holiday</div>'+
-            '<div class="staff-section-sub">Add a backdated holiday entry for this staff member. It is recorded as an approved request and kept in the audit trail.</div>'+
-            '<div class="field"><label class="small" style="margin-bottom:4px">Start date</label><input class="input retro-date" type="date" id="retroStart_'+esc(p.id)+'" onchange="syncDateRangeEndDate(\'retroStart_'+esc(p.id)+'\', \'retroUnit_'+esc(p.id)+'\', \'retroAmount_'+esc(p.id)+'\', \'retroEnd_'+esc(p.id)+'\')"></div>'+
-            '<div class="field"><label class="small" style="margin-bottom:4px">Request as</label><select class="select retro-unit" id="retroUnit_'+esc(p.id)+'" onchange="syncDateRangeEndDate(\'retroStart_'+esc(p.id)+'\', \'retroUnit_'+esc(p.id)+'\', \'retroAmount_'+esc(p.id)+'\', \'retroEnd_'+esc(p.id)+'\')"><option value="days">Days</option><option value="hours">Hours</option></select></div>'+
-            '<div class="field"><label class="small" style="margin-bottom:4px">Amount</label><input class="input retro-amount" type="number" min="0" step="0.5" id="retroAmount_'+esc(p.id)+'" onchange="syncDateRangeEndDate(\'retroStart_'+esc(p.id)+'\', \'retroUnit_'+esc(p.id)+'\', \'retroAmount_'+esc(p.id)+'\', \'retroEnd_'+esc(p.id)+'\')"></div>'+
-            '<div class="field"><label class="small" style="margin-bottom:4px">End date</label><input class="input retro-end" type="date" id="retroEnd_'+esc(p.id)+'" readonly></div>'+
-            '<div class="field"><label class="small" style="margin-bottom:4px">Reason / note</label><textarea class="textarea allowance-reason" id="retroReason_'+esc(p.id)+'" placeholder="Explain why this retrospective holiday is being added."></textarea><div class="field-note">This is stored on the approved request and its audit trail.</div></div>'+
-            '<div style="display:flex;justify-content:flex-end"><button class="btn btn-primary" style="height:30px;padding:0 10px;font-size:10px" type="button" onclick="addRetrospectiveHoliday(\''+esc(p.id)+'\', \'retroStart_'+esc(p.id)+'\', \'retroEnd_'+esc(p.id)+'\', \'retroAmount_'+esc(p.id)+'\', \'retroUnit_'+esc(p.id)+'\', \'retroReason_'+esc(p.id)+'\')">Add retrospective holiday</button></div>'+
-          '</div>'
-        ) : '')+
-        '<div class="staff-request-audit">'+
-          '<div class="staff-request-audit-title">Request audit</div>'+
-          (requestHistory.length ? requestHistory.map(renderRequestAuditItem).join('') : '<div class="small">No leave requests logged yet.</div>')+
-        '</div>'+
+    const latestReq = requestsForUser(p.id).filter(function(r){ return requestMatchesYear(r, selectedYear); })[0] || null;
+    const displayName = personDisplayNameFromRecords(p, kilnUserFor(p.id), 'Unknown');
+    const managerName = holidayManagerDisplayNameForUser(p.id);
+    const active = String(p.id) === String(selectedHolidayActivityUserId);
+    return '<button type="button" class="activity-roster-btn'+(active ? ' active' : '')+'" onclick="setHolidayActivityUser(\''+esc(p.id)+'\')">'+
+      '<div class="name">'+esc(displayName)+'</div>'+
+      '<div class="sub">'+
+        '<span class="pill '+remainingClass+'">'+esc(requestDaysText(remainingDays))+' left</span>'+
+        '<span class="pill">'+esc(requestDaysText(stats.pending / SHIFT_HOURS))+' pending</span>'+
+        '<span class="pill">'+esc(requestDaysText(stats.projected / SHIFT_HOURS))+' projected</span>'+
       '</div>'+
-    '</details>';
+      '<div class="mini">'+(latestReq ? esc(requestSummaryText(latestReq)) + ' · ' + esc(formatDateTime(latestReq.requested_at)) : 'No requests yet')+'</div>'+
+      '<div class="mini">'+(isHolidayAdmin && managerName ? 'Manager: ' + esc(managerName) : 'Click to open the detail panel')+'</div>'+
+    '</button>';
   }).join('');
+  const requestAuditHtml = selectedRequestHistory.length
+    ? selectedRequestHistory.map(renderHolidayRequestMiniItem).join('')
+    : '<div class="small">No leave requests logged yet.</div>';
+  const allowanceAuditHtml = selectedAllowanceHistory.length
+    ? selectedAllowanceHistory.map(renderHolidayAllowanceMiniItem).join('')
+    : '<div class="small">No allowance changes logged yet.</div>';
+  const editSectionHtml = selectedEditable ? (
+    '<details class="activity-collapsible">'+
+      '<summary><div><div style="font-weight:800;color:var(--tx)">Edit entitlements</div><div class="small">Adjust allowance, carryover and extras for this person.</div></div><span class="pill">'+esc(requestWholeHoursText(selectedStats.entitlement))+'</span></summary>'+
+      '<div class="content">'+
+        '<div class="activity-stat-grid">'+
+          '<div class="activity-stat"><div class="label">Entitlement</div><div class="value">'+esc(requestWholeHoursText(selectedStats.entitlement))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.entitlement / SHIFT_HOURS))+'</div></div>'+
+          '<div class="activity-stat"><div class="label">Used</div><div class="value">'+esc(requestWholeHoursText(selectedStats.used))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.used / SHIFT_HOURS))+'</div></div>'+
+          '<div class="activity-stat"><div class="label">Pending</div><div class="value">'+esc(requestWholeHoursText(selectedStats.pending))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.pending / SHIFT_HOURS))+'</div></div>'+
+          '<div class="activity-stat"><div class="label">Remaining</div><div class="value">'+esc(requestWholeHoursText(selectedStats.remaining))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.remaining / SHIFT_HOURS))+'</div></div>'+
+          '<div class="activity-stat"><div class="label">Projected</div><div class="value">'+esc(requestWholeHoursText(selectedStats.projected))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.projected / SHIFT_HOURS))+'</div></div>'+
+        '</div>'+
+        '<div class="field"><label class="small" style="margin-bottom:4px">Annual entitlement</label><input class="input" style="height:34px;font-size:11px" type="number" min="0" step="0.5" id="allow_'+esc(selectedProfile.id)+'" value="'+esc(selectedEntitlementValue)+'"'+(selectedEditable ? '' : ' disabled')+'><div class="field-note">Set the base holiday allowance for this year.</div></div>'+
+        '<div class="field"><label class="small" style="margin-bottom:4px">Carryover after 31 Dec</label><input class="input" style="height:34px;font-size:11px" type="number" min="0" step="0.5" id="carry_'+esc(selectedProfile.id)+'" value="'+esc(selectedCarryoverValue)+'"'+((selectedEditable && carryoverOpen) ? '' : ' disabled')+' title="'+esc(carryoverOpen ? 'Carryover can be adjusted now' : 'Carryover can only be adjusted after 31 December')+'"><div class="field-note">'+esc(carryoverOpen ? 'Adjust carried-over holiday for the new year.' : 'Carryover can only be changed after 31 December.')+'</div></div>'+
+        '<div class="field"><label class="small" style="margin-bottom:4px">Extras</label><div class="row" style="gap:8px;align-items:flex-end">'+
+          '<select class="select" id="extrasUnit_'+esc(selectedProfile.id)+'" style="width:120px;height:34px;font-size:11px" onchange="syncExtrasUnit(\'extrasUnit_'+esc(selectedProfile.id)+'\', \'extras_'+esc(selectedProfile.id)+'\')"'+(selectedEditable ? '' : ' disabled')+'>'+
+            '<option value="days">Days</option>'+
+            '<option value="hours">Hours</option>'+
+          '</select>'+
+          '<input class="input" style="height:34px;font-size:11px;flex:1" type="number" min="-999" max="999" step="0.5" id="extras_'+esc(selectedProfile.id)+'" value="'+esc(selectedExtrasValue)+'"'+(selectedEditable ? '' : ' disabled')+'>'+
+        '</div><div class="field-note">Positive numbers add entitlement. Negative numbers take it away.</div></div>'+
+        '<div class="field"><label class="small" style="margin-bottom:4px">Reason / note for entitlement change</label><textarea class="textarea allowance-reason" id="allowReason_'+esc(selectedProfile.id)+'" placeholder="Explain why this allowance or carryover is being changed."'+(selectedEditable ? '' : ' disabled')+'></textarea><div class="field-note">This is stored in the allowance audit trail.</div></div>'+
+        '<div style="display:flex;justify-content:flex-end"><button class="btn btn-ghost" style="height:32px;padding:0 10px;font-size:10px" type="button" onclick="saveTeamAllowance(\''+esc(selectedProfile.id)+'\')"'+(selectedEditable ? '' : ' disabled')+'>Save entitlements</button></div>'+
+      '</div>'+
+    '</details>'
+  ) : '';
+  const retrospectiveHtml = selectedEditable ? (
+    '<details class="activity-collapsible">'+
+      '<summary><div><div style="font-weight:800;color:var(--tx)">Retrospective holiday</div><div class="small">Add a backdated approved request for this person.</div></div><span class="pill approved">Admin only</span></summary>'+
+      '<div class="content">'+
+        '<div class="field"><label class="small" style="margin-bottom:4px">Start date</label><input class="input retro-date" type="date" id="retroStart_'+esc(selectedProfile.id)+'" onchange="syncDateRangeEndDate(\'retroStart_'+esc(selectedProfile.id)+'\', \'retroUnit_'+esc(selectedProfile.id)+'\', \'retroAmount_'+esc(selectedProfile.id)+'\', \'retroEnd_'+esc(selectedProfile.id)+'\')"></div>'+
+        '<div class="field"><label class="small" style="margin-bottom:4px">Request as</label><select class="select retro-unit" id="retroUnit_'+esc(selectedProfile.id)+'" onchange="syncDateRangeEndDate(\'retroStart_'+esc(selectedProfile.id)+'\', \'retroUnit_'+esc(selectedProfile.id)+'\', \'retroAmount_'+esc(selectedProfile.id)+'\', \'retroEnd_'+esc(selectedProfile.id)+'\')"><option value="days">Days</option><option value="hours">Hours</option></select></div>'+
+        '<div class="field"><label class="small" style="margin-bottom:4px">Amount</label><input class="input retro-amount" type="number" min="0" step="0.5" id="retroAmount_'+esc(selectedProfile.id)+'" onchange="syncDateRangeEndDate(\'retroStart_'+esc(selectedProfile.id)+'\', \'retroUnit_'+esc(selectedProfile.id)+'\', \'retroAmount_'+esc(selectedProfile.id)+'\', \'retroEnd_'+esc(selectedProfile.id)+'\')"></div>'+
+        '<div class="field"><label class="small" style="margin-bottom:4px">End date</label><input class="input retro-end" type="date" id="retroEnd_'+esc(selectedProfile.id)+'" readonly></div>'+
+        '<div class="field"><label class="small" style="margin-bottom:4px">Reason / note</label><textarea class="textarea allowance-reason" id="retroReason_'+esc(selectedProfile.id)+'" placeholder="Explain why this retrospective holiday is being added."></textarea><div class="field-note">This is stored on the approved request and its audit trail.</div></div>'+
+        '<div style="display:flex;justify-content:flex-end"><button class="btn btn-primary" style="height:30px;padding:0 10px;font-size:10px" type="button" onclick="addRetrospectiveHoliday(\''+esc(selectedProfile.id)+'\', \'retroStart_'+esc(selectedProfile.id)+'\', \'retroEnd_'+esc(selectedProfile.id)+'\', \'retroAmount_'+esc(selectedProfile.id)+'\', \'retroUnit_'+esc(selectedProfile.id)+'\', \'retroReason_'+esc(selectedProfile.id)+'\')">Add retrospective holiday</button></div>'+
+      '</div>'+
+    '</details>'
+  ) : '';
+  box.innerHTML = '<div class="activity-layout">'+
+    '<div class="activity-roster">'+rosterHtml+'</div>'+
+    '<div class="activity-detail">'+
+      '<div class="activity-detail-head">'+
+        '<div>'+
+          '<div class="activity-detail-name">'+esc(selectedDisplayName)+'</div>'+
+          '<div class="activity-detail-sub">'+(isHolidayAdmin && selectedManagerName ? 'Manager: ' + esc(selectedManagerName) + ' · ' : '')+'Quick scan of balances, recent changes and request history.</div>'+
+        '</div>'+
+        '<span class="pill '+selectedRemainingClass+'">'+esc(requestDaysText(selectedRemainingDays))+' left</span>'+
+      '</div>'+
+      '<div class="activity-stat-grid">'+
+        '<div class="activity-stat"><div class="label">Entitlement</div><div class="value">'+esc(requestWholeHoursText(selectedStats.entitlement))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.entitlement / SHIFT_HOURS))+'</div></div>'+
+        '<div class="activity-stat"><div class="label">Used</div><div class="value">'+esc(requestWholeHoursText(selectedStats.used))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.used / SHIFT_HOURS))+'</div></div>'+
+        '<div class="activity-stat"><div class="label">Pending</div><div class="value">'+esc(requestWholeHoursText(selectedStats.pending))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.pending / SHIFT_HOURS))+'</div></div>'+
+        '<div class="activity-stat"><div class="label">Remaining</div><div class="value">'+esc(requestWholeHoursText(selectedStats.remaining))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.remaining / SHIFT_HOURS))+'</div></div>'+
+        '<div class="activity-stat"><div class="label">Projected</div><div class="value">'+esc(requestWholeHoursText(selectedStats.projected))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.projected / SHIFT_HOURS))+'</div></div>'+
+      '</div>'+
+      '<div class="activity-section">'+
+        '<div class="activity-section-title">Recent request audit</div>'+
+        '<div class="activity-mini-list">'+requestAuditHtml+'</div>'+
+      '</div>'+
+      '<div class="activity-section">'+
+        '<div class="activity-section-title">Allowance history</div>'+
+        '<div class="activity-mini-list">'+allowanceAuditHtml+'</div>'+
+      '</div>'+
+      editSectionHtml+
+      retrospectiveHtml+
+    '</div>'+
+  '</div>';
 }
 function renderApproverQueue(){
   const panel = $('approverQueuePanel');
@@ -2418,6 +2780,7 @@ function renderApproverQueue(){
             ? esc(stats.remaining.toFixed(1)) + ' hours remaining'
             : '<span style="color:var(--amb);font-weight:700">Insufficient balance to approve</span><div class="small" style="margin-top:4px">' + esc(stats.remaining.toFixed(1)) + ' hours remaining</div>')
           : 'No holiday balance required';
+        const showCancel = req.status === 'approved';
         return '<article class="queue-card">'+
           '<div class="request-head">'+
             '<div>'+
@@ -2431,6 +2794,7 @@ function renderApproverQueue(){
             '<div class="card-box"><div class="box-label">Balance</div><div>'+balanceMarkup+'</div></div>'+
           '</div>'+
           '<div class="card-box"><div class="box-label">Decision note</div><div>'+esc(req.manager_note || '—')+'</div></div>'+
+          (showCancel ? '<div class="actions" style="margin-top:12px"><button class="btn btn-ghost" type="button" onclick="cancelManagedRequest(\''+esc(req.id)+'\')">Cancel holiday</button></div>' : '')+
         '</article>';
       }).join('')+'</div>';
     };
@@ -2446,42 +2810,69 @@ function renderApproverQueue(){
   $('approverQueuePanel').querySelector('.panel-sub').textContent = 'Requests for your assigned staff, with remaining balance shown on each card. Expand the staff cards above to edit entitlements.';
   $('managerFilter').closest('.queue-controls').style.display = 'none';
   const rowsFiltered = rows.filter(req => req.status === 'pending');
+  let html = '';
   if (!rowsFiltered.length) {
-    box.innerHTML = '<div class="empty">No pending requests for '+selectedYear+'.</div>';
-    return;
-  }
-  box.innerHTML = rowsFiltered.map(req => {
-    const person = personDisplayNameFromRecords(profileFor(req.auth_user_id), kilnUserFor(req.auth_user_id), req.requester_name || req.requester_email || 'Unknown');
-    const stats = statsForUser(req.auth_user_id, selectedYear);
-    const needsBalance = requestConsumesBalance(req);
-    const requestBalance = needsBalance ? requestBalanceHours(req) : 0;
-    const enoughBalance = !needsBalance || stats.remaining >= requestBalance;
-    const isPending = req.status === 'pending';
-    const balanceMarkup = needsBalance
-      ? (enoughBalance
-        ? esc(stats.remaining.toFixed(1)) + ' hours remaining'
-        : '<span style="color:var(--amb);font-weight:700">Insufficient balance to approve</span><div class="small" style="margin-top:4px">' + esc(stats.remaining.toFixed(1)) + ' hours remaining</div>')
-      : 'No holiday balance required';
-    return '<article class="queue-card">'+
-      '<div class="request-head">'+
-        '<div>'+
-          '<div class="request-title">'+esc(person)+'</div>'+
-          '<div class="request-meta">'+makeKindPill(req)+' <span style="margin-left:6px">'+esc(requestSummaryText(req))+'</span> · requested '+esc(formatDateTime(req.requested_at))+'</div>'+
+    html += '<div class="empty">No pending requests for '+selectedYear+'.</div>';
+  } else {
+    html += rowsFiltered.map(req => {
+      const person = personDisplayNameFromRecords(profileFor(req.auth_user_id), kilnUserFor(req.auth_user_id), req.requester_name || req.requester_email || 'Unknown');
+      const stats = statsForUser(req.auth_user_id, selectedYear);
+      const needsBalance = requestConsumesBalance(req);
+      const requestBalance = needsBalance ? requestBalanceHours(req) : 0;
+      const enoughBalance = !needsBalance || stats.remaining >= requestBalance;
+      const isPending = req.status === 'pending';
+      const balanceMarkup = needsBalance
+        ? (enoughBalance
+          ? esc(stats.remaining.toFixed(1)) + ' hours remaining'
+          : '<span style="color:var(--amb);font-weight:700">Insufficient balance to approve</span><div class="small" style="margin-top:4px">' + esc(stats.remaining.toFixed(1)) + ' hours remaining</div>')
+        : 'No holiday balance required';
+      return '<article class="queue-card">'+
+        '<div class="request-head">'+
+          '<div>'+
+            '<div class="request-title">'+esc(person)+'</div>'+
+            '<div class="request-meta">'+makeKindPill(req)+' <span style="margin-left:6px">'+esc(requestSummaryText(req))+'</span> · requested '+esc(formatDateTime(req.requested_at))+'</div>'+
+          '</div>'+
+          makeStatusPill(req.status)+
         '</div>'+
-        makeStatusPill(req.status)+
+        '<div class="request-grid">'+
+          '<div class="card-box"><div class="box-label">Reason</div><div>'+esc(requestDisplayReason(req.reason) || '—')+'</div></div>'+
+          '<div class="card-box"><div class="box-label">Balance</div><div>'+balanceMarkup+'</div></div>'+
+        '</div>'+
+        '<div class="field full"><label class="help-label" for="mgrNote_'+esc(req.id)+'">Manager note / denial reason</label><textarea id="mgrNote_'+esc(req.id)+'" class="textarea" placeholder="Required for denials."></textarea></div>'+
+        '<div class="actions">'+
+          '<button class="btn btn-primary" type="button" onclick="decideRequest(\''+esc(req.id)+'\',\'approved\')"'+(enoughBalance ? '' : ' disabled')+'>Approve</button>'+
+          '<button class="btn btn-danger" type="button" onclick="decideRequest(\''+esc(req.id)+'\',\'denied\')">Deny</button>'+
+        '</div>'+
+      '</article>';
+    }).join('');
+  }
+  const approvedRows = rows.filter(req => req.status === 'approved');
+  if (approvedRows.length) {
+    html += '<details class="staff-card approved-requests" style="margin-top:18px"><summary>'+
+      '<div class="staff-summary-left">'+
+        '<div class="name" style="font-size:13px">Approved requests</div>'+
+        '<div class="small">Open to review or cancel already approved holiday.</div>'+
       '</div>'+
-      '<div class="request-grid">'+
-        '<div class="card-box"><div class="box-label">Reason</div><div>'+esc(requestDisplayReason(req.reason) || '—')+'</div></div>'+
-        '<div class="card-box"><div class="box-label">Balance</div><div>'+balanceMarkup+'</div></div>'+
-      '</div>'+
-      '<div class="field full"><label class="help-label" for="mgrNote_'+esc(req.id)+'">Manager note / denial or cancellation reason</label><textarea id="mgrNote_'+esc(req.id)+'" class="textarea" placeholder="Required for denials and cancellations."></textarea></div>'+
-      '<div class="actions">'+
-        '<button class="btn btn-primary" type="button" onclick="decideRequest(\''+esc(req.id)+'\',\'approved\')"'+(enoughBalance ? '' : ' disabled')+'>Approve</button>'+
-        '<button class="btn btn-danger" type="button" onclick="decideRequest(\''+esc(req.id)+'\',\'denied\')">Deny</button>'+
-        (req.status !== 'cancelled' && req.status !== 'denied' ? '<button class="btn btn-ghost" type="button" onclick="cancelManagedRequest(\''+esc(req.id)+'\')">Cancel holiday</button>' : '')+
-      '</div>'+
-    '</article>';
-  }).join('');
+      '<div class="staff-summary-right"><span class="pill approved">'+esc(approvedRows.length)+' approved</span></div>'+
+    '</summary><div class="staff-body">' + approvedRows.map(req => {
+      const person = personDisplayNameFromRecords(profileFor(req.auth_user_id), kilnUserFor(req.auth_user_id), req.requester_name || req.requester_email || 'Unknown');
+      return '<article class="queue-card">'+
+        '<div class="request-head">'+
+          '<div>'+
+            '<div class="request-title">'+esc(person)+'</div>'+
+            '<div class="request-meta">'+makeKindPill(req)+' <span style="margin-left:6px">'+esc(requestSummaryText(req))+'</span> · approved '+esc(formatDateTime(req.decided_at || req.requested_at))+'</div>'+
+          '</div>'+
+          makeStatusPill(req.status)+
+        '</div>'+
+        '<div class="request-grid">'+
+          '<div class="card-box"><div class="box-label">Reason</div><div>'+esc(requestDisplayReason(req.reason) || '—')+'</div></div>'+
+          '<div class="card-box"><div class="box-label">Decision note</div><div>'+esc(req.manager_note || '—')+'</div></div>'+
+        '</div>'+
+        '<div class="actions" style="margin-top:12px"><button class="btn btn-ghost" type="button" onclick="cancelManagedRequest(\''+esc(req.id)+'\')">Cancel holiday</button></div>'+
+      '</article>';
+    }).join('') + '</div></details>';
+  }
+  box.innerHTML = html;
 }
 function renderAllowanceList(){
   const box = $('allowanceList');
@@ -2616,8 +3007,8 @@ function renderHolidayApp(){
   if (activityPanel && managerViewEnabled) {
     const title = activityPanel.querySelector('.panel-title');
     const sub = activityPanel.querySelector('.panel-sub');
-    if (title) title.textContent = 'Activity';
-    if (sub) sub.textContent = 'Team at a glance. Open a staff card to see request details and audit.';
+    if (title) title.textContent = 'Team overview';
+    if (sub) sub.textContent = 'Use the roster on the left for a quick scan, then open one person at a time for history, changes and edits.';
     const feed = $('activityFeed');
     if (feed) {
       feed.style.display = 'none';
@@ -2625,19 +3016,28 @@ function renderHolidayApp(){
     }
   }
   const page = document.querySelector('.page');
+  const hero = page ? page.querySelector('.hero') : null;
+  const summarySection = $('personalSummarySection');
+  const requestPanelEl = $('requestPanel');
   const approvalsPanel = $('approverQueuePanel');
   const allowancePanel = $('allowancePanel');
+  const activityPanelEl = $('activityPanel');
   if (!isApprover && !isHolidayAdmin && myRequestsPanel) {
     const title = myRequestsPanel.querySelector('.panel-title');
     const sub = myRequestsPanel.querySelector('.panel-sub');
     if (title) title.textContent = 'My requests & activity';
     if (sub) sub.textContent = 'Your request history first, followed by recent activity on those requests.';
   }
-  if (page && activityPanel && approvalsPanel && managerViewEnabled) {
-    page.insertBefore(activityPanel, approvalsPanel);
+  if (page && approvalsPanel && managerViewEnabled) {
+    page.insertBefore(approvalsPanel, summarySection || requestPanelEl || activityPanelEl || allowancePanel || null);
+  }
+  if (page && activityPanel && managerViewEnabled) {
+    const anchor = allowancePanel && allowancePanel.parentElement === page ? allowancePanel : (requestPanelEl && requestPanelEl.parentElement === page ? requestPanelEl.nextSibling : null);
+    page.insertBefore(activityPanel, anchor);
   }
   if (page && allowancePanel && isHolidayAdmin) {
-    page.appendChild(allowancePanel);
+    const anchor = activityPanel && activityPanel.parentElement === page ? activityPanel.nextSibling : null;
+    page.insertBefore(allowancePanel, anchor);
   }
   if (focusApprovalsOnRender && (isApprover || isHolidayAdmin)) {
     const filter = $('managerFilter');
@@ -2899,10 +3299,15 @@ async function cancelRequest(id){
   const before = Object.assign({}, req);
   const confirmText = req.status === 'approved' ? 'Cancel this approved leave request?' : 'Withdraw this leave request?';
   if (!confirm(confirmText)) return;
+  const reason = promptCancellationReason('Please enter a reason for withdrawing this holiday request.');
+  if (!reason) {
+    setToast('Please add a reason before cancelling this holiday.');
+    return;
+  }
   $('syncLabel').textContent = 'Saving…';
   const { error } = await sb.from('holiday_requests').update({
     status: 'cancelled',
-    manager_note: 'Cancelled by requester',
+    manager_note: 'Cancelled by requester: ' + reason,
     decided_by: currentUser.id,
     decided_by_name: currentDisplayName(),
     decided_at: new Date().toISOString()
@@ -2918,10 +3323,14 @@ async function cancelManagedRequest(id){
   const req = allHolidayRequests.find(r => r.id === id);
   if (!req) return;
   if (!isHolidayAdmin && !isAssignedHolidayManagerForRequest(req)) return;
-  if (req.status === 'cancelled' || req.status === 'denied') return;
+  if (req.status !== 'approved') return;
   const before = Object.assign({}, req);
   const noteEl = $('mgrNote_' + id);
-  const note = noteEl ? noteEl.value.trim() : '';
+  let note = noteEl ? noteEl.value.trim() : '';
+  if (!note) {
+    note = promptCancellationReason('Please enter a reason for cancelling this holiday request.');
+    if (noteEl && note) noteEl.value = note;
+  }
   if (!note) {
     setToast('Please add a reason before cancelling this holiday.');
     return;

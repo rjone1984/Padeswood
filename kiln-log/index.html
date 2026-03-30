@@ -34,12 +34,12 @@
   --bd3:  #3d4e62;
 
   --ac:   #1a7a35;
-  --ac2:  #22a847;
-  --ac3:  #2ecc5c;
+  --ac2:  #2ecc5c;
+  --ac3:  #5ee27b;
   --acd1: rgba(26,122,53,0.10);
   --acd2: rgba(26,122,53,0.18);
   --acd3: rgba(26,122,53,0.28);
-  --acgl: rgba(46,204,92,0.38);
+  --acgl: rgba(94,226,123,0.38);
 
   --tx:   #dde4ee;
   --tx2:  #9aa9be;
@@ -49,7 +49,7 @@
   --grn:  #21c27a;  --grnd: rgba(33,194,122,.10); --grnb: rgba(33,194,122,.28);
   --amb:  #f5a623;  --ambd: rgba(245,166,35,.10); --ambb: rgba(245,166,35,.28);
   --pur:  #9b74e8;  --purd: rgba(155,116,232,.10);--purb: rgba(155,116,232,.28);
-  --role-burner:    #1a7a35;
+  --role-burner:    #334155;
   --role-manager:   #7c3aed;
   --role-electrician:#38bdf8;
   --role-mechanical:#2563eb;
@@ -62,11 +62,11 @@
   --e1: 0 1px 3px rgba(0,0,0,.55), 0 1px 2px rgba(0,0,0,.4);
   --e2: 0 4px 18px rgba(0,0,0,.6);
   --e3: 0 20px 56px rgba(0,0,0,.72);
-  --eac: 0 4px 22px rgba(26,122,53,.35);
-  --green-wash-1: rgba(26,122,53,.08);
-  --green-wash-2: rgba(46,204,92,.06);
-  --green-wash-3: rgba(26,122,53,.14);
-  --green-edge: rgba(46,204,92,.18);
+  --eac: 0 4px 22px rgba(51,65,85,.30);
+  --green-wash-1: rgba(71,85,105,.08);
+  --green-wash-2: rgba(100,116,139,.06);
+  --green-wash-3: rgba(51,65,85,.14);
+  --green-edge: rgba(100,116,139,.18);
 
   --inp: var(--sf3);
   --glass-1: rgba(22,25,31,.82);
@@ -86,13 +86,13 @@
   --bd2:  #cdd8e6;
   --bd3:  #a9bbd3;
 
-  --ac:   #155c28;
-  --ac2:  #1a7a35;
-  --ac3:  #22a847;
-  --acd1: rgba(21,92,40,.07);
-  --acd2: rgba(21,92,40,.14);
-  --acd3: rgba(21,92,40,.24);
-  --acgl: rgba(21,92,40,.32);
+  --ac:   #1a7a35;
+  --ac2:  #2ecc5c;
+  --ac3:  #5ee27b;
+  --acd1: rgba(26,122,53,.07);
+  --acd2: rgba(26,122,53,.14);
+  --acd3: rgba(26,122,53,.24);
+  --acgl: rgba(94,226,123,.32);
 
   --tx:   #0d1526;
   --tx2:  #405063;
@@ -102,7 +102,7 @@
   --grn:  #15924f;  --grnd: rgba(21,146,79,.07);  --grnb: rgba(21,146,79,.22);
   --amb:  #c97d10;  --ambd: rgba(201,125,16,.07); --ambb: rgba(201,125,16,.22);
   --pur:  #7a50c8;  --purd: rgba(122,80,200,.07); --purb: rgba(122,80,200,.22);
-  --role-burner:    #1a7a35;
+  --role-burner:    #334155;
   --role-manager:   #7c3aed;
   --role-electrician:#38bdf8;
   --role-mechanical:#2563eb;
@@ -111,11 +111,11 @@
   --e1: 0 1px 3px rgba(0,0,0,.05), 0 1px 2px rgba(0,0,0,.03);
   --e2: 0 4px 18px rgba(0,0,0,.07);
   --e3: 0 20px 56px rgba(0,0,0,.10);
-  --eac: 0 4px 22px rgba(10,138,134,.16);
-  --green-wash-1: rgba(21,92,40,.04);
-  --green-wash-2: rgba(34,168,71,.03);
-  --green-wash-3: rgba(21,92,40,.08);
-  --green-edge: rgba(34,168,71,.12);
+  --eac: 0 4px 22px rgba(51,65,85,.16);
+  --green-wash-1: rgba(71,85,105,.04);
+  --green-wash-2: rgba(100,116,139,.03);
+  --green-wash-3: rgba(51,65,85,.08);
+  --green-edge: rgba(100,116,139,.12);
   --inp: #f7f9fd;
   --glass-1: rgba(255,255,255,.96);
   --glass-2: rgba(255,255,255,.88);
@@ -1614,7 +1614,7 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
     linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,0)),
     var(--sf);
   border:1px solid color-mix(in srgb, var(--green-edge) 38%, var(--bd2));
-  border-radius:14px; width:520px; max-width:95vw; max-height:90vh;
+  border-radius:14px; width:520px; max-width:95vw; max-height:min(90vh, 760px);
   display:flex; flex-direction:column; box-shadow:0 18px 48px rgba(0,0,0,.16);
   position:relative; overflow:hidden;
   backdrop-filter:none; -webkit-backdrop-filter:none;
@@ -1715,6 +1715,69 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
   font-size:11px;
   color:var(--tx3);
   line-height:1.45;
+}
+.palette-actions {
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  margin-top:14px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+.palette-actions button {
+  min-width:124px;
+}
+body.basic-mode,
+body.basic-mode::before,
+body.basic-mode::after {
+  background-image: none !important;
+}
+body.basic-mode,
+body.basic-mode *,
+body.basic-mode *::before,
+body.basic-mode *::after {
+  animation: none !important;
+  transition: none !important;
+}
+body.basic-mode * {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+body.basic-mode :is(.app-card,.coming-card,#mainHeader,.login-card,.lic-inner,.panel,.modal,.toast,.palette-panel,.manager-requests-panel,.header-user,.section-label,.palette-option,.palette-close,.icon-btn,.btn,.btn-ghost,.btn-primary,.btn-secondary,.btn-iso,.button,.card-arrow,.user-chip) {
+  background: var(--sf) !important;
+  background-image: none !important;
+  border-color: var(--bd2) !important;
+  box-shadow: none !important;
+}
+body.basic-mode .btn-primary {
+  background: linear-gradient(135deg, #1a7a35, #2ecc5c) !important;
+  color: #fff !important;
+  border-color: #5ee27b !important;
+  box-shadow: 0 6px 18px rgba(26,122,53,.28) !important;
+  text-shadow: 0 1px 0 rgba(0,0,0,.18);
+  font-weight: 700;
+}
+body.basic-mode:not(.dark) .btn-primary {
+  background: linear-gradient(135deg, #0f5f29, #1f8f45) !important;
+  border-color: #0b4f24 !important;
+  box-shadow: 0 8px 22px rgba(15,95,41,.34), 0 0 0 1px rgba(94,226,123,.12) !important;
+  color: #fff !important;
+}
+body.basic-mode:not(.dark) .btn-primary:hover {
+  background: linear-gradient(135deg, #0d6d31, #24a652) !important;
+  box-shadow: 0 10px 24px rgba(15,95,41,.42), 0 0 0 1px rgba(94,226,123,.18) !important;
+}
+body.basic-mode .btn-primary svg {
+  color: #fff;
+}
+body.basic-mode .btn-primary:hover {
+  background: linear-gradient(135deg, #159047, #36d86a) !important;
+  box-shadow: 0 8px 20px rgba(26,122,53,.34) !important;
+}
+body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay,.search-modal) {
+  background: rgba(5,10,18,.88) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 .modal-tabs {
@@ -2475,8 +2538,14 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
       </div>
       <span class="db-dot" title="Database connected" aria-label="Database connected" style="flex:0 0 auto"></span>
       <div id="syncDot" title="Synced" style="display:none;align-items:center;justify-content:center;width:24px;height:24px;border-radius:6px;border:1px solid var(--bd);background:var(--sf2)"></div>
-      <button class="btn-icon" onclick="toggleTheme()" id="themeBtn" title="Toggle light/dark mode">
-        <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <button class="btn-icon" onclick="toggleTheme()" id="themeBtn" title="Switch to light mode" aria-label="Switch to light mode">
+        <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="4"/>
+          <path d="M12 2v2"/><path d="M12 20v2"/>
+          <path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/>
+          <path d="M2 12h2"/><path d="M20 12h2"/>
+          <path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/>
+        </svg>
       </button>
       <button class="btn-icon" onclick="openPaletteModal()" id="paletteBtn" title="Choose colour scheme">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -2629,14 +2698,24 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
         Choose a general colour scheme for this browser only. It will carry across the Platform, Shift Tracker and Logs apps, and you can reset it at any time.
       </div>
       <div class="palette-grid" id="paletteGrid">
-        <button type="button" class="palette-option" data-palette="default" onclick="setPalettePreset('default')">
+        <button type="button" class="palette-option" data-palette="basic" onclick="setPalettePreset('basic')">
           <span class="palette-sample">
-            <span style="background:#1a7a35"></span><span style="background:#22a847"></span>
-            <span style="background:#2ecc5c"></span><span style="background:#155c28"></span>
+            <span style="background:#2f343c"></span><span style="background:#49515a"></span>
+            <span style="background:#6b7280"></span><span style="background:#d1d5db"></span>
           </span>
           <span class="palette-meta">
-            <span class="palette-name">Default Green</span>
-            <span class="palette-desc">The current suite look, kept as the fallback.</span>
+            <span class="palette-name">Basic</span>
+            <span class="palette-desc">A flat grayscale view with the glass and motion stripped back.</span>
+          </span>
+        </button>
+        <button type="button" class="palette-option" data-palette="default" onclick="setPalettePreset('default')">
+          <span class="palette-sample">
+            <span style="background:#1a7a35"></span><span style="background:#2ecc5c"></span>
+            <span style="background:#5ee27b"></span><span style="background:#0b4f24"></span>
+          </span>
+          <span class="palette-meta">
+            <span class="palette-name">Green</span>
+            <span class="palette-desc">The original Padeswood green scheme.</span>
           </span>
         </button>
         <button type="button" class="palette-option" data-palette="ocean" onclick="setPalettePreset('ocean')">
@@ -2685,8 +2764,8 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
             <span style="background:#64748b"></span><span style="background:#0f172a"></span>
           </span>
           <span class="palette-meta">
-            <span class="palette-name">Slate</span>
-            <span class="palette-desc">A calmer neutral scheme if you want less colour.</span>
+            <span class="palette-name">Graphite</span>
+            <span class="palette-desc">A darker neutral scheme if you want less colour.</span>
           </span>
         </button>
       </div>
@@ -2833,22 +2912,7 @@ function showLicenceBlock(msg, text){
 let lightMode = false;
 
 function readStoredThemePref(){
-  const shared = localStorage.getItem('pw_theme');
-  if(shared === 'light' || shared === 'dark') return shared;
-  const legacy = localStorage.getItem('kbl_theme');
-  if(legacy === 'light' || legacy === 'dark'){
-    localStorage.setItem('pw_theme', legacy);
-    localStorage.setItem('dark', legacy === 'dark' ? '1' : '0');
-    return legacy;
-  }
-  const darkFlag = localStorage.getItem('dark');
-  if(darkFlag === '1' || darkFlag === '0'){
-    const theme = darkFlag === '1' ? 'dark' : 'light';
-    localStorage.setItem('pw_theme', theme);
-    localStorage.setItem('kbl_theme', theme);
-    return theme;
-  }
-  return null;
+  return localStorage.getItem('pw_theme') || localStorage.getItem('kbl_theme') || null;
 }
 
 function storeThemePref(theme){
@@ -2861,6 +2925,7 @@ function applyThemeMode(light){
   lightMode = !!light;
   document.body.classList.toggle('light-mode', lightMode);
   document.body.classList.toggle('dark', !lightMode);
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', lightMode ? '#f0f4f8' : '#111418');
   storeThemePref(lightMode ? 'light' : 'dark');
   updateThemeIcon();
   if(window.__kblPaletteReady) applyStoredPalette();
@@ -3512,9 +3577,8 @@ function updateThemeIcon(){
 }
 
 function toggleTheme(){
-  const nextLight = !lightMode;
-  applyThemeMode(nextLight);
-  sbSaveTheme(nextLight);
+  applyThemeMode(!document.body.classList.contains('light-mode'));
+  sbSaveTheme(document.body.classList.contains('light-mode'));
 }
 
 const PALETTE_STORAGE_KEY = 'pw_palette_scheme';
@@ -3548,9 +3612,16 @@ const PALETTE_PRESETS = {
     accent2: '#d97706',
     accent3: '#f59e0b'
   },
+  basic: {
+    label: 'Basic',
+    description: 'A grayscale, non-distracting mode with no colour accents.',
+    accent: '#4b5563',
+    accent2: '#6b7280',
+    accent3: '#9ca3af'
+  },
   slate: {
-    label: 'Slate',
-    description: 'A calmer neutral scheme if you want less colour.',
+    label: 'Graphite',
+    description: 'A darker neutral scheme if you want less colour.',
     accent: '#334155',
     accent2: '#475569',
     accent3: '#64748b'
@@ -3585,6 +3656,7 @@ function rgbaFromHex(hex, alpha){
 function getStoredPalettePreset(){
   const key = localStorage.getItem(PALETTE_STORAGE_KEY);
   if(!key) return 'default';
+  if(key === 'plain') return 'basic';
   if(!PALETTE_PRESETS[key]){
     localStorage.removeItem(PALETTE_STORAGE_KEY);
     return 'default';
@@ -3626,15 +3698,15 @@ function getPaletteVars(key){
     '--ac': ac,
     '--ac2': ac2,
     '--ac3': ac3,
-    '--acd1': rgbaFromHex(ac, .10),
-    '--acd2': rgbaFromHex(ac, .18),
-    '--acd3': rgbaFromHex(ac, .28),
-    '--acgl': rgbaFromHex(ac3, .38),
-    '--eac': `0 4px 22px ${rgbaFromHex(ac, .35)}`,
-    '--green-wash-1': rgbaFromHex(ac, .08),
-    '--green-wash-2': rgbaFromHex(ac3, .06),
-    '--green-wash-3': rgbaFromHex(ac, .14),
-    '--green-edge': rgbaFromHex(ac3, .18)
+    '--acd1': rgbaFromHex(ac, .08),
+    '--acd2': rgbaFromHex(ac, .14),
+    '--acd3': rgbaFromHex(ac, .22),
+    '--acgl': rgbaFromHex(ac3, .30),
+    '--eac': `0 4px 22px ${rgbaFromHex(ac, .25)}`,
+    '--green-wash-1': rgbaFromHex(ac, .06),
+    '--green-wash-2': rgbaFromHex(ac3, .04),
+    '--green-wash-3': rgbaFromHex(ac, .10),
+    '--green-edge': rgbaFromHex(ac3, .14)
   };
 }
 
@@ -3661,6 +3733,8 @@ function applyStoredPalette(){
     if(vars) setPaletteVarMap(vars);
     else clearPaletteVars();
   }
+  document.body.classList.toggle('basic-mode', preset === 'basic');
+  document.documentElement.classList.toggle('basic-mode', preset === 'basic');
   updatePaletteUi();
 }
 
@@ -3699,7 +3773,10 @@ async function loadSharedPalettePreference(){
   if(!currentUserThemeId) return null;
   try{
     const rows = await sbFetch('/rest/v1/kiln_config?key=eq.palette_uid_' + encodeURIComponent(currentUserThemeId) + '&select=value');
-    if(rows && rows.length && rows[0].value && PALETTE_PRESETS[rows[0].value]) return rows[0].value;
+    if(rows && rows.length && rows[0].value){
+      if(rows[0].value === 'plain') return 'basic';
+      if(PALETTE_PRESETS[rows[0].value]) return rows[0].value;
+    }
   }catch(e){}
   return null;
 }
