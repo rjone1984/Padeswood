@@ -558,6 +558,23 @@ body :where(.app-card,.coming-card,.icon-btn,.login-btn,.card-arrow,.palette-opt
   color: var(--tx2);
   line-height: 1.45;
 }
+.manager-requests-btn .count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 88px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--bd2);
+  background: var(--sf3);
+  color: var(--tx2);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  line-height: 1;
+  white-space: nowrap;
+}
 .manager-requests-close {
   width: 32px;
   height: 32px;
@@ -4333,8 +4350,18 @@ function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;'
 
 function showPlatformToast(msg) {
   let t = document.getElementById('platformToast');
-  if (!t) { t=document.createElement('div'); t.id='platformToast'; t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:10px 18px;font-size:13px;color:var(--tx);z-index:9999;box-shadow:var(--e2);transition:opacity .3s'; document.body.appendChild(t); }
-  t.textContent = msg; t.style.opacity = '1';
+  if (!t) {
+    t=document.createElement('div');
+    t.id='platformToast';
+    t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:10px 18px;font-size:13px;color:var(--tx);z-index:9999;box-shadow:var(--e2);transition:opacity .3s;display:flex;align-items:center;gap:10px;max-width:min(540px,92vw)';
+    document.body.appendChild(t);
+  }
+  t.innerHTML = '';
+  const body = document.createElement('span');
+  body.textContent = msg;
+  body.style.flex = '1';
+  t.appendChild(body);
+  t.style.opacity = '1';
   clearTimeout(t._timer); t._timer = setTimeout(function(){t.style.opacity='0';}, 2800);
 }
 
@@ -4409,23 +4436,53 @@ function closeManagerRequestsMenu(){
   if (overlay) overlay.classList.remove('open');
 }
 
-function openManagerRequestsMenu(){
+async function loadManagerRequestCounts() {
+  const userId = _platformProfile && _platformProfile.id ? _platformProfile.id : null;
+  const ku = _platformKilnUser || null;
+  if (!userId || !ku || !ku.is_shift_manager || !canOpenManagerRequests()) {
+    return { holiday: 0, credit: 0 };
+  }
+  const { data: staffRows } = await sb.from('pw_profiles').select('id').eq('holiday_manager_auth_user_id', userId);
+  const staffIds = (staffRows || []).map(function(r){ return r.id; }).filter(Boolean);
+  if (!staffIds.length) return { holiday: 0, credit: 0 };
+  const [holidayCountRes, creditCountRes] = await Promise.all([
+    sb.from('holiday_requests').select('id', { count: 'exact', head: true }).eq('status', 'pending').in('auth_user_id', staffIds),
+    sb.from('credit_hour_entries').select('id', { count: 'exact', head: true }).eq('status', 'pending').in('auth_user_id', staffIds)
+  ]);
+  if (holidayCountRes.error) throw holidayCountRes.error;
+  if (creditCountRes.error) throw creditCountRes.error;
+  return {
+    holiday: holidayCountRes.count || 0,
+    credit: creditCountRes.count || 0
+  };
+}
+
+async function openManagerRequestsMenu(){
   const overlay = document.getElementById('managerRequestsModal');
   const list = document.getElementById('managerRequestsChoices');
   if (!overlay || !list) return false;
   const items = managerRequestTargets();
   list.innerHTML = '';
+  overlay.classList.add('open');
+  list.innerHTML = '<div style="padding:14px 4px;color:var(--tx3);font-size:12px;font-family:var(--ff-mono)">Loading queues…</div>';
+  let counts = { holiday: 0, credit: 0 };
+  try {
+    counts = await loadManagerRequestCounts();
+  } catch (e) {
+    counts = { holiday: 0, credit: 0 };
+  }
+  list.innerHTML = '';
   items.forEach(function(item){
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'manager-requests-btn';
-    btn.innerHTML = '<span class="left"><span class="label">'+esc(item.label)+'</span><span class="desc">'+esc(item.desc)+'</span></span><span style="font-size:18px;color:var(--ac3)">→</span>';
+    const count = item.key === 'holiday' ? counts.holiday : counts.credit;
+    btn.innerHTML = '<span class="left"><span class="label">'+esc(item.label)+'</span><span class="desc">'+esc(item.desc)+'</span></span><span class="count">'+esc(String(count))+' pending</span>';
     btn.addEventListener('click', function(){
       window.location.href = item.href;
     });
     list.appendChild(btn);
   });
-  overlay.classList.add('open');
   return true;
 }
 
@@ -4447,7 +4504,8 @@ function openManagerRequests(event) {
     return false;
   }
   if (event) event.preventDefault();
-  return openManagerRequestsMenu();
+  void openManagerRequestsMenu();
+  return false;
 }
 
 async function loadResetReqBadge() {
@@ -4462,28 +4520,9 @@ async function loadResetReqBadge() {
 async function loadHolidayReqBadge() {
   const badge = document.getElementById('holidayReqBadge');
   if (!badge) return;
-  const userId = _platformProfile && _platformProfile.id ? _platformProfile.id : null;
-  const ku = _platformKilnUser || null;
-  if (!userId || !ku || !ku.is_shift_manager || !canOpenManagerRequests()) {
-    badge.style.display = 'none';
-    badge.textContent = '';
-    return;
-  }
   try {
-    const { data: staffRows } = await sb.from('pw_profiles').select('id').eq('holiday_manager_auth_user_id', userId);
-    const staffIds = (staffRows || []).map(function(r){ return r.id; }).filter(Boolean);
-    if (!staffIds.length) {
-      badge.style.display = 'none';
-      badge.textContent = '';
-      return;
-    }
-    const [holidayCountRes, creditCountRes] = await Promise.all([
-      sb.from('holiday_requests').select('id', { count: 'exact', head: true }).eq('status', 'pending').in('auth_user_id', staffIds),
-      sb.from('credit_hour_entries').select('id', { count: 'exact', head: true }).eq('status', 'pending').in('auth_user_id', staffIds)
-    ]);
-    if (holidayCountRes.error) throw holidayCountRes.error;
-    if (creditCountRes.error) throw creditCountRes.error;
-    const pending = (holidayCountRes.count || 0) + (creditCountRes.count || 0);
+    const counts = await loadManagerRequestCounts();
+    const pending = (counts.holiday || 0) + (counts.credit || 0);
     badge.textContent = pending;
     badge.style.display = pending > 0 ? 'block' : 'none';
   } catch(e) {
@@ -4549,6 +4588,7 @@ async function deleteResetReq(btnOrId) {
     await deleteRequestRow(req);
     renderResetRequests();
     loadResetReqBadge();
+    showPlatformToast('Request deleted ✓');
   } catch(e) {}
 }
 </script>

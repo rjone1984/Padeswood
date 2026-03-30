@@ -1721,7 +1721,14 @@ async function addRetrospectiveHoliday(userId, startId, endId, amountId, unitId,
 function setToast(msg, ms){
   const t = $('toast');
   if (!t) return;
-  t.textContent = msg;
+  t.innerHTML = '';
+  t.style.display = 'flex';
+  t.style.alignItems = 'center';
+  t.style.gap = '10px';
+  const body = document.createElement('span');
+  body.textContent = msg;
+  body.style.flex = '1';
+  t.appendChild(body);
   t.classList.add('show');
   clearTimeout(window.__holidayToastTimer);
   window.__holidayToastTimer = setTimeout(() => t.classList.remove('show'), ms || 2200);
@@ -2786,6 +2793,7 @@ async function submitHolidayRequest(){
 async function cancelRequest(id){
   const req = allHolidayRequests.find(r => r.id === id);
   if (!req || req.auth_user_id !== currentUser.id || req.status === 'cancelled' || req.status === 'denied') return;
+  const before = Object.assign({}, req);
   const confirmText = req.status === 'approved' ? 'Cancel this approved leave request?' : 'Withdraw this leave request?';
   if (!confirm(confirmText)) return;
   $('syncLabel').textContent = 'Saving…';
@@ -2808,6 +2816,7 @@ async function cancelManagedRequest(id){
   if (!req) return;
   if (!isHolidayAdmin && !isAssignedHolidayManagerForRequest(req)) return;
   if (req.status === 'cancelled' || req.status === 'denied') return;
+  const before = Object.assign({}, req);
   const noteEl = $('mgrNote_' + id);
   const note = noteEl ? noteEl.value.trim() : '';
   if (!note) {
@@ -2835,6 +2844,7 @@ async function decideRequest(id, decision){
   if (!req) return;
   if (!isHolidayAdmin && !isAssignedHolidayManagerForRequest(req)) return;
   if (req.status !== 'pending') return;
+  const before = Object.assign({}, req);
   const noteEl = $('mgrNote_' + id);
   const note = noteEl ? noteEl.value.trim() : '';
   if (decision === 'approved' && requestConsumesBalance(req)) {

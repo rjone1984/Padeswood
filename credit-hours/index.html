@@ -1743,6 +1743,7 @@ let allCreditBankHolidays = [];
 let selectedYear = new Date().getFullYear();
 let selectedMyRequestsGroup = 'month';
 let loginReady = false;
+let startupLoginTimer = null;
 let focusApprovalsOnRender = new URLSearchParams(window.location.search).get('focus') === 'approvals';
 const SHIFT_HOURS = 12;
 const MY_REQUESTS_GROUP_STORAGE_KEY = 'credit_hours_my_requests_group';
@@ -2291,7 +2292,14 @@ function requestSummaryText(req){
 function setToast(msg, ms){
   const t = $('toast');
   if (!t) return;
-  t.textContent = msg;
+  t.innerHTML = '';
+  t.style.display = 'flex';
+  t.style.alignItems = 'center';
+  t.style.gap = '10px';
+  const body = document.createElement('span');
+  body.textContent = msg;
+  body.style.flex = '1';
+  t.appendChild(body);
   t.classList.add('show');
   clearTimeout(window.__holidayToastTimer);
   window.__holidayToastTimer = setTimeout(() => t.classList.remove('show'), ms || 2200);
@@ -2471,8 +2479,15 @@ function clearStartupGate(){
   document.body.classList.add('loaded-ready');
   document.body.classList.remove('loading-start');
 }
+function clearStartupLoginTimer(){
+  if (startupLoginTimer) {
+    clearTimeout(startupLoginTimer);
+    startupLoginTimer = null;
+  }
+}
 async function logout(){
   try { if (sb) await sb.auth.signOut(); } catch(e) {}
+  clearStartupLoginTimer();
   currentUser = null;
   currentProfile = null;
   currentKilnUser = null;
@@ -2490,6 +2505,7 @@ async function logout(){
   window.location.href = '../index.html';
 }
 function showAccessDenied(message){
+  clearStartupLoginTimer();
   clearStartupGate();
   dismissBootShield();
   $('loginScreen').classList.add('hidden');
@@ -2499,6 +2515,7 @@ function showAccessDenied(message){
   if (small) small.textContent = message || 'You do not have access to Credit Hours. Please contact your administrator if this is unexpected.';
 }
 function showLoginScreen(){
+  clearStartupLoginTimer();
   clearStartupGate();
   dismissBootShield();
   $('appShell').classList.add('hidden');
@@ -2521,6 +2538,7 @@ function showLoginScreen(){
   loginReady = true;
 }
 function showAppScreen(){
+  clearStartupLoginTimer();
   clearStartupGate();
   dismissBootShield();
   $('loginScreen').classList.add('hidden');
@@ -3466,7 +3484,10 @@ async function initHolidayApp(){
       showAccessDenied('You do not have Credit Hours access.');
       return false;
     }
-    showLoginScreen();
+    clearStartupLoginTimer();
+    startupLoginTimer = setTimeout(function() {
+      if (!currentUser) showLoginScreen();
+    }, 450);
     return false;
   }
   await tryHydrateSession(3);
@@ -3474,6 +3495,7 @@ async function initHolidayApp(){
 
 async function hydrateFromSession(){
   try {
+    clearStartupLoginTimer();
     const { data, error } = await sb.auth.getSession();
     if (error || !data || !data.session || !data.session.user) {
       showLoginScreen();
@@ -3521,6 +3543,7 @@ async function hydrateFromSession(){
     $('loginErr').classList.add('hidden');
     return true;
   } catch (e) {
+    clearStartupLoginTimer();
     showLoginScreen();
     $('loginErr').textContent = 'Could not open your account: ' + (e.message || String(e));
     $('loginErr').classList.remove('hidden');
@@ -3692,6 +3715,7 @@ function applyOneHourCreditPreset(){
 async function cancelRequest(id){
   const req = allHolidayRequests.find(r => r.id === id);
   if (!req || req.auth_user_id !== currentUser.id || req.status === 'cancelled' || req.status === 'denied') return;
+  const before = Object.assign({}, req);
   const confirmText = req.status === 'approved' ? 'Cancel this approved entry?' : 'Withdraw this entry?';
   if (!confirm(confirmText)) return;
   $('syncLabel').textContent = 'Saving…';
@@ -3714,6 +3738,7 @@ async function cancelManagedRequest(id){
   if (!req) return;
   if (!isHolidayAdmin && !isAssignedHolidayManagerForRequest(req)) return;
   if (req.status === 'cancelled' || req.status === 'denied') return;
+  const before = Object.assign({}, req);
   const noteEl = $('mgrNote_' + id);
   const note = noteEl ? noteEl.value.trim() : '';
   if (!note) {
@@ -3741,6 +3766,7 @@ async function decideRequest(id, decision){
   if (!req) return;
   if (!isHolidayAdmin && !isAssignedHolidayManagerForRequest(req)) return;
   if (req.status !== 'pending') return;
+  const before = Object.assign({}, req);
   const noteEl = $('mgrNote_' + id);
   const note = noteEl ? noteEl.value.trim() : '';
   if (decision === 'approved' && requestConsumesBalance(req)) {
@@ -3870,6 +3896,7 @@ async function deleteBankHoliday(date){
   if (!isHolidayAdmin) return;
   if (!confirm('Delete this bank holiday?')) return;
   $('syncLabel').textContent = 'Saving…';
+  const before = allCreditBankHolidays.find(function(row){ return String(row.holiday_date || '').slice(0,10) === String(date).slice(0,10); });
   const { error } = await sb.from('credit_hour_bank_holidays').delete().eq('holiday_date', date);
   $('syncLabel').textContent = 'Synced';
   if (error) {

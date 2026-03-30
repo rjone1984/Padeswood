@@ -241,7 +241,7 @@ body::before {
   display:flex; align-items:center; gap:12px;
   padding:16px 18px; border:1px solid var(--border2); border-radius:18px;
   background:var(--glass-3); box-shadow:var(--e3);
-  backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
+  backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
 }
 .boot-shield-mark {
   width:44px; height:44px; flex-shrink:0; border-radius:14px;
@@ -447,8 +447,8 @@ body::before {
   padding:22px 20px 18px;
   box-shadow:var(--e2);
   text-align:center;
-  backdrop-filter:blur(24px);
-  -webkit-backdrop-filter:blur(24px);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
 }
 .access-denied::before {
   content:'';
@@ -522,7 +522,7 @@ body.app-ready #app {
   height:58px;
   overflow:visible;
   position:sticky; top:0; z-index:200;
-  backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
+  backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
   box-shadow: 0 1px 0 var(--bd), var(--e1);
 }
 .light-mode .topbar {
@@ -610,8 +610,8 @@ body.app-ready #app {
     var(--glass-1);
   border-bottom:1px solid color-mix(in srgb, var(--green-edge) 42%, var(--bd2));
   box-shadow:var(--e1);
-  backdrop-filter:blur(24px);
-  -webkit-backdrop-filter:blur(24px);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
   padding:7px 12px 9px;
   display:flex;
   flex-direction:column;
@@ -633,8 +633,8 @@ body.app-ready #app {
   margin-bottom:0 !important;
 }
 @keyframes logLineGlow {
-  0%,100% { opacity:.58; filter:drop-shadow(0 0 0 rgba(46,204,92,0)); }
-  50% { opacity:1; filter:drop-shadow(0 0 8px var(--acd2)); }
+  0%,100% { opacity:.58; }
+  50% { opacity:1; }
 }
 .splash-card::before,
 .access-denied::before,
@@ -762,9 +762,40 @@ body.app-ready #app {
 .main { padding:22px; max-width:1440px; margin:0 auto }
 
 .page-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:18px }
+.page-header.day-header {
+  padding-left:8px;
+  padding-right:10px;
+}
+.page-header.day-header .page-title-wrap { padding-left:4px; }
+.page-header.day-header .page-date { padding-left:4px; }
 .page-title-wrap { display:flex; align-items:center; gap:10px }
 .page-title  { font-family:var(--ff-head); font-size:22px; font-weight:700; color:var(--tx); letter-spacing:-.5px }
 .page-nav-group { display:flex; flex-direction:column; align-items:flex-start; gap:6px; flex-wrap:wrap }
+.overview-header {
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  gap:12px;
+  padding:18px 22px 18px 24px;
+  margin-bottom:18px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,0)),
+    var(--sf);
+  border:1px solid var(--bd);
+  border-radius:18px;
+  box-shadow:var(--e1);
+}
+.overview-header .page-title-wrap { padding-left:4px; }
+.overview-header .page-date {
+  margin-top:0;
+  padding-left:4px;
+  font-size:10px;
+  letter-spacing:.45px;
+}
+.overview-header .page-nav-group { gap:8px; padding-left:4px; }
+.overview-header .overview-date-group {
+  padding-left:4px;
+}
 .overview-period-group,
 .overview-date-group,
 .overview-step-group { display:flex; align-items:center; gap:6px; flex-wrap:wrap }
@@ -1208,8 +1239,8 @@ body.app-ready #app {
   flex-direction:column;
   gap:10px;
   background:var(--glass-2);
-  backdrop-filter:blur(24px);
-  -webkit-backdrop-filter:blur(24px);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
 }
 .search-modal-row {
   display:flex;
@@ -1295,7 +1326,9 @@ body.app-ready #app {
     var(--glass-2);
   border:1px solid color-mix(in srgb, var(--green-edge) 34%, var(--bd2));
   border-radius:var(--r); overflow:hidden; box-shadow:var(--e2);
-  backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
+  backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+  content-visibility:auto;
+  contain-intrinsic-size: 360px 420px;
   transition:border-color .28s var(--ease-smooth), box-shadow .28s var(--ease-smooth), transform .28s var(--ease-smooth);
 }
 .dark .shift-panel { background:var(--glass-2); }
@@ -1389,7 +1422,9 @@ textarea { resize:vertical; line-height:1.55 }
     var(--glass-2);
   border:1px solid color-mix(in srgb, var(--green-edge) 34%, var(--bd2));
   border-radius:var(--r); overflow:hidden; margin-bottom:14px; box-shadow:var(--e2);
-  backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
+  backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+  content-visibility:auto;
+  contain-intrinsic-size: 320px 320px;
 }
 .dark .log-section { background:var(--glass-2); }
 .light-mode .log-section {
@@ -1472,7 +1507,9 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
     var(--glass-2);
   border:1px solid color-mix(in srgb, var(--green-edge) 34%, var(--bd2));
   border-radius:var(--r); overflow:hidden; margin-bottom:14px; box-shadow:var(--e2);
-  backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
+  backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+  content-visibility:auto;
+  contain-intrinsic-size: 240px 180px;
 }
 .dark .notes-section { background:var(--glass-2); }
 .light-mode .notes-section {
@@ -1512,7 +1549,9 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
   display:flex; align-items:center; gap:15px;
   box-shadow:var(--e2); transition:all .18s; cursor:default;
   position:relative; overflow:hidden;
-  backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
+  backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+  content-visibility:auto;
+  contain-intrinsic-size: 220px 120px;
 }
 .dark .stat-card { background:var(--glass-3); }
 .light-mode .stat-card {
@@ -1566,7 +1605,7 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
 .overlay {
   position:fixed; inset:0; background:rgba(0,0,0,.60);
   z-index:500; display:none; align-items:center; justify-content:center;
-  backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);
 }
 .overlay.open { display:flex }
 .modal {
@@ -2038,11 +2077,24 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
     align-items:stretch;
     gap:10px;
   }
+  .page-header.day-header {
+    padding-left:10px;
+    padding-right:8px;
+  }
   .page-title-wrap {
     width:100%;
     flex-wrap:wrap;
     gap:8px;
     align-items:center;
+  }
+  .overview-header {
+    padding:14px 16px 14px 18px;
+  }
+  .overview-header .page-title-wrap,
+  .overview-header .page-nav-group,
+  .overview-header .overview-date-group,
+  .overview-header .page-date {
+    padding-left:0;
   }
   .page-title {
     font-size:18px;
@@ -4400,7 +4452,7 @@ function buildDayHeader(day, subtitle, subtitleColor, switchFnName){
   var subtitleHtml = subtitle
     ? ' <span style="font-size:13px;font-weight:500;color:' + subtitleColor + ';margin-left:8px">' + subtitle + '</span>'
     : '';
-  return '<div>'
+  return '<div class="day-header">'
     + '<div class="page-title-wrap">'
     + '<button class="page-day-jump" type="button" onclick="' + switchFnName + '(&#39;' + prevDay + '&#39;)" aria-label="Previous day"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>'
     + '<div class="page-title">' + day + subtitleHtml + '</div>'
@@ -8450,8 +8502,9 @@ function removeEq(name){
   sbSaveList('equipment', equipment).then(function(saved){
     setListSyncState('equipment', saved ? 'connected' : 'local');
     renderManageTabs(currentManageTab);
-    renderEqList(); showToast('"'+name+'" removed' + (saved ? '' : ' (saved locally only)'));
+    renderEqList();
   });
+  showToast('"' + name + '" removed');
 }
 
 async function clearEquipmentList(){
@@ -8468,8 +8521,8 @@ async function clearEquipmentList(){
     setListSyncState('equipment', saved ? 'connected' : 'local');
     renderManageTabs(currentManageTab);
     renderEqList();
-    showToast('Equipment list cleared' + (saved ? '' : ' (saved locally only)'));
   });
+  showToast('Equipment list cleared');
 }
 
 function renderPeopleList(tab){
@@ -8552,8 +8605,9 @@ function removePerson(tab,name){
   sbSaveList(tab, _allLists[tab]).then(function(saved){
     setListSyncState(tab, saved ? 'connected' : 'local');
     renderManageTabs(currentManageTab);
-    renderPeopleList(tab); showToast('"'+name+'" removed' + (saved ? '' : ' (saved locally only)'));
+    renderPeopleList(tab);
   });
+  showToast('"' + name + '" removed');
 }
 
 function getOverviewRoleFilters(){
@@ -8586,7 +8640,7 @@ function renderOverview(){
   const mc = document.getElementById('mainContent');
   mc.innerHTML = '';
   const hdr = document.createElement('div');
-  hdr.className = 'page-header';
+  hdr.className = 'page-header overview-header';
   const overviewDateValue = window._overviewPickedDate || (weekStart ? toISO(weekStart) : '');
   hdr.innerHTML = '<div>'
     + '<div class="page-title-wrap">'
