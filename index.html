@@ -158,12 +158,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   0%,100%{transform:translateY(0) scale(1);filter:saturate(1)}
   50%{transform:translateY(-1px) scale(1.015);filter:saturate(1.05)}
 }
-@keyframes rudePulse{
-  0%,22%{opacity:0;max-width:0ch;transform:rotate(-7deg) translateY(0)}
-  38%{opacity:.92;max-width:4ch;transform:rotate(-6deg) translateY(0)}
-  56%{opacity:1;max-width:8ch;transform:rotate(-5deg) translateY(-1px)}
-  78%,100%{opacity:1;max-width:12ch;transform:rotate(-6deg) translateY(0)}
-}
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important}
   body{animation:none !important}
@@ -272,7 +266,6 @@ body :where(.app-card,.coming-card,.icon-btn,.login-btn,.card-arrow,.palette-opt
   border-radius:11px;display:flex;align-items:center;justify-content:center;
   margin:0 auto 16px;box-shadow:var(--eac);
   font-family:var(--ff-head);font-weight:800;font-size:16px;color:#fff;letter-spacing:-1px;}
-.lic-gesture{display:none;font-size:20px;line-height:1.05;margin:6px auto 16px;text-align:center;transform-origin:center;animation:rudePulse 3.8s cubic-bezier(.22,1,.36,1) both;font-family:"Bradley Hand","Segoe Print","Marker Felt","Comic Sans MS",cursive;font-weight:700;letter-spacing:.02em;color:rgba(255,242,242,.92);text-shadow:0 2px 10px rgba(0,0,0,.28),0 0 14px rgba(240,82,79,.14);white-space:nowrap;overflow:hidden;max-width:0ch;filter:drop-shadow(0 1px 0 rgba(255,255,255,.06))}
 
 #loginScreen{position:fixed;inset:0;background:var(--bg);z-index:9999;
   display:none;align-items:flex-start;justify-content:center;overflow-y:auto;padding:24px 0;}
@@ -755,7 +748,6 @@ body :where(.app-card,.coming-card,.icon-btn,.login-btn,.card-arrow,.palette-opt
       <svg style="animation:spin 1s linear infinite;width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
       Verifying…
     </div>
-    <div id="licGesture" class="lic-gesture" aria-hidden="true">Thanks A Lot</div>
     <div id="licMsg" style="display:none;font-size:13px;color:var(--red);line-height:1.6;margin-bottom:16px"></div>
     <div id="licRetryBtn" style="display:none;margin-top:12px">
       <button onclick="checkLicence()" style="background:var(--ac);color:#fff;border:none;padding:10px 24px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer">↺ Retry</button>
@@ -1557,8 +1549,6 @@ const SB_LIC_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 let sb;
 
 async function checkLicence() {
-  const gesture = document.getElementById('licGesture');
-  if (gesture) gesture.style.display = 'none';
   try {
     const res = await fetch(
       SB_LIC_URL + '/rest/v1/kiln_licences?licence_key=eq.' + encodeURIComponent(LICENCE_KEY) + '&select=paid,expires_at,customer,site',
@@ -1587,13 +1577,11 @@ async function checkLicence() {
 
 function showLicenceError(text) {
   const overlay = document.getElementById('licenceOverlay');
-  const gesture = document.getElementById('licGesture');
   if (overlay) {
     overlay.style.display = 'flex';
     overlay.style.opacity = '1';
   }
   document.getElementById('licSpinner').style.display = 'none';
-  if (gesture) gesture.style.display = 'block';
   document.getElementById('licMsg').textContent = text;
   document.getElementById('licMsg').style.display = 'block';
   document.getElementById('licRetryBtn').style.display = 'block';
@@ -2386,8 +2374,6 @@ window.addEventListener('load', function() {
 async function handleEmailConfirmation() {
   document.getElementById('licenceScreen').style.display = 'flex';
   document.getElementById('licSpinner').style.display = 'flex';
-  const gesture = document.getElementById('licGesture');
-  if (gesture) gesture.style.display = 'none';
   document.getElementById('licMsg').style.display = 'none';
   try {
     const { data, error } = await sb.auth.getSession();
@@ -3274,10 +3260,34 @@ let _accessRequestSelection = {};
 let _bulkAccessRequestTargets = [];
 const PLATFORM_PROTECTED_USERNAME = 'rjone';
 function _umShowErr(list, msg) {
-  list.innerHTML = '<div style="color:var(--red);font-size:12px;padding:12px 0;line-height:1.8">'
-    + msg + '<br><button onclick="loadAllUsers()" style="margin-top:8px;height:28px;padding:0 14px;'
-    + 'font-size:11px;font-family:var(--ff-mono);background:var(--sf3);border:1px solid var(--bd);'
-    + 'border-radius:var(--rsm);color:var(--tx2);cursor:pointer">↺ Retry</button></div>';
+  list.innerHTML = '';
+  const wrap = document.createElement('div');
+  wrap.style.color = 'var(--red)';
+  wrap.style.fontSize = '12px';
+  wrap.style.padding = '12px 0';
+  wrap.style.lineHeight = '1.8';
+
+  const text = document.createElement('div');
+  text.textContent = msg || 'Something went wrong.';
+  wrap.appendChild(text);
+
+  const retry = document.createElement('button');
+  retry.type = 'button';
+  retry.textContent = '↺ Retry';
+  retry.style.marginTop = '8px';
+  retry.style.height = '28px';
+  retry.style.padding = '0 14px';
+  retry.style.fontSize = '11px';
+  retry.style.fontFamily = 'var(--ff-mono)';
+  retry.style.background = 'var(--sf3)';
+  retry.style.border = '1px solid var(--bd)';
+  retry.style.borderRadius = 'var(--rsm)';
+  retry.style.color = 'var(--tx2)';
+  retry.style.cursor = 'pointer';
+  retry.addEventListener('click', loadAllUsers);
+  wrap.appendChild(retry);
+
+  list.appendChild(wrap);
 }
 
 function clearAccessRequestSelection() {

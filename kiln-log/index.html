@@ -185,18 +185,11 @@ body {
   0%,100%{transform:translateY(0) scale(1);filter:saturate(1)}
   50%{transform:translateY(-1px) scale(1.015);filter:saturate(1.05)}
 }
-@keyframes rudePulse{
-  0%,22%{opacity:0;max-width:0ch;transform:rotate(-7deg) translateY(0)}
-  38%{opacity:.92;max-width:4ch;transform:rotate(-6deg) translateY(0)}
-  56%{opacity:1;max-width:8ch;transform:rotate(-5deg) translateY(-1px)}
-  78%,100%{opacity:1;max-width:12ch;transform:rotate(-6deg) translateY(0)}
-}
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important}
   body{animation:none !important}
 }
 body :where(.splash-btn,.btn-primary,.btn-ghost,.btn-icon,.day-tab,.search-scope-btn,.reports-suggestion,.modal-close,.eq-item,.people-item,.toggle-trainee-btn,.add-row-btn,.del-btn,.wc,.modal-tab,.search-result-item,.shift-panel,.stat-card,.splash-card,.toast,.modal,.reports-card,.reports-send,.reports-input,.field-cell,.nav-btn,#mainHeader,#topbar,#tabBar,#splash,#licenceOverlay,#app,.card,.panel,.matrix-card,.user-row,.alert-row,.ai-scope-btn,.search-wrap input,textarea,select){transition-timing-function:var(--ease-smooth);}
-.lic-gesture{display:none;font-size:20px;line-height:1.05;margin:6px auto 16px;text-align:center;transform-origin:center;animation:rudePulse 3.8s cubic-bezier(.22,1,.36,1) both;font-family:"Bradley Hand","Segoe Print","Marker Felt","Comic Sans MS",cursive;font-weight:700;letter-spacing:.02em;color:rgba(255,242,242,.92);text-shadow:0 2px 10px rgba(0,0,0,.28),0 0 14px rgba(240,82,79,.14);white-space:nowrap;overflow:hidden;max-width:0ch;filter:drop-shadow(0 1px 0 rgba(255,255,255,.06))}
 #licenceOverlay > div{position:relative;overflow:hidden}
 #licenceOverlay > div::before,
 #licenceOverlay > div::after{
@@ -2259,7 +2252,6 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
       <svg style="width:14px;height:14px;animation:spin 1s linear infinite" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
       Verifying licence...
     </div>
-    <div id="licGesture" class="lic-gesture" aria-hidden="true">Thanks A Lot</div>
     <div id="licenceMsg" style="display:none;font-size:13px;color:var(--red);line-height:1.6;margin-bottom:16px"></div>
     <div id="licenceRetryBtn" style="display:none;margin-top:12px">
       <button onclick="checkLicence()" style="background:var(--ac);color:#fff;border:none;padding:10px 24px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer">↺ Retry</button>
@@ -2702,8 +2694,6 @@ async function checkLicence(){
   syncBootShieldLogo();
   const overlay = document.getElementById('licenceOverlay');
   const msg = document.getElementById('licenceMsg');
-  const gesture = document.getElementById('licGesture');
-  if(gesture) gesture.style.display = 'none';
   const showTimer = setTimeout(function(){
     overlay.style.opacity = '1';
   }, 400);
@@ -2781,10 +2771,8 @@ function animateSplashLoader(){
 }
 
 function showLicenceBlock(msg, text){
-  const gesture = document.getElementById('licGesture');
   msg.textContent = text;
   document.getElementById('licenceSpinner').style.display = 'none';
-  if(gesture) gesture.style.display = 'block';
   msg.style.display = 'block';
   const payBtn = document.getElementById('licencePayBtn');
   if(payBtn) payBtn.style.display = '';
