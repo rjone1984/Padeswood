@@ -1145,6 +1145,25 @@
     box-shadow: 0 0 0 3px var(--tracker-back-soft), 0 0 22px var(--tracker-back-glow);
     transform: translateY(-1px) scale(1.06);
   }
+  .tracker-shell-back.tracker-shell-back-basic:hover {
+    border-color: var(--border2);
+    color: var(--text);
+    background:
+      radial-gradient(circle at 30% 20%, color-mix(in srgb, var(--tracker-back-glow) 42%, transparent) 0%, transparent 56%),
+      linear-gradient(180deg, color-mix(in srgb, var(--tracker-back-soft) 78%, var(--glass-2)), var(--glass-2));
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--tracker-back-border) 55%, transparent);
+    transform: translateY(-1px) scale(1.03);
+  }
+  body.dark .tracker-shell-back.tracker-shell-back-basic:hover {
+    border-color: color-mix(in srgb, var(--tracker-back-accent2) 34%, var(--border));
+    color: var(--tracker-back-accent2);
+    background:
+      radial-gradient(circle at 30% 20%, color-mix(in srgb, var(--tracker-back-glow) 62%, transparent) 0%, transparent 58%),
+      linear-gradient(180deg, color-mix(in srgb, var(--tracker-back-soft-2) 88%, var(--glass-2)), color-mix(in srgb, var(--tracker-back-soft) 70%, var(--glass-2)));
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--tracker-back-border) 68%, transparent),
+      0 0 18px color-mix(in srgb, var(--tracker-back-glow) 45%, transparent);
+  }
   .tracker-shell-mark {
     width: 36px;
     height: 36px;
@@ -1912,6 +1931,7 @@ function trackerApplyBackButtonPalette(){
   const pal = TRACKER_PALETTE_PRESETS[preset] || TRACKER_PALETTE_PRESETS.default;
   const button = document.querySelector('.tracker-shell-back');
   if(!button) return;
+  button.classList.toggle('tracker-shell-back-basic', preset === 'basic');
   button.style.setProperty('--tracker-back-accent', pal.accent, 'important');
   button.style.setProperty('--tracker-back-accent2', pal.accent2, 'important');
   button.style.setProperty('--tracker-back-soft', trackerRgbaFromHex(pal.accent, .08), 'important');
