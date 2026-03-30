@@ -412,6 +412,8 @@ body.loading-start.loaded-ready{
   background:var(--sf3);border:1px solid var(--bd);color:var(--tx2);
 }
 .pill.pending{color:var(--amb);border-color:var(--ambb);background:var(--ambd)}
+.pill.queue-ok{color:var(--grn);border-color:var(--grnb);background:var(--grnd)}
+.pill.queue-warn{color:var(--amb);border-color:var(--ambb);background:var(--ambd)}
 .pill.approved{color:var(--grn);border-color:var(--grnb);background:var(--grnd)}
 .pill.denied,.pill.cancelled{color:var(--red);border-color:var(--redb);background:var(--redd)}
 .pill.kind-holiday{color:var(--grn);border-color:var(--grnb);background:var(--grnd)}
@@ -1179,6 +1181,7 @@ body.loading-start.loaded-ready{
           <div class="panel-sub">Pending requests for the team, with a live decision note.</div>
         </div>
         <div class="queue-controls">
+          <span id="approverPendingBadge" class="pill queue-ok">0 pending</span>
           <label class="small" for="managerFilter">Show</label>
           <select id="managerFilter" class="select" onchange="renderHolidayApp()">
             <option value="pending">Pending only</option>
@@ -1606,9 +1609,19 @@ function requestHoursText(hours){
   const n = num(hours, 0);
   return n.toFixed(n % 1 === 0 ? 0 : 1) + ' hour' + (n === 1 ? '' : 's');
 }
+function requestWholeHoursText(hours){
+  const n = Math.round(num(hours, 0));
+  return n.toFixed(0) + ' hour' + (n === 1 ? '' : 's');
+}
 function allowanceExtrasText(days){
   const n = num(days, 0);
-  return requestDaysText(n) + ' / ' + requestHoursText(n * SHIFT_HOURS);
+  return requestDaysText(n) + ' / ' + requestWholeHoursText(n * SHIFT_HOURS);
+}
+function holidayExtrasDays(profile){
+  return num(profile && profile.entitlement_extras_days, 0);
+}
+function holidayExtrasHours(profile){
+  return holidayExtrasDays(profile) * SHIFT_HOURS;
 }
 function requestKindFromReason(reason){
   return 'holiday';
@@ -1679,6 +1692,7 @@ async function addRetrospectiveHoliday(userId, startId, endId, amountId, unitId,
   if (!reason) { showHolidayRequestError('Please add a reason or note.'); return; }
   const reasonReview = reviewHolidayTextSafety(reason);
   if (!reasonReview.ok) { showHolidayRequestError(reasonReview.reason); return; }
+  const formattedReason = tidyRequestText(reason);
   const fallbackAmount = unit === 'hours' ? countWeekdays(start, end) * SHIFT_HOURS : countWeekdays(start, end);
   const amount = amountRaw > 0 ? amountRaw : fallbackAmount;
   if (amount <= 0) { showHolidayRequestError('Please enter at least one day or hour.'); return; }
@@ -1702,9 +1716,9 @@ async function addRetrospectiveHoliday(userId, startId, endId, amountId, unitId,
     requested_unit: unit,
     requested_amount: amount,
     requested_days: days,
-    reason,
+    reason: formattedReason,
     status: 'approved',
-    manager_note: reason,
+    manager_note: formattedReason,
     decided_by: currentUser.id,
     decided_by_name: currentDisplayName(),
     decided_at: new Date().toISOString()
@@ -1756,6 +1770,21 @@ function clearHolidayRequestError() {
   if (!el) return;
   el.style.display = 'none';
   el.textContent = '';
+}
+
+function tidyRequestText(text) {
+  const input = String(text || '').trim();
+  if (!input) return '';
+  let out = input.replace(/\s+/g, ' ');
+  out = out.replace(/\s+([,.;:!?])/g, '$1');
+  out = out.replace(/([.!?])([A-Za-z0-9])/g, '$1 $2');
+  out = out.replace(/\bi\b/g, 'I');
+  out = out.charAt(0).toUpperCase() + out.slice(1);
+  out = out.replace(/(^|[.!?]\s+)([a-z])/g, function(match, lead, ch) {
+    return lead + ch.toUpperCase();
+  });
+  if (!/[.!?]$/.test(out)) out += '.';
+  return out;
 }
 
 function reviewHolidayTextSafety(text) {
@@ -2134,7 +2163,7 @@ function statsForUser(userId, year){
   const profile = holidayProfileFor(userId);
   const allowance = num(profile && profile.annual_allowance_days, 72);
   const carryover = num(profile && profile.carryover_days, 0);
-  const extras = num(profile && profile.entitlement_extras_days, 0);
+  const extras = holidayExtrasHours(profile);
   const entitlement = allowance + carryover + extras;
   const yearRequests = allHolidayRequests.filter(r => r.auth_user_id === userId && requestMatchesYear(r, year));
   const countable = yearRequests.filter(r => requestConsumesBalance(r));
@@ -2277,12 +2306,12 @@ function renderTeamOverviewCards(){
         '</div>'+
       '</summary>'+
       '<div class="staff-body">'+
-        '<div class="meta" style="font-size:10px">Entitlement '+esc(requestHoursText(stats.entitlement))+' / '+esc(requestDaysText(stats.entitlement / SHIFT_HOURS))+'</div>'+
-        '<div class="meta" style="font-size:10px">Used '+esc(requestHoursText(stats.used))+' / '+esc(requestDaysText(stats.used / SHIFT_HOURS))+'</div>'+
-        '<div class="meta" style="font-size:10px">Pending '+esc(requestHoursText(stats.pending))+' / '+esc(requestDaysText(stats.pending / SHIFT_HOURS))+'</div>'+
-        '<div class="meta" style="font-size:10px">Remaining '+esc(requestHoursText(stats.remaining))+' / '+esc(requestDaysText(stats.remaining / SHIFT_HOURS))+'</div>'+
-        '<div class="meta" style="font-size:10px">Projected '+esc(requestHoursText(stats.projected))+' / '+esc(requestDaysText(stats.projected / SHIFT_HOURS))+'</div>'+
-        '<div class="meta" style="font-size:10px">Carryover '+esc(requestHoursText(carryoverValue))+'</div>'+
+        '<div class="meta" style="font-size:10px">Entitlement '+esc(requestWholeHoursText(stats.entitlement))+' / '+esc(requestDaysText(stats.entitlement / SHIFT_HOURS))+'</div>'+
+        '<div class="meta" style="font-size:10px">Used '+esc(requestWholeHoursText(stats.used))+' / '+esc(requestDaysText(stats.used / SHIFT_HOURS))+'</div>'+
+        '<div class="meta" style="font-size:10px">Pending '+esc(requestWholeHoursText(stats.pending))+' / '+esc(requestDaysText(stats.pending / SHIFT_HOURS))+'</div>'+
+        '<div class="meta" style="font-size:10px">Remaining '+esc(requestWholeHoursText(stats.remaining))+' / '+esc(requestDaysText(stats.remaining / SHIFT_HOURS))+'</div>'+
+        '<div class="meta" style="font-size:10px">Projected '+esc(requestWholeHoursText(stats.projected))+' / '+esc(requestDaysText(stats.projected / SHIFT_HOURS))+'</div>'+
+        '<div class="meta" style="font-size:10px">Carryover '+esc(requestWholeHoursText(carryoverValue))+'</div>'+
         '<div class="meta" style="font-size:10px">Extras '+esc(allowanceExtrasText(extrasValue))+'</div>'+
         '<div class="staff-section">'+
           '<div class="staff-section-title">Entitlement adjustment</div>'+
@@ -2303,10 +2332,10 @@ function renderTeamOverviewCards(){
           '<div class="staff-history-title">Allowance audit</div>'+
           (allowanceHistory.length ? allowanceHistory.map(function(ev){
             const allowanceText = typeof ev.new_annual_allowance_days !== 'undefined'
-              ? requestHoursText(num(ev.old_annual_allowance_days, 0)) + ' → ' + requestHoursText(num(ev.new_annual_allowance_days, 0)) + ' allowance'
+              ? requestWholeHoursText(num(ev.old_annual_allowance_days, 0)) + ' → ' + requestWholeHoursText(num(ev.new_annual_allowance_days, 0)) + ' allowance'
               : '';
             const carryText = typeof ev.new_carryover_days !== 'undefined'
-              ? requestHoursText(num(ev.old_carryover_days, 0)) + ' → ' + requestHoursText(num(ev.new_carryover_days, 0)) + ' carryover'
+              ? requestWholeHoursText(num(ev.old_carryover_days, 0)) + ' → ' + requestWholeHoursText(num(ev.new_carryover_days, 0)) + ' carryover'
               : '';
             const extrasText = typeof ev.new_extras_days !== 'undefined'
               ? allowanceExtrasText(num(ev.old_extras_days, 0)) + ' → ' + allowanceExtrasText(num(ev.new_extras_days, 0)) + ' extras'
@@ -2356,6 +2385,12 @@ function renderApproverQueue(){
   const rows = allHolidayRequests
     .filter(req => requestMatchesYear(req, selectedYear) && (isHolidayAdmin || isAssignedHolidayManagerForRequest(req)))
     .sort((a,b) => String(b.requested_at || '').localeCompare(String(a.requested_at || '')));
+  const pendingBadge = $('approverPendingBadge');
+  const pendingCount = rows.filter(function(req){ return req.status === 'pending'; }).length;
+  if (pendingBadge) {
+    pendingBadge.textContent = pendingCount + ' pending';
+    pendingBadge.className = 'pill ' + (pendingCount > 0 ? 'queue-warn' : 'queue-ok');
+  }
   if (!rows.length) {
     box.innerHTML = '<div class="empty">No leave requests found for '+selectedYear+'.</div>';
     return;
@@ -2376,6 +2411,13 @@ function renderApproverQueue(){
         const person = personDisplayNameFromRecords(profileFor(req.auth_user_id), kilnUserFor(req.auth_user_id), req.requester_name || req.requester_email || 'Unknown');
         const stats = statsForUser(req.auth_user_id, selectedYear);
         const needsBalance = requestConsumesBalance(req);
+        const requestBalance = needsBalance ? requestBalanceHours(req) : 0;
+        const enoughBalance = !needsBalance || stats.remaining >= requestBalance;
+        const balanceMarkup = needsBalance
+          ? (enoughBalance
+            ? esc(stats.remaining.toFixed(1)) + ' hours remaining'
+            : '<span style="color:var(--amb);font-weight:700">Insufficient balance to approve</span><div class="small" style="margin-top:4px">' + esc(stats.remaining.toFixed(1)) + ' hours remaining</div>')
+          : 'No holiday balance required';
         return '<article class="queue-card">'+
           '<div class="request-head">'+
             '<div>'+
@@ -2386,7 +2428,7 @@ function renderApproverQueue(){
           '</div>'+
           '<div class="request-grid">'+
             '<div class="card-box"><div class="box-label">Reason</div><div>'+esc(requestDisplayReason(req.reason) || '—')+'</div></div>'+
-            '<div class="card-box"><div class="box-label">Balance</div><div>'+(needsBalance ? esc(stats.remaining.toFixed(1))+' hours remaining' : 'No holiday balance required')+'</div></div>'+
+            '<div class="card-box"><div class="box-label">Balance</div><div>'+balanceMarkup+'</div></div>'+
           '</div>'+
           '<div class="card-box"><div class="box-label">Decision note</div><div>'+esc(req.manager_note || '—')+'</div></div>'+
         '</article>';
@@ -2412,8 +2454,14 @@ function renderApproverQueue(){
     const person = personDisplayNameFromRecords(profileFor(req.auth_user_id), kilnUserFor(req.auth_user_id), req.requester_name || req.requester_email || 'Unknown');
     const stats = statsForUser(req.auth_user_id, selectedYear);
     const needsBalance = requestConsumesBalance(req);
-    const enoughBalance = !needsBalance || stats.remaining >= requestBalanceHours(req);
+    const requestBalance = needsBalance ? requestBalanceHours(req) : 0;
+    const enoughBalance = !needsBalance || stats.remaining >= requestBalance;
     const isPending = req.status === 'pending';
+    const balanceMarkup = needsBalance
+      ? (enoughBalance
+        ? esc(stats.remaining.toFixed(1)) + ' hours remaining'
+        : '<span style="color:var(--amb);font-weight:700">Insufficient balance to approve</span><div class="small" style="margin-top:4px">' + esc(stats.remaining.toFixed(1)) + ' hours remaining</div>')
+      : 'No holiday balance required';
     return '<article class="queue-card">'+
       '<div class="request-head">'+
         '<div>'+
@@ -2424,7 +2472,7 @@ function renderApproverQueue(){
       '</div>'+
       '<div class="request-grid">'+
         '<div class="card-box"><div class="box-label">Reason</div><div>'+esc(requestDisplayReason(req.reason) || '—')+'</div></div>'+
-        '<div class="card-box"><div class="box-label">Balance</div><div>'+(needsBalance ? esc(stats.remaining.toFixed(1))+' hours remaining' : 'No holiday balance required')+'</div></div>'+
+        '<div class="card-box"><div class="box-label">Balance</div><div>'+balanceMarkup+'</div></div>'+
       '</div>'+
       '<div class="field full"><label class="help-label" for="mgrNote_'+esc(req.id)+'">Manager note / denial or cancellation reason</label><textarea id="mgrNote_'+esc(req.id)+'" class="textarea" placeholder="Required for denials and cancellations."></textarea></div>'+
       '<div class="actions">'+
@@ -2477,10 +2525,10 @@ function renderAllowanceList(){
         '</div>'+
       '</summary>'+
       '<div class="staff-body">'+
-        '<div class="meta" style="font-size:10px">Used '+esc(requestHoursText(stats.used))+' / '+esc(requestDaysText(stats.used / SHIFT_HOURS))+'</div>'+
-        '<div class="meta" style="font-size:10px">Pending '+esc(requestHoursText(stats.pending))+' / '+esc(requestDaysText(stats.pending / SHIFT_HOURS))+'</div>'+
-        '<div class="meta" style="font-size:10px">Remaining '+esc(requestHoursText(stats.remaining))+' / '+esc(requestDaysText(stats.remaining / SHIFT_HOURS))+'</div>'+
-        '<div class="meta" style="font-size:10px">Projected '+esc(requestHoursText(stats.projected))+' / '+esc(requestDaysText(stats.projected / SHIFT_HOURS))+'</div>'+
+        '<div class="meta" style="font-size:10px">Used '+esc(requestWholeHoursText(stats.used))+' / '+esc(requestDaysText(stats.used / SHIFT_HOURS))+'</div>'+
+        '<div class="meta" style="font-size:10px">Pending '+esc(requestWholeHoursText(stats.pending))+' / '+esc(requestDaysText(stats.pending / SHIFT_HOURS))+'</div>'+
+        '<div class="meta" style="font-size:10px">Remaining '+esc(requestWholeHoursText(stats.remaining))+' / '+esc(requestDaysText(stats.remaining / SHIFT_HOURS))+'</div>'+
+        '<div class="meta" style="font-size:10px">Projected '+esc(requestWholeHoursText(stats.projected))+' / '+esc(requestDaysText(stats.projected / SHIFT_HOURS))+'</div>'+
         '<div class="meta" style="font-size:10px">Extras '+esc(allowanceExtrasText(extrasValue))+'</div>'+
         '<div class="staff-section">'+
           '<div class="staff-section-title">Entitlement adjustment</div>'+
@@ -2501,10 +2549,10 @@ function renderAllowanceList(){
           '<div class="staff-history-title">Allowance audit</div>'+
           (allowanceHistory.length ? allowanceHistory.map(function(ev){
             const allowanceText = typeof ev.new_annual_allowance_days !== 'undefined'
-              ? requestHoursText(num(ev.old_annual_allowance_days, 0)) + ' → ' + requestHoursText(num(ev.new_annual_allowance_days, 0)) + ' allowance'
+              ? requestWholeHoursText(num(ev.old_annual_allowance_days, 0)) + ' → ' + requestWholeHoursText(num(ev.new_annual_allowance_days, 0)) + ' allowance'
               : '';
             const carryText = typeof ev.new_carryover_days !== 'undefined'
-              ? requestHoursText(num(ev.old_carryover_days, 0)) + ' → ' + requestHoursText(num(ev.new_carryover_days, 0)) + ' carryover'
+              ? requestWholeHoursText(num(ev.old_carryover_days, 0)) + ' → ' + requestWholeHoursText(num(ev.new_carryover_days, 0)) + ' carryover'
               : '';
             const extrasText = typeof ev.new_extras_days !== 'undefined'
               ? allowanceExtrasText(num(ev.old_extras_days, 0)) + ' → ' + allowanceExtrasText(num(ev.new_extras_days, 0)) + ' extras'
@@ -2530,12 +2578,12 @@ function renderAllowanceList(){
 }
 function renderSummary(){
   const stats = statsForUser(currentUser.id, selectedYear);
-  $('statEntitlement').textContent = requestHoursText(stats.entitlement) + ' / ' + requestDaysText(stats.entitlement / SHIFT_HOURS);
-  $('statUsed').textContent = requestHoursText(stats.used) + ' / ' + requestDaysText(stats.used / SHIFT_HOURS);
-  $('statPending').textContent = requestHoursText(stats.pending) + ' / ' + requestDaysText(stats.pending / SHIFT_HOURS);
-  $('statRemaining').textContent = requestHoursText(stats.remaining) + ' / ' + requestDaysText(stats.remaining / SHIFT_HOURS);
-  $('statProjected').textContent = requestHoursText(stats.projected) + ' / ' + requestDaysText(stats.projected / SHIFT_HOURS);
-  $('statEntitlementSub').textContent = requestHoursText(stats.allowance) + ' allowance + ' + requestHoursText(stats.carryover) + ' carryover + ' + requestHoursText(stats.extras) + ' extras';
+  $('statEntitlement').textContent = requestWholeHoursText(stats.entitlement) + ' / ' + requestDaysText(stats.entitlement / SHIFT_HOURS);
+  $('statUsed').textContent = requestWholeHoursText(stats.used) + ' / ' + requestDaysText(stats.used / SHIFT_HOURS);
+  $('statPending').textContent = requestWholeHoursText(stats.pending) + ' / ' + requestDaysText(stats.pending / SHIFT_HOURS);
+  $('statRemaining').textContent = requestWholeHoursText(stats.remaining) + ' / ' + requestDaysText(stats.remaining / SHIFT_HOURS);
+  $('statProjected').textContent = requestWholeHoursText(stats.projected) + ' / ' + requestDaysText(stats.projected / SHIFT_HOURS);
+  $('statEntitlementSub').textContent = requestWholeHoursText(stats.allowance) + ' allowance + ' + requestWholeHoursText(stats.carryover) + ' carryover + ' + requestWholeHoursText(stats.extras) + ' extras';
 }
 function renderHolidayApp(){
   $('yearSelect').value = String(selectedYear);
@@ -2805,6 +2853,7 @@ async function submitHolidayRequest(){
   if (!reason) { showHolidayRequestError('Please add a reason or note.'); return; }
   const reasonReview = reviewHolidayTextSafety(reason);
   if (!reasonReview.ok) { showHolidayRequestError(reasonReview.reason); return; }
+  const formattedReason = tidyRequestText(reason);
   const managerName = holidayManagerDisplayNameForUser(currentUser.id);
   const confirmText = managerName === 'No manager assigned'
     ? 'No manager is assigned yet. Submit this holiday request for admin review?'
@@ -2824,7 +2873,7 @@ async function submitHolidayRequest(){
     requested_unit: unit,
     requested_amount: amount,
     requested_days: days,
-    reason,
+    reason: formattedReason,
     status: 'pending'
   };
   const { error } = await sb.from('holiday_requests').insert(payload);

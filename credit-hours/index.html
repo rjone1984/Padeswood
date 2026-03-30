@@ -412,6 +412,8 @@ body.loading-start.loaded-ready{
   background:var(--sf3);border:1px solid var(--bd);color:var(--tx2);
 }
 .pill.pending{color:var(--amb);border-color:var(--ambb);background:var(--ambd)}
+.pill.queue-ok{color:var(--grn);border-color:var(--grnb);background:var(--grnd)}
+.pill.queue-warn{color:var(--amb);border-color:var(--ambb);background:var(--ambd)}
 .pill.approved{color:var(--grn);border-color:var(--grnb);background:var(--grnd)}
 .pill.denied,.pill.cancelled{color:var(--red);border-color:var(--redb);background:var(--redd)}
 .pill.kind-credit{color:var(--grn);border-color:var(--grnb);background:var(--grnd)}
@@ -1539,6 +1541,7 @@ body.loading-start.loaded-ready{
           <div class="panel-sub">Pending credit-hours and overtime claims for your assigned staff.</div>
         </div>
         <div class="queue-controls">
+          <span id="approverPendingBadge" class="pill queue-ok">0 pending</span>
           <label class="small" for="managerFilter">Show</label>
           <select id="managerFilter" class="select" onchange="renderHolidayApp()">
             <option value="pending">Pending only</option>
@@ -2235,6 +2238,20 @@ function requestKindClass(kind){
 }
 function requestDisplayReason(reason){
   return String(reason ?? '').replace(/^\[[^\]]+\]\s*/, '').trim();
+}
+function tidyRequestText(text){
+  const input = String(text || '').trim();
+  if (!input) return '';
+  let out = input.replace(/\s+/g, ' ');
+  out = out.replace(/\s+([,.;:!?])/g, '$1');
+  out = out.replace(/([.!?])([A-Za-z0-9])/g, '$1 $2');
+  out = out.replace(/\bi\b/g, 'I');
+  out = out.charAt(0).toUpperCase() + out.slice(1);
+  out = out.replace(/(^|[.!?]\s+)([a-z])/g, function(match, lead, ch){
+    return lead + ch.toUpperCase();
+  });
+  if (!/[.!?]$/.test(out)) out += '.';
+  return out;
 }
 function requestAmountText(req){
   const worked = requestHoursText(num(req && req.hours_worked, 0));
@@ -3082,6 +3099,12 @@ function renderApproverQueue(){
   const rows = allHolidayRequests
     .filter(req => requestMatchesYear(req, selectedYear) && (isHolidayAdmin || isAssignedHolidayManagerForRequest(req)))
     .sort((a,b) => String(b.requested_at || '').localeCompare(String(a.requested_at || '')));
+  const pendingBadge = $('approverPendingBadge');
+  const pendingCount = rows.filter(function(req){ return req.status === 'pending'; }).length;
+  if (pendingBadge) {
+    pendingBadge.textContent = pendingCount + ' pending';
+    pendingBadge.className = 'pill ' + (pendingCount > 0 ? 'queue-warn' : 'queue-ok');
+  }
   if (!rows.length) {
     box.innerHTML = '<div class="empty">No credit-hours entries found for '+selectedYear+'.</div>';
     return;
@@ -3103,6 +3126,13 @@ function renderApproverQueue(){
         const stats = statsForUser(req.auth_user_id, selectedYear);
         const quarterStats = rollingQuarterStatsForUser(req.auth_user_id, req.work_date);
         const needsBalance = requestConsumesBalance(req);
+        const requestBalance = needsBalance ? requestBalanceHours(req) : 0;
+        const enoughBalance = !needsBalance || (stats.quarterRemaining >= requestBalance && stats.remaining >= requestBalance);
+        const balanceMarkup = needsBalance
+          ? (enoughBalance
+            ? esc(requestHoursText(quarterStats.remaining)) + ' quarter left<div class="small" style="margin-top:4px">' + esc(requestHoursText(stats.remaining)) + ' annual left</div>'
+            : '<span style="color:var(--amb);font-weight:700">Insufficient balance to approve</span><div class="small" style="margin-top:4px">' + esc(requestHoursText(quarterStats.remaining)) + ' quarter left</div><div class="small" style="margin-top:4px">' + esc(requestHoursText(stats.remaining)) + ' annual left</div>')
+          : 'Paid overtime entry<div class="small" style="margin-top:4px">' + esc(requestHoursText(stats.remaining)) + ' annual left</div>';
         return '<article class="queue-card">'+
           '<div class="request-head">'+
             '<div>'+
@@ -3113,7 +3143,7 @@ function renderApproverQueue(){
           '</div>'+
           '<div class="request-grid">'+
             '<div class="card-box"><div class="box-label">Reason</div><div>'+esc(requestDisplayReason(req.reason) || '—')+'</div></div>'+
-            '<div class="card-box"><div class="box-label">Balance</div><div>'+(needsBalance ? esc(requestHoursText(quarterStats.remaining))+' quarter left' : 'Paid overtime entry')+'<div class="small" style="margin-top:4px">'+esc(requestHoursText(stats.remaining))+' annual left</div></div></div>'+
+            '<div class="card-box"><div class="box-label">Balance</div><div>'+balanceMarkup+'</div></div>'+
           '</div>'+
           '<div class="card-box"><div class="box-label">Decision note</div><div>'+esc(req.manager_note || '—')+'</div></div>'+
         '</article>';
@@ -3135,8 +3165,14 @@ function renderApproverQueue(){
     const person = personDisplayNameFromRecords(profileFor(req.auth_user_id), kilnUserFor(req.auth_user_id), req.requester_name || req.requester_email || 'Unknown');
     const stats = statsForUser(req.auth_user_id, selectedYear);
     const needsBalance = requestConsumesBalance(req);
-    const enoughBalance = !needsBalance || (stats.quarterRemaining >= requestBalanceHours(req) && stats.remaining >= requestBalanceHours(req));
+    const requestBalance = needsBalance ? requestBalanceHours(req) : 0;
+    const enoughBalance = !needsBalance || (stats.quarterRemaining >= requestBalance && stats.remaining >= requestBalance);
     const isPending = req.status === 'pending';
+    const balanceMarkup = needsBalance
+      ? (enoughBalance
+        ? esc(requestHoursText(stats.quarterRemaining)) + ' quarter left<div class="small" style="margin-top:4px">' + esc(requestHoursText(stats.remaining)) + ' annual left</div>'
+        : '<span style="color:var(--amb);font-weight:700">Insufficient balance to approve</span><div class="small" style="margin-top:4px">' + esc(requestHoursText(stats.quarterRemaining)) + ' quarter left</div><div class="small" style="margin-top:4px">' + esc(requestHoursText(stats.remaining)) + ' annual left</div>')
+      : 'Paid overtime entry<div class="small" style="margin-top:4px">' + esc(requestHoursText(stats.remaining)) + ' annual left</div>';
     return '<article class="queue-card">'+
       '<div class="request-head">'+
         '<div>'+
@@ -3147,7 +3183,7 @@ function renderApproverQueue(){
       '</div>'+
       '<div class="request-grid">'+
         '<div class="card-box"><div class="box-label">Reason</div><div>'+esc(requestDisplayReason(req.reason) || '—')+'</div></div>'+
-        '<div class="card-box"><div class="box-label">Balance</div><div>'+(needsBalance ? esc(requestHoursText(stats.quarterRemaining))+' quarter left' : 'Paid overtime entry')+'<div class="small" style="margin-top:4px">'+esc(requestHoursText(stats.remaining))+' annual left</div></div></div>'+
+        '<div class="card-box"><div class="box-label">Balance</div><div>'+balanceMarkup+'</div></div>'+
       '</div>'+
       '<div class="field full"><label class="help-label" for="mgrNote_'+esc(req.id)+'">Manager note / denial or cancellation reason</label><textarea id="mgrNote_'+esc(req.id)+'" class="textarea" placeholder="Required for denials and cancellations."></textarea></div>'+
       '<div class="actions">'+
@@ -3591,6 +3627,7 @@ async function submitHolidayRequest(){
   if (hoursClaimed <= 0) { setToast('Please enter the hours to be claimed.'); return; }
   if (hoursClaimed > hoursWorked) { setToast('Claimed hours cannot be greater than hours worked.'); return; }
   if (!reason) { setToast('Please add a reason or note.'); return; }
+  const formattedReason = tidyRequestText(reason);
   if (claimType === 'credit' && !creditClaimAvailableForDate(workDate)) {
     setToast('Credit hours are unavailable right now. Please choose paid overtime.');
     return;
@@ -3631,7 +3668,7 @@ async function submitHolidayRequest(){
     hours_worked: hoursWorked,
     hours_claimed: hoursClaimed,
     claim_type: claimType,
-    reason,
+    reason: formattedReason,
     manager_note: '',
     employee_signed_at: new Date().toISOString(),
     employee_signed_name: currentDisplayName(),
@@ -3655,7 +3692,7 @@ async function submitHolidayRequest(){
     request_id: optimisticEntry.id,
     action: 'Submitted',
     new_status: 'pending',
-    note: reason,
+    note: formattedReason,
     created_at: optimisticEntry.requested_at || optimisticEntry.created_at || new Date().toISOString(),
     actor_name: currentDisplayName(),
     actor_auth_user_id: currentUser.id
