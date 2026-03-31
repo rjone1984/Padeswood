@@ -2089,6 +2089,11 @@ async function submitResetRequest() {
   const domain = document.getElementById('loginDomain').value || '@heidelbergmaterials.com';
   const email = raw.includes('@') ? raw : (domain === 'other' ? '' : raw + domain);
   if (!email || !email.includes('@')) { msg.style.color='var(--red)'; msg.textContent='Please enter your full email address for this account.'; return; }
+  if (isSharedOperatorValue(raw) || isSharedOperatorValue(email)) {
+    msg.style.color = 'var(--red)';
+    msg.textContent = 'Operator is a shared role account. Please contact an administrator instead.';
+    return;
+  }
   msg.textContent = 'Submitting…';
   try {
     if (await hasPendingRequestByEmail('reset', email)) {
@@ -2138,12 +2143,14 @@ async function doLogin() {
 async function showAppSelector(user, opts) {
   const skipResetPrompt = !!(opts && opts.skipResetPrompt) || _pwPostResetSkipUid === user.id;
   const isMobileViewport = !!(window.matchMedia && window.matchMedia('(max-width: 640px)').matches);
+  _platformSharedRoleAccount = isSharedOperatorAccount(null, null, user || null);
   document.getElementById('headerUser').style.display = 'flex';
   document.getElementById('logoutBtn').style.display = 'flex';
-  document.getElementById('changePwBtn').style.display = 'flex';
+  document.getElementById('changePwBtn').style.display = _platformSharedRoleAccount ? 'none' : 'flex';
   try {
     const {data} = await sb.from('pw_profiles').select('id,full_name,email,approved,disabled,role,must_reset_password,holiday_requests_access,holiday_manager_auth_user_id,shift_tracker_access,credit_hours_access').eq('id', user.id).single();
     _platformProfile = data;
+    _platformSharedRoleAccount = isSharedOperatorAccount(data || null, null, user || null);
     if (data && (data.approved === false || data.disabled === true || data.role === 'none')) {
       await sb.auth.signOut();
       Object.keys(localStorage).forEach(function(k) {
@@ -2178,6 +2185,9 @@ async function showAppSelector(user, opts) {
       err.style.display = 'block';
       return false;
     }
+    if (document.getElementById('changePwBtn')) {
+      document.getElementById('changePwBtn').style.display = _platformSharedRoleAccount ? 'none' : 'flex';
+    }
     const sessionFullName = user && user.user_metadata && user.user_metadata.full_name
       ? String(user.user_metadata.full_name).trim()
       : '';
@@ -2208,7 +2218,12 @@ async function showAppSelector(user, opts) {
         document.getElementById('headerEmail').textContent = sessionFullName && !looksLikeShortLoginName(sessionFullName, (data && data.email) ? data.email : (user && user.email) ? user.email : '', ku && ku.username ? ku.username : '')
           ? sessionFullName
           : getSuiteDisplayName(data || null, ku || null, (user && user.email) ? user.email : '—');
-        if (ku.must_reset_password) {
+        _platformSharedRoleAccount = _platformSharedRoleAccount || isSharedOperatorAccount(data || null, ku || null, user || null);
+        if (_platformSharedRoleAccount) {
+          try {
+            await clearResetFlags(user.id, ku && ku.username ? ku.username : null);
+          } catch(e) {}
+        } else if (ku.must_reset_password) {
           if (skipResetPrompt) {
             try {
               await callAdminPwFunction({ action: 'clearReset', userId: user.id, email: data && data.email ? data.email : user.email, username: ku.username || null });
@@ -2221,7 +2236,11 @@ async function showAppSelector(user, opts) {
           }
         }
       }
-      if (data && data.must_reset_password) {
+      if (_platformSharedRoleAccount) {
+        try {
+          await clearResetFlags(user.id, ku && ku.username ? ku.username : null);
+        } catch(e) {}
+      } else if (data && data.must_reset_password) {
         if (skipResetPrompt) {
           try {
             await callAdminPwFunction({ action: 'clearReset', userId: user.id, email: data.email || user.email, username: ku && ku.username ? ku.username : null });
@@ -2259,6 +2278,7 @@ async function doLogout() {
   sessionStorage.removeItem('kbl_refresh');
   _pwPostResetSkipUid = null;
   _platformKilnUser = null;
+  _platformSharedRoleAccount = false;
   window.location.reload();
 }
 
@@ -3344,6 +3364,10 @@ async function clearResetFlags(userId, username) {
 }
 
 function openForcePwResetModal(username) {
+  if (isSharedOperatorValue(username)) {
+    showPlatformToast('Operator is a shared role account. Password changes are admin-managed.');
+    return;
+  }
   _adminSetPwTarget = null;
   _accessRequestTarget = null;
   _forcePwUsername = username || null;
@@ -3369,8 +3393,13 @@ function openAdminSetPwModal(authUserId, kilnUsername, displayName, fromResetReq
   _forcePwUsername = null;
   if (!fromResetReqId) _pendingResetReqId = null; // clear unless explicitly set by handleResetReq
   document.getElementById('forcePwTitle').textContent = 'Set Password';
-  document.getElementById('forcePwSub').textContent = 'Setting password for ' + displayName;
-  document.getElementById('forcePwNotice').textContent = 'Enter a new password for this user. They can change it themselves after logging in.';
+  const isSharedOperatorTarget = isSharedOperatorValue(kilnUsername) || isSharedOperatorValue(displayName);
+  document.getElementById('forcePwSub').textContent = isSharedOperatorTarget
+    ? 'Setting password for shared role account ' + displayName
+    : 'Setting password for ' + displayName;
+  document.getElementById('forcePwNotice').textContent = isSharedOperatorTarget
+    ? 'This is a shared role account. Only administrators should rotate this password.'
+    : 'Enter a new password for this user. They can change it themselves after logging in.';
   document.getElementById('forcePwBtn').textContent = 'Set Password';
   document.getElementById('forcePwCancelBtn').textContent = 'Cancel';
   document.getElementById('forcePwNew').value = '';
@@ -3434,6 +3463,12 @@ async function submitPlatformForceReset() {
     newPwEl.value = '';
     confEl.value = '';
     btn.disabled = true; btn.textContent = 'Saving…';
+
+    if (!_adminSetPwTarget && !_accessRequestTarget && (!_bulkAccessRequestTargets || !_bulkAccessRequestTargets.length) && (_platformSharedRoleAccount || isSharedOperatorValue(_forcePwUsername))) {
+      btn.disabled = false; btn.textContent = 'Set New Password & Continue';
+      showForcePwMsg('err', 'Operator is a shared role account. Password changes are admin-managed.');
+      return;
+    }
 
     if (_accessRequestTarget) {
       if (!canManagePlatformUsers()) {
@@ -3602,6 +3637,10 @@ function showForcePwMsg(type, text) {
 }
 
 function openChangePwModal() {
+  if (_platformSharedRoleAccount) {
+    showPlatformToast('Operator is a shared role account. Password changes are admin-managed.');
+    return;
+  }
   document.getElementById('changePwOverlay').style.display = 'flex';
   setTimeout(function() { document.getElementById('cpwCurrent').focus(); }, 80);
 }
@@ -3618,6 +3657,10 @@ async function doChangePw() {
   const confirm2 = document.getElementById('cpwConfirm').value;
   const btn      = document.getElementById('cpwBtn');
   document.getElementById('cpwMsg').style.display = 'none';
+  if (_platformSharedRoleAccount) {
+    showCpwMsg('err','Operator is a shared role account. Password changes are admin-managed.');
+    return;
+  }
   if (!current || !newPw || !confirm2) { showCpwMsg('err','Please fill in all fields.'); return; }
   if (newPw !== confirm2)             { showCpwMsg('err','New passwords do not match.'); return; }
   const { data: sessionData } = await sb.auth.getSession();
@@ -3659,7 +3702,27 @@ let _resetRequestsCache = [];
 let _feedbackRequestsCache = [];
 let _accessRequestSelection = {};
 let _bulkAccessRequestTargets = [];
+let _platformSharedRoleAccount = false;
 const PLATFORM_PROTECTED_USERNAME = 'rjone';
+const PLATFORM_SHARED_ROLE_USERNAME = 'operator';
+function normalizeSharedRoleValue(value) {
+  return String(value || '').trim().toLowerCase();
+}
+function isSharedOperatorValue(value) {
+  const text = normalizeSharedRoleValue(value);
+  if (!text) return false;
+  return text.split('@')[0] === PLATFORM_SHARED_ROLE_USERNAME;
+}
+function isSharedOperatorAccount(profile, kiln, user) {
+  return [
+    kiln && kiln.username,
+    kiln && kiln.locked_name,
+    profile && profile.full_name,
+    profile && profile.email,
+    user && user.email,
+    user && user.user_metadata && user.user_metadata.full_name
+  ].some(isSharedOperatorValue);
+}
 function _umShowErr(list, msg) {
   list.innerHTML = '';
   const wrap = document.createElement('div');
