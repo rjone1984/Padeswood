@@ -425,37 +425,28 @@ body.basic-mode .topbar .back-platform-btn:hover{
   padding:4px 8px;border-radius:999px;font-size:11px;font-family:var(--ff-mono);
   background:var(--sf3);border:1px solid var(--bd);color:var(--tx2);
 }
-.pill.pending{color:var(--amb);border-color:var(--ambb);background:var(--ambd)}
-.pill.queue-ok{color:var(--grn);border-color:var(--grnb);background:var(--grnd)}
-.pill.queue-warn{color:var(--amb);border-color:var(--ambb);background:var(--ambd)}
-.pill.approved{color:var(--grn);border-color:var(--grnb);background:var(--grnd)}
-.pill.denied,.pill.cancelled{color:var(--red);border-color:var(--redb);background:var(--redd)}
-.pill.kind-holiday{color:var(--grn);border-color:var(--grnb);background:var(--grnd)}
-.pill.kind-unpaid{color:var(--pur);border-color:var(--purb);background:var(--purd)}
-.pill.kind-other{color:var(--amb);border-color:var(--ambb);background:var(--ambd)}
-.pill.balance-red{color:var(--red);border-color:var(--redb);background:var(--redd);--balance-glow: rgba(240,82,79,.28)}
-.pill.balance-amber{color:var(--amb);border-color:var(--ambb);background:var(--ambd);--balance-glow: rgba(245,166,35,.28)}
-.pill.balance-green{color:var(--grn);border-color:var(--grnb);background:var(--grnd);--balance-glow: rgba(33,194,122,.24)}
+.pill.pending{color:var(--amb);border-color:color-mix(in srgb, var(--ambb) 72%, var(--bd));background:color-mix(in srgb, var(--ambd) 58%, var(--sf2))}
+.pill.queue-ok{color:var(--grn);border-color:color-mix(in srgb, var(--grnb) 72%, var(--bd));background:color-mix(in srgb, var(--grnd) 58%, var(--sf2))}
+.pill.queue-warn{color:var(--amb);border-color:color-mix(in srgb, var(--ambb) 72%, var(--bd));background:color-mix(in srgb, var(--ambd) 58%, var(--sf2))}
+.pill.approved{color:var(--grn);border-color:color-mix(in srgb, var(--grnb) 72%, var(--bd));background:color-mix(in srgb, var(--grnd) 58%, var(--sf2))}
+.pill.denied,.pill.cancelled{color:var(--red);border-color:color-mix(in srgb, var(--redb) 72%, var(--bd));background:color-mix(in srgb, var(--redd) 58%, var(--sf2))}
+.pill.kind-holiday{color:var(--grn);border-color:color-mix(in srgb, var(--grnb) 72%, var(--bd));background:color-mix(in srgb, var(--grnd) 58%, var(--sf2))}
+.pill.kind-unpaid{color:var(--pur);border-color:color-mix(in srgb, var(--purb) 72%, var(--bd));background:color-mix(in srgb, var(--purd) 58%, var(--sf2))}
+.pill.kind-other{color:var(--amb);border-color:color-mix(in srgb, var(--ambb) 72%, var(--bd));background:color-mix(in srgb, var(--ambd) 58%, var(--sf2))}
+.pill.balance-red{color:var(--red);border-color:color-mix(in srgb, var(--redb) 72%, var(--bd));background:color-mix(in srgb, var(--redd) 58%, var(--sf2));--balance-glow:transparent}
+.pill.balance-amber{color:var(--amb);border-color:color-mix(in srgb, var(--ambb) 72%, var(--bd));background:color-mix(in srgb, var(--ambd) 58%, var(--sf2));--balance-glow:transparent}
+.pill.balance-green{color:var(--grn);border-color:color-mix(in srgb, var(--grnb) 72%, var(--bd));background:color-mix(in srgb, var(--grnd) 58%, var(--sf2));--balance-glow:transparent}
 .pill.balance-red,
 .pill.balance-amber,
 .pill.balance-green{
   position:relative;
-  animation:balancePulse 3.4s var(--ease-smooth) infinite;
-  will-change:transform, filter, box-shadow;
+  animation:none;
+  will-change:auto;
 }
 .pill.balance-red::after,
 .pill.balance-amber::after,
 .pill.balance-green::after{
-  content:'';
-  position:absolute;
-  inset:-2px;
-  border-radius:inherit;
-  pointer-events:none;
-  opacity:.22;
-  filter:blur(8px);
-  background:var(--balance-glow);
-  z-index:-1;
-  animation:balanceAura 3.4s var(--ease-smooth) infinite;
+  display:none;
 }
 @keyframes balancePulse{
   0%,100%{transform:translateY(0) scale(1);filter:saturate(1)}
@@ -2607,7 +2598,7 @@ function renderRequestAuditItem(req){
 }
 function statsForUser(userId, year){
   const profile = holidayProfileFor(userId);
-  const allowance = num(profile && profile.annual_allowance_days, 72);
+  const allowance = num(profile && profile.annual_allowance_days, 72 / SHIFT_HOURS);
   const carryover = num(profile && profile.carryover_days, 0);
   const extras = holidayExtrasHours(profile);
   const entitlement = allowance + carryover + extras;
@@ -2775,7 +2766,7 @@ function renderTeamOverviewCards(){
   const selectedDisplayName = personDisplayNameFromRecords(selectedProfile, selectedKu, 'Unknown');
   const selectedManagerName = holidayManagerDisplayNameForUser(selectedProfile.id);
   const selectedEditable = canEditAllowanceFor(selectedProfile);
-  const selectedEntitlementValue = num(selectedHp && selectedHp.annual_allowance_days, 72);
+  const selectedEntitlementValue = num(selectedHp && selectedHp.annual_allowance_days, 72 / SHIFT_HOURS);
   const selectedCarryoverValue = num(selectedHp && selectedHp.carryover_days, 0);
   const selectedExtrasValue = num(selectedHp && selectedHp.entitlement_extras_days, 0);
   const selectedRemainingDays = selectedStats.remaining / SHIFT_HOURS;
@@ -3070,7 +3061,7 @@ function renderAllowanceList(){
         '<div class="staff-section">'+
           '<div class="staff-section-title">Entitlement adjustment</div>'+
           '<div class="staff-section-sub">Add or remove holiday entitlement and carryover for this staff member. Every save is written to the audit trail.</div>'+
-          '<div class="field"><label class="small" style="margin-bottom:4px">Annual entitlement</label><input class="input" style="height:30px;font-size:11px" type="number" min="0" step="0.5" id="allow_'+esc(p.id)+'" value="'+esc(num(hp && hp.annual_allowance_days, 72))+'"'+(editable ? '' : ' disabled')+'><div class="field-note">Base holiday allowance for the year.</div></div>'+
+          '<div class="field"><label class="small" style="margin-bottom:4px">Annual entitlement</label><input class="input" style="height:30px;font-size:11px" type="number" min="0" step="0.5" id="allow_'+esc(p.id)+'" value="'+esc(num(hp && hp.annual_allowance_days, 72 / SHIFT_HOURS))+'"'+(editable ? '' : ' disabled')+'><div class="field-note">Base holiday allowance for the year.</div></div>'+
           '<div class="field"><label class="small" style="margin-bottom:4px">Carryover after 31 Dec</label><input class="input" style="height:30px;font-size:11px" type="number" min="0" step="0.5" id="carry_'+esc(p.id)+'" value="'+esc(num(hp && hp.carryover_days, 0))+'"'+((editable && carryoverOpen) ? '' : ' disabled')+' title="'+esc(carryoverOpen ? 'Carryover can be adjusted now' : 'Carryover can only be adjusted after 31 December')+'"><div class="field-note">Extra holiday moved over into the new year.</div></div>'+
           '<div class="field"><label class="small" style="margin-bottom:4px">Extras</label><div class="row" style="gap:8px;align-items:flex-end">'+
             '<select class="select" id="extrasUnit_'+esc(p.id)+'" style="width:120px;height:30px;font-size:11px" onchange="syncExtrasUnit(\'extrasUnit_'+esc(p.id)+'\', \'extras_'+esc(p.id)+'\')"'+(editable ? '' : ' disabled')+'>'+
@@ -3201,7 +3192,7 @@ async function ensureHolidayProfile(){
   if (!data) {
     const { error } = await sb.from('holiday_profiles').insert({ auth_user_id: currentUser.id });
     if (error) throw error;
-    currentHolidayProfile = { auth_user_id: currentUser.id, annual_allowance_days: 72, carryover_days: 0, entitlement_extras_days: 0 };
+    currentHolidayProfile = { auth_user_id: currentUser.id, annual_allowance_days: 72 / SHIFT_HOURS, carryover_days: 0, entitlement_extras_days: 0 };
   } else {
     currentHolidayProfile = data;
   }
@@ -3537,7 +3528,7 @@ async function persistAllowance(userId, allowanceInputId, carryoverInputId, extr
   const target = allPwProfiles.find(p => String(p.id) === String(userId));
   if (!target) return;
   if (!isHolidayAdmin && String(target.holiday_manager_auth_user_id || '') !== String(currentUser.id || '')) return;
-  const allowance = num($(allowanceInputId)?.value, 72);
+  const allowance = num($(allowanceInputId)?.value, 72 / SHIFT_HOURS);
   const carryover = num($(carryoverInputId)?.value, 0);
   const extrasUnit = $(extrasUnitInputId)?.value === 'hours' ? 'hours' : 'days';
   const extrasValue = num($(extrasInputId)?.value, 0);

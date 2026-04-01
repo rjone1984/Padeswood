@@ -342,11 +342,8 @@
     padding: 16px 18px;
     border: 1px solid var(--border2);
     border-radius: 18px;
-    background:
-      radial-gradient(140% 120% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
-      linear-gradient(180deg, var(--glass-3), var(--glass-2));
-    border: 1px solid color-mix(in srgb, var(--palette-card-border) 45%, var(--border2));
-    box-shadow: 0 20px 62px rgba(0,0,0,.18), 0 0 0 1px var(--palette-card-border), 0 0 18px var(--palette-card-glow-2);
+    background: linear-gradient(180deg, var(--glass-3), var(--glass-2));
+    box-shadow: 0 12px 28px rgba(0,0,0,.10);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
   }
@@ -368,13 +365,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background:
-      radial-gradient(circle at 30% 20%, rgba(255,255,255,.98), rgba(255,255,255,.78) 24%, rgba(255,255,255,0) 62%),
-      linear-gradient(135deg, var(--palette-card-bg-1), var(--palette-card-bg-2));
+    background: var(--glass-2);
     border: 1px solid var(--border2);
-    box-shadow: 0 12px 28px rgba(0,0,0,.10), inset 0 1px 0 rgba(255,255,255,.48);
+    box-shadow: 0 8px 18px rgba(0,0,0,.07);
     overflow: hidden;
-    animation: heroZzzFloat 8.8s cubic-bezier(.22,1,.36,1) infinite;
+    animation: none;
   }
   .boot-shield-mark img { width:100%; height:100%; object-fit:contain; display:block; }
   .boot-shield-copy { display:grid; gap:2px; min-width:0; }
@@ -434,12 +429,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background:
-      radial-gradient(circle at 30% 20%, rgba(255,255,255,.98), rgba(255,255,255,.78) 24%, rgba(255,255,255,0) 62%),
-      linear-gradient(135deg, var(--palette-card-bg-1), var(--palette-card-bg-2));
+    background: var(--glass-2);
     border: 1px solid var(--border2);
-    box-shadow: 0 12px 28px rgba(0,0,0,.10), inset 0 1px 0 rgba(255,255,255,.48);
+    box-shadow: 0 8px 18px rgba(0,0,0,.07);
     overflow: hidden;
+    animation: none;
   }
   .splash-hero-mark img {
     width: 100%;
@@ -532,11 +526,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background:
-      radial-gradient(circle at 30% 20%, rgba(255,255,255,.98), rgba(255,255,255,.78) 24%, rgba(255,255,255,0) 62%),
-      linear-gradient(135deg, rgba(26,122,53,.10), rgba(46,204,92,.06));
+    background: var(--glass-2);
     border: 1px solid var(--border2);
-    box-shadow: 0 10px 26px rgba(0,0,0,.08), inset 0 1px 0 rgba(255,255,255,.48);
+    box-shadow: 0 8px 18px rgba(0,0,0,.07);
     overflow: hidden;
   }
   .splash-brand-mark img {
@@ -699,13 +691,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background:
-      radial-gradient(circle at 30% 20%, rgba(255,255,255,.98), rgba(255,255,255,.78) 24%, rgba(255,255,255,0) 62%),
-      linear-gradient(135deg, rgba(26,122,53,.12), rgba(46,204,92,.08));
+    background: var(--glass-2);
     border: 1px solid var(--border2);
-    box-shadow: 0 12px 28px rgba(0,0,0,.10), inset 0 1px 0 rgba(255,255,255,.48);
+    box-shadow: 0 8px 18px rgba(0,0,0,.07);
     overflow: hidden;
-    animation: holidayLogoFloat 8.8s cubic-bezier(.22,1,.36,1) infinite;
+    animation: none;
   }
   .splash-hero-mark img {
     width: 100%;
@@ -743,16 +733,14 @@
   }
   .login-card {
     width: min(560px, 100%);
-    border: 1px solid color-mix(in srgb, var(--palette-card-border) 42%, var(--border2));
+    border: 1px solid var(--border2);
     border-radius: 20px;
-    background:
-      radial-gradient(140% 120% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
-      linear-gradient(180deg, var(--glass-1), var(--glass-2));
-    box-shadow: var(--e3), 0 0 0 1px var(--palette-card-border), 0 0 18px var(--palette-card-glow-2), var(--eac);
+    background: linear-gradient(180deg, var(--glass-1), var(--glass-2));
+    box-shadow: 0 14px 36px rgba(0,0,0,.10);
     padding: 22px;
   }
   .auth-screen .login-card {
-    animation: holidayCardBreath 9.2s cubic-bezier(.22,1,.36,1) infinite;
+    animation: none;
   }
   .brand-row {
     display: flex;
@@ -768,11 +756,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background:
-      radial-gradient(circle at 30% 20%, rgba(255,255,255,.98), rgba(255,255,255,.78) 24%, rgba(255,255,255,0) 62%),
-      linear-gradient(135deg, var(--palette-card-bg-1), var(--palette-card-bg-2));
+    background: var(--glass-2);
     border: 1px solid var(--border2);
-    box-shadow: 0 12px 28px rgba(0,0,0,.10), inset 0 1px 0 rgba(255,255,255,.48);
+    box-shadow: 0 8px 18px rgba(0,0,0,.07);
     overflow: hidden;
   }
   .brand-mark.logo-mark{
@@ -791,7 +777,7 @@
     width: 54px;
     height: 54px;
     border-radius: 16px;
-    animation: holidayLogoFloat 8.8s cubic-bezier(.22,1,.36,1) infinite;
+    animation: none;
   }
   .brand-mark.logo-mark.lg{width:54px;height:54px}
   .brand-mark.logo-mark.md{width:32px;height:32px}
@@ -1246,57 +1232,33 @@
     flex: 1 1 auto;
   }
   .tracker-shell-back {
-    width: 32px;
-    height: 32px;
-    border-radius: 7px;
-    border: 1px solid var(--tracker-back-border);
-    background:
-      radial-gradient(circle at 30% 20%, color-mix(in srgb, var(--tracker-back-glow) 42%, transparent) 0%, transparent 56%),
-      linear-gradient(180deg, color-mix(in srgb, var(--tracker-back-soft) 78%, var(--glass-2)), var(--glass-2));
-    color: var(--tracker-back-accent);
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    border: 1px solid var(--border2);
+    background: var(--glass-2);
+    color: var(--text2);
     text-decoration: none;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    box-shadow: 0 0 0 1px color-mix(in srgb, var(--tracker-back-border) 55%, transparent);
+    box-shadow: 0 1px 3px var(--shadow);
     transition: border-color .18s, color .18s, background-color .18s, box-shadow .18s, transform .18s;
   }
-  body.dark .tracker-shell-back {
-    border-color: color-mix(in srgb, var(--tracker-back-accent2) 34%, var(--border));
-    background:
-      radial-gradient(circle at 30% 20%, color-mix(in srgb, var(--tracker-back-glow) 62%, transparent) 0%, transparent 58%),
-      linear-gradient(180deg, color-mix(in srgb, var(--tracker-back-soft-2) 88%, var(--glass-2)), color-mix(in srgb, var(--tracker-back-soft) 70%, var(--glass-2)));
-    color: var(--tracker-back-accent2);
-    box-shadow:
-      0 0 0 1px color-mix(in srgb, var(--tracker-back-border) 68%, transparent),
-      0 0 18px color-mix(in srgb, var(--tracker-back-glow) 45%, transparent);
-  }
   .tracker-shell-back:hover {
-    border-color: var(--tracker-back-accent);
-    color: #fff;
-    background: linear-gradient(180deg, var(--tracker-back-accent2), var(--tracker-back-accent));
-    box-shadow: 0 0 0 3px var(--tracker-back-soft), 0 0 22px var(--tracker-back-glow);
-    transform: translateY(-1px) scale(1.06);
+    border-color: var(--border3);
+    color: var(--text);
+    background: var(--glass-2);
+    box-shadow: 0 1px 3px var(--shadow);
+    transform: translateY(-1px);
   }
   .tracker-shell-back.tracker-shell-back-basic:hover {
-    border-color: var(--border2);
+    border-color: var(--border3);
     color: var(--text);
-    background:
-      radial-gradient(circle at 30% 20%, color-mix(in srgb, var(--tracker-back-glow) 42%, transparent) 0%, transparent 56%),
-      linear-gradient(180deg, color-mix(in srgb, var(--tracker-back-soft) 78%, var(--glass-2)), var(--glass-2));
-    box-shadow: 0 0 0 1px color-mix(in srgb, var(--tracker-back-border) 55%, transparent);
-    transform: translateY(-1px) scale(1.03);
-  }
-  body.dark .tracker-shell-back.tracker-shell-back-basic:hover {
-    border-color: color-mix(in srgb, var(--tracker-back-accent2) 34%, var(--border));
-    color: var(--tracker-back-accent2);
-    background:
-      radial-gradient(circle at 30% 20%, color-mix(in srgb, var(--tracker-back-glow) 62%, transparent) 0%, transparent 58%),
-      linear-gradient(180deg, color-mix(in srgb, var(--tracker-back-soft-2) 88%, var(--glass-2)), color-mix(in srgb, var(--tracker-back-soft) 70%, var(--glass-2)));
-    box-shadow:
-      0 0 0 1px color-mix(in srgb, var(--tracker-back-border) 68%, transparent),
-      0 0 18px color-mix(in srgb, var(--tracker-back-glow) 45%, transparent);
+    background: var(--glass-2);
+    box-shadow: 0 1px 3px var(--shadow);
+    transform: translateY(-1px);
   }
   .tracker-shell-mark {
     width: 36px;
@@ -1415,9 +1377,7 @@
     height: 32px;
     border-radius: 7px;
     border: 1px solid var(--border2);
-    background:
-      radial-gradient(circle at 30% 20%, color-mix(in srgb, var(--palette-card-glow-1) 42%, transparent) 0%, transparent 56%),
-      var(--glass-2);
+    background: var(--glass-2);
     color: var(--text2);
     text-decoration: none;
     cursor: pointer;
@@ -1457,10 +1417,10 @@
     box-shadow: 0 0 0 1px var(--accent-soft-2);
   }
   .tracker-shell-icon.palette.active {
-    border-color: var(--accent2);
+    border-color: var(--accent-border);
     color: var(--accent2);
     background: var(--accent-soft);
-    box-shadow: 0 0 0 1px var(--accent-soft-2), 0 0 18px var(--palette-card-glow-1);
+    box-shadow: 0 0 0 1px var(--accent-soft-2);
   }
   .palette-overlay{
     position:fixed;
@@ -1536,12 +1496,8 @@
   input[type="date"], input[type="text"], textarea { font-family: var(--ff-body); font-size: 14px; border: 1px solid var(--border2); border-radius: 7px; padding: 10px 12px; width: 100%; background: var(--glass-4); color: var(--text); outline: none; transition: border-color 0.2s; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
   .dark input[type="date"], .dark input[type="text"], .dark textarea { background: var(--glass-4); }
   input:focus, textarea:focus { border-color: var(--accent2); box-shadow: 0 0 0 3px var(--accent-soft); }
-  .card { background:
-      radial-gradient(140% 120% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
-      var(--glass-5); border-radius: 14px; padding: 16px; box-shadow: 0 12px 36px rgba(0,0,0,.12), 0 0 0 1px var(--palette-card-border), 0 0 18px var(--palette-card-glow-2); margin-bottom: 14px; border: 1px solid color-mix(in srgb, var(--palette-card-border) 42%, var(--border2)); transition: background 0.3s, border-color 0.3s; position: relative; overflow: hidden; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); }
-  .dark .card { background:
-      radial-gradient(140% 120% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
-      var(--glass-5); }
+  .card { background: var(--glass-5); border-radius: 14px; padding: 16px; box-shadow: 0 10px 28px rgba(0,0,0,.10), 0 0 0 1px color-mix(in srgb, var(--palette-card-border) 28%, var(--border2)); margin-bottom: 14px; border: 1px solid color-mix(in srgb, var(--palette-card-border) 28%, var(--border2)); transition: background 0.3s, border-color 0.3s; position: relative; overflow: hidden; backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); }
+  .dark .card { background: var(--glass-5); }
   .card::before {
     content: '';
     position: absolute;
@@ -1790,14 +1746,11 @@
   body:not(.basic-mode) input[type="text"],
   body:not(.basic-mode) textarea,
   body:not(.basic-mode) .ios-banner {
-    background:
-      radial-gradient(140% 120% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
-      radial-gradient(120% 120% at 100% 0%, var(--palette-card-glow-2), transparent 48%),
-      linear-gradient(180deg, var(--glass-1), var(--glass-2)) !important;
+    background: linear-gradient(180deg, var(--glass-1), var(--glass-2)) !important;
     border: 1px solid var(--border2) !important;
-    box-shadow: 0 8px 24px rgba(15,23,42,.06) !important;
-    backdrop-filter: blur(20px) !important;
-    -webkit-backdrop-filter: blur(20px) !important;
+    box-shadow: 0 6px 18px rgba(15,23,42,.05) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
   }
   body:not(.basic-mode) .card {
     border-radius: 14px !important;
@@ -2170,20 +2123,20 @@ function trackerApplyBackButtonPalette(){
   if(!button) return;
   document.body.classList.toggle('basic-mode', preset === 'basic');
   button.classList.toggle('tracker-shell-back-basic', preset === 'basic');
-  // Apply the suite palette tokens so dark/default uses the neutral suite tint instead of the old green glass.
+  // Apply palette tokens to the tracker shell while keeping core navigation controls on the suite baseline.
   const rootStyle = document.documentElement.style;
   const bodyStyle = document.body.style;
   const vars = {
     '--accent': pal.accent,
     '--accent2': pal.accent2,
-    '--accent-soft': trackerRgbaFromHex(pal.accent, .10),
-    '--accent-soft-2': trackerRgbaFromHex(pal.accent, .18),
-    '--accent-border': trackerRgbaFromHex(pal.accent, .28),
-    '--palette-card-bg-1': trackerRgbaFromHex(pal.accent2, .22),
-    '--palette-card-bg-2': trackerRgbaFromHex(pal.accent, .12),
-    '--palette-card-border': trackerRgbaFromHex(pal.accent3, .26),
-    '--palette-card-glow-1': trackerRgbaFromHex(pal.accent3, .18),
-    '--palette-card-glow-2': trackerRgbaFromHex(pal.accent3, .10)
+    '--accent-soft': trackerRgbaFromHex(pal.accent, .06),
+    '--accent-soft-2': trackerRgbaFromHex(pal.accent, .12),
+    '--accent-border': trackerRgbaFromHex(pal.accent, .18),
+    '--palette-card-bg-1': trackerRgbaFromHex(pal.accent2, .12),
+    '--palette-card-bg-2': trackerRgbaFromHex(pal.accent, .06),
+    '--palette-card-border': trackerRgbaFromHex(pal.accent3, .18),
+    '--palette-card-glow-1': trackerRgbaFromHex(pal.accent3, .08),
+    '--palette-card-glow-2': trackerRgbaFromHex(pal.accent3, .04)
   };
   for (const [k, v] of Object.entries(vars)) {
     if (v) {
@@ -2191,12 +2144,6 @@ function trackerApplyBackButtonPalette(){
       bodyStyle.setProperty(k, v);
     }
   }
-  button.style.setProperty('--tracker-back-accent', pal.accent, 'important');
-  button.style.setProperty('--tracker-back-accent2', pal.accent2, 'important');
-  button.style.setProperty('--tracker-back-soft', trackerRgbaFromHex(pal.accent, .08), 'important');
-  button.style.setProperty('--tracker-back-soft-2', trackerRgbaFromHex(pal.accent, .14), 'important');
-  button.style.setProperty('--tracker-back-border', trackerRgbaFromHex(pal.accent3, .18), 'important');
-  button.style.setProperty('--tracker-back-glow', trackerRgbaFromHex(pal.accent3, .24), 'important');
 }
 async function trackerLoadSharedPalette(user){
   if(!stSb || !user || !user.id) return null;
@@ -2290,8 +2237,8 @@ function renderTodayView(active){
   nav.appendChild(h("button",{class:"nav-btn",style:{padding:"6px 14px"},onClick:()=>set({viewOffset:offset+1})},"›"));
   wrap.appendChild(nav);
 
-  const hero=h("div",{class:"card",style:{background:`linear-gradient(135deg,${active.color}20,${active.color}06)`,border:`2px solid ${active.color}33`,textAlign:"center",padding:"28px 20px",marginBottom:"12px",position:"relative",overflow:"hidden",animation:isBasic?"none":"trackerCardGlow 6.8s var(--ease-smooth) infinite"}});
-  hero.appendChild(h("div",{style:{position:"absolute",top:"-30px",right:"-30px",width:"120px",height:"120px",borderRadius:"50%",background:`${active.color}10`,pointerEvents:"none"}}));
+  const hero=h("div",{class:"card",style:{background:`linear-gradient(180deg, ${active.color}18, var(--bg2))`,border:`1px solid ${active.color}2e`,textAlign:"center",padding:"28px 20px",marginBottom:"12px",position:"relative",overflow:"hidden",animation:"none"}});
+  hero.appendChild(h("div",{style:{position:"absolute",top:"-30px",right:"-30px",width:"120px",height:"120px",borderRadius:"50%",background:`radial-gradient(circle, ${active.color}12 0%, transparent 72%)`,pointerEvents:"none"}}));
   const heroEmojiClass =
     tM.emoji === "☀️" ? "sun" :
     tM.emoji === "🌙" ? "moon" :
@@ -2322,7 +2269,7 @@ function renderTodayView(active){
     bc.appendChild(h("div",{style:{fontSize:"28px",lineHeight:"1"}},nb===0?"🛌":"✈️"));
     bc.appendChild(h("div",{},
       nb===0
-        ?[h("div",{style:{fontWeight:"700",fontSize:"15px",color:"#9d174d"}},"On Long Break!"),
+        ?[h("div",{style:{fontWeight:"700",fontSize:"15px",color:"var(--text)"}}, "On Long Break!"),
           h("div",{class:"mono",style:{fontSize:"11px",color:"var(--text3)",marginTop:"2px"}},"Enjoy the time off")]
         :[h("div",{style:{fontWeight:"700",fontSize:"15px",color:"var(--text)"}},`Break in ${nb} day${nb!==1?"s":""}`),
           h("div",{class:"mono",style:{fontSize:"11px",color:"var(--text3)",marginTop:"2px"}},`Starts ${formatLongDate(addDays(TODAY,nb))}`)]
@@ -2353,7 +2300,7 @@ function renderShiftSummaryCard(active){
   const tSt=status(active,TODAY),tM=meta(tSt);
   const nx=getNextStatusChange(active,TODAY),nxM=meta(nx.status);
   const nb=getDaysUntilLongBreak(active);
-  return h("div",{class:"card",style:{border:`1px solid ${active.color}44`,boxShadow:`0 2px 10px ${active.color}12`,padding:"12px 14px",marginBottom:"12px",animation:"trackerCardGlow 6.8s var(--ease-smooth) infinite"}},
+  return h("div",{class:"card",style:{border:"1px solid var(--border2)",boxShadow:"0 8px 20px rgba(15,23,42,.05)",padding:"12px 14px",marginBottom:"12px",animation:"none"}},
     h("div",{style:{display:"flex",gap:"10px",flexWrap:"wrap",alignItems:"center"}},
       h("div",{style:{flex:"1",minWidth:"120px"}},
         h("div",{class:"mono",style:{fontSize:"9px",color:"var(--text3)",textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:"3px"}},`${active.id} Shift · ${formatShortDate(TODAY)}`),
@@ -2362,7 +2309,7 @@ function renderShiftSummaryCard(active){
       ),
       h("div",{style:{textAlign:"right",minWidth:"110px"}},
         h("div",{class:"mono",style:{fontSize:"9px",color:"var(--text3)",textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:"3px"}},"Next change"),
-        h("div",{style:{fontSize:"14px",fontWeight:"600",color:active.color}},`${nxM.emoji} ${nxM.label}`),
+        h("div",{style:{fontSize:"14px",fontWeight:"600",color:"var(--text2)"}},`${nxM.emoji} ${nxM.label}`),
         h("div",{class:"mono",style:{fontSize:"10px",color:"var(--text2)",marginTop:"2px"}},`${formatLongDate(nx.date)} · ${nx.days}d`)
       )
     ),
@@ -2372,7 +2319,7 @@ function renderShiftSummaryCard(active){
           h("span",{style:{fontSize:"12px",color:"var(--text2)"}},`Next break in `,h("strong",{},`${nb}d`),` · ${formatLongDate(addDays(TODAY,nb))}`)
         )
       :h("div",{style:{marginTop:"8px",paddingTop:"8px",borderTop:"1px solid var(--border2)"}},
-          h("span",{style:{fontSize:"12px",color:"#9d174d",fontWeight:"600"}},"✈️ Currently on long break!")
+          h("span",{style:{fontSize:"12px",color:"var(--text2)",fontWeight:"600"}},"✈️ Currently on long break!")
         )
   );
 }
@@ -2549,7 +2496,7 @@ function renderTrackerApp(){
     const st=status(sh,TODAY),m=meta(st),sel=sh.id===focus,phase=S.breakLabelsTrial ? getLongBreakPhaseShort(sh,TODAY) : "";
     pills.appendChild(h("div",{class:"pill",
       style:{background:sel?"var(--bg2)":"var(--bg3)",border:`2px solid ${sel?sh.color:"var(--border)"}`,borderRadius:"12px",padding:"9px 4px",textAlign:"center",boxShadow:sel?`0 3px 12px ${sh.color}30`:"none"},
-      onClick:()=>set({focus:sh.id,viewOffset:0})},
+      onClick:()=>set({focus:sh.id})},
       h("div",{style:{fontSize:"18px",fontWeight:"700",color:sh.color}},sh.id),
       h("div",{style:{fontSize:"14px",margin:"2px 0"}},m.emoji),
       h("div",{class:"badge",style:{background:m.bg,color:m.fg,border:`1px solid ${m.br}`,fontSize:"9px"}},m.short),

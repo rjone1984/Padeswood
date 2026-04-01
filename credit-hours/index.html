@@ -425,38 +425,35 @@ body.basic-mode .topbar .back-platform-btn:hover{
   padding:4px 8px;border-radius:999px;font-size:11px;font-family:var(--ff-mono);
   background:var(--sf3);border:1px solid var(--bd);color:var(--tx2);
 }
-.pill.pending{color:var(--amb);border-color:var(--ambb);background:var(--ambd)}
-.pill.queue-ok{color:var(--grn);border-color:var(--grnb);background:var(--grnd)}
-.pill.queue-warn{color:var(--amb);border-color:var(--ambb);background:var(--ambd)}
-.pill.approved{color:var(--grn);border-color:var(--grnb);background:var(--grnd)}
-.pill.denied,.pill.cancelled{color:var(--red);border-color:var(--redb);background:var(--redd)}
-.pill.kind-credit{color:var(--grn);border-color:var(--grnb);background:var(--grnd)}
-.pill.kind-overtime{color:var(--amb);border-color:var(--ambb);background:var(--ambd)}
-.pill.kind-unpaid{color:var(--pur);border-color:var(--purb);background:var(--purd)}
-.pill.kind-other{color:var(--amb);border-color:var(--ambb);background:var(--ambd)}
-.pill.balance-red{color:var(--red);border-color:var(--redb);background:var(--redd);--balance-glow: rgba(240,82,79,.28)}
-.pill.balance-amber{color:var(--amb);border-color:var(--ambb);background:var(--ambd);--balance-glow: rgba(245,166,35,.28)}
-.pill.balance-green{color:var(--grn);border-color:var(--grnb);background:var(--grnd);--balance-glow: rgba(33,194,122,.24)}
+.pill.pending,
+.pill.queue-ok,
+.pill.queue-warn,
+.pill.approved,
+.pill.denied,
+.pill.cancelled,
+.pill.kind-credit,
+.pill.kind-overtime,
+.pill.kind-unpaid,
+.pill.kind-other,
+.pill.balance-red,
+.pill.balance-amber,
+.pill.balance-green{
+  color:var(--tx2);
+  border-color:var(--bd2);
+  background:var(--sf3);
+  --balance-glow:transparent;
+}
 .pill.balance-red,
 .pill.balance-amber,
 .pill.balance-green{
   position:relative;
-  animation:balancePulse 3.4s var(--ease-smooth) infinite;
-  will-change:transform, filter, box-shadow;
+  animation:none;
+  will-change:auto;
 }
 .pill.balance-red::after,
 .pill.balance-amber::after,
 .pill.balance-green::after{
-  content:'';
-  position:absolute;
-  inset:-2px;
-  border-radius:inherit;
-  pointer-events:none;
-  opacity:.22;
-  filter:blur(8px);
-  background:var(--balance-glow);
-  z-index:-1;
-  animation:balanceAura 3.4s var(--ease-smooth) infinite;
+  display:none;
 }
 @keyframes balancePulse{
   0%,100%{transform:translateY(0) scale(1);filter:saturate(1)}
@@ -798,11 +795,8 @@ body.basic-mode .topbar .back-platform-btn:hover{
 .insight-card{
   border:1px solid var(--bd);
   border-radius:18px;
-  background:
-    radial-gradient(140% 100% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
-    radial-gradient(120% 100% at 100% 0%, var(--palette-card-glow-2), transparent 48%),
-    linear-gradient(180deg,var(--glass-1),var(--glass-2));
-  box-shadow:var(--e1), var(--eac);
+  background:linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  box-shadow:var(--e1);
   overflow:hidden;
 }
 .insight-head{
@@ -867,7 +861,7 @@ body.basic-mode .topbar .back-platform-btn:hover{
   border-radius:12px;
   background:var(--sf3);
   overflow:hidden;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
 }
 .insight-bar{
   position:absolute;
@@ -878,14 +872,14 @@ body.basic-mode .topbar .back-platform-btn:hover{
 }
 .insight-bar.credit{
   bottom:0;
-  background:linear-gradient(180deg,var(--grn),color-mix(in srgb, var(--grn) 70%, #000 30%));
+  background:linear-gradient(180deg,var(--tx3),color-mix(in srgb, var(--tx3) 70%, var(--bd) 30%));
 }
 .insight-bar.overtime{
-  background:linear-gradient(180deg,var(--amb),color-mix(in srgb, var(--amb) 70%, #000 30%));
+  background:linear-gradient(180deg,var(--tx2),color-mix(in srgb, var(--tx2) 70%, var(--bd) 30%));
 }
 .insight-bar.pending{
   opacity:.45;
-  border:1px dashed color-mix(in srgb, var(--tx3) 50%, var(--amb) 50%);
+  border:1px dashed color-mix(in srgb, var(--tx3) 75%, var(--bd) 25%);
 }
 .insight-month-label{
   font-size:10px;
@@ -940,7 +934,7 @@ body.basic-mode .topbar .back-platform-btn:hover{
   border-radius:10px;
   border:1px solid var(--bd);
   background:
-    linear-gradient(180deg,var(--grn),var(--grnb)),
+    linear-gradient(180deg,var(--tx3),var(--bd3)),
     var(--sf2);
   position:relative;
   overflow:hidden;
@@ -952,12 +946,12 @@ body.basic-mode .topbar .back-platform-btn:hover{
   bottom:0;
   width:100%;
   height:100%;
-  background:linear-gradient(180deg,transparent 0%, transparent calc(100% - var(--credit-height, 0%)), rgba(33,194,122,.85) calc(100% - var(--credit-height, 0%)));
+  background:linear-gradient(180deg,transparent 0%, transparent calc(100% - var(--credit-height, 0%)), rgba(148,163,184,.9) calc(100% - var(--credit-height, 0%)));
   opacity:1;
 }
 .insight-member-bar.overtime{
   background:
-    linear-gradient(180deg,var(--amb),var(--ambb)),
+    linear-gradient(180deg,var(--tx2),var(--bd2)),
     var(--sf2);
 }
 .insight-member-pill-row{
@@ -1794,19 +1788,19 @@ body:not(.basic-mode) .btn-primary:hover{
       <div class="sub" id="statEntitlementSub">Annual credit-hours allowance</div>
       </div>
       <div class="stat">
-        <div class="label">Credits Worked</div>
+        <div class="label">Credit Hours Worked</div>
         <div class="value" id="statUsed">0.0</div>
-        <div class="sub">Approved credits worked this year</div>
+        <div class="sub">Approved credit hours worked this year</div>
       </div>
       <div class="stat">
         <div class="label">Pending</div>
         <div class="value" id="statPending">0.0</div>
-        <div class="sub">Claimed hours waiting for a decision</div>
+        <div class="sub">Claimed credit hours waiting for a decision</div>
       </div>
       <div class="stat">
         <div class="label">Credit Hours Remaining</div>
         <div class="value" id="statRemaining">0.0</div>
-        <div class="sub">Allowance minus approved credits worked</div>
+        <div class="sub">Allowance minus approved credit hours worked</div>
       </div>
       <div class="stat">
         <div class="label">Overtime</div>
@@ -1816,12 +1810,12 @@ body:not(.basic-mode) .btn-primary:hover{
       <div class="stat hidden" id="statBreakCover">
         <div class="label">Break cover</div>
         <div class="value">0.0</div>
-        <div class="sub" id="statBreakCoverSub">Approved credit from "No break cover provided"</div>
+        <div class="sub" id="statBreakCoverSub">Approved credit hours from "No break cover provided"</div>
       </div>
       <div class="stat">
         <div class="label">Rolling Quarter Worked</div>
         <div class="value" id="statQuarterUsed">0.0</div>
-        <div class="sub">Approved credits worked in the rolling quarter</div>
+        <div class="sub">Approved credit hours worked in the rolling quarter</div>
       </div>
       <div class="stat">
         <div class="label">Rolling Quarter Remaining</div>
@@ -1853,7 +1847,7 @@ body:not(.basic-mode) .btn-primary:hover{
           <input id="reqStart" class="input" type="date">
         </div>
         <div class="field form-card">
-          <label for="reqWorkedHours">Hours worked</label>
+          <label for="reqWorkedHours">Credit hours worked</label>
           <input id="reqWorkedHours" class="input" type="number" min="0.5" step="0.5" value="0">
         </div>
         <div class="field form-card">
@@ -1864,7 +1858,7 @@ body:not(.basic-mode) .btn-primary:hover{
           </select>
         </div>
         <div class="field form-card">
-          <label for="reqDays">Hours to claim</label>
+          <label for="reqDays">Credit hours to claim</label>
           <input id="reqDays" class="input" type="number" min="0.5" step="0.5" value="0">
         </div>
         <div class="field full form-card">
@@ -2627,6 +2621,10 @@ function requestHoursText(hours){
   const n = num(hours, 0);
   return n.toFixed(n % 1 === 0 ? 0 : 1) + ' hour' + (n === 1 ? '' : 's');
 }
+function creditHoursText(hours){
+  const n = num(hours, 0);
+  return n.toFixed(n % 1 === 0 ? 0 : 1) + ' credit hour' + (n === 1 ? '' : 's');
+}
 function allowanceExtrasText(hours){
   return requestHoursText(hours);
 }
@@ -2666,7 +2664,7 @@ function requestAmountText(req){
   if (requestConsumesBalance(req)) {
     const earned = requestCreditHoursEarned(req);
     const multiplier = requestCreditMultiplier(req);
-    return worked + ' worked · ' + claimed + ' claimed · ' + requestHoursText(earned) + ' credit' + (multiplier > 1 ? ' (' + requestCreditMultiplierLabel(req) + ')' : '');
+    return worked + ' worked · ' + claimed + ' claimed · ' + creditHoursText(earned) + (multiplier > 1 ? ' (' + requestCreditMultiplierLabel(req) + ')' : '');
   }
   return worked + ' worked · ' + claimed + ' paid overtime';
 }
@@ -3209,7 +3207,7 @@ function renderMyRequests(){
           '<div class="entry-group-sub">' + esc(group.sub) + ' · ' + esc(group.count + ' entr' + (group.count === 1 ? 'y' : 'ies')) + '</div>' +
         '</div>' +
         '<div class="entry-group-right">' +
-          '<span class="pill">' + esc(requestHoursText(group.total)) + ' total</span>' +
+          '<span class="pill">' + esc(creditHoursText(group.total)) + ' total</span>' +
           '<span class="pill">' + esc(group.count + ' entr' + (group.count === 1 ? 'y' : 'ies')) + '</span>' +
         '</div>' +
       '</summary>' +
@@ -3341,13 +3339,12 @@ function renderTeamOverviewCards(){
       '<div class="activity-roster-head">'+
         '<div style="min-width:0">'+
           '<div class="activity-roster-name">'+esc(displayName)+'</div>'+
-          '<div class="activity-roster-sub">'+esc(requestHoursText(stats.remaining))+' remaining · '+esc(requestHoursText(stats.pending))+' pending'+(isHolidayAdmin && holidayManagerDisplayNameForUser(p.id) ? ' · '+esc(holidayManagerDisplayNameForUser(p.id)) : '')+'</div>'+
+          '<div class="activity-roster-sub">'+esc(creditHoursText(stats.remaining))+' remaining · '+esc(creditHoursText(stats.pending))+' pending'+(isHolidayAdmin && holidayManagerDisplayNameForUser(p.id) ? ' · '+esc(holidayManagerDisplayNameForUser(p.id)) : '')+'</div>'+
         '</div>'+
-        '<span class="pill '+(stats.pending > 0 ? 'queue-warn' : 'queue-ok')+'">'+esc(requestHoursText(stats.pending))+' pending</span>'+
       '</div>'+
       '<div class="activity-roster-stats">'+
-        '<span class="pill">'+esc(requestHoursText(stats.used))+' worked</span>'+
-        '<span class="pill">'+esc(requestHoursText(stats.quarterRemaining))+' quarter left</span>'+
+        '<span class="pill">'+esc(creditHoursText(stats.used))+' worked</span>'+
+        '<span class="pill">'+esc(creditHoursText(stats.quarterRemaining))+' quarter left</span>'+
         '<span class="pill">'+esc(requestHoursText(stats.overtime))+' overtime</span>'+
       '</div>'+
     '</button>';
@@ -3359,24 +3356,23 @@ function renderTeamOverviewCards(){
         '<div class="activity-detail-name">'+
           '<div class="title">'+esc(selectedDisplayName)+'</div>'+
           '<div class="sub">'+
-            esc(requestHoursText(selectedStats.entitlement))+' annual allowance · '+
-            esc(requestHoursText(selectedStats.used))+' worked · '+
-            esc(requestHoursText(selectedQuarterUsed))+' rolling quarter worked · '+
-            esc(requestHoursText(selectedQuarterRemaining))+' rolling quarter remaining'+
+            esc(creditHoursText(selectedStats.entitlement))+' annual allowance · '+
+            esc(creditHoursText(selectedStats.used))+' worked · '+
+            esc(creditHoursText(selectedQuarterUsed))+' rolling quarter worked · '+
+            esc(creditHoursText(selectedQuarterRemaining))+' rolling quarter remaining'+
             (isHolidayAdmin && holidayManagerDisplayNameForUser(selectedUserId) ? ' · manager '+esc(holidayManagerDisplayNameForUser(selectedUserId)) : '')+
           '</div>'+
         '</div>'+
         '<div class="activity-roster-stats">'+
-          '<span class="pill">'+esc(requestHoursText(selectedStats.remaining))+' remaining</span>'+
-          '<span class="pill '+(selectedStats.pending > 0 ? 'queue-warn' : 'queue-ok')+'">'+esc(requestHoursText(selectedStats.pending))+' pending</span>'+
+          '<span class="pill">'+esc(creditHoursText(selectedStats.remaining))+' remaining</span>'+
           '<span class="pill">'+esc(requestHoursText(selectedStats.overtime))+' overtime</span>'+
         '</div>'+
       '</div>'+
       '<div class="activity-stat-grid">'+
-        '<div class="activity-stat"><div class="label">Annual allowance</div><div class="value">'+esc(requestHoursText(selectedStats.entitlement))+'</div></div>'+
-        '<div class="activity-stat"><div class="label">Credit hours remaining</div><div class="value">'+esc(requestHoursText(selectedStats.remaining))+'</div></div>'+
-        '<div class="activity-stat"><div class="label">Rolling quarter worked</div><div class="value">'+esc(requestHoursText(selectedQuarterUsed))+'</div></div>'+
-        '<div class="activity-stat"><div class="label">Rolling quarter remaining</div><div class="value">'+esc(requestHoursText(selectedQuarterRemaining))+'</div></div>'+
+        '<div class="activity-stat"><div class="label">Annual allowance</div><div class="value">'+esc(creditHoursText(selectedStats.entitlement))+'</div></div>'+
+        '<div class="activity-stat"><div class="label">Credit hours remaining</div><div class="value">'+esc(creditHoursText(selectedStats.remaining))+'</div></div>'+
+        '<div class="activity-stat"><div class="label">Rolling quarter worked</div><div class="value">'+esc(creditHoursText(selectedQuarterUsed))+'</div></div>'+
+        '<div class="activity-stat"><div class="label">Rolling quarter remaining</div><div class="value">'+esc(creditHoursText(selectedQuarterRemaining))+'</div></div>'+
       '</div>'+
       '<div class="activity-section">'+
         '<div class="activity-section-title">Recent claim audit</div>'+
@@ -3527,7 +3523,7 @@ function insightMonthCell(bucket, peak, compact, monthLabel){
   if (bucket.pendingCredit + bucket.pendingOvertime > 0) {
     pieces.push('<div class="insight-bar pending" style="height:' + pendingHeight + '%;bottom:' + (creditHeight + overtimeHeight) + '%"></div>');
   }
-  return '<div class="insight-month" title="' + esc(monthLabel) + ': ' + esc(requestHoursText(bucket.credit)) + ' credit · ' + esc(requestHoursText(bucket.overtime)) + ' overtime' + (bucket.pendingCredit + bucket.pendingOvertime > 0 ? ' · ' + esc(requestHoursText(bucket.pendingCredit + bucket.pendingOvertime)) + ' pending' : '') + '">' +
+  return '<div class="insight-month" title="' + esc(monthLabel) + ': ' + esc(creditHoursText(bucket.credit)) + ' · ' + esc(requestHoursText(bucket.overtime)) + ' overtime' + (bucket.pendingCredit + bucket.pendingOvertime > 0 ? ' · ' + esc(creditHoursText(bucket.pendingCredit + bucket.pendingOvertime)) + ' pending' : '') + '">' +
     '<div class="insight-bars"' + (compact ? ' style="--bar-height:56px"' : '') + '>' + pieces.join('') + '</div>' +
     '<div class="insight-month-label">' + esc(monthLabel) + '</div>' +
   '</div>';
@@ -3541,10 +3537,10 @@ function insightMemberRow(member){
     '<div class="insight-member-head">' +
       '<div style="min-width:0">' +
         '<div class="insight-member-name">' + esc(member.title) + '</div>' +
-        '<div class="insight-member-sub">' + esc(requestHoursText(member.totals.credit)) + ' credit · ' + esc(requestHoursText(member.totals.overtime)) + ' overtime · ' + esc(requestHoursText(member.totals.pendingCredit + member.totals.pendingOvertime)) + ' pending</div>' +
+        '<div class="insight-member-sub">' + esc(creditHoursText(member.totals.credit)) + ' · ' + esc(requestHoursText(member.totals.overtime)) + ' overtime · ' + esc(creditHoursText(member.totals.pendingCredit + member.totals.pendingOvertime)) + ' pending</div>' +
       '</div>' +
       '<div class="insight-pills">' +
-        '<span class="pill kind-credit">' + esc(requestHoursText(member.totals.credit)) + ' credit</span>' +
+        '<span class="pill kind-credit">' + esc(creditHoursText(member.totals.credit)) + '</span>' +
         '<span class="pill kind-overtime">' + esc(requestHoursText(member.totals.overtime)) + ' overtime</span>' +
       '</div>' +
     '</div>' +
@@ -3560,12 +3556,12 @@ function insightTeamCard(group){
     '<div class="insight-head">' +
       '<div class="insight-head-left">' +
         '<div class="insight-team-title">' + esc(group.title) + '</div>' +
-        '<div class="insight-team-sub">' + esc(group.members.length + ' staff') + ' · ' + esc(requestHoursText(group.totals.credit)) + ' credit · ' + esc(requestHoursText(group.totals.overtime)) + ' overtime · ' + esc(requestHoursText(group.totals.pendingCredit + group.totals.pendingOvertime)) + ' pending</div>' +
+        '<div class="insight-team-sub">' + esc(group.members.length + ' staff') + ' · ' + esc(creditHoursText(group.totals.credit)) + ' · ' + esc(requestHoursText(group.totals.overtime)) + ' overtime · ' + esc(creditHoursText(group.totals.pendingCredit + group.totals.pendingOvertime)) + ' pending</div>' +
       '</div>' +
       '<div class="insight-pills">' +
-        '<span class="pill kind-credit">' + esc(requestHoursText(group.totals.credit)) + ' credit</span>' +
+        '<span class="pill kind-credit">' + esc(creditHoursText(group.totals.credit)) + '</span>' +
         '<span class="pill kind-overtime">' + esc(requestHoursText(group.totals.overtime)) + ' overtime</span>' +
-        '<span class="pill pending">' + esc(requestHoursText(group.totals.pendingCredit + group.totals.pendingOvertime)) + ' pending</span>' +
+        '<span class="pill '+((group.totals.pendingCredit + group.totals.pendingOvertime) > 0 ? 'pending' : 'queue-ok')+'">' + esc(creditHoursText(group.totals.pendingCredit + group.totals.pendingOvertime)) + ' pending</span>' +
       '</div>' +
     '</div>' +
     '<div class="insight-body">' +
@@ -3801,19 +3797,19 @@ function renderSummary(){
   const quarterUsedDisplay = stats.quarterUsed;
   const quarterRemainingDisplay = stats.quarterRemaining;
   const breakCoverHours = breakCoverCreditHoursForUser(currentUser.id, selectedYear);
-  $('statEntitlement').textContent = requestHoursText(stats.entitlement);
-  $('statUsed').textContent = requestHoursText(stats.used);
-  $('statPending').textContent = requestHoursText(stats.pending);
-  $('statRemaining').textContent = requestHoursText(stats.remaining);
+  $('statEntitlement').textContent = creditHoursText(stats.entitlement);
+  $('statUsed').textContent = creditHoursText(stats.used);
+  $('statPending').textContent = creditHoursText(stats.pending);
+  $('statRemaining').textContent = creditHoursText(stats.remaining);
   $('statProjected').textContent = requestHoursText(stats.overtime);
   $('statEntitlementSub').textContent = 'Default annual credit-hours allowance';
   const quarterUsed = $('statQuarterUsed');
   const quarterRemaining = $('statQuarterRemaining');
-  if (quarterUsed) quarterUsed.textContent = requestHoursText(quarterUsedDisplay);
-  if (quarterRemaining) quarterRemaining.textContent = requestHoursText(quarterRemainingDisplay);
+  if (quarterUsed) quarterUsed.textContent = creditHoursText(quarterUsedDisplay);
+  if (quarterRemaining) quarterRemaining.textContent = creditHoursText(quarterRemainingDisplay);
   const quarterUsedSub = quarterUsed ? quarterUsed.parentElement && quarterUsed.parentElement.querySelector('.sub') : null;
   const quarterRemainingSub = quarterRemaining ? quarterRemaining.parentElement && quarterRemaining.parentElement.querySelector('.sub') : null;
-  if (quarterUsedSub) quarterUsedSub.textContent = 'Approved credits worked plus pending reserved this quarter';
+  if (quarterUsedSub) quarterUsedSub.textContent = 'Approved credit hours worked plus pending reserved this quarter';
   if (quarterRemainingSub) quarterRemainingSub.textContent = 'Remaining after pending claims are reserved';
   const breakCoverStat = $('statBreakCover');
   if (breakCoverStat) {
@@ -3823,7 +3819,7 @@ function renderSummary(){
   }
   const breakCoverSub = $('statBreakCoverSub');
   if (breakCoverSub) {
-    breakCoverSub.textContent = 'Approved credit from "No break cover provided"';
+    breakCoverSub.textContent = 'Approved credit hours from "No break cover provided"';
   }
 }
 function renderHolidayApp(){
@@ -4209,8 +4205,8 @@ async function submitHolidayRequest(){
   const liveQuarterStats = rollingQuarterStatsForUser(currentUser.id, new Date());
   const quarterUsedEl = $('statQuarterUsed');
   const quarterRemainingEl = $('statQuarterRemaining');
-  if (quarterUsedEl) quarterUsedEl.textContent = requestHoursText(liveQuarterStats.used);
-  if (quarterRemainingEl) quarterRemainingEl.textContent = requestHoursText(liveQuarterStats.remaining);
+  if (quarterUsedEl) quarterUsedEl.textContent = creditHoursText(liveQuarterStats.used);
+  if (quarterRemainingEl) quarterRemainingEl.textContent = creditHoursText(liveQuarterStats.remaining);
   syncRequestedDays();
   $('reqReason').value = '';
   $('reqDays').value = '0';
