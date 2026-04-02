@@ -1932,6 +1932,45 @@ body:not(.basic-mode) .btn-primary:hover{
       <div id="approvalQueue" class="list"></div>
     </section>
 
+    <section class="panel hidden" id="hrHandoverPanel">
+      <div class="panel-head">
+        <div>
+          <div class="panel-title">HR handover</div>
+          <div class="panel-sub">Send names and approved credit hours or overtime for one selected range.</div>
+        </div>
+        <div class="queue-controls">
+          <span class="pill" id="hrHandoverStaffCount">Range</span>
+          <span class="pill" id="hrHandoverHoursCount">0 approved hours</span>
+          <select id="hrHandoverPeriod" class="select" onchange="setHrHandoverPeriod(this.value)">
+            <option value="week">Week</option>
+            <option value="month">Month</option>
+            <option value="year">Year</option>
+          </select>
+          <button class="btn btn-ghost" type="button" onclick="stepHrHandoverPeriod(-1)">Back</button>
+          <button class="btn btn-ghost" type="button" onclick="stepHrHandoverPeriod(1)">Next</button>
+        </div>
+      </div>
+      <div class="request-grid">
+        <div class="card-box">
+          <div class="box-label">HR mailbox</div>
+          <input id="hrHandoverRecipient" class="input" type="email" placeholder="hr@company.com" oninput="setHrHandoverRecipient(this.value)">
+          <div class="field-note">Saved in this browser so the next handover is quicker.</div>
+        </div>
+        <div class="card-box">
+          <div class="box-label">What will be sent</div>
+          <div id="hrHandoverSummary" class="small">0 approved hours ready for HR.</div>
+        </div>
+      </div>
+      <div class="card-box">
+        <div class="box-label">Names and hours</div>
+        <div id="hrHandoverList" class="list"></div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-ghost" type="button" onclick="copyHrHandoverSummary()">Copy summary</button>
+        <button class="btn btn-primary" type="button" onclick="openHrHandoverPreview()">Open email</button>
+      </div>
+    </section>
+
     <section class="panel hidden" id="allowancePanel">
       <div id="allowanceList" class="list"></div>
     </section>
@@ -2018,6 +2057,23 @@ body:not(.basic-mode) .btn-primary:hover{
   </div>
 </div>
 
+<div id="hrHandoverModal" class="palette-overlay" onclick="if(event.target===this)closeHrHandoverPreview()">
+  <div class="palette-panel">
+    <div class="palette-head">
+      <div class="palette-title">HR email preview</div>
+      <button class="palette-close" type="button" onclick="closeHrHandoverPreview()">Close</button>
+    </div>
+    <div class="palette-body">
+      <div class="palette-help">This is the email body that will open in your mail app. You can copy it, edit the recipient, or send it straight from the preview.</div>
+      <textarea id="hrHandoverPreviewText" class="textarea" rows="18" readonly></textarea>
+    </div>
+    <div class="palette-actions">
+      <button class="btn btn-ghost" type="button" onclick="copyHrHandoverSummary()">Copy text</button>
+      <button class="btn btn-primary" type="button" onclick="sendHrHandoverEmail()">Open email</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast" class="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -2027,6 +2083,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const LICENCE_KEY = 'KBL-HEIDELBERG-PADESWOOD-2026';
 const SB_LIC_URL = 'https://dviicnomxeibbuafbozp.supabase.co';
 const SB_LIC_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2aWljbm9teGVpYmJ1YWZib3pwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4ODM0MzcsImV4cCI6MjA4ODQ1OTQzN30.c1T3WXC225tdBbq_1R__9bhGFIZdSxim9dgxfvmkRjU';
+const HR_HANDOVER_DEFAULT_RECIPIENT = 'deryth.holland@heidelbergmaterials.com';
 const SUITE_LOGO_FALLBACK_SRC = 'data:image/svg+xml;utf8,' + encodeURIComponent(`
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="Padeswood Works">
   <defs>
@@ -2137,11 +2194,16 @@ let allHolidayProfileEvents = [];
 let allCreditBankHolidays = [];
 let selectedYear = new Date().getFullYear();
 let selectedMyRequestsGroup = 'month';
+let selectedHrHandoverPeriod = 'month';
+let selectedHrHandoverOffset = 0;
 let loginReady = false;
 let startupLoginTimer = null;
 let focusApprovalsOnRender = new URLSearchParams(window.location.search).get('focus') === 'approvals';
 const SHIFT_HOURS = 12;
 const MY_REQUESTS_GROUP_STORAGE_KEY = 'credit_hours_my_requests_group';
+const HR_HANDOVER_RECIPIENT_STORAGE_KEY = 'credit_hours_hr_recipient';
+const HR_HANDOVER_PERIOD_STORAGE_KEY = 'credit_hours_hr_period';
+const HR_HANDOVER_RANGE_OFFSET_STORAGE_KEY = 'credit_hours_hr_range_offset';
 
 function $(id) { return document.getElementById(id); }
 function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
@@ -2909,6 +2971,7 @@ function clearStartupLoginTimer(){
 async function logout(){
   try { if (sb) await sb.auth.signOut(); } catch(e) {}
   clearStartupLoginTimer();
+  closeHrHandoverPreview();
   currentUser = null;
   currentProfile = null;
   currentKilnUser = null;
@@ -2929,6 +2992,7 @@ function showAccessDenied(message){
   clearStartupLoginTimer();
   clearStartupGate();
   dismissBootShield();
+  closeHrHandoverPreview();
   $('loginScreen').classList.add('hidden');
   $('appShell').classList.add('hidden');
   $('accessDenied').classList.remove('hidden');
@@ -2939,6 +3003,7 @@ function showLoginScreen(){
   clearStartupLoginTimer();
   clearStartupGate();
   dismissBootShield();
+  closeHrHandoverPreview();
   $('appShell').classList.add('hidden');
   $('accessDenied').classList.add('hidden');
   $('loginScreen').classList.remove('hidden');
@@ -2962,6 +3027,7 @@ function showAppScreen(){
   clearStartupLoginTimer();
   clearStartupGate();
   dismissBootShield();
+  closeHrHandoverPreview();
   $('loginScreen').classList.add('hidden');
   $('accessDenied').classList.add('hidden');
   $('appShell').classList.remove('hidden');
@@ -3792,6 +3858,274 @@ function renderAllowanceList(){
     '</details>';
   }).join('');
 }
+function hrHandoverRecipient(){
+  const saved = String(localStorage.getItem(HR_HANDOVER_RECIPIENT_STORAGE_KEY) || '').trim();
+  return saved || HR_HANDOVER_DEFAULT_RECIPIENT;
+}
+function setHrHandoverRecipient(value){
+  const next = String(value || '').trim();
+  if (next) localStorage.setItem(HR_HANDOVER_RECIPIENT_STORAGE_KEY, next);
+  else localStorage.removeItem(HR_HANDOVER_RECIPIENT_STORAGE_KEY);
+}
+function normalizeHrHandoverPeriod(value){
+  const period = String(value || '').toLowerCase();
+  if (period === 'current-week' || period === 'last-week' || period === 'week') return 'week';
+  if (period === 'current-month' || period === 'last-month' || period === 'month') return 'month';
+  if (period === 'current-year' || period === 'last-year' || period === 'year') return 'year';
+  return ['week', 'month', 'year'].includes(period) ? period : 'month';
+}
+function getStoredHrHandoverPeriod(){
+  try {
+    return normalizeHrHandoverPeriod(localStorage.getItem(HR_HANDOVER_PERIOD_STORAGE_KEY));
+  } catch (e) {
+    return 'month';
+  }
+}
+function getStoredHrHandoverOffset(){
+  try {
+    const raw = parseInt(localStorage.getItem(HR_HANDOVER_RANGE_OFFSET_STORAGE_KEY), 10);
+    return Number.isFinite(raw) ? raw : 0;
+  } catch (e) {
+    return 0;
+  }
+}
+function setHrHandoverPeriod(value){
+  selectedHrHandoverPeriod = normalizeHrHandoverPeriod(value);
+  selectedHrHandoverOffset = 0;
+  try {
+    localStorage.setItem(HR_HANDOVER_PERIOD_STORAGE_KEY, selectedHrHandoverPeriod);
+    localStorage.setItem(HR_HANDOVER_RANGE_OFFSET_STORAGE_KEY, String(selectedHrHandoverOffset));
+  } catch (e) {}
+  renderHrHandoverPanel();
+}
+function stepHrHandoverPeriod(delta){
+  selectedHrHandoverOffset = num(selectedHrHandoverOffset, 0) + num(delta, 0);
+  try {
+    localStorage.setItem(HR_HANDOVER_RANGE_OFFSET_STORAGE_KEY, String(selectedHrHandoverOffset));
+  } catch (e) {}
+  renderHrHandoverPanel();
+}
+function hrHandoverProfilesForCurrentView(){
+  const profiles = isHolidayAdmin
+    ? allPwProfiles.filter(function(p){ return p && p.approved !== false && p.disabled !== true && p.role !== 'none'; })
+    : assignedHolidayStaffForCurrentUser();
+  return profiles.filter(Boolean).sort(function(a, b){
+    return String(personDisplayNameFromRecords(a, kilnUserFor(a.id), 'Unknown')).localeCompare(String(personDisplayNameFromRecords(b, kilnUserFor(b.id), 'Unknown')));
+  });
+}
+function hrHandoverPeriodLabel(){
+  const range = hrHandoverRangeBounds();
+  return range.label;
+}
+function hrHandoverPeriodContextLabel(){
+  return hrHandoverPeriodLabel();
+}
+function hrHandoverApprovedHoursText(hours){
+  const n = num(hours, 0);
+  return n.toFixed(n % 1 === 0 ? 0 : 1) + ' approved hour' + (n === 1 ? '' : 's');
+}
+function hrHandoverRangeBounds(){
+  const period = normalizeHrHandoverPeriod(selectedHrHandoverPeriod);
+  const offset = num(selectedHrHandoverOffset, 0);
+  const now = new Date();
+  const start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const end = new Date(start);
+  if (period === 'week') {
+    const monday = new Date(start);
+    const day = monday.getDay();
+    monday.setDate(monday.getDate() - ((day + 6) % 7) + (offset * 7));
+    start.setTime(monday.getTime());
+    end.setTime(monday.getTime());
+    end.setDate(end.getDate() + 6);
+  } else if (period === 'month') {
+    start.setDate(1);
+    start.setMonth(start.getMonth() + offset);
+    end.setTime(start.getTime());
+    end.setMonth(end.getMonth() + 1);
+    end.setDate(0);
+  } else {
+    start.setMonth(0, 1);
+    start.setFullYear(start.getFullYear() + offset);
+    end.setTime(start.getTime());
+    end.setFullYear(end.getFullYear() + 1);
+    end.setDate(0);
+  }
+  const startLabel = formatDateOnly(toLocalDateString(start));
+  const endLabel = formatDateOnly(toLocalDateString(end));
+  return {
+    label: startLabel === endLabel ? startLabel : startLabel + ' to ' + endLabel,
+    periodLabel: period,
+    start: toLocalDateString(start),
+    end: toLocalDateString(end)
+  };
+}
+function hrHandoverRequestInRange(req, bounds){
+  const keyDate = String(req && (req.work_date || req.requested_at || req.created_at || req.decided_at || '')).slice(0, 10);
+  if (!keyDate || !bounds) return false;
+  return keyDate >= bounds.start && keyDate <= bounds.end;
+}
+function hrHandoverGroupsForCurrentView(){
+  const bounds = hrHandoverRangeBounds();
+  const grouped = {
+    groupKey: 'range:' + bounds.start + ':' + bounds.end,
+    sortKey: bounds.start,
+    label: bounds.label,
+    people: new Map(),
+    total: 0,
+    credit: 0,
+    overtime: 0
+  };
+  hrHandoverProfilesForCurrentView().forEach(function(p){
+    const requests = requestsForUser(p.id)
+      .filter(function(r){ return r.status === 'approved' && hrHandoverRequestInRange(r, bounds); })
+      .sort(function(a, b){
+        return String(b.decided_at || b.requested_at || b.created_at || '').localeCompare(String(a.decided_at || a.requested_at || a.created_at || ''));
+      });
+    requests.forEach(function(req){
+      const kind = requestConsumesBalance(req) ? 'credit' : 'overtime';
+      const personKey = String(p.id || '');
+      const person = grouped.people.get(personKey) || {
+        id: personKey,
+        name: personDisplayNameFromRecords(profileFor(p.id), kilnUserFor(p.id), 'Unknown'),
+        credit: 0,
+        overtime: 0,
+        approvals: []
+      };
+      const hours = requestHours(req);
+      const approvalText = {
+        date: formatDateTime(req.decided_at || req.requested_at || req.created_at || ''),
+        manager: req.decided_by_name || 'Unknown manager'
+      };
+      person[kind] += hours;
+      person.approvals.push(approvalText);
+      grouped.total += hours;
+      grouped[kind] += hours;
+      grouped.people.set(personKey, person);
+    });
+  });
+  grouped.people = Array.from(grouped.people.values()).filter(function(person){ return person.credit > 0 || person.overtime > 0; }).sort(function(a, b){
+    return (b.credit + b.overtime) - (a.credit + a.overtime) || String(a.name).localeCompare(String(b.name));
+  });
+  return grouped.people.length ? [grouped] : [];
+}
+function renderHrHandoverGroup(group){
+  return '<article class="request-card">'+
+    '<div class="request-head">'+
+      '<div class="request-title">'+esc(group.label)+'</div>'+
+      '<span class="pill approved">'+esc(hrHandoverApprovedHoursText(group.total))+'</span>'+
+    '</div>'+
+    '<div class="list">'+group.people.map(function(person){
+      const amountParts = [];
+      if (person.credit > 0) amountParts.push(creditHoursText(person.credit) + ' credit hours');
+      if (person.overtime > 0) amountParts.push(creditHoursText(person.overtime) + ' overtime');
+      const approvalLines = (person.approvals || []).map(function(approval){
+        return 'Approved ' + approval.date + ' by ' + approval.manager;
+      });
+      return '<div class="activity-mini-item">'+
+        '<div class="top">'+
+          '<div class="title">'+esc(person.name)+'</div>'+
+          '<div class="meta" style="text-align:right">' + esc(amountParts.join(', ')) + '</div>'+
+        '</div>'+
+        (approvalLines.length ? '<div class="meta">' + esc(approvalLines.join(' | ')) + '</div>' : '') +
+      '</div>';
+    }).join('')+'</div>'+
+  '</article>';
+}
+function buildHrHandoverEmailText(){
+  const groups = hrHandoverGroupsForCurrentView();
+  const lines = [
+    'Approved credit hours from ' + currentDisplayName(),
+    ''
+  ];
+  groups.forEach(function(group){
+    lines.push(group.label);
+    group.people.forEach(function(person){
+      const parts = [];
+      if (person.credit > 0) parts.push(creditHoursText(person.credit) + ' credit hours');
+      if (person.overtime > 0) parts.push(creditHoursText(person.overtime) + ' overtime');
+      lines.push(person.name + ' - ' + parts.join(', '));
+      (person.approvals || []).forEach(function(approval){
+        lines.push('Approved ' + approval.date + ' by ' + approval.manager);
+      });
+    });
+    lines.push('');
+  });
+  return lines.join('\n');
+}
+function renderHrHandoverPanel(){
+  const panel = $('hrHandoverPanel');
+  if (!panel) return;
+  const managerViewEnabled = canViewManagerSections();
+  panel.style.display = managerViewEnabled ? '' : 'none';
+  panel.classList.toggle('hidden', !managerViewEnabled);
+  if (!managerViewEnabled) {
+    const box = $('hrHandoverList');
+    if (box) box.innerHTML = '';
+    const summary = $('hrHandoverSummary');
+    if (summary) summary.textContent = '0 approved hours ready for HR.';
+    const staffCount = $('hrHandoverStaffCount');
+    const hoursCount = $('hrHandoverHoursCount');
+    if (staffCount) staffCount.textContent = hrHandoverPeriodLabel();
+    if (hoursCount) hoursCount.textContent = '0 approved hours';
+    closeHrHandoverPreview();
+    return;
+  }
+  const recipientInput = $('hrHandoverRecipient');
+  if (recipientInput && document.activeElement !== recipientInput) {
+    recipientInput.value = hrHandoverRecipient();
+  }
+  const periodSelect = $('hrHandoverPeriod');
+  if (periodSelect && document.activeElement !== periodSelect) {
+    periodSelect.value = selectedHrHandoverPeriod;
+  }
+  const groups = hrHandoverGroupsForCurrentView();
+  const totalCredit = groups.reduce(function(sum, group){ return sum + group.total; }, 0);
+  const box = $('hrHandoverList');
+  const summary = $('hrHandoverSummary');
+  const staffCount = $('hrHandoverStaffCount');
+  const hoursCount = $('hrHandoverHoursCount');
+  if (staffCount) staffCount.textContent = hrHandoverPeriodLabel();
+  if (hoursCount) hoursCount.textContent = hrHandoverApprovedHoursText(totalCredit);
+  if (summary) {
+    summary.textContent = groups.length
+      ? hrHandoverPeriodLabel() + ': ' + hrHandoverApprovedHoursText(totalCredit) + ' ready for HR.'
+      : 'No approved credit hours or overtime ready for HR.';
+  }
+  if (!box) return;
+  if (!groups.length) {
+    box.innerHTML = '<div class="empty">No approved credit hours or overtime to send for '+hrHandoverPeriodLabel()+'.</div>';
+    return;
+  }
+  box.innerHTML = groups.map(renderHrHandoverGroup).join('');
+}
+async function copyHrHandoverSummary(){
+  const text = buildHrHandoverEmailText();
+  try {
+    await navigator.clipboard.writeText(text);
+    setToast('HR handover copied ✓');
+  } catch (e) {
+    setToast('Could not copy HR handover.');
+  }
+}
+function openHrHandoverPreview(){
+  sendHrHandoverEmail();
+}
+function closeHrHandoverPreview(){
+  const modal = $('hrHandoverModal');
+  if (modal) modal.classList.remove('open');
+}
+function sendHrHandoverEmail(){
+  const groups = hrHandoverGroupsForCurrentView();
+  if (!groups.length) {
+    setToast('No approved hours to send yet.');
+    return;
+  }
+  const recipient = hrHandoverRecipient();
+  const subject = encodeURIComponent('Approved credit hours from ' + currentDisplayName() + ' - ' + hrHandoverPeriodContextLabel());
+  const body = encodeURIComponent(buildHrHandoverEmailText());
+  const mailto = 'mailto:' + (recipient ? recipient : '') + '?subject=' + subject + '&body=' + body;
+  window.location.href = mailto;
+}
 function renderSummary(){
   const stats = statsForUser(currentUser.id, selectedYear);
   const quarterUsedDisplay = stats.quarterUsed;
@@ -3841,12 +4175,14 @@ function renderHolidayApp(){
   const myRequestsPanel = $('myRequestsPanel');
   const myRequestsActivityWrap = $('myRequestsActivityWrap');
   const activityPanel = $('activityPanel');
+  const hrHandoverPanel = $('hrHandoverPanel');
   const managerViewEnabled = canViewManagerSections();
   if (personalSummary) personalSummary.style.display = isApprover ? 'none' : '';
   if (insightsPanel) insightsPanel.style.display = managerViewEnabled ? '' : 'none';
   if (myRequestsPanel) myRequestsPanel.style.display = isApprover ? 'none' : '';
   if (myRequestsActivityWrap) myRequestsActivityWrap.style.display = 'none';
   if (activityPanel) activityPanel.style.display = managerViewEnabled ? '' : 'none';
+  if (hrHandoverPanel) hrHandoverPanel.style.display = managerViewEnabled ? '' : 'none';
   const confirmName = $('holidayManagerConfirmName');
   const confirmNote = $('holidayManagerConfirmNote');
   const requestTarget = currentHolidayManagerLabel || holidayManagerDisplayNameForUser(currentUser.id) || 'No manager assigned';
@@ -3860,6 +4196,7 @@ function renderHolidayApp(){
   renderMyRequests();
   renderInsightsPanel();
   renderApproverQueue();
+  renderHrHandoverPanel();
   renderTeamOverviewCards();
   renderActivityFeed();
   renderAllowanceList();
@@ -3993,6 +4330,8 @@ async function initHolidayApp(){
   applyTheme((getStoredThemePref() || (new Date().getHours() >= 7 && new Date().getHours() < 18)) === 'light');
   applyStoredPalette();
   selectedMyRequestsGroup = getStoredMyRequestGroupMode();
+  selectedHrHandoverPeriod = getStoredHrHandoverPeriod();
+  selectedHrHandoverOffset = getStoredHrHandoverOffset();
   sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false }
   });
