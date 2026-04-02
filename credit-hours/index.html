@@ -2195,7 +2195,7 @@ let allHolidayProfileEvents = [];
 let allCreditBankHolidays = [];
 let selectedYear = new Date().getFullYear();
 let selectedMyRequestsGroup = 'month';
-let selectedHrHandoverPeriod = 'month';
+let selectedHrHandoverPeriod = 'week';
 let selectedHrHandoverOffset = 0;
 let loginReady = false;
 let startupLoginTimer = null;
@@ -4340,8 +4340,8 @@ async function initHolidayApp(){
   applyTheme((getStoredThemePref() || (new Date().getHours() >= 7 && new Date().getHours() < 18)) === 'light');
   applyStoredPalette();
   selectedMyRequestsGroup = getStoredMyRequestGroupMode();
-  selectedHrHandoverPeriod = getStoredHrHandoverPeriod();
-  selectedHrHandoverOffset = getStoredHrHandoverOffset();
+  selectedHrHandoverPeriod = 'week';
+  selectedHrHandoverOffset = 0;
   sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false }
   });
