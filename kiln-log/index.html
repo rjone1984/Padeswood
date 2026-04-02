@@ -2605,11 +2605,11 @@ body:not(.basic-mode) .day-tab.active {
 }
 
 body:not(.basic-mode) .topbar .back-platform-btn:hover {
-  border-color: var(--ac) !important;
-  color: #fff !important;
-  background: linear-gradient(180deg, var(--ac2), var(--ac)) !important;
-  box-shadow: 0 0 0 3px var(--acd1), 0 0 22px rgba(33,194,122,.34) !important;
-  transform: translateY(-1px) scale(1.06) !important;
+  border-color: var(--bd3) !important;
+  color: var(--tx) !important;
+  background: var(--sf2) !important;
+  box-shadow: none !important;
+  transform: none !important;
 }
 
 body:not(.basic-mode) :is(.card,.panel,.modal,.toast,.search-modal,.reports-wrap,.matrix-card,.shift-panel,.stat-card,.user-row,.alert-row,.splash-card,.login-card,.access-denied,.boot-shield-card) {
@@ -2748,8 +2748,8 @@ body:not(.basic-mode) .splash-loader-bar {
         </div>
       </div>
       <div class="small" id="accessDeniedMsg">Please contact an administrator if you think this is wrong.</div>
-      <div class="row auth-actions" style="margin-top:14px">
-        <button type="button" class="btn btn-primary" onclick="window.location.href='../index.html'">Back to Platform</button>
+      <div class="row" style="margin-top:14px">
+        <button class="btn btn-primary" type="button" onclick="window.location.href='../index.html'">Back to Platform</button>
       </div>
     </div>
   </div>

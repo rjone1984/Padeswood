@@ -1946,6 +1946,7 @@ body:not(.basic-mode) .btn-primary:hover{
             <option value="month">Month</option>
             <option value="year">Year</option>
           </select>
+          <button class="btn btn-ghost" type="button" onclick="jumpHrHandoverToCurrent()">This week</button>
           <button class="btn btn-ghost" type="button" onclick="stepHrHandoverPeriod(-1)">Back</button>
           <button class="btn btn-ghost" type="button" onclick="stepHrHandoverPeriod(1)">Next</button>
         </div>
@@ -3901,6 +3902,15 @@ function setHrHandoverPeriod(value){
 function stepHrHandoverPeriod(delta){
   selectedHrHandoverOffset = num(selectedHrHandoverOffset, 0) + num(delta, 0);
   try {
+    localStorage.setItem(HR_HANDOVER_RANGE_OFFSET_STORAGE_KEY, String(selectedHrHandoverOffset));
+  } catch (e) {}
+  renderHrHandoverPanel();
+}
+function jumpHrHandoverToCurrent(){
+  selectedHrHandoverPeriod = 'week';
+  selectedHrHandoverOffset = 0;
+  try {
+    localStorage.setItem(HR_HANDOVER_PERIOD_STORAGE_KEY, selectedHrHandoverPeriod);
     localStorage.setItem(HR_HANDOVER_RANGE_OFFSET_STORAGE_KEY, String(selectedHrHandoverOffset));
   } catch (e) {}
   renderHrHandoverPanel();
