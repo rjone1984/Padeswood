@@ -1849,80 +1849,92 @@ body:not(.basic-mode) .btn-primary:hover{
     </section>
 
     <section class="panel" id="requestPanel">
-      <div class="panel-head">
-        <div>
-          <div class="panel-title">Log worked hours</div>
-          <div class="panel-sub">Record the date worked, why it was worked, the hours worked, the hours to be claimed, and whether it should count as credit hours or paid overtime. Credit hours are capped at 48 in any rolling quarter.</div>
-        </div>
-      </div>
-      <div class="form-grid">
-        <div class="field form-card">
-          <label for="reqStart">Date worked</label>
-          <input id="reqStart" class="input" type="date">
-        </div>
-        <div class="field form-card">
-          <label for="reqWorkedHours">Credit hours worked</label>
-          <input id="reqWorkedHours" class="input" type="number" min="0.5" step="0.5" value="0">
-        </div>
-        <div class="field form-card">
-          <label for="reqUnit">Claim type</label>
-          <select id="reqUnit" class="select" onchange="syncRequestedDays()">
-            <option value="credit">Credit hours</option>
-            <option value="overtime">Paid overtime</option>
-          </select>
-        </div>
-        <div class="field form-card">
-          <label for="reqDays">Credit hours to claim</label>
-          <input id="reqDays" class="input" type="number" min="0.5" step="0.5" value="0">
-        </div>
-        <div class="field full form-card">
-          <label for="reqReason">Reason / notes</label>
-          <textarea id="reqReason" class="textarea" placeholder="Why were these hours worked, and is there anything the manager should know before approving them?"></textarea>
-          <div id="quickCreditPresetWrap" class="row" style="margin-top:8px;align-items:center">
-            <button class="btn btn-ghost" type="button" onclick="applyOneHourCreditPreset()" style="padding:8px 12px;height:auto">1 hour credit preset</button>
-            <div class="small" style="flex:1;min-width:0">Fills in “No break cover provided”, sets credit hours, and drops the claim to 1 hour.</div>
+      <details class="activity-collapsible" open>
+        <summary>
+          <div>
+            <div class="panel-title">Log worked hours</div>
+            <div class="panel-sub">Record the date worked, why it was worked, the hours worked, the hours to be claimed, and whether it should count as credit hours or paid overtime. Credit hours are capped at 48 in any rolling quarter.</div>
           </div>
+        </summary>
+        <div class="content">
+          <div class="form-grid">
+            <div class="field form-card">
+              <label for="reqStart">Date worked</label>
+              <input id="reqStart" class="input" type="date">
+            </div>
+            <div class="field form-card">
+              <label for="reqWorkedHours">Credit hours worked</label>
+              <input id="reqWorkedHours" class="input" type="number" min="0.5" step="0.5" value="0">
+            </div>
+            <div class="field form-card">
+              <label for="reqUnit">Claim type</label>
+              <select id="reqUnit" class="select" onchange="syncRequestedDays()">
+                <option value="credit">Credit hours</option>
+                <option value="overtime">Paid overtime</option>
+              </select>
+            </div>
+            <div class="field form-card">
+              <label for="reqDays">Credit hours to claim</label>
+              <input id="reqDays" class="input" type="number" min="0.5" step="0.5" value="0">
+            </div>
+            <div class="field full form-card">
+              <label for="reqReason">Reason / notes</label>
+              <textarea id="reqReason" class="textarea" placeholder="Why were these hours worked, and is there anything the manager should know before approving them?"></textarea>
+              <div id="quickCreditPresetWrap" class="row" style="margin-top:8px;align-items:center">
+                <button class="btn btn-ghost" type="button" onclick="applyOneHourCreditPreset()" style="padding:8px 12px;height:auto">1 hour credit preset</button>
+                <div class="small" style="flex:1;min-width:0">Fills in “No break cover provided”, sets credit hours, and drops the claim to 1 hour.</div>
+              </div>
+            </div>
+          </div>
+          <div class="card-box request-target-box">
+            <div class="box-label">Submitted to</div>
+            <div id="holidayManagerConfirm" class="target-row">
+              <strong id="holidayManagerConfirmName">—</strong>
+              <span class="small" id="holidayManagerConfirmNote">This credit-hours entry will go to your assigned manager for sign-off.</span>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-primary" type="button" onclick="submitHolidayRequest()">Submit entry</button>
+          </div>
+          <div id="submitStatus" class="small" style="margin-top:8px;color:var(--txt2);min-height:1.2em"></div>
         </div>
-      </div>
-      <div class="card-box request-target-box">
-        <div class="box-label">Submitted to</div>
-        <div id="holidayManagerConfirm" class="target-row">
-          <strong id="holidayManagerConfirmName">—</strong>
-          <span class="small" id="holidayManagerConfirmNote">This credit-hours entry will go to your assigned manager for sign-off.</span>
-        </div>
-      </div>
-      <div class="form-actions">
-        <button class="btn btn-primary" type="button" onclick="submitHolidayRequest()">Submit entry</button>
-      </div>
-      <div id="submitStatus" class="small" style="margin-top:8px;color:var(--txt2);min-height:1.2em"></div>
+      </details>
     </section>
 
     <section class="panel" id="myRequestsPanel">
-      <div class="panel-head">
-        <div>
-          <div class="panel-title">My entries</div>
-          <div class="panel-sub">Browse your worked-hours history by week, month, or year. Open a period to expand the entries inside.</div>
-        </div>
-        <div class="queue-controls">
-          <span class="pill" id="myRequestCount">0 entries</span>
-          <select id="myRequestGroupSelect" class="select" onchange="setMyRequestGroupMode(this.value)">
-            <option value="week">By week</option>
-            <option value="month">By month</option>
-            <option value="year">By year</option>
-            <option value="all">All entries</option>
-          </select>
-        </div>
-      </div>
-      <div id="myRequests" class="list"></div>
-      <div id="myRequestsActivityWrap" style="margin-top:16px">
-        <div class="panel-head" style="padding:0 0 12px">
+      <details class="activity-collapsible" open>
+        <summary>
           <div>
-            <div class="panel-title" id="myRequestsActivityTitle" style="font-size:13px">Recent activity</div>
-            <div class="panel-sub" id="myRequestsActivitySub" style="font-size:11px">Recent actions on your requests, in the same place.</div>
+            <div class="panel-title">My entries</div>
+            <div class="panel-sub">Browse your worked-hours history by week, month, or year. Open a period to expand the entries inside.</div>
+          </div>
+          <div class="queue-controls">
+            <span class="pill" id="myRequestCount">0 entries</span>
+            <select id="myRequestGroupSelect" class="select" onchange="setMyRequestGroupMode(this.value)">
+              <option value="week">By week</option>
+              <option value="month">By month</option>
+              <option value="year">By year</option>
+              <option value="all">All entries</option>
+            </select>
+          </div>
+        </summary>
+        <div class="content">
+          <div id="myRequests" class="list"></div>
+          <div id="myRequestsActivityWrap">
+            <details class="activity-collapsible" open>
+              <summary>
+                <div>
+                  <div class="panel-title" id="myRequestsActivityTitle" style="font-size:13px">Recent activity</div>
+                  <div class="panel-sub" id="myRequestsActivitySub" style="font-size:11px">Recent actions on your requests, in the same place.</div>
+                </div>
+              </summary>
+              <div class="content">
+                <div id="myRequestsActivity" class="activity-feed"></div>
+              </div>
+            </details>
           </div>
         </div>
-        <div id="myRequestsActivity" class="activity-feed"></div>
-      </div>
+      </details>
     </section>
 
     <section class="panel" id="approverQueuePanel" style="display:none">
@@ -4574,107 +4586,115 @@ async function doLogin(){
 }
 
 async function submitHolidayRequest(){
-  if (!currentUser) return;
-  const statusEl = $('submitStatus');
-  const workDate = $('reqStart').value;
-  const hoursWorked = num($('reqWorkedHours').value, 0);
-  const hoursClaimed = num($('reqDays').value, 0);
-  const claimType = $('reqUnit').value === 'overtime' ? 'overtime' : 'credit';
-  const reason = $('reqReason').value.trim();
-  if (statusEl) statusEl.textContent = '';
-  if (!workDate) { setToast('Please choose the date worked.'); return; }
-  if (hoursWorked <= 0) { setToast('Please enter the hours worked.'); return; }
-  if (hoursClaimed <= 0) { setToast('Please enter the hours to be claimed.'); return; }
-  if (hoursClaimed > hoursWorked) { setToast('Claimed hours cannot be greater than hours worked.'); return; }
-  if (!reason) { setToast('Please add a reason or note.'); return; }
-  const formattedReason = tidyRequestText(reason);
-  if (claimType === 'credit' && !creditClaimAvailableForDate(workDate)) {
-    setToast('Credit hours are unavailable right now. Please choose paid overtime.');
-    return;
-  }
-  const managerName = holidayManagerDisplayNameForUser(currentUser.id);
-  const previewReq = {
-    auth_user_id: currentUser.id,
-    work_date: workDate,
-    hours_worked: hoursWorked,
-    hours_claimed: hoursClaimed,
-    claim_type: claimType,
-    status: 'pending'
-  };
-  if (claimType === 'credit') {
-    const effectiveClaim = requestCreditHoursEarned(previewReq);
-    const quarterStats = rollingQuarterStatsForUser(currentUser.id, workDate);
-    if (effectiveClaim > quarterStats.projected) {
-      setToast('This entry would exceed the 48-hour rolling quarter limit.');
+  try {
+    if (!currentUser) return;
+    const statusEl = $('submitStatus');
+    const workDate = $('reqStart').value;
+    const hoursWorked = num($('reqWorkedHours').value, 0);
+    const hoursClaimed = num($('reqDays').value, 0);
+    const claimType = $('reqUnit').value === 'overtime' ? 'overtime' : 'credit';
+    const reason = $('reqReason').value.trim();
+    if (statusEl) statusEl.textContent = '';
+    if (!workDate) { setToast('Please choose the date worked.'); return; }
+    if (hoursWorked <= 0) { setToast('Please enter the hours worked.'); return; }
+    if (hoursClaimed <= 0) { setToast('Please enter the hours to be claimed.'); return; }
+    if (hoursClaimed > hoursWorked) { setToast('Claimed hours cannot be greater than hours worked.'); return; }
+    if (!reason) { setToast('Please add a reason or note.'); return; }
+    const formattedReason = tidyRequestText(reason);
+    if (claimType === 'credit' && !creditClaimAvailableForDate(workDate)) {
+      setToast('Credit hours are unavailable right now. Please choose paid overtime.');
       return;
     }
-    const annualStats = statsForUser(currentUser.id, requestYear(previewReq));
-    if (effectiveClaim > annualStats.remaining) {
-      setToast('This entry would exceed your annual credit-hours allowance.');
+    const managerName = holidayManagerDisplayNameForUser(currentUser.id);
+    const previewReq = {
+      auth_user_id: currentUser.id,
+      work_date: workDate,
+      hours_worked: hoursWorked,
+      hours_claimed: hoursClaimed,
+      claim_type: claimType,
+      status: 'pending'
+    };
+    if (claimType === 'credit') {
+      const effectiveClaim = requestCreditHoursEarned(previewReq);
+      const quarterStats = rollingQuarterStatsForUser(currentUser.id, workDate);
+      if (effectiveClaim > quarterStats.projected) {
+        setToast('This entry would exceed the 48-hour rolling quarter limit.');
+        return;
+      }
+      const annualStats = statsForUser(currentUser.id, requestYear(previewReq));
+      if (effectiveClaim > annualStats.remaining) {
+        setToast('This entry would exceed your annual credit-hours allowance.');
+        return;
+      }
+    }
+    const confirmText = managerName === 'No manager assigned'
+      ? 'No manager is assigned yet. Submit this credit-hours entry for admin review?'
+      : 'Submit this credit-hours entry to ' + managerName + '?';
+    if (!confirm(confirmText)) return;
+    $('syncLabel').textContent = 'Saving…';
+    if (statusEl) statusEl.textContent = 'Saving your entry...';
+    const requesterEmail = (currentProfile && currentProfile.email) || (currentUser && currentUser.email) || '';
+    const payload = {
+      auth_user_id: currentUser.id,
+      requester_name: currentDisplayName(),
+      requester_email: requesterEmail,
+      work_date: workDate,
+      hours_worked: hoursWorked,
+      hours_claimed: hoursClaimed,
+      claim_type: claimType,
+      reason: formattedReason,
+      manager_note: '',
+      employee_signed_at: new Date().toISOString(),
+      employee_signed_name: currentDisplayName(),
+      status: 'pending'
+    };
+    const { data, error } = await sb.from('credit_hour_entries').insert(payload).select('*').maybeSingle();
+    if (error) {
+      $('syncLabel').textContent = 'Synced';
+      if (statusEl) statusEl.textContent = 'Could not save your entry: ' + error.message;
+      setToast('Could not save entry: ' + error.message);
       return;
     }
-  }
-  const confirmText = managerName === 'No manager assigned'
-    ? 'No manager is assigned yet. Submit this credit-hours entry for admin review?'
-    : 'Submit this credit-hours entry to ' + managerName + '?';
-  if (!confirm(confirmText)) return;
-  $('syncLabel').textContent = 'Saving…';
-  if (statusEl) statusEl.textContent = 'Saving your entry...';
-  const payload = {
-    auth_user_id: currentUser.id,
-    requester_name: currentDisplayName(),
-    requester_email: currentProfile.email || currentUser.email,
-    work_date: workDate,
-    hours_worked: hoursWorked,
-    hours_claimed: hoursClaimed,
-    claim_type: claimType,
-    reason: formattedReason,
-    manager_note: '',
-    employee_signed_at: new Date().toISOString(),
-    employee_signed_name: currentDisplayName(),
-    status: 'pending'
-  };
-  const { data, error } = await sb.from('credit_hour_entries').insert(payload).select('*').maybeSingle();
-  if (error) {
+    const optimisticEntry = {
+      ...payload,
+      id: data && data.id ? data.id : ('temp_' + Date.now()),
+      requested_at: (data && data.requested_at) || payload.employee_signed_at,
+      created_at: (data && data.created_at) || payload.employee_signed_at
+    };
+    allHolidayRequests.push({ ...optimisticEntry });
+    allHolidayEvents.push({
+      request_id: optimisticEntry.id,
+      action: 'Submitted',
+      new_status: 'pending',
+      note: formattedReason,
+      created_at: optimisticEntry.requested_at || optimisticEntry.created_at || new Date().toISOString(),
+      actor_name: currentDisplayName(),
+      actor_auth_user_id: currentUser.id
+    });
+    const liveQuarterStats = rollingQuarterStatsForUser(currentUser.id, new Date());
+    const quarterUsedEl = $('statQuarterUsed');
+    const quarterRemainingEl = $('statQuarterRemaining');
+    if (quarterUsedEl) quarterUsedEl.textContent = creditHoursText(liveQuarterStats.used);
+    if (quarterRemainingEl) quarterRemainingEl.textContent = creditHoursText(liveQuarterStats.remaining);
+    syncRequestedDays();
+    $('reqReason').value = '';
+    $('reqDays').value = '0';
+    $('reqWorkedHours').value = '0';
+    $('reqStart').value = '';
+    $('reqUnit').value = 'credit';
+    await loadHolidayData();
+    renderHolidayApp();
     $('syncLabel').textContent = 'Synced';
-    if (statusEl) statusEl.textContent = 'Could not save your entry: ' + error.message;
-    setToast('Could not save entry: ' + error.message);
-    return;
+    if (statusEl) statusEl.textContent = 'Submitted ✓ It now appears in My entries.';
+    setToast('Credit-hours entry submitted ✓');
+    const myEntriesPanel = $('myRequestsPanel');
+    if (myEntriesPanel) myEntriesPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } catch (err) {
+    $('syncLabel').textContent = 'Synced';
+    setToast('Could not submit entry: ' + (err && err.message ? err.message : 'unknown error'));
+    const statusEl = $('submitStatus');
+    if (statusEl) statusEl.textContent = 'Could not submit entry: ' + (err && err.message ? err.message : 'unknown error');
   }
-  const optimisticEntry = {
-    ...payload,
-    id: data && data.id ? data.id : ('temp_' + Date.now()),
-    requested_at: (data && data.requested_at) || payload.employee_signed_at,
-    created_at: (data && data.created_at) || payload.employee_signed_at
-  };
-  allHolidayRequests.push({ ...optimisticEntry });
-  allHolidayEvents.push({
-    request_id: optimisticEntry.id,
-    action: 'Submitted',
-    new_status: 'pending',
-    note: formattedReason,
-    created_at: optimisticEntry.requested_at || optimisticEntry.created_at || new Date().toISOString(),
-    actor_name: currentDisplayName(),
-    actor_auth_user_id: currentUser.id
-  });
-  const liveQuarterStats = rollingQuarterStatsForUser(currentUser.id, new Date());
-  const quarterUsedEl = $('statQuarterUsed');
-  const quarterRemainingEl = $('statQuarterRemaining');
-  if (quarterUsedEl) quarterUsedEl.textContent = creditHoursText(liveQuarterStats.used);
-  if (quarterRemainingEl) quarterRemainingEl.textContent = creditHoursText(liveQuarterStats.remaining);
-  syncRequestedDays();
-  $('reqReason').value = '';
-  $('reqDays').value = '0';
-  $('reqWorkedHours').value = '0';
-  $('reqStart').value = '';
-  $('reqUnit').value = 'credit';
-  await loadHolidayData();
-  renderHolidayApp();
-  $('syncLabel').textContent = 'Synced';
-  if (statusEl) statusEl.textContent = 'Submitted ✓ It now appears in My entries.';
-  setToast('Credit-hours entry submitted ✓');
-  const myEntriesPanel = $('myRequestsPanel');
-  if (myEntriesPanel) myEntriesPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function applyOneHourCreditPreset(){
