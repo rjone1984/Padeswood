@@ -425,24 +425,17 @@ body.basic-mode .topbar .back-platform-btn:hover{
   padding:4px 8px;border-radius:999px;font-size:11px;font-family:var(--ff-mono);
   background:var(--sf3);border:1px solid var(--bd);color:var(--tx2);
 }
-.pill.pending,
-.pill.queue-ok,
-.pill.queue-warn,
-.pill.approved,
-.pill.denied,
-.pill.cancelled,
-.pill.kind-credit,
-.pill.kind-overtime,
-.pill.kind-unpaid,
-.pill.kind-other,
-.pill.balance-red,
-.pill.balance-amber,
-.pill.balance-green{
-  color:var(--tx2);
-  border-color:var(--bd2);
-  background:var(--sf3);
-  --balance-glow:transparent;
-}
+.pill.pending{color:var(--amb);border-color:color-mix(in srgb, var(--ambb) 72%, var(--bd));background:color-mix(in srgb, var(--ambd) 58%, var(--sf2))}
+.pill.queue-ok{color:var(--grn);border-color:color-mix(in srgb, var(--grnb) 72%, var(--bd));background:color-mix(in srgb, var(--grnd) 58%, var(--sf2))}
+.pill.queue-warn{color:var(--amb);border-color:color-mix(in srgb, var(--ambb) 72%, var(--bd));background:color-mix(in srgb, var(--ambd) 58%, var(--sf2))}
+.pill.approved{color:var(--grn);border-color:color-mix(in srgb, var(--grnb) 72%, var(--bd));background:color-mix(in srgb, var(--grnd) 58%, var(--sf2))}
+.pill.denied,.pill.cancelled{color:var(--red);border-color:color-mix(in srgb, var(--redb) 72%, var(--bd));background:color-mix(in srgb, var(--redd) 58%, var(--sf2))}
+.pill.kind-credit{color:var(--grn);border-color:color-mix(in srgb, var(--grnb) 72%, var(--bd));background:color-mix(in srgb, var(--grnd) 58%, var(--sf2))}
+.pill.kind-overtime,.pill.kind-other{color:var(--amb);border-color:color-mix(in srgb, var(--ambb) 72%, var(--bd));background:color-mix(in srgb, var(--ambd) 58%, var(--sf2))}
+.pill.kind-unpaid{color:var(--pur);border-color:color-mix(in srgb, var(--purb) 72%, var(--bd));background:color-mix(in srgb, var(--purd) 58%, var(--sf2))}
+.pill.balance-red{color:var(--red);border-color:color-mix(in srgb, var(--redb) 72%, var(--bd));background:color-mix(in srgb, var(--redd) 58%, var(--sf2));--balance-glow:transparent}
+.pill.balance-amber{color:var(--amb);border-color:color-mix(in srgb, var(--ambb) 72%, var(--bd));background:color-mix(in srgb, var(--ambd) 58%, var(--sf2));--balance-glow:transparent}
+.pill.balance-green{color:var(--grn);border-color:color-mix(in srgb, var(--grnb) 72%, var(--bd));background:color-mix(in srgb, var(--grnd) 58%, var(--sf2));--balance-glow:transparent}
 .pill.balance-red,
 .pill.balance-amber,
 .pill.balance-green{
@@ -857,14 +850,14 @@ body.basic-mode .topbar .back-platform-btn:hover{
 }
 .insight-bar.credit{
   bottom:0;
-  background:linear-gradient(180deg,var(--tx3),color-mix(in srgb, var(--tx3) 70%, var(--bd) 30%));
+  background:linear-gradient(180deg,var(--grn),color-mix(in srgb, var(--grn) 70%, var(--grnd) 30%));
 }
 .insight-bar.overtime{
-  background:linear-gradient(180deg,var(--tx2),color-mix(in srgb, var(--tx2) 70%, var(--bd) 30%));
+  background:linear-gradient(180deg,var(--amb),color-mix(in srgb, var(--amb) 70%, var(--ambd) 30%));
 }
 .insight-bar.pending{
   opacity:.45;
-  border:1px dashed color-mix(in srgb, var(--tx3) 75%, var(--bd) 25%);
+  border:1px dashed color-mix(in srgb, var(--amb) 75%, var(--bd) 25%);
 }
 .insight-month-label{
   font-size:10px;
@@ -1999,8 +1992,7 @@ body:not(.basic-mode) .btn-primary:hover{
             <div id="hrHandoverList" class="list"></div>
           </div>
           <div class="form-actions">
-            <button class="btn btn-ghost" type="button" onclick="copyHrHandoverSummary()">Copy summary</button>
-            <button class="btn btn-primary" type="button" onclick="sendHrHandoverEmail()">Open email</button>
+            <button class="btn btn-primary" type="button" onclick="sendHrHandoverEmail()">Send email</button>
           </div>
         </div>
       </details>
@@ -2098,23 +2090,6 @@ body:not(.basic-mode) .btn-primary:hover{
     <div class="palette-actions">
       <button class="btn btn-ghost" type="button" onclick="resetPalettePreset()">Reset to default</button>
       <button class="btn btn-ghost" type="button" onclick="closePaletteModal()">Done</button>
-    </div>
-  </div>
-</div>
-
-<div id="hrHandoverModal" class="palette-overlay" onclick="if(event.target===this)closeHrHandoverPreview()">
-  <div class="palette-panel">
-    <div class="palette-head">
-      <div class="palette-title">HR email preview</div>
-      <button class="palette-close" type="button" onclick="closeHrHandoverPreview()">Close</button>
-    </div>
-    <div class="palette-body">
-      <div class="palette-help">This is the email body that will open in your mail app. You can copy it, edit the recipient, or send it straight from the preview.</div>
-      <textarea id="hrHandoverPreviewText" class="textarea" rows="18" readonly></textarea>
-    </div>
-    <div class="palette-actions">
-      <button class="btn btn-ghost" type="button" onclick="copyHrHandoverSummary()">Copy text</button>
-      <button class="btn btn-primary" type="button" onclick="sendHrHandoverEmail()">Open email</button>
     </div>
   </div>
 </div>
@@ -3511,7 +3486,7 @@ function renderTeamOverviewCards(){
             '<input class="input" style="height:30px;font-size:11px;flex:1" type="number" min="-999" max="999" step="0.5" id="extras_'+esc(selectedUserId)+'" value="'+esc(num(selectedHp && selectedHp.entitlement_extras_days, 0))+'"'+(selectedEditable ? '' : ' disabled')+'>'+
           '</div><div class="field-note">Positive numbers add entitlement. Negative numbers take it away.</div></div>'+
           '<div class="field"><label class="small" style="margin-bottom:4px">Reason / note for entitlement change</label><textarea class="textarea allowance-reason" id="allowReason_'+esc(selectedUserId)+'" placeholder="Explain why this allowance or carryover is being changed."'+(selectedEditable ? '' : ' disabled')+'></textarea><div class="field-note">This is stored in the allowance audit trail.</div></div>'+
-          '<div style="display:flex;justify-content:flex-end"><button class="btn btn-ghost" style="height:30px;padding:0 10px;font-size:10px" type="button" onclick="saveAllowance(\''+esc(selectedUserId)+'\')"'+(selectedEditable ? '' : ' disabled')+'>Save entitlements</button></div>'+
+          '<div style="display:flex;justify-content:flex-end"><button class="btn btn-primary" type="button" onclick="saveAllowance(\''+esc(selectedUserId)+'\')"'+(selectedEditable ? '' : ' disabled')+'>Save entitlements</button></div>'+
         '</div>'+
       '</details>'+
       '<details class="activity-collapsible">'+
@@ -3924,7 +3899,7 @@ function renderAllowanceList(){
           '</div><div class="field-note">Positive numbers add entitlement. Negative numbers take it away.</div></div>'+
           '<div class="field"><label class="small" style="margin-bottom:4px">Reason / note for entitlement change</label><textarea class="textarea allowance-reason" id="allowReason_'+esc(p.id)+'" placeholder="Explain why this allowance or carryover is being changed."'+(editable ? '' : ' disabled')+'></textarea><div class="field-note">This is stored in the allowance audit trail.</div></div>'+
         '</div>'+
-        '<div style="display:flex;justify-content:flex-end"><button class="btn btn-ghost" style="height:30px;padding:0 10px;font-size:10px" type="button" onclick="saveAllowance(\''+esc(p.id)+'\')"'+(editable ? '' : ' disabled')+'>Save entitlements</button></div>'+
+        '<div style="display:flex;justify-content:flex-end"><button class="btn btn-primary" type="button" onclick="saveAllowance(\''+esc(p.id)+'\')"'+(editable ? '' : ' disabled')+'>Save entitlements</button></div>'+
         '<div class="staff-history">'+
           '<div class="staff-history-title">Allowance audit</div>'+
           (allowanceHistory.length ? allowanceHistory.map(function(ev){
@@ -4129,7 +4104,7 @@ function hrHandoverGroupsForCurrentView(){
 function hrHandoverApprovalTextLines(personName, approval){
   return [
     personName + ' - ' + approval.amount + ' - worked ' + approval.worked,
-    'Approved on ' + approval.date + ' by ' + approval.manager
+    'Approved ' + approval.date + ' by ' + approval.manager
   ];
 }
 function renderHrHandoverGroup(group){
@@ -4175,9 +4150,7 @@ function updateHrHandoverPreviewText(){
   const text = groups.length
     ? buildHrHandoverEmailText()
     : 'No approved credit hours or overtime ready for HR.';
-  const preview = $('hrHandoverPreviewText');
   const summary = $('hrHandoverSummary');
-  if (preview) preview.value = text;
   if (summary) summary.value = text;
   return text;
 }
@@ -4223,21 +4196,8 @@ function renderHrHandoverPanel(){
   }
   box.innerHTML = groups.map(renderHrHandoverGroup).join('');
 }
-async function copyHrHandoverSummary(){
-  const text = updateHrHandoverPreviewText();
-  try {
-    await navigator.clipboard.writeText(text);
-    setToast('HR handover copied ✓');
-  } catch (e) {
-    setToast('Could not copy HR handover.');
-  }
-}
-function openHrHandoverPreview(){
-  sendHrHandoverEmail();
-}
 function closeHrHandoverPreview(){
-  const modal = $('hrHandoverModal');
-  if (modal) modal.classList.remove('open');
+  return;
 }
 function sendHrHandoverEmail(){
   const groups = hrHandoverGroupsForCurrentView();

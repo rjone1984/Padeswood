@@ -2849,7 +2849,7 @@ function renderTeamOverviewCards(){
           '<input class="input" style="height:34px;font-size:11px;flex:1" type="number" min="-999" max="999" step="0.5" id="extras_'+esc(selectedProfile.id)+'" value="'+esc(selectedExtrasValue)+'"'+(selectedEditable ? '' : ' disabled')+'>'+
         '</div><div class="field-note">Positive numbers add entitlement. Negative numbers take it away.</div></div>'+
         '<div class="field"><label class="small" style="margin-bottom:4px">Reason / note for entitlement change</label><textarea class="textarea allowance-reason" id="allowReason_'+esc(selectedProfile.id)+'" placeholder="Explain why this allowance or carryover is being changed."'+(selectedEditable ? '' : ' disabled')+'></textarea><div class="field-note">This is stored in the allowance audit trail.</div></div>'+
-        '<div style="display:flex;justify-content:flex-end"><button class="btn btn-primary" style="height:32px;padding:0 12px;font-size:10px" type="button" onclick="saveTeamAllowance(\''+esc(selectedProfile.id)+'\')"'+(selectedEditable ? '' : ' disabled')+'>Save entitlements</button></div>'+
+        '<div style="display:flex;justify-content:flex-end"><button class="btn btn-primary" type="button" onclick="saveTeamAllowance(\''+esc(selectedProfile.id)+'\')"'+(selectedEditable ? '' : ' disabled')+'>Save entitlements</button></div>'+
       '</div>'+
     '</details>'
   ) : '';
@@ -2862,7 +2862,7 @@ function renderTeamOverviewCards(){
         '<div class="field"><label class="small" style="margin-bottom:4px">Amount</label><input class="input retro-amount" type="number" min="0" step="0.5" id="retroAmount_'+esc(selectedProfile.id)+'" onchange="syncDateRangeEndDate(\'retroStart_'+esc(selectedProfile.id)+'\', \'retroUnit_'+esc(selectedProfile.id)+'\', \'retroAmount_'+esc(selectedProfile.id)+'\', \'retroEnd_'+esc(selectedProfile.id)+'\')"></div>'+
         '<div class="field"><label class="small" style="margin-bottom:4px">End date</label><input class="input retro-end" type="date" id="retroEnd_'+esc(selectedProfile.id)+'" readonly></div>'+
         '<div class="field"><label class="small" style="margin-bottom:4px">Reason / note</label><textarea class="textarea allowance-reason" id="retroReason_'+esc(selectedProfile.id)+'" placeholder="Explain why this retrospective holiday is being added."></textarea><div class="field-note">This is stored on the approved request and its audit trail.</div></div>'+
-        '<div style="display:flex;justify-content:flex-end"><button class="btn btn-primary" style="height:30px;padding:0 10px;font-size:10px" type="button" onclick="addRetrospectiveHoliday(\''+esc(selectedProfile.id)+'\', \'retroStart_'+esc(selectedProfile.id)+'\', \'retroEnd_'+esc(selectedProfile.id)+'\', \'retroAmount_'+esc(selectedProfile.id)+'\', \'retroUnit_'+esc(selectedProfile.id)+'\', \'retroReason_'+esc(selectedProfile.id)+'\')">Add retrospective holiday</button></div>'+
+        '<div style="display:flex;justify-content:flex-end"><button class="btn btn-primary" type="button" onclick="addRetrospectiveHoliday(\''+esc(selectedProfile.id)+'\', \'retroStart_'+esc(selectedProfile.id)+'\', \'retroEnd_'+esc(selectedProfile.id)+'\', \'retroAmount_'+esc(selectedProfile.id)+'\', \'retroUnit_'+esc(selectedProfile.id)+'\', \'retroReason_'+esc(selectedProfile.id)+'\')">Add retrospective holiday</button></div>'+
       '</div>'+
     '</details>'
   ) : '';
@@ -3098,7 +3098,7 @@ function renderAllowanceList(){
           '</div><div class="field-note">Positive numbers add entitlement. Negative numbers take it away.</div></div>'+
           '<div class="field"><label class="small" style="margin-bottom:4px">Reason / note for entitlement change</label><textarea class="textarea allowance-reason" id="allowReason_'+esc(p.id)+'" placeholder="Explain why this allowance or carryover is being changed."'+(editable ? '' : ' disabled')+'></textarea><div class="field-note">This is stored in the allowance audit trail.</div></div>'+
         '</div>'+
-        '<div style="display:flex;justify-content:flex-end"><button class="btn btn-primary" style="height:30px;padding:0 12px;font-size:10px" type="button" onclick="saveAllowance(\''+esc(p.id)+'\')"'+(editable ? '' : ' disabled')+'>Save entitlements</button></div>'+
+        '<div style="display:flex;justify-content:flex-end"><button class="btn btn-primary" type="button" onclick="saveAllowance(\''+esc(p.id)+'\')"'+(editable ? '' : ' disabled')+'>Save entitlements</button></div>'+
         '<div class="staff-history">'+
           '<div class="staff-history-title">Allowance audit</div>'+
           (allowanceHistory.length ? allowanceHistory.map(function(ev){
