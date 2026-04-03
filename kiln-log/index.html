@@ -1720,7 +1720,7 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
   transform-origin:bottom;
   animation:lineFlow 8.2s ease-in-out infinite;
 }
-.stat-card:hover { border-color:color-mix(in srgb, var(--green-edge) 55%, var(--bd2)); box-shadow:var(--e2), 0 0 0 1px rgba(46,204,92,.05) inset }
+.stat-card:hover { border-color:color-mix(in srgb, var(--acd3) 55%, var(--bd2)); box-shadow:var(--e2), 0 0 0 1px var(--acd1) inset }
 .stat-card:hover::before { transform:scaleY(1) }
 .stat-icon { width:40px; height:40px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex-shrink:0 }
 .stat-icon svg { width:17px; height:17px }
@@ -3542,6 +3542,7 @@ let caState = {};
 let _allLists = {}; // {list_name: [items]}
 let equipment = [], burners = [], electricians = [], mechanicals = [], analysts = [], managers = [], trainees = [];
 let _listSyncStates = {}; // {list_name: cloud|local|syncing|warn|unknown}
+let _lastAnalystCloudLoadOk = false;
 
 const DEFAULT_BURNERS  = [];
 const DEFAULT_ELECTRICIANS = [];
@@ -5896,7 +5897,6 @@ function renderCaDay(day){
       analystSel.addEventListener('change', function(){
         sd.name = this.value;
         autoSave();
-        renderCaDay(day); // re-render to update remove option visibility
       });
     }
     analystWrap.appendChild(analystSel);
@@ -6135,18 +6135,6 @@ function renderCaDay(day){
       r.appendChild(ci);
       labClean.appendChild(r);
     });
-    if(!isNight){
-      const xrdRow=document.createElement('div'); xrdRow.style.cssText='display:grid;grid-template-columns:1.5fr 0.7fr 1fr;gap:6px;align-items:center;margin-bottom:4px;';
-      const xrdLbl=document.createElement('div'); xrdLbl.style.cssText='font-size:12px;color:var(--tx2);'; xrdLbl.textContent='XRD Filters'; xrdRow.appendChild(xrdLbl);
-      if(!sd.cleaning['XRD Filters']){ sd.cleaning['XRD Filters']={completed:'',comments:''}; }
-      const xf=sd.cleaning['XRD Filters'];
-      xrdRow.appendChild(sel(xf.completed,['Yes','No'],function(){ xf.completed=this.value; autoSave(); }), e);
-      const xci=document.createElement('input'); xci.className='ca-inp'; xci.type='text'; xci.value=xf.comments||'';
-      if(!e){ xci.disabled=true; xci.style.opacity='0.7'; }
-      else xci.addEventListener('input',function(){ xf.comments=this.value; autoSave(); });
-      xrdRow.appendChild(xci);
-      labClean.appendChild(xrdRow);
-    }
     checkContent.appendChild(labClean);
 
     const opsCheck = document.createElement('div');
@@ -9552,8 +9540,10 @@ function caRowsToWeek(data){
 async function sbLoadAnalystWeek(isoMonday){
   try {
     const rows = await sbFetch('/rest/v1/'+KILN_CA_LOG_TABLE+'?week_key=eq.'+isoMonday+'&select=data,updated_at&order=updated_at.desc&limit=1');
+    _lastAnalystCloudLoadOk = true;
     if(rows && rows.length) return caRowsToWeek(rows[0].data);
   } catch(e){ console.warn('Supabase analyst load failed:', e); }
+  _lastAnalystCloudLoadOk = false;
   return null;
 }
 
@@ -9598,6 +9588,7 @@ async function loadShiftManagerWeekIfAllowed(isoMonday){
 }
 
 async function loadAnalystWeekIfAllowed(isoMonday){
+  _lastAnalystCloudLoadOk = false;
   if(!canViewCementAnalystLog()) {
     DAYS.forEach(function(day){ if(!caState[day]) caState[day] = mkCaDay(); });
     return;
@@ -9605,6 +9596,7 @@ async function loadAnalystWeekIfAllowed(isoMonday){
   const rows = await sbLoadAnalystWeek(isoMonday);
   if(rows) caState = rows;
   DAYS.forEach(function(day){ if(!caState[day]) caState[day] = mkCaDay(); });
+  if(_lastAnalystCloudLoadOk) showSyncDot('ok');
 }
 
 let _sbSaveTimer = null;
