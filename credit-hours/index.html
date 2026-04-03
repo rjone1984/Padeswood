@@ -1545,7 +1545,7 @@ body:not(.basic-mode) #licenceOverlay .login-card::before,
 body:not(.basic-mode) #licenceOverlay .login-card::after{
   display:none !important;
 }
-body:not(.basic-mode) :is(.topbar,.hero,.stat,.panel,.login-card,.field,.card-box,.entry-group,.timeline-item,.activity-card,.toast,.palette-panel,.modal,.palette-actions,.request-target-box){
+body:not(.basic-mode) :is(.hero,.stat,.panel,.login-card,.field,.card-box,.entry-group,.timeline-item,.activity-card,.toast,.palette-panel,.modal,.palette-actions,.request-target-box){
   background:var(--sf) !important;
   background-image:none !important;
   border-color:var(--bd2) !important;
@@ -1553,7 +1553,15 @@ body:not(.basic-mode) :is(.topbar,.hero,.stat,.panel,.login-card,.field,.card-bo
   backdrop-filter:blur(12px) !important;
   -webkit-backdrop-filter:blur(12px) !important;
 }
-body:not(.basic-mode) :is(.topbar,.palette-panel,.modal,.toast){
+body:not(.basic-mode) .topbar{
+  background:
+    radial-gradient(140% 120% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
+    radial-gradient(120% 120% at 100% 0%, var(--palette-card-glow-2), transparent 48%),
+    linear-gradient(180deg,var(--glass-1),var(--glass-2)) !important;
+  backdrop-filter:blur(20px) !important;
+  -webkit-backdrop-filter:blur(20px) !important;
+}
+body:not(.basic-mode) :is(.palette-panel,.modal,.toast){
   backdrop-filter:blur(14px) !important;
   -webkit-backdrop-filter:blur(14px) !important;
 }
@@ -1592,13 +1600,17 @@ body:not(.basic-mode)::after{
   opacity:0 !important;
   filter:none !important;
 }
-body:not(.basic-mode) :is(.topbar,.app-card,.login-card,.panel,.modal,.toast,.palette-panel,.manager-requests-panel,.queue-card,.activity-detail,.activity-roster-btn,.activity-stat,.activity-section,.activity-mini-item,.btn,.btn-ghost,.btn-primary,.btn-iso,.icon-btn,.user-chip,.brand-row,.brand-mark,.splash-hero-mark){
+body:not(.basic-mode) :is(.app-card,.login-card,.panel,.modal,.toast,.palette-panel,.manager-requests-panel,.queue-card,.activity-detail,.activity-roster-btn,.activity-stat,.activity-section,.activity-mini-item,.btn,.btn-ghost,.btn-primary,.btn-iso,.icon-btn,.user-chip,.brand-row,.brand-mark,.splash-hero-mark){
   background:var(--sf) !important;
   background-image:none !important;
   border-color:var(--bd2) !important;
   box-shadow:0 8px 24px rgba(15,23,42,.06) !important;
   backdrop-filter:blur(12px) !important;
   -webkit-backdrop-filter:blur(12px) !important;
+}
+body:not(.basic-mode) :is(.topbar,.palette-panel,.modal,.toast){
+  backdrop-filter:blur(20px) !important;
+  -webkit-backdrop-filter:blur(20px) !important;
 }
 body:not(.basic-mode) :is(.queue-card,.activity-detail,.activity-stat,.activity-mini-item){
   border-radius:14px !important;
@@ -1937,10 +1949,10 @@ body:not(.basic-mode) .btn-primary:hover{
           <input id="hrHandoverRecipient" class="input" type="email" placeholder="hr@company.com" oninput="setHrHandoverRecipient(this.value)">
           <div class="field-note">Saved in this browser so the next handover is quicker.</div>
         </div>
-        <div class="card-box">
-          <div class="box-label">What will be sent</div>
-          <div id="hrHandoverSummary" class="small">0 approved hours ready for HR.</div>
-        </div>
+      <div class="card-box">
+        <div class="box-label">What will be sent</div>
+        <textarea id="hrHandoverSummary" class="textarea" rows="12" readonly style="margin:0;max-height:240px;overflow:auto;font-family:var(--ff-mono);line-height:1.5">0 approved hours ready for HR.</textarea>
+      </div>
       </div>
       <div class="card-box">
         <div class="box-label">Names and hours</div>
@@ -3433,21 +3445,29 @@ function renderTeamOverviewCards(){
         '<div class="activity-stat"><div class="label">Rolling quarter worked</div><div class="value">'+esc(creditHoursText(selectedQuarterUsed))+'</div></div>'+
         '<div class="activity-stat"><div class="label">Rolling quarter remaining</div><div class="value">'+esc(creditHoursText(selectedQuarterRemaining))+'</div></div>'+
       '</div>'+
-      '<div class="card-box">'+
-        '<div class="box-label">Entitlement adjustment</div>'+
-        '<div class="small" style="margin-bottom:10px">Add or remove annual allowance and carryover for this staff member. Every save is written to the audit trail.</div>'+
-        '<div class="field"><label class="small" style="margin-bottom:4px">Annual entitlement</label><input class="input" style="height:30px;font-size:11px" type="number" min="0" step="0.5" id="allow_'+esc(selectedUserId)+'" value="'+esc(num(selectedHp && selectedHp.annual_allowance_hours, 100))+'"'+(selectedEditable ? '' : ' disabled')+'><div class="field-note">Base credit-hours allowance for the year.</div></div>'+
-        '<div class="field"><label class="small" style="margin-bottom:4px">Carryover after 31 Dec</label><input class="input" style="height:30px;font-size:11px" type="number" min="0" step="0.5" id="carry_'+esc(selectedUserId)+'" value="'+esc(num(selectedHp && selectedHp.carryover_days, 0))+'"'+((selectedEditable && selectedCarryoverOpen) ? '' : ' disabled')+' title="'+esc(selectedCarryoverOpen ? 'Carryover can be adjusted now' : 'Carryover can only be adjusted after 31 December')+'"><div class="field-note">Extra holiday moved over into the new year.</div></div>'+
-        '<div class="field"><label class="small" style="margin-bottom:4px">Extras</label><div class="row" style="gap:8px;align-items:flex-end">'+
-          '<select class="select" id="extrasUnit_'+esc(selectedUserId)+'" style="width:120px;height:30px;font-size:11px" onchange="syncExtrasUnit(\'extrasUnit_'+esc(selectedUserId)+'\', \'extras_'+esc(selectedUserId)+'\')"'+(selectedEditable ? '' : ' disabled')+'>'+
-            '<option value="days">Days</option>'+
-            '<option value="hours">Hours</option>'+
-          '</select>'+
-          '<input class="input" style="height:30px;font-size:11px;flex:1" type="number" min="-999" max="999" step="0.5" id="extras_'+esc(selectedUserId)+'" value="'+esc(num(selectedHp && selectedHp.entitlement_extras_days, 0))+'"'+(selectedEditable ? '' : ' disabled')+'>'+
-        '</div><div class="field-note">Positive numbers add entitlement. Negative numbers take it away.</div></div>'+
-        '<div class="field"><label class="small" style="margin-bottom:4px">Reason / note for entitlement change</label><textarea class="textarea allowance-reason" id="allowReason_'+esc(selectedUserId)+'" placeholder="Explain why this allowance or carryover is being changed."'+(selectedEditable ? '' : ' disabled')+'></textarea><div class="field-note">This is stored in the allowance audit trail.</div></div>'+
-        '<div style="display:flex;justify-content:flex-end"><button class="btn btn-ghost" style="height:30px;padding:0 10px;font-size:10px" type="button" onclick="saveAllowance(\''+esc(selectedUserId)+'\')"'+(selectedEditable ? '' : ' disabled')+'>Save entitlements</button></div>'+
-      '</div>'+
+      '<details class="activity-collapsible">'+
+        '<summary style="list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:flex-start;gap:10px">'+
+          '<div>'+
+            '<div class="box-label">Entitlement adjustment</div>'+
+            '<div class="small" style="margin-top:4px">Add or remove annual allowance and carryover for this staff member.</div>'+
+          '</div>'+
+          '<span class="pill">'+(selectedEditable ? 'Edit entitlements' : 'View entitlements')+'</span>'+
+        '</summary>'+
+        '<div class="card-box" style="margin-top:10px">'+
+          '<div class="small" style="margin-bottom:10px">Every save is written to the audit trail.</div>'+
+          '<div class="field"><label class="small" style="margin-bottom:4px">Annual entitlement</label><input class="input" style="height:30px;font-size:11px" type="number" min="0" step="0.5" id="allow_'+esc(selectedUserId)+'" value="'+esc(num(selectedHp && selectedHp.annual_allowance_hours, 100))+'"'+(selectedEditable ? '' : ' disabled')+'><div class="field-note">Base credit-hours allowance for the year.</div></div>'+
+          '<div class="field"><label class="small" style="margin-bottom:4px">Carryover after 31 Dec</label><input class="input" style="height:30px;font-size:11px" type="number" min="0" step="0.5" id="carry_'+esc(selectedUserId)+'" value="'+esc(num(selectedHp && selectedHp.carryover_days, 0))+'"'+((selectedEditable && selectedCarryoverOpen) ? '' : ' disabled')+' title="'+esc(selectedCarryoverOpen ? 'Carryover can be adjusted now' : 'Carryover can only be adjusted after 31 December')+'"><div class="field-note">Extra holiday moved over into the new year.</div></div>'+
+          '<div class="field"><label class="small" style="margin-bottom:4px">Extras</label><div class="row" style="gap:8px;align-items:flex-end">'+
+            '<select class="select" id="extrasUnit_'+esc(selectedUserId)+'" style="width:120px;height:30px;font-size:11px" onchange="syncExtrasUnit(\'extrasUnit_'+esc(selectedUserId)+'\', \'extras_'+esc(selectedUserId)+'\')"'+(selectedEditable ? '' : ' disabled')+'>'+
+              '<option value="days">Days</option>'+
+              '<option value="hours">Hours</option>'+
+            '</select>'+
+            '<input class="input" style="height:30px;font-size:11px;flex:1" type="number" min="-999" max="999" step="0.5" id="extras_'+esc(selectedUserId)+'" value="'+esc(num(selectedHp && selectedHp.entitlement_extras_days, 0))+'"'+(selectedEditable ? '' : ' disabled')+'>'+
+          '</div><div class="field-note">Positive numbers add entitlement. Negative numbers take it away.</div></div>'+
+          '<div class="field"><label class="small" style="margin-bottom:4px">Reason / note for entitlement change</label><textarea class="textarea allowance-reason" id="allowReason_'+esc(selectedUserId)+'" placeholder="Explain why this allowance or carryover is being changed."'+(selectedEditable ? '' : ' disabled')+'></textarea><div class="field-note">This is stored in the allowance audit trail.</div></div>'+
+          '<div style="display:flex;justify-content:flex-end"><button class="btn btn-ghost" style="height:30px;padding:0 10px;font-size:10px" type="button" onclick="saveAllowance(\''+esc(selectedUserId)+'\')"'+(selectedEditable ? '' : ' disabled')+'>Save entitlements</button></div>'+
+        '</div>'+
+      '</details>'+
       '<div class="activity-section">'+
         '<div class="activity-section-title">Recent claim audit</div>'+
         '<div class="activity-section-sub">The most recent submitted, approved, denied or cancelled entries for this person.</div>'+
@@ -4030,7 +4050,7 @@ function hrHandoverGroupsForCurrentView(){
       const hours = requestHours(req);
       const approvalText = {
         worked: formatDateOnly(req.work_date || req.requested_at || req.created_at || ''),
-        date: formatDateTime(req.decided_at || req.requested_at || req.created_at || ''),
+        date: formatDateOnly(req.decided_at || req.requested_at || req.created_at || ''),
         manager: req.decided_by_name || 'Unknown manager',
         amount: requestConsumesBalance(req) ? creditHoursText(hours) + ' credit hours' : requestHoursText(hours) + ' overtime'
       };
@@ -4046,6 +4066,12 @@ function hrHandoverGroupsForCurrentView(){
   });
   return grouped.people.length ? [grouped] : [];
 }
+function hrHandoverApprovalTextLines(personName, approval){
+  return [
+    personName + ' - ' + approval.amount + ' - worked ' + approval.worked,
+    'Approved on ' + approval.date + ' by ' + approval.manager
+  ];
+}
 function renderHrHandoverGroup(group){
   return '<article class="request-card">'+
     '<div class="request-head">'+
@@ -4053,19 +4079,13 @@ function renderHrHandoverGroup(group){
       '<span class="pill approved">'+esc(hrHandoverApprovedHoursText(group.total))+'</span>'+
     '</div>'+
     '<div class="list">'+group.people.map(function(person){
-      const amountParts = [];
-      if (person.credit > 0) amountParts.push(creditHoursText(person.credit) + ' credit hours');
-      if (person.overtime > 0) amountParts.push(creditHoursText(person.overtime) + ' overtime');
-      const approvalLines = (person.approvals || []).map(function(approval){
-        return 'Worked ' + approval.worked + ' · approved ' + approval.date + ' by ' + approval.manager;
-      });
       return '<div class="activity-mini-item">'+
-        '<div class="top">'+
-          '<div class="title">'+esc(person.name)+'</div>'+
-          '<div class="meta" style="text-align:right">' + esc(amountParts.join(', ')) + '</div>'+
-        '</div>'+
-        (approvalLines.length ? approvalLines.map(function(line){
-          return '<div class="meta">' + esc(line) + '</div>';
+        ((person.approvals || []).length ? person.approvals.map(function(approval){
+          const lines = hrHandoverApprovalTextLines(person.name, approval);
+          return '<div style="display:grid;gap:2px">' +
+            '<div class="title">' + esc(lines[0]) + '</div>' +
+            '<div class="meta">' + esc(lines[1]) + '</div>' +
+          '</div>';
         }).join('') : '') +
       '</div>';
     }).join('')+'</div>'+
@@ -4081,13 +4101,25 @@ function buildHrHandoverEmailText(){
     lines.push('Date range: ' + group.label);
     group.people.forEach(function(person){
       (person.approvals || []).forEach(function(approval){
-        lines.push(person.name + ' - ' + approval.amount + ' - worked ' + approval.worked);
-        lines.push('Approved on ' + approval.date + ' by ' + approval.manager);
+        const approvalLines = hrHandoverApprovalTextLines(person.name, approval);
+        lines.push(approvalLines[0]);
+        lines.push(approvalLines[1]);
       });
     });
     lines.push('');
   });
   return lines.join('\n');
+}
+function updateHrHandoverPreviewText(){
+  const groups = hrHandoverGroupsForCurrentView();
+  const text = groups.length
+    ? buildHrHandoverEmailText()
+    : 'No approved credit hours or overtime ready for HR.';
+  const preview = $('hrHandoverPreviewText');
+  const summary = $('hrHandoverSummary');
+  if (preview) preview.value = text;
+  if (summary) summary.value = text;
+  return text;
 }
 function renderHrHandoverPanel(){
   const panel = $('hrHandoverPanel');
@@ -4099,7 +4131,7 @@ function renderHrHandoverPanel(){
     const box = $('hrHandoverList');
     if (box) box.innerHTML = '';
     const summary = $('hrHandoverSummary');
-    if (summary) summary.textContent = '0 approved hours ready for HR.';
+    if (summary) summary.value = '0 approved hours ready for HR.';
     const staffCount = $('hrHandoverStaffCount');
     const hoursCount = $('hrHandoverHoursCount');
     if (staffCount) staffCount.textContent = 'Date range: ' + hrHandoverPeriodLabel();
@@ -4123,11 +4155,7 @@ function renderHrHandoverPanel(){
   const hoursCount = $('hrHandoverHoursCount');
   if (staffCount) staffCount.textContent = 'Date range: ' + hrHandoverPeriodLabel();
   if (hoursCount) hoursCount.textContent = hrHandoverApprovedHoursText(totalCredit);
-  if (summary) {
-    summary.textContent = groups.length
-      ? hrHandoverPeriodLabel() + ': ' + hrHandoverApprovedHoursText(totalCredit) + ' ready for HR.'
-      : 'No approved credit hours or overtime ready for HR.';
-  }
+  if (summary) summary.value = groups.length ? updateHrHandoverPreviewText() : 'No approved credit hours or overtime ready for HR.';
   if (!box) return;
   if (!groups.length) {
     box.innerHTML = '<div class="empty">No approved credit hours or overtime to send for '+hrHandoverPeriodLabel()+'.</div>';
@@ -4136,7 +4164,7 @@ function renderHrHandoverPanel(){
   box.innerHTML = groups.map(renderHrHandoverGroup).join('');
 }
 async function copyHrHandoverSummary(){
-  const text = buildHrHandoverEmailText();
+  const text = updateHrHandoverPreviewText();
   try {
     await navigator.clipboard.writeText(text);
     setToast('HR handover copied ✓');
@@ -4145,7 +4173,15 @@ async function copyHrHandoverSummary(){
   }
 }
 function openHrHandoverPreview(){
-  sendHrHandoverEmail();
+  const text = updateHrHandoverPreviewText();
+  const modal = $('hrHandoverModal');
+  if (!modal) {
+    sendHrHandoverEmail();
+    return;
+  }
+  modal.classList.add('open');
+  const preview = $('hrHandoverPreviewText');
+  if (preview) preview.value = text;
 }
 function closeHrHandoverPreview(){
   const modal = $('hrHandoverModal');
@@ -4159,7 +4195,7 @@ function sendHrHandoverEmail(){
   }
   const recipient = hrHandoverRecipient();
   const subject = encodeURIComponent('Approved credit hours from ' + currentDisplayName() + ' - ' + hrHandoverPeriodContextLabel());
-  const body = encodeURIComponent(buildHrHandoverEmailText());
+  const body = encodeURIComponent(updateHrHandoverPreviewText());
   const mailto = 'mailto:' + (recipient ? recipient : '') + '?subject=' + subject + '&body=' + body;
   window.location.href = mailto;
 }
@@ -4262,11 +4298,11 @@ function renderHolidayApp(){
   if (page && activityPanel && approvalsPanel && managerViewEnabled) {
     page.insertBefore(activityPanel, approvalsPanel);
   }
-  if (page && hrHandoverPanel && approvalsPanel && managerViewEnabled) {
-    page.insertBefore(hrHandoverPanel, approvalsPanel);
-  }
   if (page && insightsPanel && managerViewEnabled) {
     page.insertBefore(insightsPanel, requestPanel);
+  }
+  if (page && hrHandoverPanel && managerViewEnabled) {
+    page.insertBefore(hrHandoverPanel, insightsPanel || requestPanel);
   }
   if (page && allowancePanel && managerViewEnabled) {
     page.appendChild(allowancePanel);

@@ -345,8 +345,13 @@ body :where(.app-card,.coming-card,.icon-btn,.login-btn,.card-arrow,.palette-opt
 .login-err{font-size:12px;color:var(--red);background:var(--redd);border:1px solid var(--redb);
   border-radius:var(--rsm);padding:8px 12px;margin-top:12px;display:none;}
 
-#mainHeader{position:relative;z-index:10;border-bottom:1px solid var(--bd2);
-  background:var(--glass-1);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+#mainHeader{position:relative;z-index:10;border-bottom:1px solid var(--bd);
+  background:
+    radial-gradient(140% 120% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
+    radial-gradient(120% 120% at 100% 0%, var(--palette-card-glow-2), transparent 48%),
+    linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  box-shadow:var(--e2), var(--eac);
   padding:0 28px;display:flex;align-items:center;gap:14px;height:62px;}
 .header-logo{width:36px;height:36px;flex-shrink:0;
   background:linear-gradient(135deg,var(--ac),var(--ac3));
@@ -1568,11 +1573,20 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
     align-items:flex-start;
     gap:6px;
     overflow:visible;
-    background:var(--glass-1);
-    backdrop-filter:blur(18px);
-    -webkit-backdrop-filter:blur(18px);
+    background:
+      radial-gradient(140% 120% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
+      radial-gradient(120% 120% at 100% 0%, var(--palette-card-glow-2), transparent 48%),
+      linear-gradient(180deg,var(--glass-1),var(--glass-2));
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+    box-shadow:var(--e2), var(--eac);
   }
-  .light-mode #mainHeader{background:var(--glass-1);}
+  .light-mode #mainHeader{
+    background:
+      radial-gradient(140% 120% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
+      radial-gradient(120% 120% at 100% 0%, var(--palette-card-glow-2), transparent 48%),
+      linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  }
   .header-titles{min-width:0;flex:1 1 auto;}
   .header-name{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .header-sub{display:none;}
@@ -1599,6 +1613,8 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
     padding:16px 12px 18px;
     gap:16px;
   }
+  #adminPanel [style*="grid-template-columns:repeat(6,minmax(0,1fr))"],
+  #adminPanel [style*="grid-template-columns:repeat(5,minmax(0,1fr))"],
   #adminPanel [style*="grid-template-columns:repeat(4,minmax(0,1fr))"]{
     grid-template-columns:1fr !important;
   }
@@ -1646,6 +1662,8 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
     overscroll-behavior:contain;
     -webkit-overflow-scrolling:touch;
   }
+  #roleEditPanel [style*="grid-template-columns:repeat(6,minmax(0,1fr))"],
+  #roleEditPanel [style*="grid-template-columns:repeat(5,minmax(0,1fr))"],
   #roleEditPanel [style*="grid-template-columns:repeat(4,minmax(0,1fr))"],
   #roleEditPanel [style*="grid-template-columns:repeat(3,minmax(0,1fr))"],
   #roleEditPanel [style*="grid-template-columns:1fr 1fr"],
@@ -1723,7 +1741,8 @@ body:not(.basic-mode) #loginScreen::after{
 
 /* Calm, consistent surfaces: subtle glass only where it helps (header/panels). */
 body:not(.basic-mode) #mainHeader{
-  background:color-mix(in srgb, var(--sf) 92%, transparent) !important;
+  background:var(--sf) !important;
+  background-image:none !important;
   border-bottom-color:var(--bd2) !important;
   box-shadow:var(--e1) !important;
   backdrop-filter:blur(14px) !important;
@@ -2148,7 +2167,7 @@ async function showAppSelector(user, opts) {
   document.getElementById('logoutBtn').style.display = 'flex';
   document.getElementById('changePwBtn').style.display = _platformSharedRoleAccount ? 'none' : 'flex';
   try {
-    const {data} = await sb.from('pw_profiles').select('id,full_name,email,approved,disabled,role,must_reset_password,holiday_requests_access,holiday_manager_auth_user_id,shift_tracker_access,credit_hours_access').eq('id', user.id).single();
+    const {data} = await sb.from('pw_profiles').select('*').eq('id', user.id).single();
     _platformProfile = data;
     _platformSharedRoleAccount = isSharedOperatorAccount(data || null, null, user || null);
     if (data && (data.approved === false || data.disabled === true || data.role === 'none')) {
@@ -3243,7 +3262,7 @@ function renderFeedbackRequestsSection() {
   if (!_feedbackRequestsCache || !_feedbackRequestsCache.length) return '';
   let html = '<div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--bd)">';
   html += '<div style="font-family:var(--ff-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--pur);margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">'
-    + 'Feature / Bug Requests <span style="background:var(--purd);border:1px solid var(--purb);color:var(--pur);border-radius:10px;padding:1px 7px;font-size:10px">'+_feedbackRequestsCache.length+'</span>'
+    + 'Feature Requests / Bug Reporting <span style="background:var(--purd);border:1px solid var(--purb);color:var(--pur);border-radius:10px;padding:1px 7px;font-size:10px">'+_feedbackRequestsCache.length+'</span>'
     + '<span style="margin-left:auto;display:flex;align-items:center;gap:6px;flex-wrap:wrap">'
     + '<button type="button" onclick="loadAllUsers()" style="height:24px;padding:0 9px;font-size:10px;font-family:var(--ff-head);font-weight:600;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rxs);color:var(--tx2);cursor:pointer">Refresh</button>'
     + '</span></div>';
@@ -4137,7 +4156,7 @@ async function loadAllUsers() {
     }
 
     const [profRes, kilnRes] = await withTimeout(Promise.all([
-      sb.from('pw_profiles').select('id,full_name,email,approved,disabled,role,must_reset_password,holiday_requests_access,holiday_manager_auth_user_id,shift_tracker_access,credit_hours_access').order('email'),
+      sb.from('pw_profiles').select('*').order('email'),
       sb.from('kiln_users').select('username,locked_name,email,is_admin,is_burner,is_shift_manager,is_electrician,is_mechanical,is_process_operator,is_cement_analyst,is_day_staff,is_readonly,is_locked,shift_log_access,must_reset_password,auth_user_id').order('username')
     ]), 10000);
 
@@ -5044,7 +5063,7 @@ async function deleteResetReq(btnOrId) {
   <div class="feedback-request-panel" style="width:620px;max-width:94vw;max-height:86vh;background:var(--sf);border:1px solid var(--bd);border-radius:14px;display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--e3)">
     <div style="padding:18px 22px;border-bottom:1px solid var(--bd);display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-shrink:0">
       <div>
-        <div style="font-family:var(--ff-head);font-weight:700;font-size:16px;color:var(--tx)">Feature / Bug Request</div>
+        <div style="font-family:var(--ff-head);font-weight:700;font-size:16px;color:var(--tx)">Feature Requests / Bug Reporting</div>
         <div style="font-family:var(--ff-mono);font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:var(--tx3);margin-top:4px">Send this to the admin queue for review</div>
       </div>
       <button onclick="closeFeedbackRequestModal()" style="width:auto;min-width:64px;height:28px;padding:0 12px;border-radius:6px;border:1px solid var(--bd);background:transparent;color:var(--tx2);cursor:pointer;font-size:11px;font-family:var(--ff-mono);letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;justify-content:center;line-height:1">Close</button>
