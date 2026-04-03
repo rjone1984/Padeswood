@@ -510,10 +510,7 @@ body.basic-mode .topbar .back-platform-btn:hover{
 .panel{
   border:1px solid var(--bd);
   border-radius:20px;
-  background:
-    radial-gradient(140% 100% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
-    radial-gradient(120% 100% at 100% 0%, var(--palette-card-glow-2), transparent 48%),
-    linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  background:linear-gradient(180deg,var(--glass-1),var(--glass-2));
   box-shadow:var(--e2), var(--eac);
   padding:18px;
 }
@@ -561,10 +558,7 @@ body.basic-mode .topbar .back-platform-btn:hover{
 .entry-group{
   border:1px solid var(--bd);
   border-radius:18px;
-  background:
-    radial-gradient(140% 100% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
-    radial-gradient(120% 100% at 100% 0%, var(--palette-card-glow-2), transparent 48%),
-    linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  background:linear-gradient(180deg,var(--glass-1),var(--glass-2));
   box-shadow:var(--e1), var(--eac);
   overflow:hidden;
 }
@@ -610,10 +604,7 @@ body.basic-mode .topbar .back-platform-btn:hover{
 .request-card,.event-card,.staff-row{
   border:1px solid var(--bd);
   border-radius:18px;
-  background:
-    radial-gradient(140% 100% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
-    radial-gradient(120% 100% at 100% 0%, var(--palette-card-glow-2), transparent 48%),
-    linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  background:linear-gradient(180deg,var(--glass-1),var(--glass-2));
   padding:16px;
   box-shadow:var(--e1), var(--eac);
 }
@@ -683,10 +674,7 @@ body.basic-mode .topbar .back-platform-btn:hover{
 .queue-controls .select{width:auto;min-width:180px}
 .queue-card{border:1px solid var(--bd);border-radius:18px;background:linear-gradient(180deg,var(--glass-1),var(--glass-2));padding:16px;display:grid;gap:12px}
 .queue-card{
-  background:
-    radial-gradient(140% 100% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
-    radial-gradient(120% 100% at 100% 0%, var(--palette-card-glow-2), transparent 48%),
-    linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  background:linear-gradient(180deg,var(--glass-1),var(--glass-2));
   box-shadow:var(--e1), var(--eac);
 }
 .queue-card .actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
@@ -701,10 +689,7 @@ body.basic-mode .topbar .back-platform-btn:hover{
 .staff-card{
   border:1px solid var(--bd);
   border-radius:18px;
-  background:
-    radial-gradient(140% 100% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
-    radial-gradient(120% 100% at 100% 0%, var(--palette-card-glow-2), transparent 48%),
-    linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  background:linear-gradient(180deg,var(--glass-1),var(--glass-2));
   overflow:hidden;
   box-shadow:var(--e1), var(--eac);
 }
@@ -1046,9 +1031,7 @@ body.basic-mode .topbar .back-platform-btn:hover{
   border:1px solid var(--bd);
   border-radius:16px;
   padding:12px 14px;
-  background:
-    radial-gradient(140% 120% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
-    linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  background:linear-gradient(180deg,var(--glass-1),var(--glass-2));
   box-shadow:var(--e1), var(--eac);
   cursor:pointer;
   display:grid;
@@ -1058,11 +1041,11 @@ body.basic-mode .topbar .back-platform-btn:hover{
 #activityPanel .activity-roster-btn:hover{
   transform:translateY(-2px);
   border-color:color-mix(in srgb, var(--palette-card-border) 58%, var(--bd2));
-  box-shadow:var(--e2), 0 0 0 1px var(--palette-card-border), 0 0 18px var(--palette-card-glow-2);
+  box-shadow:var(--e2);
 }
 #activityPanel .activity-roster-btn.active{
   border-color:color-mix(in srgb, var(--palette-card-border) 72%, var(--ac3));
-  box-shadow:var(--e2), 0 0 0 1px var(--palette-card-border), 0 0 24px var(--palette-card-glow-1);
+  box-shadow:var(--e2);
 }
 #activityPanel .activity-roster-head{
   display:flex;
@@ -1090,10 +1073,7 @@ body.basic-mode .topbar .back-platform-btn:hover{
 #activityPanel .activity-detail{
   border:1px solid var(--bd);
   border-radius:20px;
-  background:
-    radial-gradient(140% 120% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
-    radial-gradient(120% 120% at 100% 0%, var(--palette-card-glow-2), transparent 48%),
-    linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  background:linear-gradient(180deg,var(--glass-1),var(--glass-2));
   box-shadow:var(--e2), var(--eac);
   padding:16px;
   display:grid;
@@ -1973,6 +1953,12 @@ body:not(.basic-mode) .btn-primary:hover{
     </section>
 
     <section class="panel hidden" id="allowancePanel">
+      <div class="panel-head">
+        <div>
+          <div class="panel-title">Entitlements</div>
+          <div class="panel-sub">Shift managers can adjust annual allowances and carryover for their assigned staff.</div>
+        </div>
+      </div>
       <div id="allowanceList" class="list"></div>
     </section>
 
@@ -3180,6 +3166,8 @@ function renderRequestAuditItem(req){
 function renderCreditActivityClaimItem(req){
   const events = eventsForRequest(req.id);
   const latestNote = events.length ? (events[events.length - 1].note || req.manager_note || '—') : (req.manager_note || '—');
+  const reasonText = requestDisplayReason(req.reason) || '—';
+  const noteText = requestDisplayReason(latestNote || '—');
   return '<div class="activity-mini-item">'+
     '<div class="top">'+
       '<div>'+
@@ -3189,7 +3177,8 @@ function renderCreditActivityClaimItem(req){
       '<span class="pill '+requestStatusClass(req.status)+'">'+esc(req.status.charAt(0).toUpperCase() + req.status.slice(1))+'</span>'+
     '</div>'+
     '<div class="meta">'+makeKindPill(req)+' <span style="margin-left:6px">'+esc(requestAmountText(req))+'</span></div>'+
-    '<div class="meta">'+esc(requestDisplayReason(latestNote || '—'))+'</div>'+
+    '<div class="meta">Worked for · '+esc(reasonText)+'</div>'+
+    (noteText && noteText !== reasonText ? '<div class="meta">Latest note · '+esc(noteText)+'</div>' : '')+
   '</div>';
 }
 function renderCreditAllowanceItem(ev){
@@ -3381,6 +3370,9 @@ function renderTeamOverviewCards(){
   const selectedStats = statsForUser(selectedUserId, selectedYear);
   const selectedQuarterUsed = selectedStats.quarterUsed;
   const selectedQuarterRemaining = selectedStats.quarterRemaining;
+  const selectedHp = holidayProfileFor(selectedUserId);
+  const selectedEditable = isHolidayAdmin || String(selectedProfile.holiday_manager_auth_user_id || '') === String(currentUser.id || '');
+  const selectedCarryoverOpen = canEditCarryoverNow();
   const selectedRequestHistory = requestsForUser(selectedUserId)
     .filter(function(r){
       return requestMatchesYear(r, selectedYear) && r.status !== 'cancelled' && r.status !== 'denied';
@@ -3440,6 +3432,21 @@ function renderTeamOverviewCards(){
         '<div class="activity-stat"><div class="label">Credit hours remaining</div><div class="value">'+esc(creditHoursText(selectedStats.remaining))+'</div></div>'+
         '<div class="activity-stat"><div class="label">Rolling quarter worked</div><div class="value">'+esc(creditHoursText(selectedQuarterUsed))+'</div></div>'+
         '<div class="activity-stat"><div class="label">Rolling quarter remaining</div><div class="value">'+esc(creditHoursText(selectedQuarterRemaining))+'</div></div>'+
+      '</div>'+
+      '<div class="card-box">'+
+        '<div class="box-label">Entitlement adjustment</div>'+
+        '<div class="small" style="margin-bottom:10px">Add or remove annual allowance and carryover for this staff member. Every save is written to the audit trail.</div>'+
+        '<div class="field"><label class="small" style="margin-bottom:4px">Annual entitlement</label><input class="input" style="height:30px;font-size:11px" type="number" min="0" step="0.5" id="allow_'+esc(selectedUserId)+'" value="'+esc(num(selectedHp && selectedHp.annual_allowance_hours, 100))+'"'+(selectedEditable ? '' : ' disabled')+'><div class="field-note">Base credit-hours allowance for the year.</div></div>'+
+        '<div class="field"><label class="small" style="margin-bottom:4px">Carryover after 31 Dec</label><input class="input" style="height:30px;font-size:11px" type="number" min="0" step="0.5" id="carry_'+esc(selectedUserId)+'" value="'+esc(num(selectedHp && selectedHp.carryover_days, 0))+'"'+((selectedEditable && selectedCarryoverOpen) ? '' : ' disabled')+' title="'+esc(selectedCarryoverOpen ? 'Carryover can be adjusted now' : 'Carryover can only be adjusted after 31 December')+'"><div class="field-note">Extra holiday moved over into the new year.</div></div>'+
+        '<div class="field"><label class="small" style="margin-bottom:4px">Extras</label><div class="row" style="gap:8px;align-items:flex-end">'+
+          '<select class="select" id="extrasUnit_'+esc(selectedUserId)+'" style="width:120px;height:30px;font-size:11px" onchange="syncExtrasUnit(\'extrasUnit_'+esc(selectedUserId)+'\', \'extras_'+esc(selectedUserId)+'\')"'+(selectedEditable ? '' : ' disabled')+'>'+
+            '<option value="days">Days</option>'+
+            '<option value="hours">Hours</option>'+
+          '</select>'+
+          '<input class="input" style="height:30px;font-size:11px;flex:1" type="number" min="-999" max="999" step="0.5" id="extras_'+esc(selectedUserId)+'" value="'+esc(num(selectedHp && selectedHp.entitlement_extras_days, 0))+'"'+(selectedEditable ? '' : ' disabled')+'>'+
+        '</div><div class="field-note">Positive numbers add entitlement. Negative numbers take it away.</div></div>'+
+        '<div class="field"><label class="small" style="margin-bottom:4px">Reason / note for entitlement change</label><textarea class="textarea allowance-reason" id="allowReason_'+esc(selectedUserId)+'" placeholder="Explain why this allowance or carryover is being changed."'+(selectedEditable ? '' : ' disabled')+'></textarea><div class="field-note">This is stored in the allowance audit trail.</div></div>'+
+        '<div style="display:flex;justify-content:flex-end"><button class="btn btn-ghost" style="height:30px;padding:0 10px;font-size:10px" type="button" onclick="saveAllowance(\''+esc(selectedUserId)+'\')"'+(selectedEditable ? '' : ' disabled')+'>Save entitlements</button></div>'+
       '</div>'+
       '<div class="activity-section">'+
         '<div class="activity-section-title">Recent claim audit</div>'+
@@ -3663,10 +3670,17 @@ function renderApproverQueue(){
   const managerViewEnabled = canViewManagerSections();
   if (!managerViewEnabled) {
     panel.style.display = 'none';
-    if (allowancePanel) allowancePanel.style.display = 'none';
+    if (allowancePanel) {
+      allowancePanel.style.display = 'none';
+      allowancePanel.classList.add('hidden');
+    }
     return;
   }
   panel.style.display = '';
+  if (allowancePanel) {
+    allowancePanel.style.display = '';
+    allowancePanel.classList.remove('hidden');
+  }
   const box = $('approvalQueue');
   const rows = allHolidayRequests
     .filter(req => requestMatchesYear(req, selectedYear) && (isHolidayAdmin || isAssignedHolidayManagerForRequest(req)))
@@ -3685,7 +3699,6 @@ function renderApproverQueue(){
     $('approverQueuePanel').querySelector('.panel-title').textContent = 'Credit-hours overview';
     $('approverQueuePanel').querySelector('.panel-sub').textContent = 'Entries grouped into users and shift managers.';
     $('managerFilter').closest('.queue-controls').style.display = 'none';
-    if (allowancePanel) allowancePanel.style.display = 'none';
     const grouped = { users: [], managers: [] };
     rows.forEach(function(req) {
       const ku = allKilnUsers.find(function(x){ return String(x.auth_user_id) === String(req.auth_user_id); }) || null;
@@ -3724,7 +3737,6 @@ function renderApproverQueue(){
     box.innerHTML = groupBlock('Users', grouped.users) + groupBlock('Shift Managers', grouped.managers);
     return;
   }
-  if (allowancePanel) allowancePanel.style.display = 'none';
   $('approverQueuePanel').querySelector('.panel-title').textContent = 'Team approvals';
   $('approverQueuePanel').querySelector('.panel-sub').textContent = 'Claims for your assigned staff, with remaining credit shown on each card.';
   $('managerFilter').closest('.queue-controls').style.display = 'none';
@@ -3768,7 +3780,12 @@ function renderApproverQueue(){
 }
 function renderAllowanceList(){
   const box = $('allowanceList');
+  const panel = $('allowancePanel');
   const managerViewEnabled = canViewManagerSections();
+  if (panel) {
+    panel.style.display = managerViewEnabled ? '' : 'none';
+    panel.classList.toggle('hidden', !managerViewEnabled);
+  }
   if (!managerViewEnabled) { box.innerHTML = ''; return; }
   const activeProfiles = isHolidayAdmin ? allPwProfiles.filter(p => p && p.approved !== false && p.disabled !== true && p.role !== 'none') : assignedHolidayStaffForCurrentUser();
   const carryoverOpen = canEditCarryoverNow();
@@ -3858,6 +3875,15 @@ function renderAllowanceList(){
       '</div>'+
     '</details>';
   }).join('');
+}
+function renderAllowanceList(){
+  const box = $('allowanceList');
+  const panel = $('allowancePanel');
+  if (panel) {
+    panel.style.display = 'none';
+    panel.classList.add('hidden');
+  }
+  if (box) box.innerHTML = '';
 }
 function hrHandoverRecipient(){
   const saved = String(localStorage.getItem(HR_HANDOVER_RECIPIENT_STORAGE_KEY) || '').trim();
@@ -4003,8 +4029,10 @@ function hrHandoverGroupsForCurrentView(){
       };
       const hours = requestHours(req);
       const approvalText = {
+        worked: formatDateOnly(req.work_date || req.requested_at || req.created_at || ''),
         date: formatDateTime(req.decided_at || req.requested_at || req.created_at || ''),
-        manager: req.decided_by_name || 'Unknown manager'
+        manager: req.decided_by_name || 'Unknown manager',
+        amount: requestConsumesBalance(req) ? creditHoursText(hours) + ' credit hours' : requestHoursText(hours) + ' overtime'
       };
       person[kind] += hours;
       person.approvals.push(approvalText);
@@ -4029,14 +4057,16 @@ function renderHrHandoverGroup(group){
       if (person.credit > 0) amountParts.push(creditHoursText(person.credit) + ' credit hours');
       if (person.overtime > 0) amountParts.push(creditHoursText(person.overtime) + ' overtime');
       const approvalLines = (person.approvals || []).map(function(approval){
-        return 'Approved ' + approval.date + ' by ' + approval.manager;
+        return 'Worked ' + approval.worked + ' · approved ' + approval.date + ' by ' + approval.manager;
       });
       return '<div class="activity-mini-item">'+
         '<div class="top">'+
           '<div class="title">'+esc(person.name)+'</div>'+
           '<div class="meta" style="text-align:right">' + esc(amountParts.join(', ')) + '</div>'+
         '</div>'+
-        (approvalLines.length ? '<div class="meta">' + esc(approvalLines.join(' | ')) + '</div>' : '') +
+        (approvalLines.length ? approvalLines.map(function(line){
+          return '<div class="meta">' + esc(line) + '</div>';
+        }).join('') : '') +
       '</div>';
     }).join('')+'</div>'+
   '</article>';
@@ -4048,14 +4078,11 @@ function buildHrHandoverEmailText(){
     ''
   ];
   groups.forEach(function(group){
-    lines.push(group.label);
+    lines.push('Date range: ' + group.label);
     group.people.forEach(function(person){
-      const parts = [];
-      if (person.credit > 0) parts.push(creditHoursText(person.credit) + ' credit hours');
-      if (person.overtime > 0) parts.push(creditHoursText(person.overtime) + ' overtime');
-      lines.push(person.name + ' - ' + parts.join(', '));
       (person.approvals || []).forEach(function(approval){
-        lines.push('Approved ' + approval.date + ' by ' + approval.manager);
+        lines.push(person.name + ' - ' + approval.amount + ' - worked ' + approval.worked);
+        lines.push('Approved on ' + approval.date + ' by ' + approval.manager);
       });
     });
     lines.push('');
@@ -4075,7 +4102,7 @@ function renderHrHandoverPanel(){
     if (summary) summary.textContent = '0 approved hours ready for HR.';
     const staffCount = $('hrHandoverStaffCount');
     const hoursCount = $('hrHandoverHoursCount');
-    if (staffCount) staffCount.textContent = hrHandoverPeriodLabel();
+    if (staffCount) staffCount.textContent = 'Date range: ' + hrHandoverPeriodLabel();
     if (hoursCount) hoursCount.textContent = '0 approved hours';
     closeHrHandoverPreview();
     return;
@@ -4094,7 +4121,7 @@ function renderHrHandoverPanel(){
   const summary = $('hrHandoverSummary');
   const staffCount = $('hrHandoverStaffCount');
   const hoursCount = $('hrHandoverHoursCount');
-  if (staffCount) staffCount.textContent = hrHandoverPeriodLabel();
+  if (staffCount) staffCount.textContent = 'Date range: ' + hrHandoverPeriodLabel();
   if (hoursCount) hoursCount.textContent = hrHandoverApprovedHoursText(totalCredit);
   if (summary) {
     summary.textContent = groups.length
@@ -4235,10 +4262,13 @@ function renderHolidayApp(){
   if (page && activityPanel && approvalsPanel && managerViewEnabled) {
     page.insertBefore(activityPanel, approvalsPanel);
   }
+  if (page && hrHandoverPanel && approvalsPanel && managerViewEnabled) {
+    page.insertBefore(hrHandoverPanel, approvalsPanel);
+  }
   if (page && insightsPanel && managerViewEnabled) {
     page.insertBefore(insightsPanel, requestPanel);
   }
-  if (page && allowancePanel && isHolidayAdmin) {
+  if (page && allowancePanel && managerViewEnabled) {
     page.appendChild(allowancePanel);
   }
   if (page && bankHolidayPanel && isHolidayAdmin) {

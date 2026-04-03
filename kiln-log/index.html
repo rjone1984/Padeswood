@@ -2292,8 +2292,8 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay,.search-
     max-width:110px;
   }
   .topbar a[title="Back to platform"] {
-    width:28px !important;
-    height:28px !important;
+    width:38px !important;
+    height:38px !important;
   }
   .topbar .logo {
     width:32px !important;
@@ -2748,7 +2748,7 @@ body:not(.basic-mode) .splash-loader-bar {
         </div>
       </div>
       <div class="small" id="accessDeniedMsg">Please contact an administrator if you think this is wrong.</div>
-      <div class="row" style="margin-top:14px">
+      <div class="row auth-actions" style="margin-top:14px">
         <button class="btn btn-primary" type="button" onclick="window.location.href='../index.html'">Back to Platform</button>
       </div>
     </div>
@@ -7240,7 +7240,7 @@ function renderReports(){
       <div style="height:16px"></div>
       <div class="reports-prompt-wrap">
         <textarea class="reports-prompt" id="reportPrompt" rows="3"
-          placeholder="Message... (Ctrl/Cmd+Enter to send)"
+          placeholder="Message..."
           onkeydown="if((event.ctrlKey||event.metaKey)&&event.key==='Enter'){event.preventDefault();sendReport();}"></textarea>
         <button class="reports-send" id="reportSendBtn" onclick="sendReport()">
           <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" style="width:15px;height:15px"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
@@ -7657,6 +7657,8 @@ async function saveWhiteboardData(){
 
 let _feedbackRange   = 'week';
 let _resolvedRange   = 'week';
+let _feedbackOffset  = 0;
+let _resolvedOffset  = 0;
 let _resolvedSearch  = '';
 let _ongoingSearch   = '';
 let _fbTab           = 'ongoing';
@@ -7735,6 +7737,119 @@ function feedbackRowToIssue(row){
   };
 }
 
+function normalizeFeedbackRange(value){
+  const range = String(value || '').toLowerCase();
+  return ['week','month','year','all'].includes(range) ? range : 'week';
+}
+
+function feedbackRangeJumpLabel(range){
+  const normalized = normalizeFeedbackRange(range);
+  if(normalized === 'month') return 'This month';
+  if(normalized === 'year') return 'This year';
+  if(normalized === 'all') return 'All time';
+  return 'This week';
+}
+
+function feedbackRangeBounds(range, offset){
+  const normalized = normalizeFeedbackRange(range);
+  if(normalized === 'all'){
+    return { range:'all', label:'All time', start:null, end:null, fetchStart:null };
+  }
+  const step = Number.isFinite(Number(offset)) ? Number(offset) : 0;
+  const start = new Date();
+  start.setHours(0,0,0,0);
+  const end = new Date(start);
+  if(normalized === 'week'){
+    const dow = start.getDay();
+    start.setDate(start.getDate() - (dow===0 ? 6 : dow-1) + (step * 7));
+    end.setTime(start.getTime());
+    end.setDate(end.getDate() + 6);
+  } else if(normalized === 'month'){
+    start.setDate(1);
+    start.setMonth(start.getMonth() + step);
+    end.setTime(start.getTime());
+    end.setMonth(end.getMonth() + 1);
+    end.setDate(0);
+  } else {
+    start.setMonth(0, 1);
+    start.setFullYear(start.getFullYear() + step);
+    end.setTime(start.getTime());
+    end.setFullYear(end.getFullYear() + 1);
+    end.setDate(0);
+  }
+  const fetchStart = new Date(start);
+  fetchStart.setDate(fetchStart.getDate() - 6);
+  const startLabel = start.toLocaleDateString('en-GB',{ day:'2-digit', month:'short', year:'numeric' });
+  const endLabel = end.toLocaleDateString('en-GB',{ day:'2-digit', month:'short', year:'numeric' });
+  return {
+    range: normalized,
+    label: startLabel === endLabel ? startLabel : startLabel + ' to ' + endLabel,
+    start,
+    end,
+    fetchStart
+  };
+}
+
+function feedbackIssueInRange(issue, bounds){
+  if(!bounds || bounds.range === 'all') return true;
+  if(!issue || !(issue.shiftDate instanceof Date) || isNaN(issue.shiftDate.getTime())) return false;
+  const dateOnly = new Date(issue.shiftDate.getFullYear(), issue.shiftDate.getMonth(), issue.shiftDate.getDate());
+  return dateOnly >= bounds.start && dateOnly <= bounds.end;
+}
+
+function syncFeedbackRangeControls(){
+  ['week','month','year','all'].forEach(function(r){
+    const fbBtn = document.getElementById('fbRange-'+r);
+    const rsBtn = document.getElementById('resRange-'+r);
+    if(fbBtn) fbBtn.className = 'search-scope-btn' + (_feedbackRange===r ? ' active' : '');
+    if(rsBtn) rsBtn.className = 'search-scope-btn' + (_resolvedRange===r ? ' active' : '');
+  });
+  const ongoingBounds = feedbackRangeBounds(_feedbackRange, _feedbackOffset);
+  const resolvedBounds = feedbackRangeBounds(_resolvedRange, _resolvedOffset);
+  const fbLabel = document.getElementById('fbRangeLabel');
+  const resLabel = document.getElementById('resRangeLabel');
+  const fbCurrent = document.getElementById('fbRangeCurrent');
+  const resCurrent = document.getElementById('resRangeCurrent');
+  const fbBack = document.getElementById('fbRangeBack');
+  const resBack = document.getElementById('resRangeBack');
+  const fbNext = document.getElementById('fbRangeNext');
+  const resNext = document.getElementById('resRangeNext');
+  if(fbLabel) fbLabel.textContent = ongoingBounds.label;
+  if(resLabel) resLabel.textContent = resolvedBounds.label;
+  if(fbCurrent) fbCurrent.textContent = feedbackRangeJumpLabel(_feedbackRange);
+  if(resCurrent) resCurrent.textContent = feedbackRangeJumpLabel(_resolvedRange);
+  const fbDisableStep = normalizeFeedbackRange(_feedbackRange) === 'all';
+  const resDisableStep = normalizeFeedbackRange(_resolvedRange) === 'all';
+  if(fbCurrent) fbCurrent.disabled = fbDisableStep;
+  if(resCurrent) resCurrent.disabled = resDisableStep;
+  if(fbBack) fbBack.disabled = fbDisableStep;
+  if(resBack) resBack.disabled = resDisableStep;
+  if(fbNext) fbNext.disabled = fbDisableStep;
+  if(resNext) resNext.disabled = resDisableStep;
+}
+
+async function stepFeedbackRange(tab, delta){
+  const scope = tab === 'resolved' ? 'resolved' : 'ongoing';
+  const currentRange = scope === 'resolved' ? _resolvedRange : _feedbackRange;
+  if(normalizeFeedbackRange(currentRange) === 'all') return;
+  if(scope === 'resolved') _resolvedOffset = num(_resolvedOffset, 0) + num(delta, 0);
+  else _feedbackOffset = num(_feedbackOffset, 0) + num(delta, 0);
+  syncFeedbackRangeControls();
+  if(scope === 'resolved') await loadResolvedIssues();
+  else await loadFeedbackIssues();
+}
+
+async function jumpFeedbackRangeToCurrent(tab){
+  const scope = tab === 'resolved' ? 'resolved' : 'ongoing';
+  const currentRange = scope === 'resolved' ? _resolvedRange : _feedbackRange;
+  if(normalizeFeedbackRange(currentRange) === 'all') return;
+  if(scope === 'resolved') _resolvedOffset = 0;
+  else _feedbackOffset = 0;
+  syncFeedbackRangeControls();
+  if(scope === 'resolved') await loadResolvedIssues();
+  else await loadFeedbackIssues();
+}
+
 async function syncFeedbackWeekFromState(weekKey, weekData){
   if(!weekKey || !weekData) return true;
   const rows = buildFeedbackRowsFromWeek(weekKey, weekData);
@@ -7789,7 +7904,7 @@ async function renderFeedback(){
 
   function rangeBtns(activeRange, callbackName, prefix){
     return ['week','month','year','all'].map(function(r){
-      const label = r==='week'?'This Week':r==='month'?'This Month':r==='year'?'This Year':'All Time';
+      const label = r==='week'?'Week':r==='month'?'Month':r==='year'?'Year':'All time';
       const cls = 'search-scope-btn' + (activeRange===r ? ' active' : '');
       return '<button type="button" onclick="'+callbackName+'(\''+r+'\')" id="'+prefix+r+'" class="'+cls+'">'+label+'</button>';
     }).join('');
@@ -7818,6 +7933,10 @@ async function renderFeedback(){
     +'<div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;align-items:center">'
     +'<span style="font-size:10px;font-family:var(--ff-mono);color:var(--tx3);letter-spacing:1px;text-transform:uppercase;margin-right:2px">Range</span>'
     +rangeBtns(_feedbackRange, 'setFeedbackRange', 'fbRange-')
+    +'<span class="pill" id="fbRangeLabel">This week</span>'
+    +'<button class="btn btn-ghost" type="button" id="fbRangeCurrent" onclick="jumpFeedbackRangeToCurrent(\'ongoing\')">This week</button>'
+    +'<button class="btn btn-ghost" type="button" id="fbRangeBack" onclick="stepFeedbackRange(\'ongoing\',-1)">Back</button>'
+    +'<button class="btn btn-ghost" type="button" id="fbRangeNext" onclick="stepFeedbackRange(\'ongoing\',1)">Next</button>'
     +'</div>'
     +'<div style="position:relative;margin-bottom:14px">'
     +'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--tx3);pointer-events:none"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>'
@@ -7834,6 +7953,10 @@ async function renderFeedback(){
     +'<div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;align-items:center">'
     +'<span style="font-size:10px;font-family:var(--ff-mono);color:var(--tx3);letter-spacing:1px;text-transform:uppercase;margin-right:2px">Range</span>'
     +rangeBtns(_resolvedRange, 'setResolvedRange', 'resRange-')
+    +'<span class="pill" id="resRangeLabel">This week</span>'
+    +'<button class="btn btn-ghost" type="button" id="resRangeCurrent" onclick="jumpFeedbackRangeToCurrent(\'resolved\')">This week</button>'
+    +'<button class="btn btn-ghost" type="button" id="resRangeBack" onclick="stepFeedbackRange(\'resolved\',-1)">Back</button>'
+    +'<button class="btn btn-ghost" type="button" id="resRangeNext" onclick="stepFeedbackRange(\'resolved\',1)">Next</button>'
     +'</div>'
     +'<div style="position:relative;margin-bottom:14px">'
     +'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute;left:11px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--tx3);pointer-events:none"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>'
@@ -7845,6 +7968,8 @@ async function renderFeedback(){
     +'<div style="text-align:center;padding:40px;color:var(--tx3);font-family:var(--ff-mono);font-size:12px">Loading...</div>'
     +'</div>'
     +'</div>';
+
+  syncFeedbackRangeControls();
 
   if(_fbTab==='ongoing') await loadFeedbackIssues();
   else await loadResolvedIssues();
@@ -7868,67 +7993,40 @@ function switchFeedbackTab(tabId){
 }
 
 async function setFeedbackRange(range){
-  _feedbackRange = range;
-  _resolvedRange = range;
-  ['week','month','year','all'].forEach(function(r){
-    const fbBtn = document.getElementById('fbRange-'+r);
-    const rsBtn = document.getElementById('resRange-'+r);
-    if(fbBtn){
-      fbBtn.className = 'search-scope-btn' + (_feedbackRange===r ? ' active' : '');
-    }
-    if(rsBtn){
-      rsBtn.className = 'search-scope-btn' + (_resolvedRange===r ? ' active' : '');
-    }
-  });
+  _feedbackRange = normalizeFeedbackRange(range);
+  _resolvedRange = _feedbackRange;
+  _feedbackOffset = 0;
+  _resolvedOffset = 0;
+  syncFeedbackRangeControls();
   await loadFeedbackIssues();
   await loadResolvedIssues();
 }
 
 async function setResolvedRange(range){
-  _resolvedRange = range;
-  _feedbackRange = range;
-  ['week','month','year','all'].forEach(function(r){
-    const fbBtn = document.getElementById('fbRange-'+r);
-    const rsBtn = document.getElementById('resRange-'+r);
-    if(fbBtn){
-      fbBtn.className = 'search-scope-btn' + (_feedbackRange===r ? ' active' : '');
-    }
-    if(rsBtn){
-      rsBtn.className = 'search-scope-btn' + (_resolvedRange===r ? ' active' : '');
-    }
-  });
+  _resolvedRange = normalizeFeedbackRange(range);
+  _feedbackRange = _resolvedRange;
+  _feedbackOffset = 0;
+  _resolvedOffset = 0;
+  syncFeedbackRangeControls();
   await loadResolvedIssues();
   await loadFeedbackIssues();
 }
 
 function feedbackRangeCutoff(){
-  const now = new Date();
-  if(_feedbackRange==='week'){
-    const d = new Date(now);
-    const dow = d.getDay();
-    d.setDate(d.getDate() - (dow===0?6:dow-1));
-    d.setHours(0,0,0,0);
-    return d;
-  }
-  if(_feedbackRange==='month'){
-    return new Date(now.getFullYear(), now.getMonth(), 1);
-  }
-  if(_feedbackRange==='year'){
-    return new Date(now.getFullYear(), 0, 1);
-  }
-  return null; // all time
+  return feedbackRangeBounds(_feedbackRange, _feedbackOffset).fetchStart;
 }
 
 async function loadFeedbackIssues(){
   const list = document.getElementById('fbList');
   if(!list) return;
 
-  const cutoff = feedbackRangeCutoff();
+  const bounds = feedbackRangeBounds(_feedbackRange, _feedbackOffset);
   let rows = [];
   try {
     let url = '/rest/v1/'+KILN_FEEDBACK_ITEMS_TABLE+'?select=week_key,day,shift,equipment,issue,status,status_by,status_at,flagged_by,flagged_at,burner,updated_at';
-    if(cutoff){
-      url += '&week_key=gte.'+toISO(cutoff);
+    if(bounds.fetchStart){
+      url += '&week_key=gte.'+toISO(bounds.fetchStart);
+      if(bounds.end) url += '&week_key=lte.'+toISO(bounds.end);
     }
     url += '&status=eq.Ongoing&order=week_key.desc';
     const dbRows = await sbFetch(url);
@@ -7948,9 +8046,8 @@ async function loadFeedbackIssues(){
 
   if(weekStart){
     const currentIso = toISO(weekStart);
-    const currentCutoff = feedbackRangeCutoff();
     const currentWeekDate = parseLocalDate(currentIso);
-    if(!currentCutoff || currentWeekDate >= currentCutoff){
+    if(!bounds.fetchStart || (currentWeekDate >= bounds.fetchStart && (!bounds.end || currentWeekDate <= bounds.end))){
       rows = rows.concat(buildFeedbackRowsFromWeek(currentIso, state).filter(function(r){ return r.status === 'Ongoing'; }));
     }
   }
@@ -7960,6 +8057,7 @@ async function loadFeedbackIssues(){
   rows.forEach(function(row){
     const issue = feedbackRowToIssue(row);
     if(!issue || issue.status !== 'Ongoing') return;
+    if(!feedbackIssueInRange(issue, bounds)) return;
     const k = [issue.iso, issue.day, issue.sk, issue.equipment, issue.issue].join('|');
     if(seen.has(k)) return;
     seen.add(k);
@@ -8099,11 +8197,14 @@ async function loadResolvedIssues(){
   const list = document.getElementById('fbResolvedList');
   if(!list) return;
 
-  const cutoff = resolvedRangeCutoff();
+  const bounds = feedbackRangeBounds(_resolvedRange, _resolvedOffset);
   let rows = [];
   try {
     let url = '/rest/v1/'+KILN_FEEDBACK_ITEMS_TABLE+'?select=week_key,day,shift,equipment,issue,status,status_by,status_at,flagged_by,flagged_at,burner,updated_at';
-    if(cutoff) url += '&week_key=gte.'+toISO(cutoff);
+    if(bounds.fetchStart){
+      url += '&week_key=gte.'+toISO(bounds.fetchStart);
+      if(bounds.end) url += '&week_key=lte.'+toISO(bounds.end);
+    }
     url += '&status=eq.Resolved&order=week_key.desc';
     const dbRows = await sbFetch(url);
     if(dbRows && dbRows.length) rows = rows.concat(dbRows);
@@ -8122,9 +8223,8 @@ async function loadResolvedIssues(){
 
   if(weekStart){
     const currentIso = toISO(weekStart);
-    const currentCutoff = resolvedRangeCutoff();
     const currentWeekDate = parseLocalDate(currentIso);
-    if(!currentCutoff || currentWeekDate >= currentCutoff){
+    if(!bounds.fetchStart || (currentWeekDate >= bounds.fetchStart && (!bounds.end || currentWeekDate <= bounds.end))){
       rows = rows.concat(buildFeedbackRowsFromWeek(currentIso, state).filter(function(r){ return r.status === 'Resolved'; }));
     }
   }
@@ -8134,6 +8234,7 @@ async function loadResolvedIssues(){
   rows.forEach(function(row){
     const issue = feedbackRowToIssue(row);
     if(!issue || issue.status !== 'Resolved') return;
+    if(!feedbackIssueInRange(issue, bounds)) return;
     const k = [issue.iso, issue.day, issue.sk, issue.equipment, issue.issue].join('|');
     if(seen.has(k)) return;
     seen.add(k);
@@ -8254,17 +8355,7 @@ async function reopenFeedbackIssue(idx){
 
 
 function resolvedRangeCutoff(){
-  const now = new Date();
-  if(_resolvedRange==='week'){
-    const d = new Date(now);
-    const dow = d.getDay();
-    d.setDate(d.getDate() - (dow===0?6:dow-1));
-    d.setHours(0,0,0,0);
-    return d;
-  }
-  if(_resolvedRange==='month') return new Date(now.getFullYear(), now.getMonth(), 1);
-  if(_resolvedRange==='year')  return new Date(now.getFullYear(), 0, 1);
-  return null;
+  return feedbackRangeBounds(_resolvedRange, _resolvedOffset).fetchStart;
 }
 
 function renderWhiteboard(){
