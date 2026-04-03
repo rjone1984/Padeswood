@@ -1176,13 +1176,13 @@ body.basic-mode .topbar .back-platform-btn:hover{
   color:var(--tx2);
   line-height:1.4;
 }
-#activityPanel .activity-collapsible{
+.activity-collapsible{
   border:1px solid var(--bd);
   border-radius:16px;
   overflow:hidden;
   background:var(--sf3);
 }
-#activityPanel .activity-collapsible summary{
+.activity-collapsible summary{
   list-style:none;
   cursor:pointer;
   padding:12px 14px;
@@ -1191,8 +1191,8 @@ body.basic-mode .topbar .back-platform-btn:hover{
   gap:12px;
   align-items:flex-start;
 }
-#activityPanel .activity-collapsible summary::-webkit-details-marker{display:none}
-#activityPanel .activity-collapsible .content{
+.activity-collapsible summary::-webkit-details-marker{display:none}
+.activity-collapsible .content{
   border-top:1px solid var(--bd);
   padding:12px 14px 14px;
   display:grid;
@@ -1835,13 +1835,17 @@ body:not(.basic-mode) .btn-primary:hover{
     </section>
 
     <section class="panel hidden" id="insightsPanel">
-      <div class="panel-head">
-        <div>
-          <div class="panel-title">Yearly insights</div>
-          <div class="panel-sub">A visual at-a-glance view of credit hours and overtime paid through the year, grouped by team and by individual.</div>
+      <details class="activity-collapsible" open>
+        <summary>
+          <div>
+            <div class="panel-title">Yearly insights</div>
+            <div class="panel-sub">A visual at-a-glance view of credit hours and overtime paid through the year, grouped by team and by individual.</div>
+          </div>
+        </summary>
+        <div class="content">
+          <div id="insightCards" class="list"></div>
         </div>
-      </div>
-      <div id="insightCards" class="list"></div>
+      </details>
     </section>
 
     <section class="panel" id="requestPanel">
@@ -1922,64 +1926,72 @@ body:not(.basic-mode) .btn-primary:hover{
     </section>
 
     <section class="panel" id="approverQueuePanel" style="display:none">
-      <div class="panel-head">
-        <div>
-          <div class="panel-title">Team approvals</div>
-          <div class="panel-sub">Pending credit-hours and overtime claims for your assigned staff.</div>
+      <details class="activity-collapsible" open>
+        <summary>
+          <div>
+            <div class="panel-title">Team approvals</div>
+            <div class="panel-sub">Pending credit-hours and overtime claims for your assigned staff.</div>
+          </div>
+          <div class="queue-controls">
+            <span id="approverPendingBadge" class="pill queue-ok">0 pending</span>
+            <label class="small" for="managerFilter">Show</label>
+            <select id="managerFilter" class="select" onchange="renderHolidayApp()">
+              <option value="pending">Pending only</option>
+              <option value="all">All entries</option>
+              <option value="approved">Approved</option>
+              <option value="denied">Denied</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+        </summary>
+        <div class="content">
+          <div id="approvalQueue" class="list"></div>
         </div>
-        <div class="queue-controls">
-          <span id="approverPendingBadge" class="pill queue-ok">0 pending</span>
-          <label class="small" for="managerFilter">Show</label>
-          <select id="managerFilter" class="select" onchange="renderHolidayApp()">
-            <option value="pending">Pending only</option>
-            <option value="all">All entries</option>
-            <option value="approved">Approved</option>
-            <option value="denied">Denied</option>
-            <option value="cancelled">Cancelled</option>
-          </select>
-        </div>
-      </div>
-      <div id="approvalQueue" class="list"></div>
+      </details>
     </section>
 
     <section class="panel hidden" id="hrHandoverPanel">
-      <div class="panel-head">
-        <div>
-          <div class="panel-title">HR handover</div>
-          <div class="panel-sub">Send names and approved credit hours or overtime for one selected range.</div>
+      <details class="activity-collapsible" open>
+        <summary>
+          <div>
+            <div class="panel-title">HR handover</div>
+            <div class="panel-sub">Send names and approved credit hours or overtime for one selected range.</div>
+          </div>
+          <div class="queue-controls">
+            <span class="pill" id="hrHandoverStaffCount">Range</span>
+            <span class="pill" id="hrHandoverHoursCount">0 approved hours</span>
+            <select id="hrHandoverPeriod" class="select" onchange="setHrHandoverPeriod(this.value)">
+              <option value="week">Week</option>
+              <option value="month">Month</option>
+              <option value="year">Year</option>
+            </select>
+            <button class="btn btn-ghost" type="button" onclick="jumpHrHandoverToCurrent()">This week</button>
+            <button class="btn btn-ghost" type="button" onclick="stepHrHandoverPeriod(-1)">Back</button>
+            <button class="btn btn-ghost" type="button" onclick="stepHrHandoverPeriod(1)">Next</button>
+          </div>
+        </summary>
+        <div class="content">
+          <div class="request-grid">
+            <div class="card-box">
+              <div class="box-label">HR mailbox</div>
+              <input id="hrHandoverRecipient" class="input" type="email" placeholder="hr@company.com" oninput="setHrHandoverRecipient(this.value)">
+              <div class="field-note">Saved in this browser so the next handover is quicker.</div>
+            </div>
+            <div class="card-box">
+              <div class="box-label">What will be sent</div>
+              <textarea id="hrHandoverSummary" class="textarea" rows="12" readonly style="margin:0;max-height:240px;overflow:auto;font-family:var(--ff-mono);line-height:1.5">0 approved hours ready for HR.</textarea>
+            </div>
+          </div>
+          <div class="card-box">
+            <div class="box-label">Names and hours</div>
+            <div id="hrHandoverList" class="list"></div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-ghost" type="button" onclick="copyHrHandoverSummary()">Copy summary</button>
+            <button class="btn btn-primary" type="button" onclick="sendHrHandoverEmail()">Open email</button>
+          </div>
         </div>
-        <div class="queue-controls">
-          <span class="pill" id="hrHandoverStaffCount">Range</span>
-          <span class="pill" id="hrHandoverHoursCount">0 approved hours</span>
-          <select id="hrHandoverPeriod" class="select" onchange="setHrHandoverPeriod(this.value)">
-            <option value="week">Week</option>
-            <option value="month">Month</option>
-            <option value="year">Year</option>
-          </select>
-          <button class="btn btn-ghost" type="button" onclick="jumpHrHandoverToCurrent()">This week</button>
-          <button class="btn btn-ghost" type="button" onclick="stepHrHandoverPeriod(-1)">Back</button>
-          <button class="btn btn-ghost" type="button" onclick="stepHrHandoverPeriod(1)">Next</button>
-        </div>
-      </div>
-      <div class="request-grid">
-        <div class="card-box">
-          <div class="box-label">HR mailbox</div>
-          <input id="hrHandoverRecipient" class="input" type="email" placeholder="hr@company.com" oninput="setHrHandoverRecipient(this.value)">
-          <div class="field-note">Saved in this browser so the next handover is quicker.</div>
-        </div>
-      <div class="card-box">
-        <div class="box-label">What will be sent</div>
-        <textarea id="hrHandoverSummary" class="textarea" rows="12" readonly style="margin:0;max-height:240px;overflow:auto;font-family:var(--ff-mono);line-height:1.5">0 approved hours ready for HR.</textarea>
-      </div>
-      </div>
-      <div class="card-box">
-        <div class="box-label">Names and hours</div>
-        <div id="hrHandoverList" class="list"></div>
-      </div>
-      <div class="form-actions">
-        <button class="btn btn-ghost" type="button" onclick="copyHrHandoverSummary()">Copy summary</button>
-        <button class="btn btn-primary" type="button" onclick="sendHrHandoverEmail()">Open email</button>
-      </div>
+      </details>
     </section>
 
     <section class="panel hidden" id="allowancePanel">
@@ -2016,14 +2028,18 @@ body:not(.basic-mode) .btn-primary:hover{
     </section>
 
     <section class="panel" id="activityPanel">
-      <div class="panel-head">
-        <div>
-          <div class="panel-title">Activity</div>
-          <div class="panel-sub">A simple audit trail showing when entries were submitted and actioned.</div>
+      <details class="activity-collapsible" open>
+        <summary>
+          <div>
+            <div class="panel-title">Activity</div>
+            <div class="panel-sub">A simple audit trail showing when entries were submitted and actioned.</div>
+          </div>
+        </summary>
+        <div class="content">
+          <div id="teamOverviewCards" class="list"></div>
+          <div id="activityFeed" class="activity-feed"></div>
         </div>
-      </div>
-      <div id="teamOverviewCards" class="list" style="margin-bottom:12px"></div>
-      <div id="activityFeed" class="activity-feed"></div>
+      </details>
     </section>
   </main>
 </div>
@@ -2100,7 +2116,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const LICENCE_KEY = 'KBL-HEIDELBERG-PADESWOOD-2026';
 const SB_LIC_URL = 'https://dviicnomxeibbuafbozp.supabase.co';
 const SB_LIC_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2aWljbm9teGVpYmJ1YWZib3pwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4ODM0MzcsImV4cCI6MjA4ODQ1OTQzN30.c1T3WXC225tdBbq_1R__9bhGFIZdSxim9dgxfvmkRjU';
-const HR_HANDOVER_DEFAULT_RECIPIENT = 'deryth.holland@heidelbergmaterials.com';
+const HR_HANDOVER_DEFAULT_RECIPIENT = 'dereth.holland@heidelbergmaterials.com';
 const SUITE_LOGO_FALLBACK_SRC = 'data:image/svg+xml;utf8,' + encodeURIComponent(`
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="Padeswood Works">
   <defs>

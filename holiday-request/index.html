@@ -1018,13 +1018,13 @@ body.basic-mode .topbar .back-platform-btn:hover{
   color:var(--tx2);
   line-height:1.4;
 }
-#activityPanel .activity-collapsible{
+.activity-collapsible{
   border:1px solid var(--bd);
   border-radius:16px;
   overflow:hidden;
   background:var(--sf3);
 }
-#activityPanel .activity-collapsible summary{
+.activity-collapsible summary{
   list-style:none;
   cursor:pointer;
   padding:12px 14px;
@@ -1033,8 +1033,8 @@ body.basic-mode .topbar .back-platform-btn:hover{
   gap:12px;
   align-items:center;
 }
-#activityPanel .activity-collapsible summary::-webkit-details-marker{display:none}
-#activityPanel .activity-collapsible .content{
+.activity-collapsible summary::-webkit-details-marker{display:none}
+.activity-collapsible .content{
   border-top:1px solid var(--bd);
   padding:12px 14px 14px;
   display:grid;
@@ -1576,25 +1576,33 @@ body:not(.basic-mode) .btn-primary:hover{
     </section>
 
     <section class="panel" id="myRequestsPanel">
-      <div class="panel-head">
-        <div>
-          <div class="panel-title">My requests</div>
-          <div class="panel-sub">History, approvals and the audit trail for your own leave requests.</div>
-        </div>
-        <div class="queue-controls">
-          <span class="pill" id="myRequestCount">0 requests</span>
-        </div>
-      </div>
-      <div id="myRequests" class="list"></div>
-      <div id="myRequestsActivityWrap" style="margin-top:16px">
-        <div class="panel-head" style="padding:0 0 12px">
+      <details class="activity-collapsible" open>
+        <summary>
           <div>
-            <div class="panel-title" id="myRequestsActivityTitle" style="font-size:13px">Recent activity</div>
-            <div class="panel-sub" id="myRequestsActivitySub" style="font-size:11px">Recent actions on your requests, in the same place.</div>
+            <div class="panel-title">My requests</div>
+            <div class="panel-sub">History, approvals and the audit trail for your own leave requests.</div>
+          </div>
+          <div class="queue-controls">
+            <span class="pill" id="myRequestCount">0 requests</span>
+          </div>
+        </summary>
+        <div class="content">
+          <div id="myRequests" class="list"></div>
+          <div id="myRequestsActivityWrap">
+            <details class="activity-collapsible" open>
+              <summary>
+                <div>
+                  <div class="panel-title" id="myRequestsActivityTitle" style="font-size:13px">Recent activity</div>
+                  <div class="panel-sub" id="myRequestsActivitySub" style="font-size:11px">Recent actions on your requests, in the same place.</div>
+                </div>
+              </summary>
+              <div class="content">
+                <div id="myRequestsActivity" class="activity-feed"></div>
+              </div>
+            </details>
           </div>
         </div>
-        <div id="myRequestsActivity" class="activity-feed"></div>
-      </div>
+      </details>
     </section>
 
     <section class="panel" id="approverQueuePanel" style="display:none">
@@ -1629,14 +1637,18 @@ body:not(.basic-mode) .btn-primary:hover{
     </section>
 
     <section class="panel" id="activityPanel">
-      <div class="panel-head">
-        <div>
-          <div class="panel-title">Activity</div>
-          <div class="panel-sub">A simple audit trail showing when requests were made and actioned.</div>
+      <details class="activity-collapsible" open>
+        <summary>
+          <div>
+            <div class="panel-title">Activity</div>
+            <div class="panel-sub">A simple audit trail showing when requests were made and actioned.</div>
+          </div>
+        </summary>
+        <div class="content">
+          <div id="teamOverviewCards" class="list"></div>
+          <div id="activityFeed" class="activity-feed"></div>
         </div>
-      </div>
-      <div id="teamOverviewCards" class="list" style="margin-bottom:12px"></div>
-      <div id="activityFeed" class="activity-feed"></div>
+      </details>
     </section>
   </main>
 </div>
@@ -2721,14 +2733,16 @@ function renderHolidayRequestMiniItem(req){
   const events = eventsForRequest(req.id);
   const latest = events.length ? events[events.length - 1] : null;
   const statusClass = requestStatusClass(req.status);
+  const reasonText = requestDisplayReason(req.reason || '');
+  const noteText = requestDisplayReason((latest && latest.note) || req.manager_note || '');
   return '<div class="activity-mini-item">'+
     '<div class="top">'+
       '<div class="title">'+makeKindPill(req)+' <span style="margin-left:6px">'+esc(requestSummaryText(req))+'</span></div>'+
       '<span class="pill '+statusClass+'">'+esc(req.status.charAt(0).toUpperCase() + req.status.slice(1))+'</span>'+
     '</div>'+
     '<div class="meta">'+esc(formatDateTime(req.requested_at))+(req.decided_at ? ' · decided '+esc(formatDateTime(req.decided_at)) : '')+'</div>'+
-    '<div class="meta">'+esc(requestDisplayReason(req.reason) || '—')+'</div>'+
-    '<div class="meta">'+esc(requestDisplayReason((latest && latest.note) || req.manager_note || '—'))+'</div>'+
+    '<div class="meta">'+esc(reasonText || '—')+'</div>'+
+    (noteText && noteText !== reasonText ? '<div class="meta">'+esc(noteText)+'</div>' : '')+
   '</div>';
 }
 function renderHolidayAllowanceMiniItem(ev){
@@ -2835,13 +2849,13 @@ function renderTeamOverviewCards(){
           '<input class="input" style="height:34px;font-size:11px;flex:1" type="number" min="-999" max="999" step="0.5" id="extras_'+esc(selectedProfile.id)+'" value="'+esc(selectedExtrasValue)+'"'+(selectedEditable ? '' : ' disabled')+'>'+
         '</div><div class="field-note">Positive numbers add entitlement. Negative numbers take it away.</div></div>'+
         '<div class="field"><label class="small" style="margin-bottom:4px">Reason / note for entitlement change</label><textarea class="textarea allowance-reason" id="allowReason_'+esc(selectedProfile.id)+'" placeholder="Explain why this allowance or carryover is being changed."'+(selectedEditable ? '' : ' disabled')+'></textarea><div class="field-note">This is stored in the allowance audit trail.</div></div>'+
-        '<div style="display:flex;justify-content:flex-end"><button class="btn btn-ghost" style="height:32px;padding:0 10px;font-size:10px" type="button" onclick="saveTeamAllowance(\''+esc(selectedProfile.id)+'\')"'+(selectedEditable ? '' : ' disabled')+'>Save entitlements</button></div>'+
+        '<div style="display:flex;justify-content:flex-end"><button class="btn btn-primary" style="height:32px;padding:0 12px;font-size:10px" type="button" onclick="saveTeamAllowance(\''+esc(selectedProfile.id)+'\')"'+(selectedEditable ? '' : ' disabled')+'>Save entitlements</button></div>'+
       '</div>'+
     '</details>'
   ) : '';
   const retrospectiveHtml = selectedEditable ? (
     '<details class="activity-collapsible">'+
-      '<summary><div><div style="font-weight:800;color:var(--tx)">Retrospective holiday</div><div class="small">Add a backdated approved request for this person.</div></div><span class="pill approved">Admin only</span></summary>'+
+      '<summary><div><div style="font-weight:800;color:var(--tx)">Retrospective holiday</div><div class="small">Add a backdated approved request for this person.</div></div></summary>'+
       '<div class="content">'+
         '<div class="field"><label class="small" style="margin-bottom:4px">Start date</label><input class="input retro-date" type="date" id="retroStart_'+esc(selectedProfile.id)+'" onchange="syncDateRangeEndDate(\'retroStart_'+esc(selectedProfile.id)+'\', \'retroUnit_'+esc(selectedProfile.id)+'\', \'retroAmount_'+esc(selectedProfile.id)+'\', \'retroEnd_'+esc(selectedProfile.id)+'\')"></div>'+
         '<div class="field"><label class="small" style="margin-bottom:4px">Request as</label><select class="select retro-unit" id="retroUnit_'+esc(selectedProfile.id)+'" onchange="syncDateRangeEndDate(\'retroStart_'+esc(selectedProfile.id)+'\', \'retroUnit_'+esc(selectedProfile.id)+'\', \'retroAmount_'+esc(selectedProfile.id)+'\', \'retroEnd_'+esc(selectedProfile.id)+'\')"><option value="days">Days</option><option value="hours">Hours</option></select></div>'+
@@ -3084,7 +3098,7 @@ function renderAllowanceList(){
           '</div><div class="field-note">Positive numbers add entitlement. Negative numbers take it away.</div></div>'+
           '<div class="field"><label class="small" style="margin-bottom:4px">Reason / note for entitlement change</label><textarea class="textarea allowance-reason" id="allowReason_'+esc(p.id)+'" placeholder="Explain why this allowance or carryover is being changed."'+(editable ? '' : ' disabled')+'></textarea><div class="field-note">This is stored in the allowance audit trail.</div></div>'+
         '</div>'+
-        '<div style="display:flex;justify-content:flex-end"><button class="btn btn-ghost" style="height:30px;padding:0 10px;font-size:10px" type="button" onclick="saveAllowance(\''+esc(p.id)+'\')"'+(editable ? '' : ' disabled')+'>Save entitlements</button></div>'+
+        '<div style="display:flex;justify-content:flex-end"><button class="btn btn-primary" style="height:30px;padding:0 12px;font-size:10px" type="button" onclick="saveAllowance(\''+esc(p.id)+'\')"'+(editable ? '' : ' disabled')+'>Save entitlements</button></div>'+
         '<div class="staff-history">'+
           '<div class="staff-history-title">Allowance audit</div>'+
           (allowanceHistory.length ? allowanceHistory.map(function(ev){
@@ -3577,7 +3591,7 @@ async function saveAllowance(userId){
 }
 
 async function saveTeamAllowance(userId){
-  return persistAllowance(userId, 'teamAllow_' + userId, 'teamCarry_' + userId, 'teamExtrasUnit_' + userId, 'teamExtras_' + userId, 'teamReason_' + userId);
+  return persistAllowance(userId, 'allow_' + userId, 'carry_' + userId, 'extrasUnit_' + userId, 'extras_' + userId, 'allowReason_' + userId);
 }
 
 window.addEventListener('load', function(){
