@@ -3048,7 +3048,7 @@ function getFeedbackAllowedApps() {
   if (profile && profile.shift_tracker_access !== false) {
     apps.push({ value: 'Shift Tracker', label: 'Shift Tracker' });
   }
-  if (ku && (ku.shift_log_access !== false || hasAnyKilnRole(ku) || ku.is_admin)) {
+  if (ku && (ku.is_admin || ku.shift_log_access !== false)) {
     apps.push({ value: 'Logs', label: 'Logs' });
   }
   return apps;
@@ -4295,7 +4295,7 @@ function renderUserCard(m, DS, LS, RS, rc) {
   const displayName = getSuiteDisplayName(p || null, ku || null, '?');
   const email = (p&&p.email)||(ku&&ku.email)||'\u2014';
   const initials = displayName.split(' ').map(function(w){return w[0]||'';}).join('').slice(0,2).toUpperCase()||'?';
-  const kilnAccess = ku ? ((ku.shift_log_access !== false) || hasAnyKilnRole(ku)) : null;
+  const kilnAccess = ku ? (ku.is_admin || ku.shift_log_access !== false) : null;
   const kilnRole = !ku ? null : (kilnAccess === false ? 'none' : ku.is_admin ? 'admin' : ku.is_shift_manager ? 'shift_manager' : ku.is_electrician ? 'electrician' : ku.is_mechanical ? 'mechanical' : ku.is_process_operator ? 'process_operator' : ku.is_cement_analyst ? 'cement_analyst' : ku.is_day_staff ? 'day_staff' : ku.is_burner ? 'burner' : 'read_only');
   const holidayManagerId = p ? (p.holiday_manager_auth_user_id || null) : null;
   const kilnRoles = [];
@@ -4488,7 +4488,7 @@ function openRoleEditor(profileId) {
   document.getElementById('roleEditCreditHours').value = p.credit_hours_access === false ? 'false' : 'true';
   document.getElementById('roleEditTracker').value = p.shift_tracker_access === false ? 'false' : 'true';
   document.getElementById('roleEditHoliday').value = p.holiday_requests_access === false ? 'false' : 'true';
-  const access = !ku ? false : ((ku.shift_log_access !== false) || hasAnyKilnRole(ku));
+  const access = !ku ? false : (ku.is_admin || ku.shift_log_access !== false);
   document.getElementById('roleEditKilnAccess').value = access ? 'true' : 'false';
   populateHolidayManagerSelect('roleEditHolidayManager', p.holiday_manager_auth_user_id || '', profileId);
   document.getElementById('roleEditKilnAdmin').checked = !!(ku && ku.is_admin);
@@ -4560,7 +4560,7 @@ async function saveRoleEditor() {
     document.getElementById('roleEditKilnBurner').checked ||
     document.getElementById('roleEditKilnReadOnly').checked
   );
-  const shouldEnableKilnAccess = kilnAccess || requestedKilnRole;
+  const shouldEnableKilnAccess = kilnAccess;
   const kilnFlags = {
     is_admin: !!document.getElementById('roleEditKilnAdmin').checked,
     is_shift_manager: !!document.getElementById('roleEditKilnManager').checked,
@@ -4581,20 +4581,6 @@ async function saveRoleEditor() {
   if (existingAdmin && !requestedAdmin && (isProtectedAdmin || remainingAdmins <= 0)) {
     roleEditorShowMsg('err', 'The last admin account must stay admin.');
     return;
-  }
-  if (!shouldEnableKilnAccess) {
-    kilnFlags.is_admin = false;
-    kilnFlags.is_shift_manager = false;
-    kilnFlags.is_electrician = false;
-    kilnFlags.is_mechanical = false;
-    kilnFlags.is_process_operator = false;
-    kilnFlags.is_cement_analyst = false;
-    kilnFlags.is_day_staff = false;
-    kilnFlags.is_burner = false;
-    kilnFlags.is_readonly = false;
-  }
-  if (requestedKilnRole) {
-    kilnFlags.shift_log_access = true;
   }
   if (kilnFlags.shift_log_access && !kilnFlags.is_admin && !kilnFlags.is_shift_manager && !kilnFlags.is_electrician && !kilnFlags.is_mechanical && !kilnFlags.is_process_operator && !kilnFlags.is_cement_analyst && !kilnFlags.is_day_staff && !kilnFlags.is_burner && !kilnFlags.is_readonly) {
     kilnFlags.is_readonly = true;
