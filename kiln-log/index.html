@@ -2813,10 +2813,6 @@ body:not(.basic-mode) .splash-loader-bar {
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;flex-shrink:0"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
             Whiteboard
           </div>
-          <div id="mobileHandover" onclick="showShiftHandover();closeMobileMenu()" style="display:none;padding:10px 14px;font-size:13px;color:var(--tx);cursor:pointer;display:flex;align-items:center;gap:10px;transition:background .1s" onmouseover="this.style.background='var(--sf2)'" onmouseout="this.style.background='transparent'">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;flex-shrink:0"><path d="M3 12a9 9 0 1 0 3-6.7"/><polyline points="3 3 3 9 9 9"/></svg>
-            Shift Handover
-          </div>
           <div id="mobileManageLists" onclick="openManageModal();closeMobileMenu()" style="display:none;padding:10px 14px;font-size:13px;color:var(--tx);cursor:pointer;display:flex;align-items:center;gap:10px;transition:background .1s" onmouseover="this.style.background='var(--sf2)'" onmouseout="this.style.background='transparent'">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;flex-shrink:0"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
             Manage Lists
@@ -2831,10 +2827,6 @@ body:not(.basic-mode) .splash-loader-bar {
       <button class="btn btn-ghost" id="printBtn" onclick="showPrintModal()" style="display:none">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
         Print / PDF
-      </button>
-      <button class="btn btn-ghost" id="handoverBtn" onclick="showShiftHandover()" title="Previous shift handover" style="display:none">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7"/><polyline points="3 3 3 9 9 9"/></svg>
-        Shift Handover
       </button>
       <input type="file" id="jsonFileInput" accept=".json" style="display:none" onchange="importJSON(event)">
       <button class="btn btn-primary write-only" id="saveAllBtn" onclick="saveAll()">
@@ -3745,9 +3737,7 @@ async function _applyUserSession(match, sessionUser, profileDisplayName){
   document.getElementById('manageListsBtn').style.display = isAdmin ? '' : 'none';
   const _cdBtn = document.getElementById('clearDayBtn'); if(_cdBtn) _cdBtn.style.display = isAdmin ? '' : 'none';
   const _canPrint = isAdmin || isShiftManager || isDayStaff || readOnly;
-  const _canHandover = isAdmin || isShiftManager;
   document.querySelectorAll('#printBtn, .printBtn').forEach(function(b){ b.style.display = _canPrint ? '' : 'none'; });
-  document.querySelectorAll('#handoverBtn, .handoverBtn').forEach(function(b){ b.style.display = _canHandover ? '' : 'none'; });
   document.getElementById('btn-weekly-overview').style.display = '';
   document.getElementById('btn-ai-reporting').style.display = '';
   document.getElementById('btn-whiteboard').style.display = canViewWhiteboard() ? '' : 'none';
@@ -3757,7 +3747,6 @@ async function _applyUserSession(match, sessionUser, profileDisplayName){
   const _mwo = document.getElementById('mobileWeeklyOverview'); if(_mwo) _mwo.style.display = 'flex';
   const _mar = document.getElementById('mobileAiReporting'); if(_mar) _mar.style.display = 'flex';
   const _mwb = document.getElementById('mobileWhiteboard'); if(_mwb) _mwb.style.display = canViewWhiteboard() ? 'flex' : 'none';
-  const _mho = document.getElementById('mobileHandover'); if(_mho) _mho.style.display = _canHandover ? 'flex' : 'none';
   const _mmw = document.getElementById('mobileMenuWrap'); if(_mmw) _mmw.dataset.hasItems = '1';
   updateMobileMenu();
   document.querySelectorAll('.write-only').forEach(el => el.style.display = readOnly ? 'none' : '');
@@ -3815,7 +3804,6 @@ async function doLogout(){
   window.location.href = '../index.html';
   const _mwo2 = document.getElementById('mobileWeeklyOverview'); if(_mwo2) _mwo2.style.display='none';
   const _mar2 = document.getElementById('mobileAiReporting'); if(_mar2) _mar2.style.display='none';
-  const _mho2 = document.getElementById('mobileHandover'); if(_mho2) _mho2.style.display='none';
 }
 
 function toggleMobileMenu(){
@@ -3831,7 +3819,6 @@ function updateMobileMenu(){
   const items = [
     ['mobileWeeklyOverview', 'btn-weekly-overview'],
     ['mobileAiReporting',   'btn-ai-reporting'],
-    ['mobileHandover',      'handoverBtn'],
     ['mobileManageLists',   'manageListsBtn'],
   ];
   let anyVisible = false;
@@ -7844,8 +7831,9 @@ async function stepFeedbackRange(tab, delta){
   const scope = tab === 'resolved' ? 'resolved' : 'ongoing';
   const currentRange = scope === 'resolved' ? _resolvedRange : _feedbackRange;
   if(normalizeFeedbackRange(currentRange) === 'all') return;
-  if(scope === 'resolved') _resolvedOffset = num(_resolvedOffset, 0) + num(delta, 0);
-  else _feedbackOffset = num(_feedbackOffset, 0) + num(delta, 0);
+  const step = Number.isFinite(Number(delta)) ? Number(delta) : 0;
+  if(scope === 'resolved') _resolvedOffset = (Number.isFinite(Number(_resolvedOffset)) ? Number(_resolvedOffset) : 0) + step;
+  else _feedbackOffset = (Number.isFinite(Number(_feedbackOffset)) ? Number(_feedbackOffset) : 0) + step;
   syncFeedbackRangeControls();
   if(scope === 'resolved') await loadResolvedIssues();
   else await loadFeedbackIssues();
