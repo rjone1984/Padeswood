@@ -1177,8 +1177,26 @@ body.basic-mode .topbar .back-platform-btn:hover{
   line-height:1.4;
 }
 #activityPanel .activity-collapsible{
+  border:1px solid var(--bd);
+  border-radius:16px;
+  overflow:hidden;
+  background:var(--sf3);
+}
+#activityPanel .activity-collapsible summary{
+  list-style:none;
+  cursor:pointer;
+  padding:12px 14px;
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:flex-start;
+}
+#activityPanel .activity-collapsible summary::-webkit-details-marker{display:none}
+#activityPanel .activity-collapsible .content{
   border-top:1px solid var(--bd);
-  padding-top:10px;
+  padding:12px 14px 14px;
+  display:grid;
+  gap:12px;
 }
 #activityPanel .activity-empty{
   padding:14px 12px;
@@ -1960,7 +1978,7 @@ body:not(.basic-mode) .btn-primary:hover{
       </div>
       <div class="form-actions">
         <button class="btn btn-ghost" type="button" onclick="copyHrHandoverSummary()">Copy summary</button>
-        <button class="btn btn-primary" type="button" onclick="openHrHandoverPreview()">Open email</button>
+        <button class="btn btn-primary" type="button" onclick="sendHrHandoverEmail()">Open email</button>
       </div>
     </section>
 
@@ -3468,20 +3486,34 @@ function renderTeamOverviewCards(){
           '<div style="display:flex;justify-content:flex-end"><button class="btn btn-ghost" style="height:30px;padding:0 10px;font-size:10px" type="button" onclick="saveAllowance(\''+esc(selectedUserId)+'\')"'+(selectedEditable ? '' : ' disabled')+'>Save entitlements</button></div>'+
         '</div>'+
       '</details>'+
-      '<div class="activity-section">'+
-        '<div class="activity-section-title">Recent claim audit</div>'+
-        '<div class="activity-section-sub">The most recent submitted, approved, denied or cancelled entries for this person.</div>'+
-        '<div class="activity-mini-list">'+
-          (selectedRequestHistory.length ? selectedRequestHistory.map(renderCreditActivityClaimItem).join('') : '<div class="activity-empty">No credit-hours entries logged yet.</div>')+
+      '<details class="activity-collapsible">'+
+        '<summary>'+
+          '<div>'+
+            '<div class="box-label">Recent claim audit</div>'+
+            '<div class="small" style="margin-top:4px">The most recent submitted, approved, denied or cancelled entries for this person.</div>'+
+          '</div>'+
+          '<span class="pill">Open audit</span>'+
+        '</summary>'+
+        '<div class="content">'+
+          '<div class="activity-mini-list">'+
+            (selectedRequestHistory.length ? selectedRequestHistory.map(renderCreditActivityClaimItem).join('') : '<div class="activity-empty">No credit-hours entries logged yet.</div>')+
+          '</div>'+
         '</div>'+
-      '</div>'+
-      '<div class="activity-section">'+
-        '<div class="activity-section-title">Allowance history</div>'+
-        '<div class="activity-section-sub">Edits made to entitlement, carryover and extras are shown here in the order they were made.</div>'+
-        '<div class="activity-mini-list">'+
-          (selectedAllowanceHistory.length ? selectedAllowanceHistory.map(renderCreditAllowanceItem).join('') : '<div class="activity-empty">No allowance changes logged yet.</div>')+
+      '</details>'+
+      '<details class="activity-collapsible">'+
+        '<summary>'+
+          '<div>'+
+            '<div class="box-label">Allowance history</div>'+
+            '<div class="small" style="margin-top:4px">Edits made to entitlement, carryover and extras are shown here in the order they were made.</div>'+
+          '</div>'+
+          '<span class="pill">Open history</span>'+
+        '</summary>'+
+        '<div class="content">'+
+          '<div class="activity-mini-list">'+
+            (selectedAllowanceHistory.length ? selectedAllowanceHistory.map(renderCreditAllowanceItem).join('') : '<div class="activity-empty">No allowance changes logged yet.</div>')+
+          '</div>'+
         '</div>'+
-      '</div>'+
+      '</details>'+
     '</div>'+
   '</div>';
 }
@@ -4173,15 +4205,7 @@ async function copyHrHandoverSummary(){
   }
 }
 function openHrHandoverPreview(){
-  const text = updateHrHandoverPreviewText();
-  const modal = $('hrHandoverModal');
-  if (!modal) {
-    sendHrHandoverEmail();
-    return;
-  }
-  modal.classList.add('open');
-  const preview = $('hrHandoverPreviewText');
-  if (preview) preview.value = text;
+  sendHrHandoverEmail();
 }
 function closeHrHandoverPreview(){
   const modal = $('hrHandoverModal');

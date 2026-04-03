@@ -1026,10 +1026,22 @@ body.basic-mode .page-period-jump.active:hover {
    Scoped to Overview only to keep the established log/table style elsewhere unchanged. */
 #ovBody .tbl-wrap { -webkit-overflow-scrolling:touch; }
 #ovBody table.log { font-size:12px; table-layout:fixed; width:100%; }
+#ovBody table.log .ov-issue-note {
+  font-size:12px;
+  line-height:1.45;
+}
+#ovBody table.log .ov-issue-title {
+  font-size:12px;
+  line-height:1.35;
+}
 @media(max-width:640px){
   #ovBody table.log { table-layout:auto; width:max-content; min-width:100%; font-size:13px; }
   #ovBody table.log thead th { font-size:9.5px; letter-spacing:1px; }
   #ovBody .section-div { font-size:10px; letter-spacing:1.2px; }
+  #ovBody table.log .ov-issue-note,
+  #ovBody table.log .ov-issue-title {
+    font-size:11.5px;
+  }
 }
 .page-status { display:flex; align-items:center; gap:8px; margin-top:7px }
 
@@ -9228,8 +9240,8 @@ function renderOverviewBody(){
           const stBg=e.status==='Resolved'?'#16a34a18':e.status==='Ongoing'?'#dc262618':'transparent';
           const stPill=e.status?('<span style="display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;background:'+stBg+';color:'+stCol+';border:1px solid '+stCol+'">'+esc(e.status)+'</span>'):'<span style="color:var(--tx3);font-size:11px">—</span>';
           const stWho=(e.statusBy||e.statusAt)?('<div style="font-size:10px;color:var(--tx3);font-family:var(--ff-mono);margin-top:2px">'+esc(e.statusBy||'')+(e.statusAt?' · '+esc(e.statusAt):'')+'</div>'):'';
-          const issueCell = '<div style="font-weight:600;margin-bottom:2px">'+(esc(e.equipment)||'&mdash;')+'</div>'
-            +'<div style="color:var(--tx2)">'+(esc(e.issue)||'<span style="color:var(--tx3)">No notes</span>')+'</div>';
+          const issueCell = '<div class="ov-issue-title" style="font-weight:600;margin-bottom:2px">'+(esc(e.equipment)||'&mdash;')+'</div>'
+            +'<div class="ov-issue-note" style="color:var(--tx2)">'+(esc(e.issue)||'<span style="color:var(--tx3)">No notes</span>')+'</div>';
           bRawRows.push(row(d,si,[
             '<span style="font-size:11px;color:var(--tx2);font-family:var(--ff-head);font-weight:700">'+(esc(sd.burner)||'&mdash;')+'</span>',
             issueCell,
