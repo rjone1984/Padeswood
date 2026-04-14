@@ -1,0 +1,3661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'">
+<meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Holiday Requests">
+<meta name="theme-color" content="#111418">
+<title>Padeswood Works — Holiday Requests</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Figtree:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ff-head:'Helvetica Neue','Arial Nova',Arial,sans-serif;
+  --ff-body:'Helvetica Neue','Arial Nova',Arial,sans-serif;
+  --ff-mono:'Fira Code',monospace;
+  --ease-smooth:cubic-bezier(.22,1,.36,1);
+  --bg:#111418; --sf:#16191f; --sf2:#1c2028; --sf3:#222830; --sf4:#282f3a;
+  --bd:#252c38; --bd2:#2f3a4a; --bd3:#3d4e62;
+  --ac:#1a7a35; --ac2:#2ecc5c; --ac3:#5ee27b;
+  --acd1:rgba(26,122,53,.10); --acd2:rgba(26,122,53,.18); --acd3:rgba(26,122,53,.28);
+  --palette-card-bg-1: rgba(46,204,92,.22);
+  --palette-card-bg-2: rgba(26,122,53,.12);
+  --palette-card-border: rgba(94,226,123,.26);
+  --palette-card-glow-1: rgba(94,226,123,.18);
+  --palette-card-glow-2: rgba(94,226,123,.10);
+  --tx:#dde4ee; --tx2:#9aa9be; --tx3:#6f8097;
+  --red:#f0524f; --redd:rgba(240,82,79,.10); --redb:rgba(240,82,79,.28);
+  --grn:#21c27a; --grnd:rgba(33,194,122,.10); --grnb:rgba(33,194,122,.28);
+  --amb:#f5a623; --ambd:rgba(245,166,35,.10); --ambb:rgba(245,166,35,.28);
+  --pur:#9b74e8; --purd:rgba(155,116,232,.10); --purb:rgba(155,116,232,.28);
+  --r:10px; --rsm:7px; --rxs:5px;
+  --e1:0 1px 3px rgba(0,0,0,.55),0 1px 2px rgba(0,0,0,.4);
+  --e2:0 4px 18px rgba(0,0,0,.6); --e3:0 20px 56px rgba(0,0,0,.72);
+  --eac:0 4px 22px rgba(51,65,85,.30);
+  --glass-1: rgba(22,25,31,.82);
+  --glass-2: rgba(22,25,31,.72);
+  --glass-3: rgba(22,25,31,.68);
+  --glass-4: rgba(22,25,31,.56);
+  /* Alias tokens used by older/shared snippets. */
+  --text: var(--tx);
+  --text2: var(--tx2);
+  --text3: var(--tx3);
+  --text-soft: var(--tx3);
+  --border: var(--bd);
+  --border2: var(--bd2);
+}
+.light-mode{
+  --bg:#fbfdff; --sf:#ffffff; --sf2:#f8fbff; --sf3:#f2f7fd; --sf4:#edf3fa;
+  --bd:#dce5f0; --bd2:#cdd8e6; --bd3:#a9bbd3;
+  --ac:#1a7a35; --ac2:#2ecc5c; --ac3:#5ee27b;
+  --acd1:rgba(26,122,53,.07); --acd2:rgba(26,122,53,.14); --acd3:rgba(26,122,53,.24);
+  --palette-card-bg-1: rgba(46,204,92,.18);
+  --palette-card-bg-2: rgba(26,122,53,.10);
+  --palette-card-border: rgba(94,226,123,.22);
+  --palette-card-glow-1: rgba(94,226,123,.14);
+  --palette-card-glow-2: rgba(94,226,123,.08);
+  --tx:#0d1526; --tx2:#405063; --tx3:#74839a;
+  --red:#d93f3c; --redd:rgba(217,63,60,.07); --redb:rgba(217,63,60,.22);
+  --grn:#15924f; --grnd:rgba(21,146,79,.07); --grnb:rgba(21,146,79,.22);
+  --amb:#c97d10; --ambd:rgba(201,125,16,.07); --ambb:rgba(201,125,16,.22);
+  --pur:#7a50c8; --purd:rgba(122,80,200,.07); --purb:rgba(122,80,200,.22);
+  --e1:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --e2:0 4px 18px rgba(0,0,0,.07); --e3:0 20px 56px rgba(0,0,0,.10);
+  --eac:0 4px 22px rgba(51,65,85,.16);
+  --glass-1: rgba(255,255,255,.96);
+  --glass-2: rgba(255,255,255,.82);
+  --glass-3: rgba(255,255,255,.92);
+  --glass-4: rgba(255,255,255,.78);
+}
+body.light-mode{
+  background:
+    radial-gradient(1200px 620px at 18% -6%, rgba(255,255,255,.98), transparent 58%),
+    radial-gradient(960px 520px at 100% 0%, var(--palette-card-glow-1), transparent 54%),
+    linear-gradient(180deg, rgba(255,255,255,.2), rgba(255,255,255,0)),
+    var(--bg);
+}
+body.light-mode .app-card,
+body.light-mode .login-card,
+body.light-mode .panel,
+body.light-mode .topbar,
+body.light-mode .palette-panel,
+body.light-mode .toast{
+  backdrop-filter:blur(22px);
+  -webkit-backdrop-filter:blur(22px);
+}
+body.light-mode .app-card,
+body.light-mode .login-card,
+body.light-mode .panel,
+body.light-mode .topbar,
+body.light-mode .palette-panel{
+  box-shadow:0 18px 44px rgba(15,23,42,.08), inset 0 1px 0 rgba(255,255,255,.62);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:var(--ff-body);
+  background:var(--bg);
+  color:var(--tx);
+  font-size:13.5px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  transition:background .35s var(--ease-smooth),color .35s var(--ease-smooth),transform .28s var(--ease-smooth),box-shadow .28s var(--ease-smooth);
+  overflow-x:hidden;
+  animation:pageEnter .62s cubic-bezier(.16,1,.3,1) both;
+}
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background-image:radial-gradient(circle,var(--palette-card-glow-2) 1px,transparent 1px);
+  background-size:28px 28px;
+  z-index:0;
+}
+@keyframes pageEnter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes lineFlow{
+  0%,100%{background-position:0% 50%;opacity:.62}
+  50%{background-position:100% 50%;opacity:1}
+}
+@keyframes licenceLineFlow{
+  0%,100%{transform:translateX(-18%);opacity:.38}
+  50%{transform:translateX(18%);opacity:.88}
+}
+@keyframes chipBreath{
+  0%,100%{transform:translateY(0) scale(1);filter:saturate(1)}
+  50%{transform:translateY(-1px) scale(1.015);filter:saturate(1.05)}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important}
+}
+.hidden{display:none !important}
+.loading-start .boot-shield,
+.loading-start .auth-screen,
+.loading-start #appShell{
+  display:none !important;
+}
+body.loading-start{
+  visibility:hidden;
+}
+body.loading-start.loaded-ready{
+  visibility:visible;
+}
+.boot-shield{
+  position:fixed;
+  inset:0;
+  z-index:9998;
+  display:none !important;
+  align-items:center;
+  justify-content:center;
+  padding:24px 18px;
+  background:var(--bg);
+}
+.boot-shield::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background-image:radial-gradient(circle,var(--palette-card-glow-2) 1px,transparent 1px);
+  background-size:28px 28px;
+  opacity:.9;
+}
+.boot-shield-card{
+  display:none;
+  position:relative;
+  z-index:1;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:16px 18px;
+  border:1px solid var(--border2);
+  border-radius:18px;
+  background:var(--glass-3);
+  box-shadow:var(--e3);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+}
+.boot-shield-mark{
+  width:44px;
+  height:44px;
+  flex-shrink:0;
+  border-radius:14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255,255,255,.98), rgba(255,255,255,.78) 24%, rgba(255,255,255,0) 62%),
+    linear-gradient(135deg, rgba(26,122,53,.12), rgba(46,204,92,.08));
+  border:1px solid var(--border2);
+  box-shadow:0 12px 28px rgba(0,0,0,.10), inset 0 1px 0 rgba(255,255,255,.48);
+  overflow:hidden;
+  animation:holidayLogoFloat 8.8s cubic-bezier(.22,1,.36,1) infinite;
+}
+.boot-shield-mark img{width:100%;height:100%;object-fit:contain;display:block}
+.boot-shield-copy{display:grid;gap:2px;min-width:0}
+.boot-shield-title{
+  font-family:var(--ff-head);
+  font-size:15px;
+  font-weight:800;
+  color:var(--text);
+  letter-spacing:-.3px;
+}
+.boot-shield-sub{
+  font-size:9px;
+  font-family:var(--ff-mono);
+  text-transform:uppercase;
+  letter-spacing:2px;
+  color:var(--text-soft);
+}
+.app-shell,.auth-screen{position:relative;z-index:1}
+.auth-screen{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:26px 18px;
+}
+@keyframes holidayCardBreath{
+  0%,100%{
+    transform:translateY(0) scale(1);
+    box-shadow:var(--e3);
+  }
+  50%{
+    transform:translateY(-1px) scale(1.01);
+    box-shadow:0 24px 62px rgba(0,0,0,.18);
+  }
+}
+@keyframes holidayLogoFloat{
+  0%,100%{
+    transform:translateY(0) scale(1);
+    filter:drop-shadow(0 0 0 rgba(46,204,92,0));
+  }
+  50%{
+    transform:translateY(-2px) scale(1.03);
+    filter:drop-shadow(0 10px 18px rgba(46,204,92,.14));
+  }
+}
+.auth-shell{
+  width:min(560px,100%);
+  display:grid;
+  gap:14px;
+}
+.splash-hero{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:0 8px;
+}
+.splash-hero-mark{
+  width:60px;height:60px;flex-shrink:0;border-radius:18px;display:flex;align-items:center;justify-content:center;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255,255,255,.98), rgba(255,255,255,.78) 24%, rgba(255,255,255,0) 62%),
+    linear-gradient(135deg, rgba(26,122,53,.12), rgba(46,204,92,.08));
+  border:1px solid var(--border2);
+  box-shadow:0 12px 28px rgba(0,0,0,.10), inset 0 1px 0 rgba(255,255,255,.48);
+  overflow:hidden;
+  animation:holidayLogoFloat 8.8s cubic-bezier(.22,1,.36,1) infinite;
+}
+.splash-hero-mark img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+}
+.splash-hero-copy{min-width:0;display:flex;flex-direction:column;gap:4px}
+.splash-hero-title{
+  font-family:var(--ff-head);
+  font-size:25px;
+  line-height:1.02;
+  font-weight:800;
+  color:var(--text);
+  letter-spacing:-0.03em;
+}
+.splash-hero-sub{
+  font-family:var(--ff-mono);
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:2.4px;
+  text-transform:uppercase;
+  color:var(--text3);
+}
+.login-card{
+  width:min(560px,100%);
+  border:1px solid var(--bd);
+  border-radius:20px;
+  background:linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  box-shadow:var(--e3), var(--eac);
+  padding:22px;
+}
+.auth-screen .login-card{
+  animation:holidayCardBreath 9.2s cubic-bezier(.22,1,.36,1) infinite;
+}
+#licenceOverlay .login-card{
+  position:relative;
+  overflow:hidden;
+}
+#licenceOverlay .login-card::before{
+  content:'';
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(46,204,92,0) 10%,rgba(46,204,92,.55) 50%,rgba(46,204,92,0) 90%,transparent 100%);
+  filter:drop-shadow(0 0 6px rgba(46,204,92,.22));
+  animation:licenceLineFlow 7.6s ease-in-out infinite;
+}
+#licenceOverlay .login-card::after{
+  content:'';
+  position:absolute;
+  bottom:0;
+  left:0;
+  right:0;
+  height:1px;
+  background:linear-gradient(90deg,transparent,rgba(46,204,92,0) 10%,rgba(46,204,92,.55) 50%,rgba(46,204,92,0) 90%,transparent 100%);
+  filter:drop-shadow(0 0 6px rgba(46,204,92,.18));
+  animation:licenceLineFlow 7.6s ease-in-out infinite 1.9s;
+  opacity:.72;
+}
+.brand-row{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.brand-mark{
+  width:54px;height:54px;border-radius:16px;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(180deg,var(--acd3),var(--acd1));
+  border:1px solid var(--bd2);
+  box-shadow:0 8px 24px rgba(0,0,0,.15);
+  color:var(--ac3);
+  flex-shrink:0;
+}
+.brand-mark.logo-mark{
+  background:none;
+  border:none;
+  box-shadow:none;
+  padding:0;
+}
+.brand-mark.logo-mark img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+}
+.brand-mark.logo-mark.lg{width:54px;height:54px}
+.brand-mark.logo-mark.md{width:32px;height:32px}
+.brand-mark.logo-mark.lg{
+  animation:holidayLogoFloat 8.8s cubic-bezier(.22,1,.36,1) infinite;
+}
+.brand-title{font-family:var(--ff-head);font-weight:800;font-size:24px;line-height:1.1;margin:0;color:var(--tx)}
+.brand-sub{margin:3px 0 0;color:var(--tx2);font-size:13px}
+.login-grid{display:grid;gap:12px;margin-top:10px}
+.field{
+  display:grid;
+  gap:8px;
+  padding:12px;
+  border:1px solid var(--bd);
+  border-radius:16px;
+  background:
+    radial-gradient(120% 100% at 0% 0%, var(--palette-card-glow-1), transparent 46%),
+    radial-gradient(120% 100% at 100% 0%, var(--palette-card-glow-2), transparent 52%),
+    linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  box-shadow:var(--e1);
+  min-width:0;
+}
+.field label,.help-label{font-size:11px;font-family:var(--ff-mono);text-transform:uppercase;letter-spacing:1px;color:var(--tx3)}
+.input,.textarea,.select{
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  border:1px solid var(--bd);
+  border-radius:12px;
+  background:var(--sf2);
+  color:var(--tx);
+  padding:12px 14px;
+  font:inherit;
+  outline:none;
+  transition:border-color .28s var(--ease-smooth), box-shadow .28s var(--ease-smooth), background .28s var(--ease-smooth), transform .28s var(--ease-smooth);
+}
+.input,.select{
+  min-height:44px;
+}
+.select{
+  -webkit-appearance:none;
+  appearance:none;
+}
+.field #reqUnit,
+.field #reqDays{
+  height:44px;
+  min-height:44px;
+}
+.textarea{min-height:112px;resize:vertical}
+.input:focus,.textarea:focus,.select:focus{border-color:var(--ac3);box-shadow:0 0 0 3px var(--acd1);background:var(--sf)}
+.input::placeholder,.textarea::placeholder{color:var(--tx3)}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.btn,.icon-btn,.tab-btn,.chip{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  border:1px solid var(--bd);border-radius:12px;
+  background:var(--sf2);color:var(--tx);text-decoration:none;
+  transition:all .28s var(--ease-smooth);cursor:pointer;
+}
+.btn{padding:12px 16px;font-weight:700}
+.btn:hover,.icon-btn:hover,.tab-btn:hover,.chip:hover{transform:translateY(-1px);border-color:var(--bd3)}
+.topbar .back-platform-btn:hover{
+  border-color:var(--ac);
+  color:#fff;
+  background:linear-gradient(180deg,var(--ac2),var(--ac));
+  box-shadow:0 0 0 3px var(--acd1),0 0 22px rgba(33,194,122,.34);
+  transform:translateY(-1px) scale(1.06);
+}
+body.basic-mode .topbar .back-platform-btn:hover{
+  border-color:var(--bd3);
+  color:var(--tx);
+  background:var(--sf2);
+  box-shadow:none;
+  transform:translateY(-1px) scale(1.03);
+}
+.btn-primary{background:linear-gradient(180deg,var(--acd2),var(--acd1));border-color:var(--ac3);color:var(--ac3)}
+.btn-danger{background:var(--redd);border-color:var(--redb);color:var(--red)}
+.btn-ghost{background:var(--sf3)}
+.icon-btn{width:38px;height:38px;padding:0}
+.pill{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:4px 8px;border-radius:999px;font-size:11px;font-family:var(--ff-mono);
+  background:var(--sf3);border:1px solid var(--bd);color:var(--tx2);
+}
+.pill.pending{color:var(--amb);border-color:color-mix(in srgb, var(--ambb) 72%, var(--bd));background:color-mix(in srgb, var(--ambd) 58%, var(--sf2))}
+.pill.queue-ok{color:var(--grn);border-color:color-mix(in srgb, var(--grnb) 72%, var(--bd));background:color-mix(in srgb, var(--grnd) 58%, var(--sf2))}
+.pill.queue-warn{color:var(--amb);border-color:color-mix(in srgb, var(--ambb) 72%, var(--bd));background:color-mix(in srgb, var(--ambd) 58%, var(--sf2))}
+.pill.approved{color:var(--grn);border-color:color-mix(in srgb, var(--grnb) 72%, var(--bd));background:color-mix(in srgb, var(--grnd) 58%, var(--sf2))}
+.pill.denied,.pill.cancelled{color:var(--red);border-color:color-mix(in srgb, var(--redb) 72%, var(--bd));background:color-mix(in srgb, var(--redd) 58%, var(--sf2))}
+.pill.kind-holiday{color:var(--grn);border-color:color-mix(in srgb, var(--grnb) 72%, var(--bd));background:color-mix(in srgb, var(--grnd) 58%, var(--sf2))}
+.pill.kind-unpaid{color:var(--pur);border-color:color-mix(in srgb, var(--purb) 72%, var(--bd));background:color-mix(in srgb, var(--purd) 58%, var(--sf2))}
+.pill.kind-other{color:var(--amb);border-color:color-mix(in srgb, var(--ambb) 72%, var(--bd));background:color-mix(in srgb, var(--ambd) 58%, var(--sf2))}
+.pill.balance-red{color:var(--red);border-color:color-mix(in srgb, var(--redb) 72%, var(--bd));background:color-mix(in srgb, var(--redd) 58%, var(--sf2));--balance-glow:transparent}
+.pill.balance-amber{color:var(--amb);border-color:color-mix(in srgb, var(--ambb) 72%, var(--bd));background:color-mix(in srgb, var(--ambd) 58%, var(--sf2));--balance-glow:transparent}
+.pill.balance-green{color:var(--grn);border-color:color-mix(in srgb, var(--grnb) 72%, var(--bd));background:color-mix(in srgb, var(--grnd) 58%, var(--sf2));--balance-glow:transparent}
+.pill.balance-red,
+.pill.balance-amber,
+.pill.balance-green{
+  position:relative;
+  animation:none;
+  will-change:auto;
+}
+.pill.balance-red::after,
+.pill.balance-amber::after,
+.pill.balance-green::after{
+  display:none;
+}
+@keyframes balancePulse{
+  0%,100%{transform:translateY(0) scale(1);filter:saturate(1)}
+  50%{transform:translateY(-1px) scale(1.03);filter:saturate(1.08)}
+}
+@keyframes balanceAura{
+  0%,100%{opacity:.16;transform:scale(.96)}
+  50%{opacity:.34;transform:scale(1.04)}
+}
+.topbar{
+  position:sticky;top:0;z-index:10;
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
+  padding:12px 18px;
+  border-bottom:1px solid var(--bd);
+  background:
+    radial-gradient(140% 120% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
+    radial-gradient(120% 120% at 100% 0%, var(--palette-card-glow-2), transparent 48%),
+    linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  backdrop-filter:blur(20px);
+  box-shadow:var(--e2), var(--eac);
+}
+.topbar-left,.topbar-right{display:flex;align-items:center;gap:10px;min-width:0;flex-wrap:wrap}
+.topbar-title{display:flex;flex-direction:column;min-width:0}
+.topbar-title .kicker{font-size:10px;font-family:var(--ff-mono);text-transform:uppercase;letter-spacing:1px;color:var(--tx3)}
+.topbar-title h1{margin:0;font-family:var(--ff-head);font-size:18px;line-height:1.1;color:var(--tx)}
+.status-dot{width:10px;height:10px;border-radius:999px;background:var(--grn);box-shadow:0 0 0 4px var(--grnd)}
+.user-chip{max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:8px 12px}
+.page{width:min(1240px,100%);margin:0 auto;padding:22px 18px 34px;display:grid;gap:16px}
+.hero{
+  display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;
+  padding:20px;border:1px solid var(--bd);border-radius:20px;
+  background:
+    radial-gradient(140% 100% at 0% 0%, var(--palette-card-glow-1), transparent 40%),
+    radial-gradient(120% 100% at 100% 0%, var(--palette-card-glow-2), transparent 50%),
+    linear-gradient(180deg,var(--glass-1),var(--glass-3));
+  box-shadow:var(--e2), var(--eac);
+}
+.hero h2{margin:0;font-family:var(--ff-head);font-size:28px;line-height:1.05}
+.hero p{margin:6px 0 0;color:var(--tx2);max-width:72ch}
+.eyebrow{font-size:10px;font-family:var(--ff-mono);letter-spacing:1.2px;text-transform:uppercase;color:var(--ac3);margin-bottom:6px}
+.summary-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.stat{
+  border:1px solid var(--bd);
+  border-radius:16px;
+  background:
+    radial-gradient(120% 100% at 0% 0%, var(--palette-card-glow-2), transparent 45%),
+    linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  padding:11px 13px;
+  box-shadow:var(--e2), var(--eac);
+}
+.stat .label{font-size:9px;font-family:var(--ff-mono);text-transform:uppercase;letter-spacing:1px;color:var(--tx3)}
+.stat .value{font-family:var(--ff-head);font-size:22px;font-weight:800;line-height:1.05;margin-top:4px}
+.stat .sub{margin-top:4px;color:var(--tx2);font-size:11px;line-height:1.35}
+.stat.stat-remaining{
+  position:relative;
+  overflow:hidden;
+  transform:translateY(-1px);
+  --stat-accent: var(--amb);
+  border-color:color-mix(in srgb, var(--ambb) 74%, var(--bd));
+  background:
+    radial-gradient(120% 120% at 0% 0%, rgba(245,166,35,.22), transparent 44%),
+    radial-gradient(120% 120% at 100% 0%, rgba(94,226,123,.10), transparent 50%),
+    linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  box-shadow:0 0 0 1px rgba(245,166,35,.12), 0 12px 28px rgba(245,166,35,.10), var(--e2), var(--eac);
+}
+.stat.stat-remaining::before{
+  content:'';
+  position:absolute;
+  inset:0 auto 0 0;
+  width:4px;
+  background:linear-gradient(180deg,var(--amb),color-mix(in srgb, var(--amb) 35%, var(--ac3)));
+  box-shadow:0 0 18px rgba(245,166,35,.32);
+}
+.stat.stat-remaining .label,
+.stat.stat-remaining .value{
+  color:var(--stat-accent);
+}
+.stat.stat-remaining .value{
+  font-size:24px;
+}
+.stat.stat-remaining .sub{
+  color:var(--tx);
+}
+.stat.balance-red,
+.stat.balance-amber,
+.stat.balance-green{
+  position:relative;
+  overflow:hidden;
+  --stat-accent: var(--amb);
+}
+.stat.balance-red{
+  --stat-accent: var(--red);
+  border-color:color-mix(in srgb, var(--redb) 74%, var(--bd));
+  background:
+    radial-gradient(120% 120% at 0% 0%, rgba(240,82,79,.18), transparent 44%),
+    radial-gradient(120% 120% at 100% 0%, rgba(240,82,79,.09), transparent 50%),
+    linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  box-shadow:0 0 0 1px rgba(240,82,79,.10), 0 12px 28px rgba(240,82,79,.08), var(--e2), var(--eac);
+}
+.stat.balance-amber{
+  --stat-accent: var(--amb);
+  border-color:color-mix(in srgb, var(--ambb) 74%, var(--bd));
+  background:
+    radial-gradient(120% 120% at 0% 0%, rgba(245,166,35,.20), transparent 44%),
+    radial-gradient(120% 120% at 100% 0%, rgba(245,166,35,.10), transparent 50%),
+    linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  box-shadow:0 0 0 1px rgba(245,166,35,.10), 0 12px 28px rgba(245,166,35,.08), var(--e2), var(--eac);
+}
+.stat.balance-green{
+  --stat-accent: var(--grn);
+  border-color:color-mix(in srgb, var(--grnb) 74%, var(--bd));
+  background:
+    radial-gradient(120% 120% at 0% 0%, rgba(33,194,122,.18), transparent 44%),
+    radial-gradient(120% 120% at 100% 0%, rgba(33,194,122,.09), transparent 50%),
+    linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  box-shadow:0 0 0 1px rgba(33,194,122,.10), 0 12px 28px rgba(33,194,122,.08), var(--e2), var(--eac);
+}
+.stat.balance-red::before,
+.stat.balance-amber::before,
+.stat.balance-green::before{
+  content:'';
+  position:absolute;
+  inset:0 auto 0 0;
+  width:4px;
+  background:linear-gradient(180deg,var(--stat-accent),color-mix(in srgb, var(--stat-accent) 35%, var(--tx3)));
+  box-shadow:0 0 18px color-mix(in srgb, var(--stat-accent) 36%, transparent);
+}
+.stat.balance-red .label,
+.stat.balance-amber .label,
+.stat.balance-green .label,
+.stat.balance-red .value,
+.stat.balance-amber .value,
+.stat.balance-green .value{
+  color:var(--stat-accent);
+}
+.panel{
+  border:1px solid var(--bd);
+  border-radius:20px;
+  background:
+    radial-gradient(140% 100% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
+    radial-gradient(120% 100% at 100% 0%, var(--palette-card-glow-2), transparent 48%),
+    linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  box-shadow:var(--e2), var(--eac);
+  padding:18px;
+}
+#requestPanel{
+  position:relative;
+  margin-bottom:10px;
+}
+#myRequestsPanel{
+  position:relative;
+}
+.panel-head{
+  display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
+  margin-bottom:14px;
+}
+.panel-title{font-family:var(--ff-head);font-size:18px;font-weight:800}
+.panel-sub{color:var(--tx2);font-size:12px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tab-btn{padding:10px 14px;font-weight:700}
+.tab-btn.active{
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(180deg,var(--acd2),var(--acd1));
+  border-color:var(--ac3);
+  color:var(--ac3);
+  animation:chipBreath 6.8s ease-in-out infinite;
+}
+.tab-btn.active::after{
+  content:'';
+  position:absolute;
+  inset:-1px;
+  border-radius:inherit;
+  pointer-events:none;
+  background:linear-gradient(120deg,transparent 0%,rgba(255,255,255,.18) 48%,transparent 100%);
+  background-size:200% 100%;
+  animation:lineFlow 7.6s ease-in-out infinite;
+  opacity:.24;
+}
+.form-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.form-grid > *{min-width:0}
+.field.wide{grid-column:span 2}
+.field.full{grid-column:1/-1}
+.form-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:12px;flex-wrap:wrap}
+.list{display:grid;gap:12px}
+.empty{
+  padding:20px;border:1px dashed var(--bd2);border-radius:18px;color:var(--tx3);
+  background:rgba(255,255,255,.02);text-align:center
+}
+.request-card,.event-card,.staff-row{
+  border:1px solid var(--bd);
+  border-radius:18px;
+  background:
+    radial-gradient(140% 100% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
+    radial-gradient(120% 100% at 100% 0%, var(--palette-card-glow-2), transparent 48%),
+    linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  padding:16px;
+  box-shadow:var(--e1), var(--eac);
+}
+.request-card{display:grid;gap:12px}
+.request-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.request-title{font-family:var(--ff-head);font-weight:800;font-size:16px}
+.request-meta{font-size:12px;color:var(--tx2);margin-top:3px}
+.request-note{margin-top:2px;color:var(--tx2)}
+.request-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.request-grid > *{min-width:0}
+.card-box{
+  border:1px solid var(--bd);
+  background:var(--sf2);
+  border-radius:14px;
+  padding:12px;
+  box-shadow:var(--e1), var(--eac);
+}
+.form-card{
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  min-height:100%;
+}
+.request-target-box{
+  display:grid;
+  gap:8px;
+  margin-top:14px;
+  padding:12px 14px;
+  min-height:0;
+}
+.request-target-box .target-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.form-card .input,
+.form-card .select{
+  min-height:44px;
+}
+.form-card .input[type="date"]{
+  min-height:44px;
+}
+.form-card .input[type="date"],
+.retro-date,
+.retro-end{
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  box-sizing:border-box;
+  display:block;
+}
+.form-card .field-note{
+  font-size:11px;
+  color:var(--tx2);
+  line-height:1.45;
+}
+.card-box .box-label{font-size:10px;font-family:var(--ff-mono);text-transform:uppercase;letter-spacing:1px;color:var(--tx3);margin-bottom:6px}
+.timeline{display:grid;gap:8px}
+.timeline-item{
+  padding:10px 12px;border-radius:12px;border:1px solid var(--bd);background:var(--sf3);
+  display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap
+}
+.timeline-item .t-left{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.timeline-item .t-time{font-size:11px;color:var(--tx3);font-family:var(--ff-mono)}
+.timeline-item .t-note{color:var(--tx2);font-size:12px}
+.queue-controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.queue-controls .select{width:auto;min-width:180px}
+.queue-card{border:1px solid var(--bd);border-radius:18px;background:linear-gradient(180deg,var(--glass-1),var(--glass-2));padding:16px;display:grid;gap:12px}
+.queue-card{
+  background:
+    radial-gradient(140% 100% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
+    radial-gradient(120% 100% at 100% 0%, var(--palette-card-glow-2), transparent 48%),
+    linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  box-shadow:var(--e1), var(--eac);
+}
+.queue-card .actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.staff-row{
+  display:grid;
+  grid-template-columns:2fr 110px 110px 110px 110px auto;
+  gap:10px;align-items:center
+}
+.staff-row .name{font-weight:700}
+.staff-row .meta{font-size:12px;color:var(--tx2)}
+.staff-row input{width:100%}
+.staff-card{
+  border:1px solid var(--bd);
+  border-radius:18px;
+  background:
+    radial-gradient(140% 100% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
+    radial-gradient(120% 100% at 100% 0%, var(--palette-card-glow-2), transparent 48%),
+    linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  overflow:hidden;
+  box-shadow:var(--e1), var(--eac);
+}
+.staff-card summary{
+  list-style:none;
+  cursor:pointer;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  padding:12px 14px;
+}
+.staff-card summary::-webkit-details-marker{display:none}
+.staff-card .staff-summary-left{min-width:0;display:grid;gap:3px}
+.staff-card .staff-summary-right{
+  display:grid;
+  gap:5px;
+  justify-items:end;
+  align-content:center;
+  min-width:0;
+}
+.staff-card .staff-summary-right .pill{
+  width:max-content;
+  white-space:nowrap;
+  animation:chipBreath 7.4s ease-in-out infinite;
+}
+.staff-card .staff-body{
+  border-top:1px solid var(--bd);
+  padding:12px 14px 14px;
+  display:grid;
+  gap:10px;
+}
+.staff-card .staff-history{
+  border-top:1px solid var(--bd);
+  padding-top:10px;
+  display:grid;
+  gap:8px;
+}
+.staff-card .staff-history-title{
+  font-size:9px;
+  font-family:var(--ff-mono);
+  text-transform:uppercase;
+  letter-spacing:1px;
+  color:var(--tx3);
+}
+.staff-card .staff-history-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:8px;
+  flex-wrap:wrap;
+  padding:8px 10px;
+  border:1px solid var(--bd);
+  border-radius:12px;
+  background:var(--sf3);
+}
+.staff-card .staff-history-item .left{
+  display:grid;
+  gap:1px;
+  min-width:0;
+}
+.staff-card .staff-history-item .title{
+  font-size:11px;
+  font-weight:700;
+  color:var(--tx);
+}
+.staff-card .staff-history-item .meta{
+  font-size:10px;
+  color:var(--tx2);
+}
+.staff-card .staff-request-audit{
+  border-top:1px solid var(--bd);
+  padding-top:10px;
+  display:grid;
+  gap:8px;
+}
+.staff-card .staff-request-audit-title{
+  font-size:9px;
+  font-family:var(--ff-mono);
+  text-transform:uppercase;
+  letter-spacing:1px;
+  color:var(--tx3);
+}
+.staff-card .staff-request-item{
+  display:grid;
+  gap:4px;
+  padding:8px 10px;
+  border:1px solid var(--bd);
+  border-radius:12px;
+  background:var(--sf3);
+}
+.staff-card .staff-request-item .top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.staff-card .staff-request-item .title{
+  font-size:11px;
+  font-weight:700;
+  color:var(--tx);
+}
+.staff-card .staff-request-item .meta{
+  font-size:10px;
+  color:var(--tx2);
+}
+.staff-card .staff-request-item .timeline{
+  display:grid;
+  gap:6px;
+  margin-top:4px;
+}
+.staff-card .staff-request-item .timeline-item{
+  padding:6px 8px;
+}
+.staff-card .staff-request-item .timeline-item .t-note{
+  font-size:11px;
+}
+.staff-card .allowance-reason{
+  min-height:72px;
+  resize:vertical;
+}
+.staff-card .staff-section{
+  display:grid;
+  gap:10px;
+  padding:12px;
+  border:1px solid var(--bd);
+  border-radius:16px;
+  background:var(--sf3);
+}
+.staff-card .staff-section-title{
+  font-size:10px;
+  font-family:var(--ff-mono);
+  text-transform:uppercase;
+  letter-spacing:1.2px;
+  color:var(--tx3);
+}
+.staff-card .staff-section-sub{
+  font-size:11px;
+  color:var(--tx2);
+  line-height:1.45;
+}
+.staff-card .staff-mini{
+  font-size:10px;
+  font-family:var(--ff-mono);
+  text-transform:uppercase;
+  letter-spacing:1px;
+  color:var(--tx3);
+}
+.activity-feed{display:grid;gap:12px}
+.activity-card{
+  position:relative;
+  border:1px solid var(--bd);
+  border-radius:18px;
+  background:
+    radial-gradient(140% 100% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
+    radial-gradient(120% 100% at 100% 0%, var(--palette-card-glow-2), transparent 48%),
+    linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  padding:14px 15px 14px 18px;
+  display:grid;
+  gap:8px;
+  box-shadow:var(--e1), var(--eac);
+  overflow:hidden;
+}
+.activity-card::before{
+  content:'';
+  position:absolute;
+  inset:0 auto 0 0;
+  width:4px;
+  background:var(--activity-accent,var(--ac3));
+  opacity:.85;
+}
+.activity-card.activity-approved{--activity-accent:var(--grn)}
+.activity-card.activity-pending{--activity-accent:var(--amb)}
+.activity-card.activity-denied{--activity-accent:var(--red)}
+.activity-card.activity-cancelled{--activity-accent:var(--red)}
+.activity-card .row-top{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+  align-items:flex-start;
+}
+.activity-card .meta-line{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+.activity-card .when{
+  font-size:11px;
+  color:var(--tx3);
+  font-family:var(--ff-mono);
+  white-space:nowrap;
+}
+.activity-card .actor{font-weight:700}
+.activity-card .headline{
+  font-size:14px;
+  font-weight:800;
+  color:var(--tx);
+  line-height:1.25;
+}
+.activity-card .detail{
+  font-size:12px;
+  color:var(--tx2);
+  line-height:1.45;
+}
+.activity-card .note{
+  padding:10px 11px;
+  border-radius:12px;
+  border:1px solid var(--bd);
+  background:var(--sf3);
+}
+#activityPanel .activity-layout{
+  display:grid;
+  grid-template-columns:minmax(240px,320px) minmax(0,1fr);
+  gap:14px;
+  align-items:start;
+}
+#activityPanel .activity-roster{
+  display:grid;
+  gap:10px;
+}
+#activityPanel .activity-roster-btn{
+  width:100%;
+  display:grid;
+  gap:6px;
+  text-align:left;
+  padding:14px 15px;
+  border:1px solid var(--bd);
+  border-radius:18px;
+  background:
+    radial-gradient(140% 100% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
+    radial-gradient(120% 100% at 100% 0%, var(--palette-card-glow-2), transparent 48%),
+    linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  box-shadow:var(--e1), var(--eac);
+}
+#activityPanel .activity-roster-btn.active{
+  border-color:var(--ac3);
+  box-shadow:0 0 0 3px var(--acd1), var(--e1), var(--eac);
+  transform:translateY(-1px);
+}
+#activityPanel .activity-roster-btn .name{
+  font-family:var(--ff-head);
+  font-size:15px;
+  font-weight:800;
+  color:var(--tx);
+  line-height:1.15;
+}
+#activityPanel .activity-roster-btn .sub{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+#activityPanel .activity-roster-btn .mini{
+  font-size:11px;
+  color:var(--tx2);
+  line-height:1.4;
+}
+#activityPanel .activity-detail{
+  border:1px solid var(--bd);
+  border-radius:20px;
+  background:
+    radial-gradient(140% 100% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
+    radial-gradient(120% 100% at 100% 0%, var(--palette-card-glow-2), transparent 48%),
+    linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  box-shadow:var(--e1), var(--eac);
+  padding:16px;
+  display:grid;
+  gap:14px;
+}
+#activityPanel .activity-detail-head{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+  align-items:flex-start;
+}
+#activityPanel .activity-detail-name{
+  font-family:var(--ff-head);
+  font-size:22px;
+  font-weight:800;
+  line-height:1.05;
+  color:var(--tx);
+}
+#activityPanel .activity-detail-sub{
+  margin-top:5px;
+  font-size:12px;
+  color:var(--tx2);
+}
+#activityPanel .activity-stat-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;
+}
+#activityPanel .activity-stat{
+  border:1px solid var(--bd);
+  border-radius:14px;
+  background:var(--sf3);
+  padding:10px 12px;
+  display:grid;
+  gap:4px;
+}
+#activityPanel .activity-stat .label{
+  font-size:9px;
+  font-family:var(--ff-mono);
+  text-transform:uppercase;
+  letter-spacing:1px;
+  color:var(--tx3);
+}
+#activityPanel .activity-stat .value{
+  font-family:var(--ff-head);
+  font-size:16px;
+  font-weight:800;
+  color:var(--tx);
+}
+#activityPanel .activity-stat .sub{
+  font-size:11px;
+  color:var(--tx2);
+}
+#activityPanel .activity-section{
+  display:grid;
+  gap:10px;
+  padding:12px;
+  border:1px solid var(--bd);
+  border-radius:16px;
+  background:var(--sf3);
+}
+#activityPanel .activity-section-title{
+  font-size:10px;
+  font-family:var(--ff-mono);
+  text-transform:uppercase;
+  letter-spacing:1.2px;
+  color:var(--tx3);
+}
+#activityPanel .activity-mini-list{
+  display:grid;
+  gap:8px;
+}
+#activityPanel .activity-mini-item{
+  display:grid;
+  gap:4px;
+  padding:10px 11px;
+  border:1px solid var(--bd);
+  border-radius:14px;
+  background:linear-gradient(180deg,var(--glass-1),var(--glass-3));
+}
+#activityPanel .activity-mini-item .top{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+#activityPanel .activity-mini-item .title{
+  font-size:12px;
+  font-weight:800;
+  color:var(--tx);
+}
+#activityPanel .activity-mini-item .meta{
+  font-size:11px;
+  color:var(--tx2);
+  line-height:1.4;
+}
+.activity-collapsible{
+  border:1px solid var(--bd);
+  border-radius:16px;
+  overflow:hidden;
+  background:var(--sf3);
+}
+.activity-collapsible summary{
+  list-style:none;
+  cursor:pointer;
+  padding:12px 14px;
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:center;
+}
+.activity-collapsible summary::-webkit-details-marker{display:none}
+.activity-collapsible .content{
+  border-top:1px solid var(--bd);
+  padding:12px 14px 14px;
+  display:grid;
+  gap:12px;
+}
+.activity-card .actor-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:4px 8px;
+  border-radius:999px;
+  border:1px solid var(--bd);
+  background:var(--sf3);
+  color:var(--tx2);
+  font-size:11px;
+  font-family:var(--ff-mono);
+}
+@media (max-width: 980px){
+  #activityPanel .activity-layout{grid-template-columns:1fr}
+  #activityPanel .activity-detail{order:-1}
+  #activityPanel .activity-roster{order:1}
+  #activityPanel .activity-stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+.toast{
+  position:fixed;left:50%;bottom:22px;transform:translateX(-50%);
+  padding:10px 16px;border-radius:12px;background:var(--sf);border:1px solid var(--bd);
+  box-shadow:var(--e2);z-index:1000;color:var(--tx);font-size:13px;opacity:0;pointer-events:none;transition:opacity .28s var(--ease-smooth), transform .28s var(--ease-smooth);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(-3px)}
+.palette-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.56);
+  z-index:1000;
+  display:none;
+  align-items:flex-start;
+  justify-content:center;
+  padding:clamp(14px, 3vh, 28px) 18px 18px;
+  overflow:auto;
+}
+.palette-overlay.open{display:flex}
+.palette-panel{
+  width:min(720px,100%);
+  max-height:min(84vh, 760px);
+  border-radius:22px;border:1px solid var(--bd);
+  background:
+    radial-gradient(140% 100% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
+    radial-gradient(120% 100% at 100% 0%, var(--palette-card-glow-2), transparent 48%),
+    linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  box-shadow:var(--e3), var(--eac);
+  padding:18px;
+  margin-top:clamp(4px, 1vh, 12px);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+.palette-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px;flex-shrink:0}
+.palette-title{font-family:var(--ff-head);font-size:18px;font-weight:800}
+.palette-close{border:1px solid var(--bd);background:var(--sf2);color:var(--tx);border-radius:12px;padding:10px 14px;cursor:pointer}
+.palette-body{display:grid;gap:14px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.palette-help{color:var(--tx2);font-size:13px;line-height:1.55}
+.palette-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.palette-option{
+  display:flex;align-items:center;gap:14px;text-align:left;
+  border:1px solid var(--bd);border-radius:18px;padding:14px;background:var(--sf2);color:var(--tx);cursor:pointer
+}
+.palette-option.active{border-color:var(--ac3);box-shadow:0 0 0 3px var(--acd1)}
+.palette-sample{width:54px;height:54px;border-radius:16px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;overflow:hidden;border:1px solid var(--bd)}
+.palette-sample span{display:block}
+.palette-meta{display:grid;gap:2px}
+.palette-name{font-weight:800;font-family:var(--ff-head)}
+.palette-desc{color:var(--tx2);font-size:12px;line-height:1.45}
+.palette-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px;flex-wrap:wrap;align-items:center}
+.palette-actions button{min-width:124px}
+body.basic-mode,
+body.basic-mode::before,
+body.basic-mode::after {
+  background-image: none !important;
+}
+body.basic-mode,
+body.basic-mode *,
+body.basic-mode *::before,
+body.basic-mode *::after {
+  animation: none !important;
+  transition: none !important;
+}
+body.basic-mode * {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+body.basic-mode button {
+  color: var(--tx) !important;
+  text-shadow: none !important;
+}
+body.basic-mode :is(.app-card,.coming-card,#mainHeader,.login-card,.lic-inner,.panel,.modal,.toast,.palette-panel,.manager-requests-panel,.header-user,.section-label,.palette-option,.palette-close,.icon-btn,.btn,.btn-ghost,.btn-primary,.btn-secondary,.btn-iso,.button,.card-arrow,.user-chip) {
+  background: var(--sf) !important;
+  background-image: none !important;
+  border-color: var(--bd2) !important;
+  box-shadow: none !important;
+}
+body.basic-mode .btn-primary {
+  background: var(--sf2) !important;
+  color: var(--tx) !important;
+  border-color: var(--bd2) !important;
+  box-shadow: none !important;
+}
+body.basic-mode.dark .palette-actions {
+  background: #10151d !important;
+  border-top-color: #2f3a49 !important;
+}
+body.basic-mode.dark .palette-actions :is(.btn,.btn-ghost,.btn-primary,.btn-secondary,.btn-iso,.button) {
+  background: #1b2330 !important;
+  border-color: #3a4656 !important;
+  color: #f3f7fc !important;
+  text-shadow: none !important;
+  font-weight: 700 !important;
+  box-shadow: 0 1px 0 rgba(255,255,255,.04), 0 10px 20px rgba(0,0,0,.18) !important;
+}
+body.basic-mode.dark .palette-actions :is(.btn,.btn-ghost,.btn-primary,.btn-secondary,.btn-iso,.button):hover {
+  background: #222b39 !important;
+  border-color: #516070 !important;
+  color: #fff !important;
+  box-shadow: 0 12px 24px rgba(0,0,0,.24) !important;
+}
+body.basic-mode :is(.palette-overlay,.manager-requests-overlay) {
+  background: rgba(5,10,18,.88) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+@media (max-width: 720px){
+  .palette-panel{
+    max-height: calc(100dvh - 24px);
+  }
+  .palette-overlay{
+    padding-top:10px;
+    align-items:flex-start;
+  }
+  .palette-panel{
+    width:min(100%, 680px);
+    margin-top:0;
+  }
+  .palette-grid{
+    grid-template-columns:1fr;
+  }
+}
+.error{
+  padding:10px 12px;border-radius:12px;font-size:12px;line-height:1.5;border:1px solid var(--redb);
+  background:var(--redd);color:var(--red)
+}
+.small{font-size:12px;color:var(--tx2)}
+.split{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center}
+.visually-hidden{
+  position:absolute !important;
+  width:1px !important;
+  height:1px !important;
+  padding:0 !important;
+  margin:-1px !important;
+  overflow:hidden !important;
+  clip:rect(0,0,0,0) !important;
+  white-space:nowrap !important;
+  border:0 !important;
+}
+@media (max-width: 1100px){
+  .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .staff-row{grid-template-columns:1fr 110px 110px 110px 110px auto}
+}
+@media (max-width: 760px){
+  .auth-screen{padding:16px 12px}
+  .auth-shell{gap:12px}
+  .splash-hero{gap:12px;padding:0 4px}
+  .splash-hero-mark{width:54px;height:54px;border-radius:16px}
+  .splash-hero-title{font-size:22px}
+  .splash-hero-sub{font-size:8px;letter-spacing:2px}
+  .login-card{padding:18px}
+  .brand-row{gap:12px;margin-bottom:14px;align-items:flex-start}
+  .brand-title{font-size:22px}
+  .brand-sub{font-size:12px}
+  .page{padding:14px 12px 24px}
+  .hero{padding:16px;align-items:flex-start}
+  .hero h2{font-size:22px}
+  .summary-grid{grid-template-columns:1fr}
+  .stat{padding:12px 13px}
+  .form-grid{grid-template-columns:1fr}
+  .field.wide,.field.full{grid-column:auto}
+  .field{padding:11px}
+  .form-grid > *{min-width:0}
+  .form-card .input[type="date"],
+  .retro-date,
+  .retro-end{
+    font-size:12px;
+    padding-inline:10px;
+    padding-block:0;
+  }
+  .request-grid{grid-template-columns:1fr}
+  .staff-row{grid-template-columns:1fr;gap:8px}
+  .staff-card summary{padding:12px}
+  .staff-card .staff-body{padding:12px}
+  .palette-grid{grid-template-columns:1fr}
+  .topbar{
+    padding:10px 12px;
+    gap:10px;
+    align-items:flex-start;
+  }
+  .topbar-left,.topbar-right{gap:8px}
+  .topbar-right{margin-left:auto;justify-content:flex-end}
+  .topbar-title h1{font-size:16px}
+  .topbar-title .kicker{font-size:9px}
+  .user-chip{max-width:180px}
+  .brand-mark.logo-mark.md{width:28px;height:28px}
+}
+
+/* Final Apple-style override layer. Preserve structure/behavior; simplify glass, motion, and backgrounds. */
+body.light-mode:not(.basic-mode){
+  background:var(--bg) !important;
+}
+body:not(.basic-mode)::before,
+body:not(.basic-mode) .boot-shield::before{
+  background:none !important;
+  opacity:0 !important;
+}
+body:not(.basic-mode) .auth-screen .login-card,
+body:not(.basic-mode) .boot-shield-mark,
+body:not(.basic-mode) .splash-hero-mark,
+body:not(.basic-mode) .brand-mark.logo-mark.lg,
+body:not(.basic-mode) .tab-btn.active,
+body:not(.basic-mode) .pill.balance-red,
+body:not(.basic-mode) .pill.balance-amber,
+body:not(.basic-mode) .pill.balance-green{
+  animation:none !important;
+}
+body:not(.basic-mode) .pill.balance-red::after,
+body:not(.basic-mode) .pill.balance-amber::after,
+body:not(.basic-mode) .pill.balance-green::after,
+body:not(.basic-mode) .tab-btn.active::after,
+body:not(.basic-mode) #licenceOverlay .login-card::before,
+body:not(.basic-mode) #licenceOverlay .login-card::after{
+  display:none !important;
+}
+body:not(.basic-mode) :is(.hero,.stat,.panel,.login-card,.field,.card-box,.request-card,.event-card,.staff-row,.toast,.palette-panel,.modal,.palette-actions){
+  background:var(--sf) !important;
+  background-image:none !important;
+  border-color:var(--bd2) !important;
+  box-shadow:var(--e1) !important;
+  backdrop-filter:blur(12px) !important;
+  -webkit-backdrop-filter:blur(12px) !important;
+}
+body:not(.basic-mode) .topbar{
+  background:
+    radial-gradient(140% 120% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
+    radial-gradient(120% 120% at 100% 0%, var(--palette-card-glow-2), transparent 48%),
+    linear-gradient(180deg,var(--glass-1),var(--glass-2)) !important;
+  backdrop-filter:blur(20px) !important;
+  -webkit-backdrop-filter:blur(20px) !important;
+}
+body:not(.basic-mode) :is(.palette-panel,.modal,.toast){
+  backdrop-filter:blur(14px) !important;
+  -webkit-backdrop-filter:blur(14px) !important;
+}
+body:not(.basic-mode) :is(.btn,.icon-btn,.tab-btn,.chip):hover{
+  transform:none !important;
+  box-shadow:none !important;
+}
+body:not(.basic-mode) .topbar .back-platform-btn:hover{
+  border-color:var(--bd3) !important;
+  color:var(--tx) !important;
+  background:var(--sf2) !important;
+  box-shadow:none !important;
+  transform:none !important;
+}
+body:not(.basic-mode) .btn-primary{
+  background:var(--ac) !important;
+  color:#fff !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+}
+body:not(.basic-mode) .btn-primary:hover{
+  background:var(--ac2) !important;
+}
+body:not(.basic-mode) .btn-ghost{
+  background:var(--sf2) !important;
+}
+body:not(.basic-mode) .empty{
+  background:var(--sf) !important;
+}
+body:not(.basic-mode){
+  background:var(--bg) !important;
+}
+body:not(.basic-mode)::before,
+body:not(.basic-mode)::after{
+  background:none !important;
+  opacity:0 !important;
+  filter:none !important;
+}
+body:not(.basic-mode) :is(.app-card,.login-card,.panel,.modal,.toast,.palette-panel,.queue-card,.activity-detail,.activity-roster-btn,.activity-stat,.activity-section,.activity-mini-item,.btn,.btn-ghost,.btn-primary,.btn-iso,.icon-btn,.user-chip,.brand-row,.brand-mark,.splash-hero-mark){
+  background:var(--sf) !important;
+  background-image:none !important;
+  border-color:var(--bd2) !important;
+  box-shadow:0 8px 24px rgba(15,23,42,.06) !important;
+  backdrop-filter:blur(12px) !important;
+  -webkit-backdrop-filter:blur(12px) !important;
+}
+body:not(.basic-mode) :is(.topbar,.palette-panel,.modal,.toast){
+  backdrop-filter:blur(20px) !important;
+  -webkit-backdrop-filter:blur(20px) !important;
+}
+body:not(.basic-mode) :is(.palette-panel,.queue-card,.activity-detail,.activity-stat,.activity-mini-item){
+  border-radius:14px !important;
+}
+body:not(.basic-mode) :is(.topbar,.queue-card,.activity-detail,.activity-stat,.activity-mini-item)::before,
+body:not(.basic-mode) :is(.topbar,.queue-card,.activity-detail,.activity-stat,.activity-mini-item)::after{
+  animation:none !important;
+  background:none !important;
+}
+body:not(.basic-mode) .btn-primary{
+  background:var(--ac) !important;
+  color:#fff !important;
+  box-shadow:none !important;
+}
+body:not(.basic-mode) .btn-primary:hover{
+  background:var(--ac2) !important;
+}
+</style>
+</head>
+<body class="loading-start">
+<div id="bootShield" class="boot-shield" aria-hidden="true">
+  <div class="boot-shield-card">
+    <div class="boot-shield-mark"><img data-suite-logo alt="Padeswood Works"></div>
+    <div class="boot-shield-copy">
+      <div class="boot-shield-title">Padeswood Works</div>
+      <div class="boot-shield-sub">Opening Holiday Requests</div>
+    </div>
+  </div>
+</div>
+<div id="loginScreen" class="auth-screen hidden">
+  <div class="auth-shell">
+    <div class="splash-hero">
+      <div class="splash-hero-mark" aria-hidden="true"><img data-suite-logo alt="Padeswood Works"></div>
+      <div class="splash-hero-copy">
+        <div class="splash-hero-title">Padeswood Works</div>
+        <div class="splash-hero-sub">HeidelbergMaterials · Holiday Requests</div>
+      </div>
+    </div>
+    <div class="login-card">
+      <div class="brand-row">
+        <div class="brand-mark logo-mark lg" aria-hidden="true"><img data-suite-logo alt="Padeswood Works"></div>
+        <div>
+          <h1 class="brand-title">Holiday and leave</h1>
+          <div class="brand-sub">Balance, approvals and audit trail for the suite</div>
+        </div>
+      </div>
+      <div class="login-grid">
+        <div class="field">
+          <label for="loginEmail">Email</label>
+          <input id="loginEmail" class="input" type="email" autocomplete="email" placeholder="name@heidelbergmaterials.com">
+        </div>
+        <div class="field">
+          <label for="loginPass">Password</label>
+          <input id="loginPass" class="input" type="password" autocomplete="current-password" placeholder="Password">
+        </div>
+        <button id="loginBtn" class="btn btn-primary" type="button">Sign In</button>
+      </div>
+      <div id="loginErr" class="error hidden" style="margin-top:10px"></div>
+    </div>
+  </div>
+</div>
+
+<div id="accessDenied" class="auth-screen hidden">
+  <div class="auth-shell">
+    <div class="splash-hero">
+      <div class="splash-hero-mark" aria-hidden="true"><img data-suite-logo alt="Padeswood Works"></div>
+      <div class="splash-hero-copy">
+        <div class="splash-hero-title">Padeswood Works</div>
+        <div class="splash-hero-sub">HeidelbergMaterials · Holiday Requests</div>
+      </div>
+    </div>
+    <div class="login-card">
+      <div class="brand-row">
+        <div class="brand-mark logo-mark lg" aria-hidden="true"><img data-suite-logo alt="Padeswood Works"></div>
+        <div>
+          <h1 class="brand-title">No Access</h1>
+          <div class="brand-sub">You do not have access to Holiday Requests.</div>
+        </div>
+      </div>
+      <div class="small">Please contact an administrator if you think this is wrong.</div>
+      <div class="row" style="margin-top:14px">
+        <button class="btn btn-primary" type="button" onclick="goBackToPlatform()">Back to Platform</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="licenceOverlay" style="position:fixed;inset:0;background:var(--bg);z-index:10000;display:none;align-items:center;justify-content:center;opacity:0;transition:opacity .3s ease">
+  <div class="login-card" style="width:min(420px,92vw)">
+    <div class="brand-row">
+      <div class="brand-mark logo-mark lg" aria-hidden="true"><img data-suite-logo alt="Padeswood Works"></div>
+      <div>
+        <h1 class="brand-title">Checking licence</h1>
+        <div class="brand-sub">Please wait while we verify access.</div>
+      </div>
+    </div>
+    <div id="licenceSpinner" style="display:flex;align-items:center;justify-content:center;gap:8px;color:var(--tx3);font-size:12px;font-family:var(--ff-mono);margin:8px 0 14px">
+      <span class="db-dot" aria-hidden="true"></span>
+      Verifying licence…
+    </div>
+    <div id="licenceMsg" style="display:none;font-size:13px;color:var(--red);line-height:1.6;margin-bottom:16px"></div>
+    <div id="licenceRetryBtn" style="display:none">
+      <button type="button" class="btn btn-primary" onclick="checkLicence()">Retry</button>
+    </div>
+  </div>
+</div>
+
+<div id="appShell" class="app-shell hidden">
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="icon-btn back-platform-btn" type="button" onclick="goBackToPlatform()" title="Back to platform" aria-label="Back to platform">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M15 18l-6-6 6-6"/><path d="M9 12h12"/></svg>
+      </button>
+      <div class="brand-mark logo-mark md" aria-hidden="true"><img data-suite-logo alt="Padeswood Works"></div>
+      <div class="topbar-title">
+        <div class="kicker">Holiday and leave management</div>
+        <h1>Holiday Requests</h1>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <span class="status-dot" aria-hidden="true"></span>
+      <span class="pill visually-hidden" id="syncLabel" aria-live="polite">Synced</span>
+      <button class="icon-btn" type="button" id="themeBtn" onclick="toggleTheme()" title="Switch to light mode" aria-label="Switch to light mode">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+          <circle cx="12" cy="12" r="4"/>
+          <path d="M12 2v2"/><path d="M12 20v2"/>
+          <path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/>
+          <path d="M2 12h2"/><path d="M20 12h2"/>
+          <path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/>
+        </svg>
+      </button>
+      <button class="icon-btn" type="button" onclick="openPaletteModal()" title="Choose colour scheme" aria-label="Choose colour scheme">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+          <path d="M12 3a9 9 0 1 0 0 18h1a2 2 0 0 0 0-4h-1a2 2 0 0 1 0-4h1a2 2 0 0 0 0-4h-1a2 2 0 0 1 0-4z"/>
+          <circle cx="8" cy="8.5" r="1.1" fill="currentColor" stroke="none"/>
+          <circle cx="6.6" cy="13" r="1.1" fill="currentColor" stroke="none"/>
+          <circle cx="10.6" cy="15.5" r="1.1" fill="currentColor" stroke="none"/>
+          <circle cx="15.6" cy="8.9" r="1.1" fill="currentColor" stroke="none"/>
+        </svg>
+      </button>
+      <span class="pill user-chip" id="userChip">—</span>
+      <button class="icon-btn" type="button" onclick="logout()" title="Sign out" aria-label="Sign out">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">Personal leave tracking</div>
+        <h2>Holiday requests in one place</h2>
+        <p>Request time off, keep an eye on what is left this year and leave a proper approval trail for each request.</p>
+      </div>
+      <div class="field" style="min-width:180px">
+        <label for="yearSelect">View year</label>
+        <select id="yearSelect" class="select" onchange="setSelectedYear(this.value)">
+          <option>2026</option>
+        </select>
+      </div>
+    </section>
+
+    <section class="summary-grid" id="personalSummarySection">
+      <div class="stat">
+        <div class="label">Entitlement</div>
+        <div class="value" id="statEntitlement">0.0</div>
+      <div class="sub" id="statEntitlementSub">Hours allowance + carryover</div>
+      </div>
+      <div class="stat">
+        <div class="label">Used</div>
+        <div class="value" id="statUsed">0.0</div>
+        <div class="sub">Approved leave this year</div>
+      </div>
+      <div class="stat">
+        <div class="label">Pending</div>
+        <div class="value" id="statPending">0.0</div>
+        <div class="sub">Waiting for a decision</div>
+      </div>
+      <div class="stat stat-remaining">
+        <div class="label">Remaining</div>
+        <div class="value" id="statRemaining">0.0</div>
+        <div class="sub">Entitlement minus approved</div>
+      </div>
+      <div class="stat">
+        <div class="label">Projected</div>
+        <div class="value" id="statProjected">0.0</div>
+        <div class="sub">If all pending are approved</div>
+      </div>
+    </section>
+
+    <section class="panel" id="requestPanel">
+      <div class="panel-head">
+        <div>
+          <div class="panel-title">Request leave</div>
+          <div class="panel-sub">Holiday requests only. Pick a start date, then choose how much time off you need and the end date will calculate itself.</div>
+        </div>
+      </div>
+      <div id="holidayReqMsg" style="display:none;margin:0 0 12px;font-size:12px;padding:8px 12px;border-radius:var(--rsm)"></div>
+      <div class="form-grid">
+        <div class="field form-card">
+          <label for="reqUnit">Request as</label>
+          <select id="reqUnit" class="select" onchange="syncRequestedDays()">
+            <option value="days">Days</option>
+            <option value="hours">Hours</option>
+          </select>
+        </div>
+        <div class="field form-card">
+          <label for="reqDays">Amount</label>
+          <input id="reqDays" class="input" type="number" min="0.5" step="0.5" value="0" onchange="syncRequestedDays()">
+        </div>
+        <div class="field form-card">
+          <label for="reqStart">Start date</label>
+          <input id="reqStart" class="input" type="date" onchange="syncRequestedDays()">
+        </div>
+        <div class="field form-card">
+          <label for="reqEnd">End date</label>
+          <input id="reqEnd" class="input" type="date" readonly>
+        </div>
+        <div class="field full form-card">
+          <label for="reqReason">Reason / notes</label>
+          <textarea id="reqReason" class="textarea" placeholder="Add any context that helps the manager approve the request."></textarea>
+        </div>
+      </div>
+      <div class="card-box request-target-box">
+        <div class="box-label">Request sent to</div>
+        <div id="holidayManagerConfirm" class="target-row">
+          <strong id="holidayManagerConfirmName">—</strong>
+          <span class="small" id="holidayManagerConfirmNote">Holiday requests will go to your assigned manager.</span>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" type="button" onclick="submitHolidayRequest()">Submit request</button>
+      </div>
+    </section>
+
+    <section class="panel" id="myRequestsPanel">
+      <details class="activity-collapsible" open>
+        <summary>
+          <div>
+            <div class="panel-title">My requests</div>
+            <div class="panel-sub">History, approvals and the audit trail for your own leave requests.</div>
+          </div>
+          <div class="queue-controls">
+            <span class="pill" id="myRequestCount">0 requests</span>
+          </div>
+        </summary>
+        <div class="content">
+          <div id="myRequests" class="list"></div>
+          <div id="myRequestsActivityWrap">
+            <details class="activity-collapsible" open>
+              <summary>
+                <div>
+                  <div class="panel-title" id="myRequestsActivityTitle" style="font-size:13px">Recent activity</div>
+                  <div class="panel-sub" id="myRequestsActivitySub" style="font-size:11px">Recent actions on your requests, in the same place.</div>
+                </div>
+              </summary>
+              <div class="content">
+                <div id="myRequestsActivity" class="activity-feed"></div>
+              </div>
+            </details>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <section class="panel" id="approverQueuePanel" style="display:none">
+      <div class="panel-head">
+        <div>
+          <div class="panel-title">Team approvals</div>
+          <div class="panel-sub">Pending requests for the team, with a live decision note.</div>
+        </div>
+        <div class="queue-controls">
+          <span id="approverPendingBadge" class="pill queue-ok">0 pending</span>
+          <label class="small" for="managerFilter">Show</label>
+          <select id="managerFilter" class="select" onchange="renderHolidayApp()">
+            <option value="pending">Pending only</option>
+            <option value="all">All requests</option>
+            <option value="approved">Approved</option>
+            <option value="denied">Denied</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+      </div>
+      <div id="approvalQueue" class="list"></div>
+    </section>
+
+    <section class="panel" id="allowancePanel" style="display:none">
+      <div class="panel-head">
+        <div>
+          <div class="panel-title">Holiday allowances</div>
+          <div class="panel-sub">Set annual allowance in hours per person. Carryover can only be added after 31 December at manager discretion.</div>
+        </div>
+      </div>
+      <div id="allowanceList" class="list"></div>
+    </section>
+
+    <section class="panel" id="activityPanel">
+      <details class="activity-collapsible" open>
+        <summary>
+          <div>
+            <div class="panel-title">Activity</div>
+            <div class="panel-sub">A simple audit trail showing when requests were made and actioned.</div>
+          </div>
+        </summary>
+        <div class="content">
+          <div id="teamOverviewCards" class="list"></div>
+          <div id="activityFeed" class="activity-feed"></div>
+        </div>
+      </details>
+    </section>
+  </main>
+</div>
+
+<div id="paletteModal" class="palette-overlay" onclick="if(event.target===this)closePaletteModal()">
+  <div class="palette-panel">
+    <div class="palette-head">
+      <div class="palette-title">Colour Scheme</div>
+      <button class="palette-close" type="button" onclick="closePaletteModal()">Close</button>
+    </div>
+    <div class="palette-body">
+      <div class="palette-help">Choose a general colour scheme for this browser only. It will carry across the Platform, Shift Tracker, Logs, Holiday Requests, and Credit Hours apps, and you can reset it at any time.</div>
+      <div class="palette-grid" id="paletteGrid">
+        <button type="button" class="palette-option" data-palette="basic" onclick="setPalettePreset('basic')">
+          <span class="palette-sample"><span style="background:#2f343c"></span><span style="background:#49515a"></span><span style="background:#6b7280"></span><span style="background:#d1d5db"></span></span>
+          <span class="palette-meta"><span class="palette-name">Basic</span><span class="palette-desc">A flat grayscale view with the glass and motion stripped back.</span></span>
+        </button>
+        <button type="button" class="palette-option" data-palette="default" onclick="setPalettePreset('default')">
+          <span class="palette-sample"><span style="background:#1a7a35"></span><span style="background:#2ecc5c"></span><span style="background:#5ee27b"></span><span style="background:#0b4f24"></span></span>
+          <span class="palette-meta"><span class="palette-name">Green</span><span class="palette-desc">The original Padeswood green scheme.</span></span>
+        </button>
+        <button type="button" class="palette-option" data-palette="ocean" onclick="setPalettePreset('ocean')">
+          <span class="palette-sample"><span style="background:#0f766e"></span><span style="background:#14b8a6"></span><span style="background:#2dd4bf"></span><span style="background:#0b4f4a"></span></span>
+          <span class="palette-meta"><span class="palette-name">Ocean</span><span class="palette-desc">Cool teal tones with a calmer feel.</span></span>
+        </button>
+        <button type="button" class="palette-option" data-palette="sky" onclick="setPalettePreset('sky')">
+          <span class="palette-sample"><span style="background:#2563eb"></span><span style="background:#3b82f6"></span><span style="background:#60a5fa"></span><span style="background:#1e40af"></span></span>
+          <span class="palette-meta"><span class="palette-name">Sky</span><span class="palette-desc">Brighter blue accents for a sharper read.</span></span>
+        </button>
+        <button type="button" class="palette-option" data-palette="violet" onclick="setPalettePreset('violet')">
+          <span class="palette-sample"><span style="background:#6d28d9"></span><span style="background:#8b5cf6"></span><span style="background:#a78bfa"></span><span style="background:#4c1d95"></span></span>
+          <span class="palette-meta"><span class="palette-name">Violet</span><span class="palette-desc">A more premium purple accent without layout changes.</span></span>
+        </button>
+        <button type="button" class="palette-option" data-palette="amber" onclick="setPalettePreset('amber')">
+          <span class="palette-sample"><span style="background:#b45309"></span><span style="background:#d97706"></span><span style="background:#f59e0b"></span><span style="background:#92400e"></span></span>
+          <span class="palette-meta"><span class="palette-name">Amber</span><span class="palette-desc">Warm industrial tones with a bit more glow.</span></span>
+        </button>
+        <button type="button" class="palette-option" data-palette="slate" onclick="setPalettePreset('slate')">
+          <span class="palette-sample"><span style="background:#334155"></span><span style="background:#475569"></span><span style="background:#64748b"></span><span style="background:#0f172a"></span></span>
+          <span class="palette-meta"><span class="palette-name">Graphite</span><span class="palette-desc">A darker neutral scheme if you want less colour.</span></span>
+        </button>
+      </div>
+    </div>
+    <div class="palette-actions">
+      <button class="btn btn-ghost" type="button" onclick="resetPalettePreset()">Reset to default</button>
+      <button class="btn btn-ghost" type="button" onclick="closePaletteModal()">Done</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../shared-suite.js"></script>
+<script>
+const suiteShared = window.PadeswoodSuite || null;
+const SUPABASE_URL = 'https://xnkwrkoxvgptobnmekgv.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhua3dya294dmdwdG9ibm1la2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NjAxNTQsImV4cCI6MjA4ODIzNjE1NH0.PrmnJ4eGepac41bQuNPG7TcBaunrfTWdjLtkGLr_2LY';
+const LICENCE_KEY = 'KBL-HEIDELBERG-PADESWOOD-2026';
+const SB_LIC_URL = 'https://dviicnomxeibbuafbozp.supabase.co';
+const SB_LIC_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2aWljbm9teGVpYmJ1YWZib3pwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4ODM0MzcsImV4cCI6MjA4ODQ1OTQzN30.c1T3WXC225tdBbq_1R__9bhGFIZdSxim9dgxfvmkRjU';
+const SUITE_LOGO_FALLBACK_SRC = 'data:image/svg+xml;utf8,' + encodeURIComponent(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="Padeswood Works">
+  <defs>
+    <linearGradient id="g" x1="16" y1="12" x2="80" y2="84" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1a7a35"/>
+      <stop offset="1" stop-color="#2ecc5c"/>
+    </linearGradient>
+  </defs>
+  <rect x="8" y="8" width="80" height="80" rx="22" fill="url(#g)"/>
+  <rect x="14" y="14" width="68" height="68" rx="18" fill="rgba(255,255,255,.10)"/>
+  <path d="M30 66V30h17.5c8.5 0 13.5 4.8 13.5 11.8 0 7.2-5.3 12.1-13.2 12.1H39V66H30Zm9-19h7.7c3.7 0 5.8-1.9 5.8-5s-2.1-5.1-5.8-5.1H39V47Zm22 19V30h8.7l8 16.6L85.7 30H94v36h-8V46.1l-6.7 13.5h-5.4L67.2 46V66h-8Z" fill="#fff"/>
+</svg>`.trim());
+let SUITE_LOGO_SRC = null;
+let SUITE_LOGO_PROMISE = null;
+const PALETTE_STORAGE_KEY = 'pw_palette_scheme';
+const PALETTE_VARS = ['--ac','--ac2','--ac3','--acd1','--acd2','--acd3','--palette-card-bg-1','--palette-card-bg-2','--palette-card-border','--palette-card-glow-1','--palette-card-glow-2','--eac'];
+const PALETTE_PRESETS = {
+  default: {
+    label: 'Default Green',
+    vars: {
+      '--ac':'#1a7a35','--ac2':'#2ecc5c','--ac3':'#5ee27b',
+      '--acd1':'rgba(26,122,53,.08)','--acd2':'rgba(26,122,53,.14)','--acd3':'rgba(26,122,53,.22)',
+      '--palette-card-bg-1':'rgba(46,204,92,.18)','--palette-card-bg-2':'rgba(26,122,53,.08)',
+      '--palette-card-border':'rgba(94,226,123,.18)','--palette-card-glow-1':'rgba(94,226,123,.12)','--palette-card-glow-2':'rgba(94,226,123,.06)',
+      '--eac':'0 4px 22px rgba(26,122,53,.25)'
+    }
+  },
+  ocean: {
+    label: 'Ocean',
+    vars: {
+      '--ac':'#0f766e','--ac2':'#14b8a6','--ac3':'#2dd4bf',
+      '--acd1':'rgba(15,118,110,.08)','--acd2':'rgba(15,118,110,.14)','--acd3':'rgba(15,118,110,.22)',
+      '--palette-card-bg-1':'rgba(20,184,166,.18)','--palette-card-bg-2':'rgba(15,118,110,.08)',
+      '--palette-card-border':'rgba(45,212,191,.18)','--palette-card-glow-1':'rgba(45,212,191,.12)','--palette-card-glow-2':'rgba(45,212,191,.06)',
+      '--eac':'0 4px 22px rgba(15,118,110,.25)'
+    }
+  },
+  sky: {
+    label: 'Sky',
+    vars: {
+      '--ac':'#2563eb','--ac2':'#3b82f6','--ac3':'#60a5fa',
+      '--acd1':'rgba(37,99,235,.08)','--acd2':'rgba(37,99,235,.14)','--acd3':'rgba(37,99,235,.22)',
+      '--palette-card-bg-1':'rgba(59,130,246,.18)','--palette-card-bg-2':'rgba(37,99,235,.08)',
+      '--palette-card-border':'rgba(96,165,250,.18)','--palette-card-glow-1':'rgba(96,165,250,.12)','--palette-card-glow-2':'rgba(96,165,250,.06)',
+      '--eac':'0 4px 22px rgba(37,99,235,.25)'
+    }
+  },
+  violet: {
+    label: 'Violet',
+    vars: {
+      '--ac':'#6d28d9','--ac2':'#8b5cf6','--ac3':'#a78bfa',
+      '--acd1':'rgba(109,40,217,.08)','--acd2':'rgba(109,40,217,.14)','--acd3':'rgba(109,40,217,.22)',
+      '--palette-card-bg-1':'rgba(139,92,246,.18)','--palette-card-bg-2':'rgba(109,40,217,.08)',
+      '--palette-card-border':'rgba(167,139,250,.18)','--palette-card-glow-1':'rgba(167,139,250,.12)','--palette-card-glow-2':'rgba(167,139,250,.06)',
+      '--eac':'0 4px 22px rgba(109,40,217,.25)'
+    }
+  },
+  amber: {
+    label: 'Amber',
+    vars: {
+      '--ac':'#b45309','--ac2':'#d97706','--ac3':'#f59e0b',
+      '--acd1':'rgba(180,83,9,.08)','--acd2':'rgba(180,83,9,.14)','--acd3':'rgba(180,83,9,.22)',
+      '--palette-card-bg-1':'rgba(245,158,11,.18)','--palette-card-bg-2':'rgba(180,83,9,.08)',
+      '--palette-card-border':'rgba(245,158,11,.18)','--palette-card-glow-1':'rgba(245,158,11,.12)','--palette-card-glow-2':'rgba(245,158,11,.06)',
+      '--eac':'0 4px 22px rgba(180,83,9,.25)'
+    }
+  },
+  basic: {
+    label: 'Basic',
+    vars: {
+      '--ac':'#4b5563','--ac2':'#6b7280','--ac3':'#9ca3af',
+      '--acd1':'rgba(75,85,99,.08)','--acd2':'rgba(75,85,99,.14)','--acd3':'rgba(75,85,99,.22)',
+      '--palette-card-bg-1':'rgba(107,114,128,.18)','--palette-card-bg-2':'rgba(75,85,99,.08)',
+      '--palette-card-border':'rgba(156,163,175,.18)','--palette-card-glow-1':'rgba(156,163,175,.10)','--palette-card-glow-2':'rgba(156,163,175,.05)',
+      '--eac':'0 4px 22px rgba(75,85,99,.20)'
+    }
+  },
+  slate: {
+    label: 'Graphite',
+    vars: {
+      '--ac':'#334155','--ac2':'#475569','--ac3':'#64748b',
+      '--acd1':'rgba(51,65,85,.08)','--acd2':'rgba(51,65,85,.14)','--acd3':'rgba(51,65,85,.22)',
+      '--palette-card-bg-1':'rgba(71,85,105,.18)','--palette-card-bg-2':'rgba(51,65,85,.08)',
+      '--palette-card-border':'rgba(100,116,139,.18)','--palette-card-glow-1':'rgba(100,116,139,.12)','--palette-card-glow-2':'rgba(100,116,139,.06)',
+      '--eac':'0 4px 22px rgba(51,65,85,.25)'
+    }
+  }
+};
+
+let sb = null;
+let currentUser = null;
+let currentProfile = null;
+let currentKilnUser = null;
+let currentHolidayProfile = null;
+let currentHolidayManagerProfile = null;
+let currentHolidayManagerKilnUser = null;
+let currentHolidayManagerLabel = 'No manager assigned';
+const HOLIDAY_ACCESS_DENIED_LAUNCH = new URLSearchParams(window.location.search).get('access') === 'denied';
+let isHolidayAdmin = false;
+let isApprover = false;
+let allPwProfiles = [];
+let allKilnUsers = [];
+let allHolidayProfiles = [];
+let allHolidayRequests = [];
+let allHolidayEvents = [];
+let allHolidayProfileEvents = [];
+let selectedYear = new Date().getFullYear();
+let selectedHolidayActivityUserId = null;
+let loginReady = false;
+let focusApprovalsOnRender = new URLSearchParams(window.location.search).get('focus') === 'approvals';
+const SHIFT_HOURS = 12;
+
+function $(id) { return document.getElementById(id); }
+function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function kilnUserFor(userId){
+  if (currentUser && String(userId) === String(currentUser.id) && currentKilnUser) return currentKilnUser;
+  return allKilnUsers.find(function(p){ return String(p.auth_user_id) === String(userId); }) || null;
+}
+function profileDisplayName(profile){
+  return (profile && profile.full_name) || (profile && profile.email) || '—';
+}
+function looksLikeShortLoginName(value, email, username){
+  const raw = String(value || '').trim();
+  if (!raw) return false;
+  const normalized = raw.toLowerCase();
+  const emailLocal = email && String(email).includes('@') ? String(email).split('@')[0].trim().toLowerCase() : '';
+  const loginName = String(username || '').trim().toLowerCase();
+  if (emailLocal && normalized === emailLocal) return true;
+  if (loginName && normalized === loginName) return true;
+  return !/\s/.test(raw) && /^[a-z0-9._-]{3,}$/i.test(raw);
+}
+function compactLoginLabel(email, username){
+  const emailLocal = email && String(email).includes('@') ? String(email).split('@')[0].trim() : '';
+  const loginName = String(username || '').trim();
+  if (loginName && !looksLikeShortLoginName(loginName, email, username)) return loginName;
+  if (emailLocal) return emailLocal;
+  if (loginName) return loginName;
+  return '';
+}
+function personDisplayNameFromRecords(profile, kilnUser, fallback){
+  const lockedName = kilnUser && kilnUser.locked_name ? String(kilnUser.locked_name).trim() : '';
+  const fullName = profile && profile.full_name ? String(profile.full_name).trim() : '';
+  const email = (profile && profile.email) ? String(profile.email).trim() : ((kilnUser && kilnUser.email) ? String(kilnUser.email).trim() : '');
+  if (fullName && !looksLikeShortLoginName(fullName, email, kilnUser && kilnUser.username)) return fullName;
+  if (lockedName && !looksLikeShortLoginName(lockedName, email, kilnUser && kilnUser.username)) return lockedName;
+  const loginLabel = compactLoginLabel(email, kilnUser && kilnUser.username);
+  if (loginLabel) return loginLabel;
+  if (fallback && !String(fallback).includes('@')) return String(fallback).trim();
+  return '—';
+}
+function holidayManagerDisplayNameFromRecords(profile, kilnUser){
+  return personDisplayNameFromRecords(profile, kilnUser, null);
+}
+function actorDisplayNameForEvent(event){
+  if (!event) return 'Unknown';
+  return personDisplayNameFromRecords(
+    profileFor(event.actor_user_id),
+    kilnUserFor(event.actor_user_id),
+    event.actor_name || 'Unknown'
+  );
+}
+async function resolveSuiteLogoSrc(){
+  if (SUITE_LOGO_SRC) return SUITE_LOGO_SRC;
+  if (SUITE_LOGO_PROMISE) return SUITE_LOGO_PROMISE;
+  SUITE_LOGO_PROMISE = (async function(){
+    try {
+      const stored = localStorage.getItem('pw_suite_logo_src');
+      if (stored && !/svg\+xml/i.test(stored)) {
+        SUITE_LOGO_SRC = stored;
+        return SUITE_LOGO_SRC;
+      }
+    } catch (e) {}
+    SUITE_LOGO_SRC = SUITE_LOGO_FALLBACK_SRC;
+    try {
+      const response = await fetch('../index.html', { cache: 'force-cache' });
+      if (response.ok) {
+        const html = await response.text();
+        const match = html.match(/<div class="header-logo">[\s\S]*?<img[^>]+src="([^"]+)"/i)
+          || html.match(/<img[^>]+class="[^"]*header-logo[^"]*"[^>]+src="([^"]+)"/i)
+          || html.match(/<img[^>]+data-suite-logo[^>]+src="([^"]+)"/i);
+        if (match && match[1]) {
+          SUITE_LOGO_SRC = match[1];
+          try { localStorage.setItem('pw_suite_logo_src', SUITE_LOGO_SRC); } catch (e) {}
+        }
+      }
+    } catch (err) {
+      console.warn('Holiday logo source fallback in use:', err && err.message ? err.message : err);
+    }
+    return SUITE_LOGO_SRC || SUITE_LOGO_FALLBACK_SRC;
+  })();
+  return SUITE_LOGO_PROMISE;
+}
+
+async function applySuiteLogos(){
+  const src = await resolveSuiteLogoSrc();
+  document.querySelectorAll('[data-suite-logo]').forEach(function(img){
+    img.src = src || SUITE_LOGO_FALLBACK_SRC;
+  });
+  return src || SUITE_LOGO_FALLBACK_SRC;
+}
+function pad2(n){ return String(n).padStart(2,'0'); }
+function toLocalDateString(value){
+  if (!value) return '';
+  const d = value instanceof Date ? value : new Date(value);
+  if (isNaN(d)) return '';
+  return [d.getFullYear(), pad2(d.getMonth()+1), pad2(d.getDate())].join('-');
+}
+function formatDateOnly(value){
+  if (!value) return '—';
+  const d = new Date(value + 'T00:00:00');
+  if (isNaN(d)) return '—';
+  return d.toLocaleDateString(undefined, { day:'2-digit', month:'short', year:'numeric' });
+}
+function formatDateTime(value){
+  if (!value) return '—';
+  const d = new Date(value);
+  if (isNaN(d)) return '—';
+  return d.toLocaleString(undefined, { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+}
+function num(value, fallback){
+  const n = Number(value);
+  return Number.isFinite(n) ? n : (fallback || 0);
+}
+async function checkLicence(){
+  const overlay = $('licenceOverlay');
+  const msg = $('licenceMsg');
+  const spinner = $('licenceSpinner');
+  const retry = $('licenceRetryBtn');
+  if (overlay) {
+    overlay.style.display = 'none';
+    overlay.style.opacity = '0';
+  }
+  if (spinner) spinner.style.display = 'none';
+  if (msg) {
+    msg.style.display = 'none';
+    msg.textContent = '';
+  }
+  if (retry) retry.style.display = 'none';
+  const showFailure = function(text){
+    if (overlay) {
+      overlay.style.display = 'flex';
+      overlay.style.opacity = '1';
+    }
+    if (spinner) spinner.style.display = 'none';
+    if (msg) {
+      msg.textContent = (text || 'Unable to confirm licence.') + ' Please contact your administrator.';
+      msg.style.display = 'block';
+    }
+    if (retry) retry.style.display = 'block';
+  };
+  return suiteShared.licence.check({
+    url: SB_LIC_URL,
+    apiKey: SB_LIC_KEY,
+    licenceKey: LICENCE_KEY,
+    failOpen: false,
+    onInactive: async function(_lic, text){
+      showFailure(text);
+    },
+    onError: async function(){
+      showFailure('Unable to confirm licence.');
+    }
+  });
+}
+function canEditCarryoverNow(){
+  return new Date().getMonth() !== 11;
+}
+function isWeekend(date){
+  const d = date.getDay();
+  return d === 0 || d === 6;
+}
+function countWeekdays(startStr, endStr){
+  if (!startStr || !endStr) return 0;
+  const start = new Date(startStr + 'T00:00:00');
+  const end = new Date(endStr + 'T00:00:00');
+  if (isNaN(start) || isNaN(end) || start > end) return 0;
+  let total = 0;
+  const cursor = new Date(start);
+  while (cursor <= end) {
+    if (!isWeekend(cursor)) total += 1;
+    cursor.setDate(cursor.getDate() + 1);
+  }
+  return total;
+}
+function addWeekdays(startStr, weekdayCount){
+  if (!startStr) return '';
+  const start = new Date(startStr + 'T00:00:00');
+  if (isNaN(start)) return '';
+  const count = Math.max(1, Math.ceil(num(weekdayCount, 0)));
+  const cursor = new Date(start);
+  let seen = 0;
+  while (true) {
+    if (!isWeekend(cursor)) {
+      seen += 1;
+      if (seen >= count) return toLocalDateString(cursor);
+    }
+    cursor.setDate(cursor.getDate() + 1);
+  }
+}
+function calcRequestedWeekdayEquivalent(){
+  const unit = $('reqUnit').value === 'hours' ? 'hours' : 'days';
+  const amount = num($('reqDays').value, 0);
+  return unit === 'hours' ? amount / SHIFT_HOURS : amount;
+}
+function syncRequestedEndDate(){
+  const start = $('reqStart').value;
+  const amount = calcRequestedWeekdayEquivalent();
+  const endField = $('reqEnd');
+  if (!endField) return;
+  if (!start || amount <= 0) {
+    endField.value = '';
+    return;
+  }
+  endField.value = addWeekdays(start, amount);
+}
+function syncDateRangeEndDate(startId, unitId, amountId, endId){
+  const startEl = $(startId);
+  const unitEl = $(unitId);
+  const amountEl = $(amountId);
+  const endEl = $(endId);
+  if (!startEl || !unitEl || !amountEl || !endEl) return;
+  const start = startEl.value;
+  const unit = unitEl.value === 'hours' ? 'hours' : 'days';
+  const amount = num(amountEl.value, 0);
+  const days = unit === 'hours' ? amount / SHIFT_HOURS : amount;
+  if (!start || days <= 0) {
+    endEl.value = '';
+    return;
+  }
+  endEl.value = addWeekdays(start, days);
+}
+function requestYear(request){
+  if (!request) return selectedYear;
+  const source = request.start_date || request.requested_at || request.created_at || '';
+  const d = new Date(String(source).slice(0,10) + 'T00:00:00');
+  return isNaN(d) ? selectedYear : d.getFullYear();
+}
+function requestMatchesYear(request, year){
+  return requestYear(request) === year;
+}
+function requestStatusClass(status){
+  return status === 'approved' ? 'approved' : status === 'denied' || status === 'cancelled' ? 'denied' : 'pending';
+}
+function requestDaysText(days){
+  const n = num(days, 0);
+  return n.toFixed(n % 1 === 0 ? 0 : 1) + ' day' + (n === 1 ? '' : 's');
+}
+function requestHoursText(hours){
+  const n = num(hours, 0);
+  return n.toFixed(n % 1 === 0 ? 0 : 1) + ' hour' + (n === 1 ? '' : 's');
+}
+function requestWholeHoursText(hours){
+  const n = Math.round(num(hours, 0));
+  return n.toFixed(0) + ' hour' + (n === 1 ? '' : 's');
+}
+function allowanceExtrasText(days){
+  const n = num(days, 0);
+  return requestDaysText(n) + ' / ' + requestWholeHoursText(n * SHIFT_HOURS);
+}
+function holidayExtrasDays(profile){
+  return num(profile && profile.entitlement_extras_days, 0);
+}
+function holidayExtrasHours(profile){
+  return holidayExtrasDays(profile) * SHIFT_HOURS;
+}
+function requestKindFromReason(reason){
+  return 'holiday';
+}
+function requestKindLabel(kind){
+  return 'Holiday';
+}
+function requestKindClass(kind){
+  return 'holiday';
+}
+function requestDisplayReason(reason){
+  return String(reason ?? '').replace(/^\[[^\]]+\]\s*/, '').trim();
+}
+function requestAmountText(req){
+  const unit = req && req.requested_unit === 'hours' ? 'hours' : 'days';
+  const amount = num(req && req.requested_amount, 0) || num(req && req.requested_days, 0);
+  return unit === 'hours'
+    ? requestHoursText(amount) + ' (' + requestDaysText(amount / SHIFT_HOURS) + ')'
+    : requestDaysText(amount) + ' (' + requestHoursText(amount * SHIFT_HOURS) + ')';
+}
+function requestKindFromRequest(req){
+  return requestKindFromReason(req && req.reason);
+}
+function requestHours(req){
+  const unit = req && req.requested_unit === 'hours' ? 'hours' : 'days';
+  const amount = num(req && req.requested_amount, 0) || num(req && req.requested_days, 0);
+  if (unit === 'hours') return amount;
+  return amount * SHIFT_HOURS;
+}
+function balanceTrafficLightClass(days){
+  const n = num(days, 0);
+  if (n <= 0) return 'balance-red';
+  if (n < 3) return 'balance-amber';
+  return 'balance-green';
+}
+function requestConsumesBalance(req){
+  return true;
+}
+function requestBalanceHours(req){
+  return requestConsumesBalance(req) ? requestHours(req) : 0;
+}
+function makeKindPill(req){
+  const kind = requestKindFromRequest(req);
+  return '<span class="pill kind-' + requestKindClass(kind) + '">' + esc(requestKindLabel(kind)) + '</span>';
+}
+function requestSummaryText(req){
+  const amountText = requestAmountText(req);
+  const kind = requestKindLabel(requestKindFromRequest(req));
+  return kind === 'Holiday' ? amountText : kind + ' · ' + amountText;
+}
+async function addRetrospectiveHoliday(userId, startId, endId, amountId, unitId, reasonId){
+  if (!currentUser) return;
+  if (!canAddRetrospectiveHolidayFor(userId)) return;
+  const startEl = $(startId);
+  const endEl = $(endId);
+  const amountEl = $(amountId);
+  const unitEl = $(unitId);
+  const reasonEl = $(reasonId);
+  const start = startEl ? startEl.value : '';
+  const end = endEl ? endEl.value : '';
+  const unit = unitEl && unitEl.value === 'hours' ? 'hours' : 'days';
+  const amountRaw = num(amountEl ? amountEl.value : 0, 0);
+  const reason = String(reasonEl ? reasonEl.value : '').trim();
+  if (!start || !end) { setToast('Please choose both dates.'); return; }
+  if (new Date(start + 'T00:00:00') > new Date(end + 'T00:00:00')) { setToast('The end date must be after the start date.'); return; }
+  const today = toLocalDateString(new Date());
+  if (end > today) { setToast('Retrospective holiday must be for dates in the past.'); return; }
+  if (!reason) { showHolidayRequestError('Please add a reason or note.'); return; }
+  const reasonReview = reviewHolidayTextSafety(reason);
+  if (!reasonReview.ok) { showHolidayRequestError(reasonReview.reason); return; }
+  const formattedReason = tidyRequestText(reason);
+  const fallbackAmount = unit === 'hours' ? countWeekdays(start, end) * SHIFT_HOURS : countWeekdays(start, end);
+  const amount = amountRaw > 0 ? amountRaw : fallbackAmount;
+  if (amount <= 0) { showHolidayRequestError('Please enter at least one day or hour.'); return; }
+  const days = unit === 'hours' ? amount / SHIFT_HOURS : amount;
+  const stats = statsForUser(userId, selectedYear);
+  const needed = unit === 'hours' ? amount : days * SHIFT_HOURS;
+  if (stats.remaining < needed) {
+    showHolidayRequestError('Not enough holiday balance remaining for this retrospective entry.');
+    return;
+  }
+  const targetName = holidayManagerDisplayNameForUser(userId);
+  if (!confirm('Add this retrospective holiday for ' + targetName + '?')) return;
+  $('syncLabel').textContent = 'Saving…';
+  const targetProfile = profileFor(userId);
+  const payload = {
+    auth_user_id: userId,
+    requester_name: targetProfile ? personDisplayNameFromRecords(targetProfile, kilnUserFor(userId), 'Unknown') : currentDisplayName(),
+    requester_email: (targetProfile && targetProfile.email) || '',
+    start_date: start,
+    end_date: end,
+    requested_unit: unit,
+    requested_amount: amount,
+    requested_days: days,
+    reason: formattedReason,
+    status: 'approved',
+    manager_note: formattedReason,
+    decided_by: currentUser.id,
+    decided_by_name: currentDisplayName(),
+    decided_at: new Date().toISOString()
+  };
+  const { error } = await sb.from('holiday_requests').insert(payload);
+  $('syncLabel').textContent = 'Synced';
+  if (error) { setToast('Could not add retrospective holiday: ' + error.message); return; }
+  if (startEl) startEl.value = '';
+  if (endEl) endEl.value = '';
+  if (amountEl) amountEl.value = '';
+  if (reasonEl) reasonEl.value = '';
+  if (unitEl) unitEl.value = 'days';
+  await loadHolidayData();
+  renderHolidayApp();
+  setToast('Retrospective holiday added ✓');
+}
+function setToast(msg, ms){
+  const t = $('toast');
+  if (!t) return;
+  t.innerHTML = '';
+  t.style.display = 'flex';
+  t.style.alignItems = 'center';
+  t.style.gap = '10px';
+  const body = document.createElement('span');
+  body.textContent = msg;
+  body.style.flex = '1';
+  t.appendChild(body);
+  t.classList.add('show');
+  clearTimeout(window.__holidayToastTimer);
+  window.__holidayToastTimer = setTimeout(() => t.classList.remove('show'), ms || 2200);
+}
+function promptCancellationReason(title){
+  return String(window.prompt(title || 'Please enter a reason for cancelling this holiday.') || '').trim();
+}
+
+function showHolidayRequestError(msg) {
+  const el = $('holidayReqMsg');
+  if (!el) {
+    setToast(msg);
+    return;
+  }
+  el.textContent = msg;
+  el.style.display = 'block';
+  el.style.background = 'var(--redd)';
+  el.style.color = 'var(--red)';
+  el.style.border = '1px solid var(--redb)';
+  el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function clearHolidayRequestError() {
+  const el = $('holidayReqMsg');
+  if (!el) return;
+  el.style.display = 'none';
+  el.textContent = '';
+}
+
+function tidyRequestText(text) {
+  const input = String(text || '').trim();
+  if (!input) return '';
+  let out = input.replace(/\s+/g, ' ');
+  out = out.replace(/\s+([,.;:!?])/g, '$1');
+  out = out.replace(/([.!?])([A-Za-z0-9])/g, '$1 $2');
+  out = out.replace(/\bi\b/g, 'I');
+  out = out.charAt(0).toUpperCase() + out.slice(1);
+  out = out.replace(/(^|[.!?]\s+)([a-z])/g, function(match, lead, ch) {
+    return lead + ch.toUpperCase();
+  });
+  if (!/[.!?]$/.test(out)) out += '.';
+  return out;
+}
+
+function reviewHolidayTextSafety(text) {
+  const normalized = String(text || '')
+    .toLowerCase()
+    .replace(/[^\w\s']/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (!normalized) return { ok: true, reason: '' };
+  const blockedPatterns = [
+    { label: 'swearing', re: /\b(fuck|fucker|fucking|shit|shithead|bitch|cunt|wanker|arsehole|asshole|dickhead|prick|bastard|bullshit|bollocks|crap)\b/i },
+    { label: 'insults', re: /\b(idiot|moron|stupid|useless|pathetic|trash|twat|loser|clown)\b/i },
+    { label: 'threats', re: /\b(kill yourself|go die|die in a fire|beat you up|hurt you)\b/i },
+    { label: 'slurs', re: /\b(nigger|faggot|retard|spastic)\b/i }
+  ];
+  const hits = [];
+  blockedPatterns.forEach(function(item) {
+    if (item.re.test(normalized)) hits.push(item.label);
+  });
+  if (hits.length) {
+    const uniqueHits = Array.from(new Set(hits));
+    return {
+      ok: false,
+      reason: 'Please remove swearing, insults, threats, or slurs before sending. The local safety check flagged: ' + uniqueHits.join(', ') + '.'
+    };
+  }
+  return { ok: true, reason: '' };
+}
+
+function getStoredThemePref(){
+  return suiteShared.storage.getThemePref();
+}
+function applyTheme(isLight){
+  const light = !!isLight;
+  document.body.classList.toggle('light-mode', light);
+  document.body.classList.toggle('dark', !light);
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', light ? '#f0f4f8' : '#111418');
+  suiteShared.storage.setThemePref(light ? 'light' : 'dark');
+  syncThemeButton();
+}
+async function persistSharedThemePreference(isLight){
+  if (!sb || !currentUser || !currentUser.id) return;
+  try {
+    await suiteShared.preferences.saveTheme(sb, currentUser, isLight);
+  } catch (e) {}
+}
+async function loadSharedThemePreference(){
+  if (!sb || !currentUser || !currentUser.id) return null;
+  try {
+    return await suiteShared.preferences.loadTheme(sb, currentUser);
+  } catch (e) {}
+  return null;
+}
+function toggleTheme(){
+  const nextLight = !document.body.classList.contains('light-mode');
+  applyTheme(nextLight);
+  persistSharedThemePreference(nextLight);
+}
+function syncThemeButton(){
+  const btn = document.getElementById('themeBtn');
+  if (!btn) return;
+  const isLight = document.body.classList.contains('light-mode');
+  btn.innerHTML = isLight
+    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>'
+    : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/></svg>';
+  btn.title = isLight ? 'Switch to dark mode' : 'Switch to light mode';
+  btn.setAttribute('aria-label', btn.title);
+}
+function setPaletteVars(vars){
+  const targets = [document.documentElement, document.body].filter(Boolean);
+  targets.forEach(function(target){
+    Object.entries(vars).forEach(([k,v]) => target.style.setProperty(k, v));
+  });
+}
+function clearPaletteVars(){
+  const targets = [document.documentElement, document.body].filter(Boolean);
+  targets.forEach(function(target){
+    PALETTE_VARS.forEach(k => target.style.removeProperty(k));
+  });
+}
+function getStoredPalettePreset(){
+  const key = localStorage.getItem(PALETTE_STORAGE_KEY);
+  if (key === 'plain') return 'basic';
+  return PALETTE_PRESETS[key] ? key : 'default';
+}
+async function persistSharedPalettePreference(key){
+  if (!sb || !currentUser || !currentUser.id) return;
+  try {
+    await suiteShared.preferences.savePalette(sb, currentUser, key);
+  } catch (e) {}
+}
+async function loadSharedPalettePreference(){
+  if (!sb || !currentUser || !currentUser.id) return null;
+  try {
+    return await suiteShared.preferences.loadPalette(sb, currentUser, Object.keys(PALETTE_PRESETS));
+  } catch (e) {}
+  return null;
+}
+async function applySharedPalettePreference(){
+  const sharedPalette = await loadSharedPalettePreference();
+  if (sharedPalette) {
+    localStorage.setItem(PALETTE_STORAGE_KEY, sharedPalette);
+  }
+  applyStoredPalette();
+}
+function updatePaletteUi(){
+  const preset = getStoredPalettePreset();
+  document.querySelectorAll('[data-palette]').forEach(el => el.classList.toggle('active', el.dataset.palette === preset));
+  const btn = document.querySelector('[title="Choose colour scheme"]');
+  if (btn) btn.classList.toggle('active', preset !== 'default');
+}
+function applyStoredPalette(){
+  const preset = getStoredPalettePreset();
+  if (preset === 'default') clearPaletteVars();
+  else setPaletteVars(PALETTE_PRESETS[preset].vars);
+  document.body.classList.toggle('basic-mode', preset === 'basic');
+  document.documentElement.classList.toggle('basic-mode', preset === 'basic');
+  updatePaletteUi();
+}
+function setPalettePreset(key){
+  if (key === 'default') localStorage.removeItem(PALETTE_STORAGE_KEY);
+  else if (PALETTE_PRESETS[key]) localStorage.setItem(PALETTE_STORAGE_KEY, key);
+  applyStoredPalette();
+  persistSharedPalettePreference(key);
+}
+function resetPalettePreset(){
+  setPalettePreset('default');
+  closePaletteModal();
+}
+function openPaletteModal(){
+  updatePaletteUi();
+  $('paletteModal').classList.add('open');
+}
+function closePaletteModal(){
+  $('paletteModal').classList.remove('open');
+}
+window.addEventListener('storage', function(e){
+  if (e.key === PALETTE_STORAGE_KEY) applyStoredPalette();
+  if (e.key === 'pw_theme') {
+    const theme = getStoredThemePref();
+    if (theme) applyTheme(theme === 'light');
+  }
+  if (e.key === 'kbl_theme' || e.key === 'dark') {
+    const theme = getStoredThemePref();
+    if (theme) applyTheme(theme === 'light');
+  }
+});
+
+function goBackToPlatform(){
+  window.location.href = '../index.html';
+}
+function dismissBootShield(){
+  const el = $('bootShield');
+  if (el) el.classList.add('hidden');
+}
+function clearStartupGate(){
+  document.body.classList.add('loaded-ready');
+  document.body.classList.remove('loading-start');
+}
+async function logout(){
+  try { if (sb) await sb.auth.signOut(); } catch(e) {}
+  currentUser = null;
+  currentProfile = null;
+  currentKilnUser = null;
+  currentHolidayProfile = null;
+  currentHolidayManagerProfile = null;
+  currentHolidayManagerKilnUser = null;
+  isHolidayAdmin = false;
+  isApprover = false;
+  allPwProfiles = [];
+  allKilnUsers = [];
+  allHolidayProfiles = [];
+  allHolidayRequests = [];
+  allHolidayEvents = [];
+  allHolidayProfileEvents = [];
+  window.location.href = '../index.html';
+}
+function showAccessDenied(message){
+  clearStartupGate();
+  dismissBootShield();
+  $('loginScreen').classList.add('hidden');
+  $('appShell').classList.add('hidden');
+  $('accessDenied').classList.remove('hidden');
+  const small = $('accessDenied').querySelector('.small');
+  if (small) small.textContent = message || 'You do not have access to Holiday Requests. Please contact your administrator if this is unexpected.';
+}
+function showLoginScreen(){
+  clearStartupGate();
+  dismissBootShield();
+  $('appShell').classList.add('hidden');
+  $('accessDenied').classList.add('hidden');
+  $('loginScreen').classList.remove('hidden');
+  const email = $('loginEmail');
+  const pass = $('loginPass');
+  const err = $('loginErr');
+  if (email) email.value = '';
+  if (pass) pass.value = '';
+  if (err) {
+    err.textContent = '';
+    err.classList.add('hidden');
+  }
+  const btn = $('loginBtn');
+  if (btn) {
+    btn.disabled = false;
+    btn.textContent = 'Sign In';
+  }
+  loginReady = true;
+}
+function showAppScreen(){
+  clearStartupGate();
+  dismissBootShield();
+  $('loginScreen').classList.add('hidden');
+  $('accessDenied').classList.add('hidden');
+  $('appShell').classList.remove('hidden');
+}
+function refreshYearOptions(){
+  const el = $('yearSelect');
+  if (!el) return;
+  const years = [];
+  const current = new Date().getFullYear();
+  for (let y = current; y <= current + 2; y += 1) years.push(y);
+  const old = Number(el.value || selectedYear || current);
+  el.innerHTML = years.map(y => '<option value="'+y+'">'+y+'</option>').join('');
+  const nextValue = years.includes(old) ? old : current;
+  selectedYear = nextValue;
+  el.value = String(nextValue);
+}
+function setSelectedYear(value){
+  const year = Number(value);
+  if (!Number.isFinite(year)) return;
+  selectedYear = year;
+  renderHolidayApp();
+}
+function syncRequestedDays(){
+  const start = $('reqStart').value;
+  const unit = $('reqUnit').value;
+  const amountField = $('reqDays');
+  if (amountField) {
+    amountField.min = unit === 'hours' ? '1' : '0.5';
+    amountField.step = unit === 'hours' ? '1' : '0.5';
+  }
+  syncRequestedEndDate();
+}
+function syncExtrasUnit(unitInputId, amountInputId){
+  const unitEl = $(unitInputId);
+  const amountEl = $(amountInputId);
+  if (!unitEl || !amountEl) return;
+  const next = unitEl.value === 'hours' ? 'hours' : 'days';
+  const prev = unitEl.dataset.unit || next;
+  if (prev !== next) {
+    const current = num(amountEl.value, 0);
+    amountEl.value = String(prev === 'hours' && next === 'days'
+      ? current / SHIFT_HOURS
+      : prev === 'days' && next === 'hours'
+        ? current * SHIFT_HOURS
+        : current);
+  }
+  unitEl.dataset.unit = next;
+  amountEl.step = next === 'hours' ? '1' : '0.5';
+  amountEl.min = next === 'hours' ? '-999' : '-999';
+}
+function canAddRetrospectiveHolidayFor(userId){
+  if (!currentUser) return false;
+  if (isHolidayAdmin) return true;
+  return String(profileFor(userId)?.holiday_manager_auth_user_id || '') === String(currentUser.id || '');
+}
+function currentDisplayName(){
+  const sessionFullName = currentUser && currentUser.user_metadata && currentUser.user_metadata.full_name
+    ? String(currentUser.user_metadata.full_name).trim()
+    : '';
+  const profileEmail = (currentProfile && currentProfile.email) || (currentUser && currentUser.email) || '';
+  if (sessionFullName && !looksLikeShortLoginName(sessionFullName, profileEmail, currentKilnUser && currentKilnUser.username)) {
+    return sessionFullName;
+  }
+  return personDisplayNameFromRecords(currentProfile, currentKilnUser, currentUser && currentUser.email);
+}
+function holidayProfileFor(userId){
+  return allHolidayProfiles.find(p => p.auth_user_id === userId) || null;
+}
+function profileFor(userId){
+  return allPwProfiles.find(p => p.id === userId) || null;
+}
+function holidayManagerProfileFor(userId){
+  if (currentUser && String(userId) === String(currentUser.id) && currentHolidayManagerProfile) return currentHolidayManagerProfile;
+  const profile = profileFor(userId);
+  return profile && profile.holiday_manager_auth_user_id ? profileFor(profile.holiday_manager_auth_user_id) : null;
+}
+function holidayManagerDisplayNameForUser(userId){
+  const requesterProfile = profileFor(userId);
+  const managerId = requesterProfile && requesterProfile.holiday_manager_auth_user_id ? requesterProfile.holiday_manager_auth_user_id : null;
+  if (!managerId) return currentHolidayManagerLabel || 'No manager assigned';
+  const isCurrent = !!(currentUser && String(userId) === String(currentUser.id));
+  const manager = (isCurrent && currentHolidayManagerProfile) || profileFor(managerId) || null;
+  const kilnUser = (isCurrent && currentHolidayManagerKilnUser) || kilnUserFor(managerId) || null;
+  const label = holidayManagerDisplayNameFromRecords(manager, kilnUser);
+  if (label && label !== '—') return label;
+  return currentHolidayManagerLabel || 'No manager assigned';
+}
+function isAssignedHolidayManagerForRequest(req){
+  if (!isApprover || isHolidayAdmin || !req || !currentUser) return false;
+  const requester = profileFor(req.auth_user_id);
+  return !!(requester && String(requester.holiday_manager_auth_user_id || '') === String(currentUser.id || ''));
+}
+function canCurrentUserSeeHolidayRequest(req){
+  if (isHolidayAdmin) return true;
+  if (!req || !currentUser) return false;
+  if (String(req.auth_user_id) === String(currentUser.id)) return true;
+  return isAssignedHolidayManagerForRequest(req);
+}
+function requestsForUser(userId){
+  return allHolidayRequests.filter(r => r.auth_user_id === userId).sort((a,b) => String(b.requested_at || '').localeCompare(String(a.requested_at || '')));
+}
+function eventsForRequest(requestId){
+  return allHolidayEvents.filter(e => e.request_id === requestId).sort((a,b) => String(a.created_at || '').localeCompare(String(b.created_at || '')));
+}
+function profileEventsForUser(userId){
+  return allHolidayProfileEvents
+    .filter(e => String(e.profile_user_id || '') === String(userId || ''))
+    .sort((a,b) => String(b.created_at || '').localeCompare(String(a.created_at || '')));
+}
+function assignedHolidayStaffForCurrentUser(){
+  if (!currentUser) return [];
+  return allPwProfiles.filter(function(p){
+    if (!p || p.approved === false || p.disabled === true || p.role === 'none') return false;
+    return String(p.holiday_manager_auth_user_id || '') === String(currentUser.id || '');
+  });
+}
+function hasAssignedHolidayStaff(){
+  return assignedHolidayStaffForCurrentUser().length > 0;
+}
+function renderRequestAuditItem(req){
+  const events = eventsForRequest(req.id);
+  const latestNote = events.length ? (events[events.length - 1].note || req.manager_note || '—') : (req.manager_note || '—');
+  return '<div class="staff-request-item">'+
+    '<div class="top">'+
+      '<div class="title">'+esc(formatDateOnly(req.start_date))+' → '+esc(formatDateOnly(req.end_date))+'</div>'+
+      makeStatusPill(req.status)+
+    '</div>'+
+    '<div class="meta">'+makeKindPill(req)+' <span style="margin-left:6px">'+esc(requestSummaryText(req))+'</span></div>'+
+    '<div class="meta">Requested '+esc(formatDateTime(req.requested_at))+(req.decided_at ? ' · decided '+esc(formatDateTime(req.decided_at)) : '')+'</div>'+
+    '<div class="meta">'+esc(requestDisplayReason(latestNote || '—'))+'</div>'+
+    '<div class="timeline">'+
+      (events.length ? events.map(ev => '<div class="timeline-item"><div class="t-left"><span class="pill '+requestStatusClass(ev.new_status || ev.action.toLowerCase())+'">'+esc(ev.action)+'</span><strong>'+esc(actorDisplayNameForEvent(ev))+'</strong><span class="t-time">'+esc(formatDateTime(ev.created_at))+'</span></div><div class="t-note">'+esc(requestDisplayReason(ev.note || '—'))+'</div></div>').join('') : '<div class="small">No audit trail recorded yet.</div>')+
+    '</div>'+
+  '</div>';
+}
+function statsForUser(userId, year){
+  const profile = holidayProfileFor(userId);
+  const allowance = num(profile && profile.annual_allowance_days, 72 / SHIFT_HOURS);
+  const carryover = num(profile && profile.carryover_days, 0);
+  const extras = holidayExtrasHours(profile);
+  const entitlement = allowance + carryover + extras;
+  const yearRequests = allHolidayRequests.filter(r => r.auth_user_id === userId && requestMatchesYear(r, year));
+  const countable = yearRequests.filter(r => requestConsumesBalance(r));
+  const used = countable.filter(r => r.status === 'approved').reduce((sum, r) => sum + requestBalanceHours(r), 0);
+  const pending = countable.filter(r => r.status === 'pending').reduce((sum, r) => sum + requestBalanceHours(r), 0);
+  return {
+    allowance,
+    carryover,
+    extras,
+    entitlement,
+    used,
+    pending,
+    remaining: entitlement - used,
+    projected: entitlement - used - pending
+  };
+}
+function makeStatusPill(status){
+  const cls = requestStatusClass(status);
+  return '<span class="pill '+cls+'">'+esc(status.charAt(0).toUpperCase() + status.slice(1))+'</span>';
+}
+function renderMyRequests(){
+  const box = $('myRequests');
+  const rows = requestsForUser(currentUser.id).filter(r => requestMatchesYear(r, selectedYear));
+  $('myRequestCount').textContent = rows.length + ' request' + (rows.length === 1 ? '' : 's');
+  if (!rows.length) {
+    box.innerHTML = '<div class="empty">No leave requests found for '+selectedYear+'.</div>';
+    return;
+  }
+  box.innerHTML = rows.map(renderRequestCard).join('');
+}
+function renderRequestCard(req){
+  const events = eventsForRequest(req.id);
+  const own = req.auth_user_id === currentUser.id;
+  const canCancel = own && req.status !== 'cancelled' && req.status !== 'denied';
+  const cancelLabel = req.status === 'approved' ? 'Cancel request' : 'Withdraw request';
+  const actionBtn = canCancel ? '<button class="btn btn-danger" type="button" onclick="cancelRequest(\''+esc(req.id)+'\')">'+esc(cancelLabel)+'</button>' : '';
+  return '<article class="request-card">'+
+    '<div class="request-head">'+
+      '<div>'+
+        '<div class="request-title">'+esc(formatDateOnly(req.start_date))+' → '+esc(formatDateOnly(req.end_date))+'</div>'+
+        '<div class="request-meta">'+makeKindPill(req)+' <span style="margin-left:6px">'+esc(requestSummaryText(req))+'</span> · requested '+esc(formatDateTime(req.requested_at))+(req.decided_at ? ' · '+esc(req.status)+' '+esc(formatDateTime(req.decided_at)) : '')+'</div>'+
+      '</div>'+
+      makeStatusPill(req.status)+
+    '</div>'+
+    '<div class="request-grid">'+
+      '<div class="card-box"><div class="box-label">Reason</div><div>'+esc(requestDisplayReason(req.reason) || '—')+'</div></div>'+
+    '<div class="card-box"><div class="box-label">Decision note</div><div>'+esc(req.manager_note || '—')+'</div></div>'+
+    '</div>'+
+    '<div class="card-box"><div class="box-label">Audit trail</div><div class="timeline">'+
+      (events.length ? events.map(ev => '<div class="timeline-item"><div class="t-left"><span class="pill '+requestStatusClass(ev.new_status || ev.action.toLowerCase())+'">'+esc(ev.action)+'</span><strong>'+esc(actorDisplayNameForEvent(ev))+'</strong><span class="t-time">'+esc(formatDateTime(ev.created_at))+'</span></div><div class="t-note" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap"><span>'+esc(requestDisplayReason(ev.note || '—'))+'</span>'+(isHolidayAdmin ? '<button class="btn btn-ghost" type="button" onclick="deleteAuditEvent(\''+esc(ev.id)+'\',\''+esc(req.id)+'\')" style="height:24px;padding:0 8px;font-size:10px;font-family:var(--ff-head);font-weight:600;color:var(--red);border-color:var(--redb);background:var(--redd)">Delete</button>' : '')+'</div></div>').join('') : '<div class="small">No audit trail recorded yet.</div>')+
+    '</div></div>'+
+    (actionBtn ? '<div class="form-actions" style="margin-top:0">'+actionBtn+'</div>' : '')+
+  '</article>';
+}
+
+async function deleteAuditEvent(eventId, requestId){
+  if (!isHolidayAdmin) return;
+  if (!confirm('Delete this audit trail entry?')) return;
+  $('syncLabel').textContent = 'Saving…';
+  const { error } = await sb.from('holiday_request_events').delete().eq('id', eventId);
+  $('syncLabel').textContent = 'Synced';
+  if (error) {
+    setToast('Could not delete audit trail entry: ' + error.message);
+    return;
+  }
+  await loadHolidayData();
+  renderHolidayApp();
+  setToast('Audit trail entry deleted ✓');
+}
+function renderActivityFeed(){
+  const feed = (isApprover || isHolidayAdmin) ? $('activityFeed') : $('myRequestsActivity');
+  if (!feed) return;
+  const events = allHolidayEvents.filter(ev => {
+    const year = new Date(String(ev.created_at || '').slice(0,10) + 'T00:00:00').getFullYear();
+    if (year !== selectedYear) return false;
+    const req = allHolidayRequests.find(r => r.id === ev.request_id);
+    return !!(req && canCurrentUserSeeHolidayRequest(req));
+  }).sort((a,b) => String(b.created_at || '').localeCompare(String(a.created_at || ''))).slice(0,40);
+  if (!events.length) {
+    feed.innerHTML = '<div class="empty">No leave activity yet for '+selectedYear+'.</div>';
+    return;
+  }
+  feed.innerHTML = events.map(ev => {
+    const req = allHolidayRequests.find(r => r.id === ev.request_id);
+    const title = req ? (formatDateOnly(req.start_date) + ' → ' + formatDateOnly(req.end_date) + ' · ' + requestSummaryText(req)) : 'Request';
+    const statusClass = requestStatusClass(ev.new_status || ev.action.toLowerCase());
+    return '<div class="activity-card activity-'+statusClass+'">'+
+      '<div class="row-top">'+
+        '<div class="meta-line">'+
+          '<span class="pill '+statusClass+'">'+esc(ev.action)+'</span>'+
+          (req ? makeKindPill(req) : '')+
+          '<span class="actor-pill"><span class="actor">'+esc(actorDisplayNameForEvent(ev))+'</span></span>'+
+        '</div>'+
+        '<div class="when">'+esc(formatDateTime(ev.created_at))+'</div>'+
+      '</div>'+
+      '<div class="headline">'+esc(title)+'</div>'+
+      '<div class="note">'+esc(requestDisplayReason(ev.note || '—'))+'</div>'+
+    '</div>';
+  }).join('');
+}
+function setHolidayActivityUser(userId){
+  selectedHolidayActivityUserId = String(userId || '');
+  renderHolidayApp();
+}
+function renderHolidayRequestMiniItem(req){
+  const events = eventsForRequest(req.id);
+  const latest = events.length ? events[events.length - 1] : null;
+  const statusClass = requestStatusClass(req.status);
+  const reasonText = requestDisplayReason(req.reason || '');
+  const noteText = requestDisplayReason((latest && latest.note) || req.manager_note || '');
+  return '<div class="activity-mini-item">'+
+    '<div class="top">'+
+      '<div class="title">'+makeKindPill(req)+' <span style="margin-left:6px">'+esc(requestSummaryText(req))+'</span></div>'+
+      '<span class="pill '+statusClass+'">'+esc(req.status.charAt(0).toUpperCase() + req.status.slice(1))+'</span>'+
+    '</div>'+
+    '<div class="meta">'+esc(formatDateTime(req.requested_at))+(req.decided_at ? ' · decided '+esc(formatDateTime(req.decided_at)) : '')+'</div>'+
+    '<div class="meta">'+esc(reasonText || '—')+'</div>'+
+    (noteText && noteText !== reasonText ? '<div class="meta">'+esc(noteText)+'</div>' : '')+
+  '</div>';
+}
+function renderHolidayAllowanceMiniItem(ev){
+  const allowanceText = typeof ev.new_annual_allowance_days !== 'undefined'
+    ? requestWholeHoursText(num(ev.old_annual_allowance_days, 0)) + ' → ' + requestWholeHoursText(num(ev.new_annual_allowance_days, 0)) + ' allowance'
+    : '';
+  const carryText = typeof ev.new_carryover_days !== 'undefined'
+    ? requestWholeHoursText(num(ev.old_carryover_days, 0)) + ' → ' + requestWholeHoursText(num(ev.new_carryover_days, 0)) + ' carryover'
+    : '';
+  const extrasText = typeof ev.new_extras_days !== 'undefined'
+    ? allowanceExtrasText(num(ev.old_extras_days, 0)) + ' → ' + allowanceExtrasText(num(ev.new_extras_days, 0)) + ' extras'
+    : '';
+  const changeText = [allowanceText, carryText, extrasText].filter(Boolean).join(' · ') || 'Allowance updated';
+  return '<div class="activity-mini-item">'+
+    '<div class="top">'+
+      '<div class="title">'+esc(changeText)+'</div>'+
+      '<span class="pill approved">Logged</span>'+
+    '</div>'+
+    '<div class="meta">'+esc(ev.actor_name || 'Unknown')+' · '+esc(formatDateTime(ev.created_at))+'</div>'+
+    '<div class="meta">'+esc(requestDisplayReason(ev.note || '—'))+'</div>'+
+  '</div>';
+}
+function renderTeamOverviewCards(){
+  const box = $('teamOverviewCards');
+  if (!box) return;
+  const managerViewEnabled = isHolidayAdmin || isApprover;
+  if (!managerViewEnabled) {
+    box.innerHTML = '';
+    return;
+  }
+  const activeProfiles = isHolidayAdmin ? allPwProfiles.filter(p => p && p.approved !== false && p.disabled !== true && p.role !== 'none') : assignedHolidayStaffForCurrentUser();
+  const carryoverOpen = canEditCarryoverNow();
+  const canEditAllowanceFor = function(p){
+    return isHolidayAdmin || String(p.holiday_manager_auth_user_id || '') === String(currentUser.id || '');
+  };
+  if (!activeProfiles.length) {
+    box.innerHTML = '<div class="empty">No staff assigned yet.</div>';
+    return;
+  }
+  if (!selectedHolidayActivityUserId || !activeProfiles.some(function(p){ return String(p.id) === String(selectedHolidayActivityUserId); })) {
+    selectedHolidayActivityUserId = String(activeProfiles[0].id);
+  }
+  const selectedProfile = activeProfiles.find(function(p){ return String(p.id) === String(selectedHolidayActivityUserId); }) || activeProfiles[0];
+  const selectedHp = holidayProfileFor(selectedProfile.id);
+  const selectedKu = kilnUserFor(selectedProfile.id);
+  const selectedStats = statsForUser(selectedProfile.id, selectedYear);
+  const selectedDisplayName = personDisplayNameFromRecords(selectedProfile, selectedKu, 'Unknown');
+  const selectedManagerName = holidayManagerDisplayNameForUser(selectedProfile.id);
+  const selectedEditable = canEditAllowanceFor(selectedProfile);
+  const selectedEntitlementValue = num(selectedHp && selectedHp.annual_allowance_days, 72 / SHIFT_HOURS);
+  const selectedCarryoverValue = num(selectedHp && selectedHp.carryover_days, 0);
+  const selectedExtrasValue = num(selectedHp && selectedHp.entitlement_extras_days, 0);
+  const selectedRemainingDays = selectedStats.remaining / SHIFT_HOURS;
+  const selectedRemainingClass = balanceTrafficLightClass(selectedRemainingDays);
+  const selectedRequestHistory = requestsForUser(selectedProfile.id)
+    .filter(function(r){ return requestMatchesYear(r, selectedYear); })
+    .slice(0, 3);
+  const selectedAllowanceHistory = profileEventsForUser(selectedProfile.id)
+    .filter(function(e){ return e && requestMatchesYear({ start_date: e.created_at }, selectedYear); })
+    .slice(0, 3);
+  const rosterHtml = activeProfiles.map(function(p){
+    const stats = statsForUser(p.id, selectedYear);
+    const remainingDays = stats.remaining / SHIFT_HOURS;
+    const remainingClass = balanceTrafficLightClass(remainingDays);
+    const latestReq = requestsForUser(p.id).filter(function(r){ return requestMatchesYear(r, selectedYear); })[0] || null;
+    const displayName = personDisplayNameFromRecords(p, kilnUserFor(p.id), 'Unknown');
+    const managerName = holidayManagerDisplayNameForUser(p.id);
+    const active = String(p.id) === String(selectedHolidayActivityUserId);
+    return '<button type="button" class="activity-roster-btn'+(active ? ' active' : '')+'" onclick="setHolidayActivityUser(\''+esc(p.id)+'\')">'+
+      '<div class="name">'+esc(displayName)+'</div>'+
+      '<div class="sub">'+
+        '<span class="pill '+remainingClass+'">'+esc(requestDaysText(remainingDays))+' left</span>'+
+        '<span class="pill">'+esc(requestDaysText(stats.pending / SHIFT_HOURS))+' pending</span>'+
+        '<span class="pill">'+esc(requestDaysText(stats.projected / SHIFT_HOURS))+' projected</span>'+
+      '</div>'+
+      '<div class="mini">'+(latestReq ? esc(requestSummaryText(latestReq)) + ' · ' + esc(formatDateTime(latestReq.requested_at)) : 'No requests yet')+'</div>'+
+      '<div class="mini">'+(isHolidayAdmin && managerName ? 'Manager: ' + esc(managerName) : 'Click to open the detail panel')+'</div>'+
+    '</button>';
+  }).join('');
+  const requestAuditHtml = selectedRequestHistory.length
+    ? selectedRequestHistory.map(renderHolidayRequestMiniItem).join('')
+    : '<div class="small">No leave requests logged yet.</div>';
+  const allowanceAuditHtml = selectedAllowanceHistory.length
+    ? selectedAllowanceHistory.map(renderHolidayAllowanceMiniItem).join('')
+    : '<div class="small">No allowance changes logged yet.</div>';
+  const editSectionHtml = selectedEditable ? (
+    '<details class="activity-collapsible">'+
+      '<summary><div><div style="font-weight:800;color:var(--tx)">Edit entitlements</div><div class="small">Adjust allowance, carryover and extras for this person.</div></div><span class="pill">'+esc(requestWholeHoursText(selectedStats.entitlement))+'</span></summary>'+
+      '<div class="content">'+
+        '<div class="activity-stat-grid">'+
+          '<div class="activity-stat"><div class="label">Entitlement</div><div class="value">'+esc(requestWholeHoursText(selectedStats.entitlement))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.entitlement / SHIFT_HOURS))+'</div></div>'+
+          '<div class="activity-stat"><div class="label">Used</div><div class="value">'+esc(requestWholeHoursText(selectedStats.used))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.used / SHIFT_HOURS))+'</div></div>'+
+          '<div class="activity-stat"><div class="label">Pending</div><div class="value">'+esc(requestWholeHoursText(selectedStats.pending))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.pending / SHIFT_HOURS))+'</div></div>'+
+          '<div class="activity-stat"><div class="label">Remaining</div><div class="value">'+esc(requestWholeHoursText(selectedStats.remaining))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.remaining / SHIFT_HOURS))+'</div></div>'+
+          '<div class="activity-stat"><div class="label">Projected</div><div class="value">'+esc(requestWholeHoursText(selectedStats.projected))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.projected / SHIFT_HOURS))+'</div></div>'+
+        '</div>'+
+        '<div class="field"><label class="small" style="margin-bottom:4px">Annual entitlement</label><input class="input" style="height:34px;font-size:11px" type="number" min="0" step="0.5" id="allow_'+esc(selectedProfile.id)+'" value="'+esc(selectedEntitlementValue)+'"'+(selectedEditable ? '' : ' disabled')+'><div class="field-note">Set the base holiday allowance for this year.</div></div>'+
+        '<div class="field"><label class="small" style="margin-bottom:4px">Carryover after 31 Dec</label><input class="input" style="height:34px;font-size:11px" type="number" min="0" step="0.5" id="carry_'+esc(selectedProfile.id)+'" value="'+esc(selectedCarryoverValue)+'"'+((selectedEditable && carryoverOpen) ? '' : ' disabled')+' title="'+esc(carryoverOpen ? 'Carryover can be adjusted now' : 'Carryover can only be adjusted after 31 December')+'"><div class="field-note">'+esc(carryoverOpen ? 'Adjust carried-over holiday for the new year.' : 'Carryover can only be changed after 31 December.')+'</div></div>'+
+        '<div class="field"><label class="small" style="margin-bottom:4px">Extras</label><div class="row" style="gap:8px;align-items:flex-end">'+
+          '<select class="select" id="extrasUnit_'+esc(selectedProfile.id)+'" style="width:120px;height:34px;font-size:11px" onchange="syncExtrasUnit(\'extrasUnit_'+esc(selectedProfile.id)+'\', \'extras_'+esc(selectedProfile.id)+'\')"'+(selectedEditable ? '' : ' disabled')+'>'+
+            '<option value="days">Days</option>'+
+            '<option value="hours">Hours</option>'+
+          '</select>'+
+          '<input class="input" style="height:34px;font-size:11px;flex:1" type="number" min="-999" max="999" step="0.5" id="extras_'+esc(selectedProfile.id)+'" value="'+esc(selectedExtrasValue)+'"'+(selectedEditable ? '' : ' disabled')+'>'+
+        '</div><div class="field-note">Positive numbers add entitlement. Negative numbers take it away.</div></div>'+
+        '<div class="field"><label class="small" style="margin-bottom:4px">Reason / note for entitlement change</label><textarea class="textarea allowance-reason" id="allowReason_'+esc(selectedProfile.id)+'" placeholder="Explain why this allowance or carryover is being changed."'+(selectedEditable ? '' : ' disabled')+'></textarea><div class="field-note">This is stored in the allowance audit trail.</div></div>'+
+        '<div style="display:flex;justify-content:flex-end"><button class="btn btn-primary" type="button" onclick="saveTeamAllowance(\''+esc(selectedProfile.id)+'\')"'+(selectedEditable ? '' : ' disabled')+'>Save entitlements</button></div>'+
+      '</div>'+
+    '</details>'
+  ) : '';
+  const retrospectiveHtml = selectedEditable ? (
+    '<details class="activity-collapsible">'+
+      '<summary><div><div style="font-weight:800;color:var(--tx)">Retrospective holiday</div><div class="small">Add a backdated approved request for this person.</div></div></summary>'+
+      '<div class="content">'+
+        '<div class="field"><label class="small" style="margin-bottom:4px">Start date</label><input class="input retro-date" type="date" id="retroStart_'+esc(selectedProfile.id)+'" onchange="syncDateRangeEndDate(\'retroStart_'+esc(selectedProfile.id)+'\', \'retroUnit_'+esc(selectedProfile.id)+'\', \'retroAmount_'+esc(selectedProfile.id)+'\', \'retroEnd_'+esc(selectedProfile.id)+'\')"></div>'+
+        '<div class="field"><label class="small" style="margin-bottom:4px">Request as</label><select class="select retro-unit" id="retroUnit_'+esc(selectedProfile.id)+'" onchange="syncDateRangeEndDate(\'retroStart_'+esc(selectedProfile.id)+'\', \'retroUnit_'+esc(selectedProfile.id)+'\', \'retroAmount_'+esc(selectedProfile.id)+'\', \'retroEnd_'+esc(selectedProfile.id)+'\')"><option value="days">Days</option><option value="hours">Hours</option></select></div>'+
+        '<div class="field"><label class="small" style="margin-bottom:4px">Amount</label><input class="input retro-amount" type="number" min="0" step="0.5" id="retroAmount_'+esc(selectedProfile.id)+'" onchange="syncDateRangeEndDate(\'retroStart_'+esc(selectedProfile.id)+'\', \'retroUnit_'+esc(selectedProfile.id)+'\', \'retroAmount_'+esc(selectedProfile.id)+'\', \'retroEnd_'+esc(selectedProfile.id)+'\')"></div>'+
+        '<div class="field"><label class="small" style="margin-bottom:4px">End date</label><input class="input retro-end" type="date" id="retroEnd_'+esc(selectedProfile.id)+'" readonly></div>'+
+        '<div class="field"><label class="small" style="margin-bottom:4px">Reason / note</label><textarea class="textarea allowance-reason" id="retroReason_'+esc(selectedProfile.id)+'" placeholder="Explain why this retrospective holiday is being added."></textarea><div class="field-note">This is stored on the approved request and its audit trail.</div></div>'+
+        '<div style="display:flex;justify-content:flex-end"><button class="btn btn-primary" type="button" onclick="addRetrospectiveHoliday(\''+esc(selectedProfile.id)+'\', \'retroStart_'+esc(selectedProfile.id)+'\', \'retroEnd_'+esc(selectedProfile.id)+'\', \'retroAmount_'+esc(selectedProfile.id)+'\', \'retroUnit_'+esc(selectedProfile.id)+'\', \'retroReason_'+esc(selectedProfile.id)+'\')">Add retrospective holiday</button></div>'+
+      '</div>'+
+    '</details>'
+  ) : '';
+  box.innerHTML = '<div class="activity-layout">'+
+    '<div class="activity-roster">'+rosterHtml+'</div>'+
+    '<div class="activity-detail">'+
+      '<div class="activity-detail-head">'+
+        '<div>'+
+          '<div class="activity-detail-name">'+esc(selectedDisplayName)+'</div>'+
+          '<div class="activity-detail-sub">'+(isHolidayAdmin && selectedManagerName ? 'Manager: ' + esc(selectedManagerName) + ' · ' : '')+'Quick scan of balances, recent changes and request history.</div>'+
+        '</div>'+
+        '<span class="pill '+selectedRemainingClass+'">'+esc(requestDaysText(selectedRemainingDays))+' left</span>'+
+      '</div>'+
+      '<div class="activity-stat-grid">'+
+        '<div class="activity-stat"><div class="label">Entitlement</div><div class="value">'+esc(requestWholeHoursText(selectedStats.entitlement))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.entitlement / SHIFT_HOURS))+'</div></div>'+
+        '<div class="activity-stat"><div class="label">Used</div><div class="value">'+esc(requestWholeHoursText(selectedStats.used))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.used / SHIFT_HOURS))+'</div></div>'+
+        '<div class="activity-stat"><div class="label">Pending</div><div class="value">'+esc(requestWholeHoursText(selectedStats.pending))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.pending / SHIFT_HOURS))+'</div></div>'+
+        '<div class="activity-stat"><div class="label">Remaining</div><div class="value">'+esc(requestWholeHoursText(selectedStats.remaining))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.remaining / SHIFT_HOURS))+'</div></div>'+
+        '<div class="activity-stat"><div class="label">Projected</div><div class="value">'+esc(requestWholeHoursText(selectedStats.projected))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.projected / SHIFT_HOURS))+'</div></div>'+
+      '</div>'+
+      '<div class="activity-section">'+
+        '<div class="activity-section-title">Recent request audit</div>'+
+        '<div class="activity-mini-list">'+requestAuditHtml+'</div>'+
+      '</div>'+
+      '<div class="activity-section">'+
+        '<div class="activity-section-title">Allowance history</div>'+
+        '<div class="activity-mini-list">'+allowanceAuditHtml+'</div>'+
+      '</div>'+
+      editSectionHtml+
+      retrospectiveHtml+
+    '</div>'+
+  '</div>';
+}
+function renderApproverQueue(){
+  const panel = $('approverQueuePanel');
+  const allowancePanel = $('allowancePanel');
+  const managerViewEnabled = isHolidayAdmin || isApprover;
+  if (!managerViewEnabled) {
+    panel.style.display = 'none';
+    allowancePanel.style.display = 'none';
+    return;
+  }
+  panel.style.display = '';
+  const box = $('approvalQueue');
+  const rows = allHolidayRequests
+    .filter(req => requestMatchesYear(req, selectedYear) && (isHolidayAdmin || isAssignedHolidayManagerForRequest(req)))
+    .sort((a,b) => String(b.requested_at || '').localeCompare(String(a.requested_at || '')));
+  const pendingBadge = $('approverPendingBadge');
+  const pendingCount = rows.filter(function(req){ return req.status === 'pending'; }).length;
+  if (pendingBadge) {
+    pendingBadge.textContent = pendingCount + ' pending';
+    pendingBadge.className = 'pill ' + (pendingCount > 0 ? 'queue-warn' : 'queue-ok');
+  }
+  if (!rows.length) {
+    box.innerHTML = '<div class="empty">No leave requests found for '+selectedYear+'.</div>';
+    return;
+  }
+  if (isHolidayAdmin) {
+    $('approverQueuePanel').querySelector('.panel-title').textContent = 'Leave overview';
+    $('approverQueuePanel').querySelector('.panel-sub').textContent = 'Requests grouped into users and shift managers.';
+    $('managerFilter').closest('.queue-controls').style.display = 'none';
+    allowancePanel.style.display = '';
+    const grouped = { users: [], managers: [] };
+    rows.forEach(function(req) {
+      const ku = allKilnUsers.find(function(x){ return String(x.auth_user_id) === String(req.auth_user_id); }) || null;
+      (ku && ku.is_shift_manager ? grouped.managers : grouped.users).push(req);
+    });
+    const groupBlock = function(title, list) {
+      if (!list.length) return '<div class="empty">'+title+' requests are empty for '+selectedYear+'.</div>';
+      return '<div style="display:flex;flex-direction:column;gap:12px;margin-bottom:18px"><div style="font-family:var(--ff-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--tx3)">'+esc(title)+'</div>'+list.map(function(req){
+        const person = personDisplayNameFromRecords(profileFor(req.auth_user_id), kilnUserFor(req.auth_user_id), req.requester_name || req.requester_email || 'Unknown');
+        const stats = statsForUser(req.auth_user_id, selectedYear);
+        const needsBalance = requestConsumesBalance(req);
+        const requestBalance = needsBalance ? requestBalanceHours(req) : 0;
+        const enoughBalance = !needsBalance || stats.remaining >= requestBalance;
+        const balanceMarkup = needsBalance
+          ? (enoughBalance
+            ? esc(stats.remaining.toFixed(1)) + ' hours remaining'
+            : '<span style="color:var(--amb);font-weight:700">Insufficient balance to approve</span><div class="small" style="margin-top:4px">' + esc(stats.remaining.toFixed(1)) + ' hours remaining</div>')
+          : 'No holiday balance required';
+        const showCancel = req.status === 'approved';
+        return '<article class="queue-card">'+
+          '<div class="request-head">'+
+            '<div>'+
+              '<div class="request-title">'+esc(person)+'</div>'+
+              '<div class="request-meta">'+makeKindPill(req)+' <span style="margin-left:6px">'+esc(requestSummaryText(req))+'</span> · requested '+esc(formatDateTime(req.requested_at))+'</div>'+
+            '</div>'+
+            makeStatusPill(req.status)+
+          '</div>'+
+          '<div class="request-grid">'+
+            '<div class="card-box"><div class="box-label">Reason</div><div>'+esc(requestDisplayReason(req.reason) || '—')+'</div></div>'+
+            '<div class="card-box"><div class="box-label">Balance</div><div>'+balanceMarkup+'</div></div>'+
+          '</div>'+
+          '<div class="card-box"><div class="box-label">Decision note</div><div>'+esc(req.manager_note || '—')+'</div></div>'+
+          (showCancel ? '<div class="actions" style="margin-top:12px"><button class="btn btn-ghost" type="button" onclick="cancelManagedRequest(\''+esc(req.id)+'\')">Cancel holiday</button></div>' : '')+
+        '</article>';
+      }).join('')+'</div>';
+    };
+    box.innerHTML = groupBlock('Users', grouped.users) + groupBlock('Shift Managers', grouped.managers);
+    return;
+  }
+  allowancePanel.style.display = isHolidayAdmin ? '' : 'none';
+  if (isHolidayAdmin) {
+    allowancePanel.querySelector('.panel-title').textContent = 'Entitlements & carryover';
+    allowancePanel.querySelector('.panel-sub').textContent = 'Add or remove annual entitlement and carryover for your assigned staff. Carryover can only be changed after 31 December.';
+  }
+  $('approverQueuePanel').querySelector('.panel-title').textContent = 'Team approvals';
+  $('approverQueuePanel').querySelector('.panel-sub').textContent = 'Requests for your assigned staff, with remaining balance shown on each card. Expand the staff cards above to edit entitlements.';
+  $('managerFilter').closest('.queue-controls').style.display = 'none';
+  const rowsFiltered = rows.filter(req => req.status === 'pending');
+  let html = '';
+  if (!rowsFiltered.length) {
+    html += '<div class="empty">No pending requests for '+selectedYear+'.</div>';
+  } else {
+    html += rowsFiltered.map(req => {
+      const person = personDisplayNameFromRecords(profileFor(req.auth_user_id), kilnUserFor(req.auth_user_id), req.requester_name || req.requester_email || 'Unknown');
+      const stats = statsForUser(req.auth_user_id, selectedYear);
+      const needsBalance = requestConsumesBalance(req);
+      const requestBalance = needsBalance ? requestBalanceHours(req) : 0;
+      const enoughBalance = !needsBalance || stats.remaining >= requestBalance;
+      const isPending = req.status === 'pending';
+      const balanceMarkup = needsBalance
+        ? (enoughBalance
+          ? esc(stats.remaining.toFixed(1)) + ' hours remaining'
+          : '<span style="color:var(--amb);font-weight:700">Insufficient balance to approve</span><div class="small" style="margin-top:4px">' + esc(stats.remaining.toFixed(1)) + ' hours remaining</div>')
+        : 'No holiday balance required';
+      return '<article class="queue-card">'+
+        '<div class="request-head">'+
+          '<div>'+
+            '<div class="request-title">'+esc(person)+'</div>'+
+            '<div class="request-meta">'+makeKindPill(req)+' <span style="margin-left:6px">'+esc(requestSummaryText(req))+'</span> · requested '+esc(formatDateTime(req.requested_at))+'</div>'+
+          '</div>'+
+          makeStatusPill(req.status)+
+        '</div>'+
+        '<div class="request-grid">'+
+          '<div class="card-box"><div class="box-label">Reason</div><div>'+esc(requestDisplayReason(req.reason) || '—')+'</div></div>'+
+          '<div class="card-box"><div class="box-label">Balance</div><div>'+balanceMarkup+'</div></div>'+
+        '</div>'+
+        '<div class="field full"><label class="help-label" for="mgrNote_'+esc(req.id)+'">Manager note / denial reason</label><textarea id="mgrNote_'+esc(req.id)+'" class="textarea" placeholder="Required for denials."></textarea></div>'+
+        '<div class="actions">'+
+          '<button class="btn btn-primary" type="button" onclick="decideRequest(\''+esc(req.id)+'\',\'approved\')"'+(enoughBalance ? '' : ' disabled')+'>Approve</button>'+
+          '<button class="btn btn-danger" type="button" onclick="decideRequest(\''+esc(req.id)+'\',\'denied\')">Deny</button>'+
+        '</div>'+
+      '</article>';
+    }).join('');
+  }
+  const approvedRows = rows.filter(req => req.status === 'approved');
+  if (approvedRows.length) {
+    html += '<details class="staff-card approved-requests" style="margin-top:18px"><summary>'+
+      '<div class="staff-summary-left">'+
+        '<div class="name" style="font-size:13px">Approved requests</div>'+
+        '<div class="small">Open to review or cancel already approved holiday.</div>'+
+      '</div>'+
+      '<div class="staff-summary-right"><span class="pill approved">'+esc(approvedRows.length)+' approved</span></div>'+
+    '</summary><div class="staff-body">' + approvedRows.map(req => {
+      const person = personDisplayNameFromRecords(profileFor(req.auth_user_id), kilnUserFor(req.auth_user_id), req.requester_name || req.requester_email || 'Unknown');
+      return '<article class="queue-card">'+
+        '<div class="request-head">'+
+          '<div>'+
+            '<div class="request-title">'+esc(person)+'</div>'+
+            '<div class="request-meta">'+makeKindPill(req)+' <span style="margin-left:6px">'+esc(requestSummaryText(req))+'</span> · approved '+esc(formatDateTime(req.decided_at || req.requested_at))+'</div>'+
+          '</div>'+
+          makeStatusPill(req.status)+
+        '</div>'+
+        '<div class="request-grid">'+
+          '<div class="card-box"><div class="box-label">Reason</div><div>'+esc(requestDisplayReason(req.reason) || '—')+'</div></div>'+
+          '<div class="card-box"><div class="box-label">Decision note</div><div>'+esc(req.manager_note || '—')+'</div></div>'+
+        '</div>'+
+        '<div class="actions" style="margin-top:12px"><button class="btn btn-ghost" type="button" onclick="cancelManagedRequest(\''+esc(req.id)+'\')">Cancel holiday</button></div>'+
+      '</article>';
+    }).join('') + '</div></details>';
+  }
+  box.innerHTML = html;
+}
+function renderAllowanceList(){
+  const box = $('allowanceList');
+  const managerViewEnabled = isHolidayAdmin || isApprover;
+  if (!managerViewEnabled) { box.innerHTML = ''; return; }
+  const activeProfiles = isHolidayAdmin ? allPwProfiles.filter(p => p && p.approved !== false && p.disabled !== true && p.role !== 'none') : assignedHolidayStaffForCurrentUser();
+  const carryoverOpen = canEditCarryoverNow();
+  if (!activeProfiles.length) {
+    box.innerHTML = '<div class="empty">' + (isHolidayAdmin ? 'No active platform users found.' : 'No active staff are assigned to you yet.') + '</div>';
+    return;
+  }
+  const canEditAllowanceFor = function(p){ return isHolidayAdmin || String(p.holiday_manager_auth_user_id || '') === String(currentUser.id || ''); };
+  box.innerHTML = activeProfiles.map(p => {
+    const hp = holidayProfileFor(p.id);
+    const stats = statsForUser(p.id, selectedYear);
+    const ku = kilnUserFor(p.id);
+    const displayName = personDisplayNameFromRecords(p, ku, 'Unknown');
+    const editable = canEditAllowanceFor(p);
+    const managerName = holidayManagerDisplayNameForUser(p.id);
+    const extrasValue = num(hp && hp.entitlement_extras_days, 0);
+    const remainingDays = stats.remaining / SHIFT_HOURS;
+    const remainingClass = balanceTrafficLightClass(remainingDays);
+    const allowanceHistory = profileEventsForUser(p.id)
+      .filter(function(e){ return e && requestMatchesYear({ start_date: e.created_at }, selectedYear); })
+      .slice(0, 3);
+    const requestHistory = requestsForUser(p.id)
+      .filter(function(r){ return requestMatchesYear(r, selectedYear); })
+      .slice(0, 4);
+    const showManagerLabel = isHolidayAdmin;
+    return '<details class="staff-card">'+
+      '<summary>'+
+        '<div class="staff-summary-left">'+
+          '<div class="name" style="font-size:13px">'+esc(displayName)+'</div>'+
+        '</div>'+
+        '<div class="staff-summary-right">'+
+          (showManagerLabel ? '<span class="pill">'+esc(managerName)+'</span>' : '')+
+          '<span class="pill">'+esc(requestDaysText(stats.used / SHIFT_HOURS))+' taken</span>'+
+          '<span class="pill '+remainingClass+'">'+esc(requestDaysText(remainingDays))+' left</span>'+
+          '<span class="pill">'+esc(requestDaysText(stats.pending / SHIFT_HOURS))+' pending</span>'+
+          '<span class="pill">'+esc(requestDaysText(stats.projected / SHIFT_HOURS))+' projected</span>'+
+        '</div>'+
+      '</summary>'+
+      '<div class="staff-body">'+
+        '<div class="meta" style="font-size:10px">Used '+esc(requestWholeHoursText(stats.used))+' / '+esc(requestDaysText(stats.used / SHIFT_HOURS))+'</div>'+
+        '<div class="meta" style="font-size:10px">Pending '+esc(requestWholeHoursText(stats.pending))+' / '+esc(requestDaysText(stats.pending / SHIFT_HOURS))+'</div>'+
+        '<div class="meta" style="font-size:10px">Remaining '+esc(requestWholeHoursText(stats.remaining))+' / '+esc(requestDaysText(stats.remaining / SHIFT_HOURS))+'</div>'+
+        '<div class="meta" style="font-size:10px">Projected '+esc(requestWholeHoursText(stats.projected))+' / '+esc(requestDaysText(stats.projected / SHIFT_HOURS))+'</div>'+
+        '<div class="meta" style="font-size:10px">Extras '+esc(allowanceExtrasText(extrasValue))+'</div>'+
+        '<div class="staff-section">'+
+          '<div class="staff-section-title">Entitlement adjustment</div>'+
+          '<div class="staff-section-sub">Add or remove holiday entitlement and carryover for this staff member. Every save is written to the audit trail.</div>'+
+          '<div class="field"><label class="small" style="margin-bottom:4px">Annual entitlement</label><input class="input" style="height:30px;font-size:11px" type="number" min="0" step="0.5" id="allow_'+esc(p.id)+'" value="'+esc(num(hp && hp.annual_allowance_days, 72 / SHIFT_HOURS))+'"'+(editable ? '' : ' disabled')+'><div class="field-note">Base holiday allowance for the year.</div></div>'+
+          '<div class="field"><label class="small" style="margin-bottom:4px">Carryover after 31 Dec</label><input class="input" style="height:30px;font-size:11px" type="number" min="0" step="0.5" id="carry_'+esc(p.id)+'" value="'+esc(num(hp && hp.carryover_days, 0))+'"'+((editable && carryoverOpen) ? '' : ' disabled')+' title="'+esc(carryoverOpen ? 'Carryover can be adjusted now' : 'Carryover can only be adjusted after 31 December')+'"><div class="field-note">Extra holiday moved over into the new year.</div></div>'+
+          '<div class="field"><label class="small" style="margin-bottom:4px">Extras</label><div class="row" style="gap:8px;align-items:flex-end">'+
+            '<select class="select" id="extrasUnit_'+esc(p.id)+'" style="width:120px;height:30px;font-size:11px" onchange="syncExtrasUnit(\'extrasUnit_'+esc(p.id)+'\', \'extras_'+esc(p.id)+'\')"'+(editable ? '' : ' disabled')+'>'+
+              '<option value="days">Days</option>'+
+              '<option value="hours">Hours</option>'+
+            '</select>'+
+            '<input class="input" style="height:30px;font-size:11px;flex:1" type="number" min="-999" max="999" step="0.5" id="extras_'+esc(p.id)+'" value="'+esc(extrasValue)+'"'+(editable ? '' : ' disabled')+'>'+
+          '</div><div class="field-note">Positive numbers add entitlement. Negative numbers take it away.</div></div>'+
+          '<div class="field"><label class="small" style="margin-bottom:4px">Reason / note for entitlement change</label><textarea class="textarea allowance-reason" id="allowReason_'+esc(p.id)+'" placeholder="Explain why this allowance or carryover is being changed."'+(editable ? '' : ' disabled')+'></textarea><div class="field-note">This is stored in the allowance audit trail.</div></div>'+
+        '</div>'+
+        '<div style="display:flex;justify-content:flex-end"><button class="btn btn-primary" type="button" onclick="saveAllowance(\''+esc(p.id)+'\')"'+(editable ? '' : ' disabled')+'>Save entitlements</button></div>'+
+        '<div class="staff-history">'+
+          '<div class="staff-history-title">Allowance audit</div>'+
+          (allowanceHistory.length ? allowanceHistory.map(function(ev){
+            const allowanceText = typeof ev.new_annual_allowance_days !== 'undefined'
+              ? requestWholeHoursText(num(ev.old_annual_allowance_days, 0)) + ' → ' + requestWholeHoursText(num(ev.new_annual_allowance_days, 0)) + ' allowance'
+              : '';
+            const carryText = typeof ev.new_carryover_days !== 'undefined'
+              ? requestWholeHoursText(num(ev.old_carryover_days, 0)) + ' → ' + requestWholeHoursText(num(ev.new_carryover_days, 0)) + ' carryover'
+              : '';
+            const extrasText = typeof ev.new_extras_days !== 'undefined'
+              ? allowanceExtrasText(num(ev.old_extras_days, 0)) + ' → ' + allowanceExtrasText(num(ev.new_extras_days, 0)) + ' extras'
+              : '';
+            const changeText = [allowanceText, carryText, extrasText].filter(Boolean).join(' · ') || 'Allowance updated';
+            return '<div class="staff-history-item">'+
+              '<div class="left">'+
+                '<div class="title">'+esc(changeText)+'</div>'+
+                '<div class="meta">'+esc(ev.actor_name || 'Unknown')+' · '+esc(formatDateTime(ev.created_at))+'</div>'+
+                '<div class="meta">'+esc(requestDisplayReason(ev.note || '—'))+'</div>'+
+              '</div>'+
+              '<span class="pill approved">Logged</span>'+
+            '</div>';
+          }).join('') : '<div class="small">No allowance changes logged yet.</div>')+
+        '</div>'+
+        '<div class="staff-request-audit">'+
+          '<div class="staff-request-audit-title">Request audit</div>'+
+          (requestHistory.length ? requestHistory.map(renderRequestAuditItem).join('') : '<div class="small">No leave requests logged yet.</div>')+
+        '</div>'+
+      '</div>'+
+    '</details>';
+  }).join('');
+}
+function renderSummary(){
+  const stats = statsForUser(currentUser.id, selectedYear);
+  const remainingCard = $('statRemaining') ? $('statRemaining').closest('.stat') : null;
+  $('statEntitlement').textContent = requestWholeHoursText(stats.entitlement) + ' / ' + requestDaysText(stats.entitlement / SHIFT_HOURS);
+  $('statUsed').textContent = requestWholeHoursText(stats.used) + ' / ' + requestDaysText(stats.used / SHIFT_HOURS);
+  $('statPending').textContent = requestWholeHoursText(stats.pending) + ' / ' + requestDaysText(stats.pending / SHIFT_HOURS);
+  $('statRemaining').textContent = requestWholeHoursText(stats.remaining) + ' / ' + requestDaysText(stats.remaining / SHIFT_HOURS);
+  $('statProjected').textContent = requestWholeHoursText(stats.projected) + ' / ' + requestDaysText(stats.projected / SHIFT_HOURS);
+  if (remainingCard) {
+    remainingCard.classList.remove('balance-red', 'balance-amber', 'balance-green');
+    remainingCard.classList.add(balanceTrafficLightClass(stats.remaining / SHIFT_HOURS));
+  }
+  $('statEntitlementSub').textContent = requestWholeHoursText(stats.allowance) + ' allowance + ' + requestWholeHoursText(stats.carryover) + ' carryover + ' + requestWholeHoursText(stats.extras) + ' extras';
+}
+function renderHolidayApp(){
+  $('yearSelect').value = String(selectedYear);
+  const requestPanel = $('requestPanel');
+  if (requestPanel) requestPanel.style.display = isApprover ? 'none' : '';
+  const personalSummary = $('personalSummarySection');
+  const myRequestsPanel = $('myRequestsPanel');
+  const myRequestsActivityWrap = $('myRequestsActivityWrap');
+  const activityPanel = $('activityPanel');
+  const managerViewEnabled = isHolidayAdmin || isApprover;
+  if (personalSummary) personalSummary.style.display = isApprover ? 'none' : '';
+  if (myRequestsPanel) myRequestsPanel.style.display = isApprover ? 'none' : '';
+  if (myRequestsActivityWrap) myRequestsActivityWrap.style.display = isApprover ? 'none' : '';
+  if (activityPanel) activityPanel.style.display = managerViewEnabled ? '' : 'none';
+  const confirmName = $('holidayManagerConfirmName');
+  const confirmNote = $('holidayManagerConfirmNote');
+  const requestTarget = currentHolidayManagerLabel || holidayManagerDisplayNameForUser(currentUser.id) || 'No manager assigned';
+  if (confirmName) confirmName.textContent = requestTarget;
+  if (confirmNote) {
+    confirmNote.textContent = requestTarget && requestTarget !== 'No manager assigned'
+      ? 'Holiday requests will be sent to ' + requestTarget + '.'
+      : 'No manager is assigned yet. An admin can still see your request.';
+  }
+  renderSummary();
+  renderMyRequests();
+  renderApproverQueue();
+  renderTeamOverviewCards();
+  renderActivityFeed();
+  renderAllowanceList();
+  if (activityPanel && managerViewEnabled) {
+    const title = activityPanel.querySelector('.panel-title');
+    const sub = activityPanel.querySelector('.panel-sub');
+    if (title) title.textContent = 'Team overview';
+    if (sub) sub.textContent = 'Use the roster on the left for a quick scan, then open one person at a time for history, changes and edits.';
+    const feed = $('activityFeed');
+    if (feed) {
+      feed.style.display = 'none';
+      feed.innerHTML = '';
+    }
+  }
+  const page = document.querySelector('.page');
+  const hero = page ? page.querySelector('.hero') : null;
+  const summarySection = $('personalSummarySection');
+  const requestPanelEl = $('requestPanel');
+  const approvalsPanel = $('approverQueuePanel');
+  const allowancePanel = $('allowancePanel');
+  const activityPanelEl = $('activityPanel');
+  if (!isApprover && !isHolidayAdmin && myRequestsPanel) {
+    const title = myRequestsPanel.querySelector('.panel-title');
+    const sub = myRequestsPanel.querySelector('.panel-sub');
+    if (title) title.textContent = 'My requests & activity';
+    if (sub) sub.textContent = 'Your request history first, followed by recent activity on those requests.';
+  }
+  if (page && approvalsPanel && managerViewEnabled) {
+    page.insertBefore(approvalsPanel, summarySection || requestPanelEl || activityPanelEl || allowancePanel || null);
+  }
+  if (page && activityPanel && managerViewEnabled) {
+    const anchor = allowancePanel && allowancePanel.parentElement === page ? allowancePanel : (requestPanelEl && requestPanelEl.parentElement === page ? requestPanelEl.nextSibling : null);
+    page.insertBefore(activityPanel, anchor);
+  }
+  if (page && allowancePanel && isHolidayAdmin) {
+    const anchor = activityPanel && activityPanel.parentElement === page ? activityPanel.nextSibling : null;
+    page.insertBefore(allowancePanel, anchor);
+  }
+  if (focusApprovalsOnRender && (isApprover || isHolidayAdmin)) {
+    const filter = $('managerFilter');
+    if (filter) filter.value = 'pending';
+    setTimeout(function(){
+      const panel = $('approverQueuePanel');
+      if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 120);
+    focusApprovalsOnRender = false;
+  }
+}
+
+async function ensureHolidayProfile(){
+  const { data } = await sb.from('holiday_profiles').select('auth_user_id,annual_allowance_days,carryover_days,entitlement_extras_days').eq('auth_user_id', currentUser.id).maybeSingle();
+  if (!data) {
+    const { error } = await sb.from('holiday_profiles').insert({ auth_user_id: currentUser.id });
+    if (error) throw error;
+    currentHolidayProfile = { auth_user_id: currentUser.id, annual_allowance_days: 72 / SHIFT_HOURS, carryover_days: 0, entitlement_extras_days: 0 };
+  } else {
+    currentHolidayProfile = data;
+  }
+}
+async function loadHolidayData(){
+  const managerScopeEnabled = !!(isHolidayAdmin || isApprover);
+  const currentManagerId = currentProfile && currentProfile.holiday_manager_auth_user_id ? currentProfile.holiday_manager_auth_user_id : null;
+  const currentManagerProfilePromise = currentManagerId
+    ? sb.from('pw_profiles').select('id,full_name,email').eq('id', currentManagerId).maybeSingle()
+    : Promise.resolve({ data: null });
+  const currentManagerKilnPromise = currentManagerId
+    ? sb.from('kiln_users').select('auth_user_id,locked_name,email,username').eq('auth_user_id', currentManagerId).maybeSingle()
+    : Promise.resolve({ data: null });
+  const currentManagerResults = await Promise.all([currentManagerProfilePromise, currentManagerKilnPromise]);
+  const [currentManagerProfRes, currentManagerKilnRes] = currentManagerResults;
+  if (currentManagerId) {
+    currentHolidayManagerProfile = currentManagerProfRes.data || null;
+    currentHolidayManagerKilnUser = currentManagerKilnRes.data || null;
+    currentHolidayManagerLabel = holidayManagerDisplayNameFromRecords(currentHolidayManagerProfile, currentHolidayManagerKilnUser);
+  }
+  if (managerScopeEnabled) {
+    const requestPromise = sb.from('holiday_requests').select('*');
+    const eventPromise = sb.from('holiday_request_events').select('*');
+    const profilePromise = sb.from('holiday_profiles').select('auth_user_id,annual_allowance_days,carryover_days,entitlement_extras_days');
+    const profileEventPromise = sb.from('holiday_profile_events').select('*');
+    const extraProfilePromise = sb.from('pw_profiles').select('id,full_name,email,approved,disabled,role,holiday_requests_access,holiday_manager_auth_user_id').order('full_name', { ascending: true });
+    const kilnUserPromise = sb.from('kiln_users').select('auth_user_id,is_admin,is_shift_manager,is_locked,locked_name,email,username').order('username', { ascending: true });
+    const results = await Promise.all([requestPromise, eventPromise, profilePromise, profileEventPromise, extraProfilePromise, kilnUserPromise]);
+    const [reqRes, evRes, hpRes, hpEventRes, extraRes, kilnRes] = results;
+    if (reqRes.error) throw reqRes.error;
+    if (evRes.error) throw evRes.error;
+    if (hpRes.error) throw hpRes.error;
+    allHolidayRequests = (reqRes.data || []).map(r => ({
+      ...r,
+      requested_days: num(r.requested_days, 0),
+    }));
+    allHolidayEvents = evRes.data || [];
+    allHolidayProfiles = hpRes.data || [];
+    allHolidayProfileEvents = hpEventRes.data || [];
+    allPwProfiles = (extraRes.data || []);
+    allKilnUsers = (kilnRes.data || []);
+    return;
+  }
+  const requestPromise = sb.from('holiday_requests').select('*').eq('auth_user_id', currentUser.id);
+  const profilePromise = sb.from('holiday_profiles').select('auth_user_id,annual_allowance_days,carryover_days,entitlement_extras_days').eq('auth_user_id', currentUser.id);
+  const profileEventPromise = sb.from('holiday_profile_events').select('*').eq('profile_user_id', currentUser.id);
+  const [reqRes, hpRes, hpEventRes] = await Promise.all([requestPromise, profilePromise, profileEventPromise]);
+  if (reqRes.error) throw reqRes.error;
+  if (hpRes.error) throw hpRes.error;
+  const ownRequests = (reqRes.data || []).map(r => ({
+    ...r,
+    requested_days: num(r.requested_days, 0),
+  }));
+  const reqIds = ownRequests.map(r => r.id).filter(Boolean);
+  const eventRes = reqIds.length
+    ? await sb.from('holiday_request_events').select('*').in('request_id', reqIds)
+    : { data: [] };
+  if (eventRes.error) throw eventRes.error;
+  allHolidayRequests = ownRequests;
+  allHolidayEvents = eventRes.data || [];
+  allHolidayProfiles = hpRes.data || [];
+  allHolidayProfileEvents = hpEventRes.data || [];
+  allPwProfiles = [currentProfile].filter(Boolean);
+  allKilnUsers = [currentKilnUser].filter(Boolean);
+}
+
+async function initHolidayApp(){
+  await applySuiteLogos();
+  applyTheme((getStoredThemePref() || (new Date().getHours() >= 7 && new Date().getHours() < 18)) === 'light');
+  applyStoredPalette();
+  sb = suiteShared.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  sb.auth.onAuthStateChange(function(event, session) {
+    if (event === 'SIGNED_IN' && session && session.user) {
+      setTimeout(function() {
+        hydrateFromSession();
+      }, 0);
+    }
+  });
+  $('loginBtn').addEventListener('click', doLogin);
+  $('loginPass').addEventListener('keydown', function(e){ if (e.key === 'Enter') doLogin(); });
+  $('loginEmail').addEventListener('keydown', function(e){ if (e.key === 'Enter') doLogin(); });
+  async function tryHydrateSession(retries) {
+    const session = await sb.auth.getSession();
+    if (session && session.data && session.data.session) {
+      return hydrateFromSession();
+    }
+    if (retries > 0) {
+      await new Promise(function(resolve){ setTimeout(resolve, 200); });
+      return tryHydrateSession(retries - 1);
+    }
+    if (HOLIDAY_ACCESS_DENIED_LAUNCH) {
+      showAccessDenied('You do not have Holiday Requests access.');
+      return false;
+    }
+    showLoginScreen();
+    return false;
+  }
+  await tryHydrateSession(3);
+}
+
+async function hydrateFromSession(){
+  try {
+    const { data, error } = await sb.auth.getSession();
+    if (error || !data || !data.session || !data.session.user) {
+      showLoginScreen();
+      return false;
+    }
+    currentUser = data.session.user;
+    const accessState = await suiteShared.access.loadPwAppAccessState(sb, currentUser, {
+      accessField: 'holiday_requests_access',
+      profileSelect: 'id,full_name,email,approved,disabled,role,holiday_requests_access,holiday_manager_auth_user_id,must_reset_password',
+      kilnSelect: 'auth_user_id,is_admin,is_shift_manager,is_locked,shift_log_access,locked_name,email,username',
+      requiresProfile: true
+    });
+    const prof = accessState.profile || null;
+    if (!accessState.allowed) {
+      currentProfile = null;
+      showAccessDenied(!prof ? 'This account does not have Platform access yet.' : prof.disabled === true ? 'Your account has been disabled. Please contact an administrator.' : prof.holiday_requests_access === false ? 'You do not have Holiday Requests access.' : 'You do not have Platform access.');
+      return false;
+    }
+    currentProfile = prof;
+    isHolidayAdmin = !!(prof && prof.role === 'admin');
+    currentHolidayManagerProfile = null;
+    currentHolidayManagerKilnUser = null;
+    currentHolidayManagerLabel = 'No manager assigned';
+    if (prof && prof.holiday_manager_auth_user_id) {
+      const { data: mgrProf } = await sb.from('pw_profiles').select('id,full_name,email').eq('id', prof.holiday_manager_auth_user_id).maybeSingle();
+      currentHolidayManagerProfile = mgrProf || null;
+      const { data: mgrKiln } = await sb.from('kiln_users').select('auth_user_id,locked_name,email,username').eq('auth_user_id', prof.holiday_manager_auth_user_id).maybeSingle();
+      currentHolidayManagerKilnUser = mgrKiln || null;
+      currentHolidayManagerLabel = holidayManagerDisplayNameFromRecords(currentHolidayManagerProfile, currentHolidayManagerKilnUser);
+    }
+    currentKilnUser = accessState.kilnUser || null;
+    isApprover = !!(currentKilnUser && currentKilnUser.is_shift_manager && !(currentProfile && currentProfile.holiday_manager_auth_user_id));
+    const sessionFullName = currentUser && currentUser.user_metadata && currentUser.user_metadata.full_name
+      ? String(currentUser.user_metadata.full_name).trim()
+      : '';
+    $('userChip').textContent = (sessionFullName && !looksLikeShortLoginName(sessionFullName, currentUser.email || (prof && prof.email) || '', currentKilnUser && currentKilnUser.username))
+      ? sessionFullName
+      : personDisplayNameFromRecords(prof, currentKilnUser, currentUser.email || (currentUser.user_metadata && currentUser.user_metadata.full_name) || '—');
+    const sharedTheme = await loadSharedThemePreference();
+    if (sharedTheme) applyTheme(sharedTheme === 'light');
+    await applySharedPalettePreference();
+    await ensureHolidayProfile();
+    await loadHolidayData();
+    refreshYearOptions();
+    showAppScreen();
+    renderHolidayApp();
+    $('syncLabel').textContent = 'Synced';
+    $('loginErr').classList.add('hidden');
+    return true;
+  } catch (e) {
+    showLoginScreen();
+    $('loginErr').textContent = 'Could not open your account: ' + (e.message || String(e));
+    $('loginErr').classList.remove('hidden');
+    return false;
+  }
+}
+
+async function doLogin(){
+  const email = $('loginEmail').value.trim();
+  const password = $('loginPass').value;
+  const err = $('loginErr');
+  if (!email || !password) {
+    err.textContent = 'Please enter your email and password.';
+    err.classList.remove('hidden');
+    return;
+  }
+  $('loginBtn').disabled = true;
+  $('loginBtn').textContent = 'Signing in…';
+  err.classList.add('hidden');
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
+  $('loginBtn').disabled = false;
+  $('loginBtn').textContent = 'Sign In';
+  if (error) {
+    err.textContent = error.message;
+    err.classList.remove('hidden');
+    return;
+  }
+  if (data && data.session) {
+    await sb.auth.setSession(data.session).catch(() => {});
+  }
+  await hydrateFromSession();
+}
+
+async function submitHolidayRequest(){
+  if (!currentUser) return;
+  const start = $('reqStart').value;
+  const end = $('reqEnd').value;
+  const daysRaw = num($('reqDays').value, 0);
+  const unit = $('reqUnit').value === 'hours' ? 'hours' : 'days';
+  const reason = $('reqReason').value.trim();
+  clearHolidayRequestError();
+  if (!start || !end) { setToast('Please choose both dates.'); return; }
+  if (new Date(start) > new Date(end)) { setToast('The end date must be after the start date.'); return; }
+  if (!reason) { showHolidayRequestError('Please add a reason or note.'); return; }
+  const reasonReview = reviewHolidayTextSafety(reason);
+  if (!reasonReview.ok) { showHolidayRequestError(reasonReview.reason); return; }
+  const formattedReason = tidyRequestText(reason);
+  const managerName = holidayManagerDisplayNameForUser(currentUser.id);
+  const confirmText = managerName === 'No manager assigned'
+    ? 'No manager is assigned yet. Submit this holiday request for admin review?'
+    : 'Submit this holiday request to ' + managerName + '?';
+  if (!confirm(confirmText)) return;
+  const fallbackAmount = unit === 'hours' ? countWeekdays(start, end) * SHIFT_HOURS : countWeekdays(start, end);
+  const amount = daysRaw > 0 ? daysRaw : fallbackAmount;
+  if (amount <= 0) { setToast('Please enter at least one day or hour.'); return; }
+  const days = unit === 'hours' ? amount / SHIFT_HOURS : amount;
+  $('syncLabel').textContent = 'Saving…';
+  const payload = {
+    auth_user_id: currentUser.id,
+    requester_name: currentDisplayName(),
+    requester_email: currentProfile.email || currentUser.email,
+    start_date: start,
+    end_date: end,
+    requested_unit: unit,
+    requested_amount: amount,
+    requested_days: days,
+    reason: formattedReason,
+    status: 'pending'
+  };
+  const { error } = await sb.from('holiday_requests').insert(payload);
+  if (error) {
+    $('syncLabel').textContent = 'Synced';
+    setToast('Could not save request: ' + error.message);
+    return;
+  }
+  $('reqReason').value = '';
+  $('reqDays').value = '0';
+  $('reqStart').value = '';
+  $('reqEnd').value = '';
+  $('reqUnit').value = 'days';
+  await loadHolidayData();
+  renderHolidayApp();
+  $('syncLabel').textContent = 'Synced';
+  setToast('Leave request submitted ✓');
+}
+
+async function cancelRequest(id){
+  const req = allHolidayRequests.find(r => r.id === id);
+  if (!req || req.auth_user_id !== currentUser.id || req.status === 'cancelled' || req.status === 'denied') return;
+  const before = Object.assign({}, req);
+  const confirmText = req.status === 'approved' ? 'Cancel this approved leave request?' : 'Withdraw this leave request?';
+  if (!confirm(confirmText)) return;
+  const reason = promptCancellationReason('Please enter a reason for withdrawing this holiday request.');
+  if (!reason) {
+    setToast('Please add a reason before cancelling this holiday.');
+    return;
+  }
+  $('syncLabel').textContent = 'Saving…';
+  const { error } = await sb.from('holiday_requests').update({
+    status: 'cancelled',
+    manager_note: 'Cancelled by requester: ' + reason,
+    decided_by: currentUser.id,
+    decided_by_name: currentDisplayName(),
+    decided_at: new Date().toISOString()
+  }).eq('id', id);
+  $('syncLabel').textContent = 'Synced';
+  if (error) { setToast('Could not withdraw request: ' + error.message); return; }
+  await loadHolidayData();
+  renderHolidayApp();
+  setToast('Request withdrawn ✓');
+}
+
+async function cancelManagedRequest(id){
+  const req = allHolidayRequests.find(r => r.id === id);
+  if (!req) return;
+  if (!isHolidayAdmin && !isAssignedHolidayManagerForRequest(req)) return;
+  if (req.status !== 'approved') return;
+  const before = Object.assign({}, req);
+  const noteEl = $('mgrNote_' + id);
+  let note = noteEl ? noteEl.value.trim() : '';
+  if (!note) {
+    note = promptCancellationReason('Please enter a reason for cancelling this holiday request.');
+    if (noteEl && note) noteEl.value = note;
+  }
+  if (!note) {
+    setToast('Please add a reason before cancelling this holiday.');
+    return;
+  }
+  if (!confirm('Cancel this holiday request?')) return;
+  $('syncLabel').textContent = 'Saving…';
+  const { error } = await sb.from('holiday_requests').update({
+    status: 'cancelled',
+    manager_note: note,
+    decided_by: currentUser.id,
+    decided_by_name: currentDisplayName(),
+    decided_at: new Date().toISOString()
+  }).eq('id', id);
+  $('syncLabel').textContent = 'Synced';
+  if (error) { setToast('Could not cancel request: ' + error.message); return; }
+  await loadHolidayData();
+  renderHolidayApp();
+  setToast('Holiday cancelled ✓');
+}
+
+async function decideRequest(id, decision){
+  const req = allHolidayRequests.find(r => r.id === id);
+  if (!req) return;
+  if (!isHolidayAdmin && !isAssignedHolidayManagerForRequest(req)) return;
+  if (req.status !== 'pending') return;
+  const before = Object.assign({}, req);
+  const noteEl = $('mgrNote_' + id);
+  const note = noteEl ? noteEl.value.trim() : '';
+  if (decision === 'approved' && requestConsumesBalance(req)) {
+    const stats = statsForUser(req.auth_user_id, selectedYear);
+    const needed = requestBalanceHours(req);
+    if (stats.remaining < needed) {
+      setToast('Not enough holiday balance remaining to approve this request.');
+      return;
+    }
+  }
+  if ((decision === 'denied' || decision === 'cancelled') && !note) {
+    setToast(decision === 'denied' ? 'Please add a denial reason.' : 'Please add a reason before cancelling this holiday.');
+    return;
+  }
+  if (!confirm((decision === 'approved' ? 'Approve' : 'Deny') + ' this request?')) return;
+  $('syncLabel').textContent = 'Saving…';
+  const { error } = await sb.from('holiday_requests').update({
+    status: decision,
+    manager_note: note || null,
+    decided_by: currentUser.id,
+    decided_by_name: currentDisplayName(),
+    decided_at: new Date().toISOString()
+  }).eq('id', id);
+  $('syncLabel').textContent = 'Synced';
+  if (error) { setToast('Could not update request: ' + error.message); return; }
+  await loadHolidayData();
+  renderHolidayApp();
+  setToast(decision === 'approved' ? 'Request approved ✓' : 'Request denied ✓');
+}
+
+async function persistAllowance(userId, allowanceInputId, carryoverInputId, extrasUnitInputId, extrasInputId, reasonInputId){
+  const target = allPwProfiles.find(p => String(p.id) === String(userId));
+  if (!target) return;
+  if (!isHolidayAdmin && String(target.holiday_manager_auth_user_id || '') !== String(currentUser.id || '')) return;
+  const allowance = num($(allowanceInputId)?.value, 72 / SHIFT_HOURS);
+  const carryover = num($(carryoverInputId)?.value, 0);
+  const extrasUnit = $(extrasUnitInputId)?.value === 'hours' ? 'hours' : 'days';
+  const extrasValue = num($(extrasInputId)?.value, 0);
+  const extras = extrasUnit === 'hours' ? extrasValue / SHIFT_HOURS : extrasValue;
+  const reason = String($(reasonInputId)?.value || '').trim();
+  const existing = holidayProfileFor(userId);
+  if (!reason) {
+    setToast('Please add a reason for this allowance change.');
+    return;
+  }
+  if (!canEditCarryoverNow() && num(existing && existing.carryover_days, 0) !== carryover) {
+    setToast('Carryover can only be adjusted after 31 December, at manager discretion.');
+    return;
+  }
+  $('syncLabel').textContent = 'Saving…';
+  const { error } = await sb.rpc('update_holiday_profile_allowance', {
+    p_user_id: userId,
+    p_allowance: allowance,
+    p_carryover: carryover,
+    p_extras: extras,
+    p_reason: reason
+  });
+  $('syncLabel').textContent = 'Synced';
+  if (error) { setToast('Could not save allowance: ' + error.message); return; }
+  await loadHolidayData();
+  renderHolidayApp();
+  const reasonField = $(reasonInputId);
+  if (reasonField) reasonField.value = '';
+  setToast('Allowance saved ✓');
+}
+
+async function saveAllowance(userId){
+  return persistAllowance(userId, 'allow_' + userId, 'carry_' + userId, 'extrasUnit_' + userId, 'extras_' + userId, 'allowReason_' + userId);
+}
+
+async function saveTeamAllowance(userId){
+  return persistAllowance(userId, 'allow_' + userId, 'carry_' + userId, 'extrasUnit_' + userId, 'extras_' + userId, 'allowReason_' + userId);
+}
+
+window.addEventListener('load', function(){
+  applySuiteLogos();
+  checkLicence().then(function(ok){
+    if (ok) initHolidayApp();
+  });
+  const theme = getStoredThemePref();
+  if (theme) applyTheme(theme === 'light');
+  else applyTheme(new Date().getHours() >= 7 && new Date().getHours() < 18);
+});
+</script>
+</body>
+</html>
