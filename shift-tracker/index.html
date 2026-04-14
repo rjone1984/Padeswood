@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="PW Shift Tracker">
-<meta name="theme-color" content="#000000" id="theme-meta">
+<meta name="theme-color" content="#111418" id="theme-meta">
 <link rel="manifest" href="./manifest.webmanifest">
 <title>Padeswood Works - Shift Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Figtree:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -55,41 +55,41 @@
     --glass-7: rgba(255,255,255,.95);
   }
   .dark {
-    --bg: #000000;
-    --bg2: #050607;
-    --bg3: #0b0c0e;
-    --bg4: #101115;
+    --bg: #111418;
+    --bg2: #16191f;
+    --bg3: #222830;
+    --bg4: #1c2028;
     --text: #dde4ee;
     --text2: #9aa9be;
     --text3: #6f8097;
     --border: #2f3a4a;
     --border2: #252c38;
-    --shadow: rgba(0,0,0,0.42);
+    --shadow: rgba(0,0,0,0.32);
     --accent: #4b5563;
     --accent2: #64748b;
     --accent-soft: rgba(100,116,139,.10);
     --accent-soft-2: rgba(100,116,139,.18);
     --accent-border: rgba(100,116,139,.28);
-    --palette-card-bg-1: rgba(20,20,24,.88);
-    --palette-card-bg-2: rgba(10,10,12,.72);
-    --palette-card-border: rgba(255,255,255,.10);
-    --palette-card-glow-1: rgba(255,255,255,.04);
-    --palette-card-glow-2: rgba(255,255,255,.02);
-    --tracker-back-accent: #6b7280;
-    --tracker-back-accent2: #9ca3af;
-    --tracker-back-soft: rgba(255,255,255,.05);
-    --tracker-back-soft-2: rgba(255,255,255,.08);
-    --tracker-back-border: rgba(255,255,255,.10);
-    --tracker-back-glow: rgba(255,255,255,.12);
+    --palette-card-bg-1: rgba(100,116,139,.18);
+    --palette-card-bg-2: rgba(75,85,99,.10);
+    --palette-card-border: rgba(148,163,184,.22);
+    --palette-card-glow-1: rgba(148,163,184,.14);
+    --palette-card-glow-2: rgba(148,163,184,.08);
+    --tracker-back-accent: #4b5563;
+    --tracker-back-accent2: #64748b;
+    --tracker-back-soft: rgba(100,116,139,.10);
+    --tracker-back-soft-2: rgba(100,116,139,.18);
+    --tracker-back-border: rgba(100,116,139,.28);
+    --tracker-back-glow: rgba(100,116,139,.34);
     --danger-soft: rgba(240,82,79,.10);
     --danger-border: rgba(240,82,79,.28);
-    --glass-1: rgba(5,6,7,.94);
-    --glass-2: rgba(5,6,7,.72);
-    --glass-3: rgba(8,9,11,.96);
-    --glass-4: rgba(7,8,10,.90);
-    --glass-5: rgba(8,9,11,.95);
-    --glass-6: rgba(6,7,9,.92);
-    --glass-7: rgba(7,8,10,.95);
+    --glass-1: rgba(22,25,31,.72);
+    --glass-2: rgba(22,25,31,.26);
+    --glass-3: rgba(22,25,31,.82);
+    --glass-4: rgba(22,25,31,.72);
+    --glass-5: rgba(22,25,31,.80);
+    --glass-6: rgba(22,25,31,.76);
+    --glass-7: rgba(22,25,31,.80);
   }
 
   body {
@@ -2170,6 +2170,16 @@ async function stPersistTrackerData(){
   }
 }
 
+function getSavedNote(shiftId,dateKey){ const n=loadNotes(); return(n[shiftId]&&n[shiftId][dateKey])||""; }
+function collectSavedNotes(){
+  const n=loadNotes(),list=[];
+  for(const[shiftId,days] of Object.entries(n))
+    for(const[key,note] of Object.entries(days)){
+      const[y,m,d]=key.split("-").map(Number);
+      list.push({shiftId,date:new Date(y,m,d),note,key});
+    }
+  return list.sort((a,b)=>a.date-b.date);
+}
 function syncThemeAlias(){
   const stored = suiteShared ? suiteShared.storage.getThemePref() : (localStorage.getItem("pw_theme") || localStorage.getItem("kbl_theme") || (localStorage.getItem("dark") === "1" ? "dark" : null));
   const dark = stored ? stored !== "light" : true;
@@ -2468,9 +2478,11 @@ function renderCalendarView(){
     if(!date){grid.appendChild(h("div",{style:{minHeight:"58px"}}));return;}
     const isToday=daysBetween(TODAY,date)===0;
     const fSt=status(active,date),fM=meta(fSt);
+    const hasNote=loadNotes()[active.id]&&loadNotes()[active.id][dateStorageKey(date)];
     const cell=h("div",{style:{borderRadius:"7px",background:isToday?active.color+"18":fM.bg+"bb",border:`1px solid ${isToday?active.color:fM.br+"88"}`,padding:"3px 2px 4px",minHeight:"58px",height:"100%",position:"relative",cursor:"pointer",transition:"transform .12s, box-shadow .12s, border-color .12s",display:"flex",flexDirection:"column"},title:formatLongDate(date),onClick:()=>set({tab:"Today",viewOffset:daysBetween(TODAY,date)})});
     cell.onmouseenter=function(){ this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,.08)'; };
     cell.onmouseleave=function(){ this.style.transform='none'; this.style.boxShadow='none'; };
+    if(hasNote) cell.appendChild(h("div",{style:{position:"absolute",top:"2px",right:"3px",fontSize:"8px"}},"📝"));
     cell.appendChild(h("div",{class:"mono",style:{textAlign:"center",fontSize:"10px",fontWeight:isToday?"700":"400",color:isToday?active.color:"var(--text2)",marginBottom:"2px"}},String(date.getDate())));
     const bdgs=h("div",{style:{display:"flex",flexDirection:"column",gap:"2px",padding:"0 1px",flex:"1"}});
     for(const sh of SHIFTS){
@@ -2502,7 +2514,7 @@ function renderSummaryView(){
   const list=h("div",{style:{display:"flex",flexDirection:"column",gap:"4px"}});
   for(let i=0;i<30;i++){
     const date=addDays(TODAY,i),st=status(active,date),m=meta(st);
-    const isToday=i===0;
+    const isToday=i===0,note=getSavedNote(active.id,dateStorageKey(date));
     const rowStyle={display:"flex",alignItems:"center",gap:"10px",padding:"9px 12px",borderRadius:"10px",background:isToday?active.color+"12":"var(--bg4)",border:`1px solid ${isToday?active.color+"44":"var(--border2)"}`,cursor:"pointer",transition:"transform .12s, box-shadow .12s, border-color .12s"};
     if(trackerGetStoredPalettePreset()!=='basic'){
       rowStyle.animation=`pageIn 0.3s ease both`;
@@ -2513,6 +2525,7 @@ function renderSummaryView(){
     row.onmouseleave=function(){ this.style.transform='none'; this.style.boxShadow='none'; };
     row.appendChild(h("div",{class:"mono",style:{fontSize:"11px",color:isToday?active.color:"var(--text2)",minWidth:"78px",fontWeight:isToday?"700":"400"}},formatShortDate(date)));
     row.appendChild(h("div",{class:"badge",style:{background:m.bg,color:m.fg,border:`1px solid ${m.br}`}},m.emoji," ",m.short));
+    if(note) row.appendChild(h("span",{style:{fontSize:"11px",color:"var(--text2)",flex:"1",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}},"📝 "+note));
     if(isToday) row.appendChild(h("span",{class:"mono",style:{fontSize:"10px",color:active.color,marginLeft:"auto",fontWeight:"700"}},"TODAY"));
     list.appendChild(row);
   }
@@ -2549,7 +2562,7 @@ function renderSearchView(){
     wrap.appendChild(h("div",{style:{fontWeight:"600",fontSize:"13px",color:"var(--text)",marginBottom:"8px"}},`All shifts on ${formatDateLabel(date)}`));
     const card=h("div",{class:"card",style:{padding:"10px"}});
     SHIFTS.forEach((sh,i)=>{
-      const st=status(sh,date),m2=meta(st);
+      const st=status(sh,date),m2=meta(st),note=getSavedNote(sh.id,dateStorageKey(date));
       const rowStyle={display:"flex",alignItems:"center",gap:"10px",padding:"9px 0",borderBottom:i<SHIFTS.length-1?"1px solid var(--border2)":"none"};
       if(trackerGetStoredPalettePreset()!=='basic'){
         rowStyle.animation=`pageIn 0.25s ease both`;
@@ -2559,7 +2572,8 @@ function renderSearchView(){
       row.appendChild(h("div",{style:{width:"28px",height:"28px",borderRadius:"8px",background:sh.color+"18",border:`2px solid ${sh.color}`,display:"flex",alignItems:"center",justifyContent:"center",fontWeight:"700",fontSize:"14px",color:sh.color}},sh.id));
       row.appendChild(h("div",{style:{flex:"1"}},
         h("div",{style:{fontSize:"13px",fontWeight:"600",color:"var(--text)"}},m2.label),
-        h("div",{class:"mono",style:{fontSize:"10px",color:"var(--text3)",marginTop:"1px"}},describeCyclePosition(sh,date))
+        h("div",{class:"mono",style:{fontSize:"10px",color:"var(--text3)",marginTop:"1px"}},describeCyclePosition(sh,date)),
+        note?h("div",{style:{fontSize:"11px",color:"var(--text2)",marginTop:"2px"}},"📝 "+note):null
       ));
       row.appendChild(h("span",{style:{fontSize:"20px"}},m2.emoji));
       card.appendChild(row);
@@ -2568,8 +2582,8 @@ function renderSearchView(){
     wrap.appendChild(h("button",{class:"share-btn",onClick:()=>{
       const lines=[`Shift Summary — ${formatDateLabel(date)}`,""];
       for(const sh of SHIFTS){
-        const m2=meta(status(sh,date));
-        lines.push(`${sh.id} Shift: ${m2.emoji} ${m2.label}`);
+        const m2=meta(status(sh,date)),note=getSavedNote(sh.id,dateStorageKey(date));
+        lines.push(`${sh.id} Shift: ${m2.emoji} ${m2.label}${note?" · "+note:""}`);
       }
       const txt=lines.join("\n");
       if(navigator.share){navigator.share({title:"Shift Summary",text:txt}).catch(()=>{});}
@@ -2585,7 +2599,7 @@ function renderTrackerApp(){
   const selectedDate=addDays(TODAY,S.viewOffset||0);
   document.body.classList.toggle("dark",dark);
   document.getElementById("app-wrap").classList.toggle("dark",dark);
-  document.getElementById("theme-meta").content=dark?"#000000":"#f0f4f8";
+  document.getElementById("theme-meta").content=dark?"#0f172a":"#f0f4f8";
   trackerApplyBackButtonPalette();
   syncTrackerThemeButton();
   const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
@@ -2722,7 +2736,7 @@ function initShiftTrackerUi(){
   const dark = isDarkThemeEnabled();
   document.body.classList.toggle('dark', dark);
   document.getElementById('app-wrap').classList.toggle('dark', dark);
-  document.getElementById('theme-meta').content = dark ? "#000000" : "#f0f4f8";
+  document.getElementById('theme-meta').content = dark ? "#111418" : "#f0f4f8";
   renderTrackerApp();
 }
 
@@ -2879,11 +2893,12 @@ async function stSyncThemeFromUser(user) {
 
 function stRevealApp() {
   const els = stGetEls();
+  stCancelStartupWatchdog();
   stCancelLoginReveal();
   stDismissBootShield();
   document.body.classList.add('loaded-ready');
   document.body.classList.remove('loading-start');
-  sessionStorage.setItem('auth', '1');
+  stWriteSessionStorage('auth', '1');
   if (els.loginArea) els.loginArea.style.display = 'none';
   if (els.splash) els.splash.style.display = 'none';
   if (els.appWrap) els.appWrap.classList.add('visible');
@@ -2892,11 +2907,12 @@ function stRevealApp() {
 function stShowLogin() {
   const els = stGetEls();
   const userChip = document.getElementById('stHeaderUser');
+  stCancelStartupWatchdog();
   stCancelLoginReveal();
   stDismissBootShield();
   document.body.classList.add('loaded-ready');
   document.body.classList.remove('loading-start');
-  sessionStorage.removeItem('auth');
+  stRemoveSessionStorage('auth');
   stSyncSplashBrandLogo();
   if (els.splash) {
     els.splash.style.display = 'block';
@@ -2913,12 +2929,13 @@ function stShowLogin() {
 function stShowAccessDenied(message) {
   const els = stGetEls();
   const userChip = document.getElementById('stHeaderUser');
+  stCancelStartupWatchdog();
   stCancelLoginReveal();
   stDismissBootShield();
   stSyncSplashBrandLogo();
   document.body.classList.add('loaded-ready');
   document.body.classList.remove('loading-start');
-  sessionStorage.removeItem('auth');
+  stRemoveSessionStorage('auth');
   if (els.splash) {
     els.splash.style.display = 'none';
   }

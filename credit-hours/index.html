@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Credit Hours">
-<meta name="theme-color" content="#000000">
+<meta name="theme-color" content="#111418">
 <title>Padeswood Works — Credit Hours</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Figtree:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -18,7 +18,7 @@
   --ff-body:'Helvetica Neue','Arial Nova',Arial,sans-serif;
   --ff-mono:'Fira Code',monospace;
   --ease-smooth:cubic-bezier(.22,1,.36,1);
-  --bg:#000000; --sf:#050607; --sf2:#0b0c0e; --sf3:#101115; --sf4:#15171a;
+  --bg:#111418; --sf:#16191f; --sf2:#1c2028; --sf3:#222830; --sf4:#282f3a;
   --bd:#252c38; --bd2:#2f3a4a; --bd3:#3d4e62;
   --ac:#1a7a35; --ac2:#2ecc5c; --ac3:#5ee27b;
   --acd1:rgba(26,122,53,.10); --acd2:rgba(26,122,53,.18); --acd3:rgba(26,122,53,.28);
@@ -35,11 +35,11 @@
   --r:10px; --rsm:7px; --rxs:5px;
   --e1:0 1px 3px rgba(0,0,0,.55),0 1px 2px rgba(0,0,0,.4);
   --e2:0 4px 18px rgba(0,0,0,.6); --e3:0 20px 56px rgba(0,0,0,.72);
-  --eac:0 4px 22px rgba(0,0,0,.40);
-  --glass-1: rgba(5,6,7,.94);
-  --glass-2: rgba(5,6,7,.78);
-  --glass-3: rgba(8,9,11,.96);
-  --glass-4: rgba(7,8,10,.90);
+  --eac:0 4px 22px rgba(51,65,85,.30);
+  --glass-1: rgba(22,25,31,.82);
+  --glass-2: rgba(22,25,31,.72);
+  --glass-3: rgba(22,25,31,.68);
+  --glass-4: rgba(22,25,31,.56);
   /* Alias tokens used by older/shared snippets. */
   --text: var(--tx);
   --text2: var(--tx2);
@@ -2801,7 +2801,7 @@ function applyTheme(isLight){
   const light = !!isLight;
   document.body.classList.toggle('light-mode', light);
   document.body.classList.toggle('dark', !light);
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', light ? '#f0f4f8' : '#000000');
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', light ? '#f0f4f8' : '#111418');
   suiteShared.storage.setThemePref(light ? 'light' : 'dark');
   syncThemeButton();
 }
