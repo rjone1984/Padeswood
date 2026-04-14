@@ -6,7 +6,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="PW Shift Tracker">
-<meta name="theme-color" content="#111418" id="theme-meta">
+<meta name="theme-color" content="#000000" id="theme-meta">
+<link rel="manifest" href="./manifest.webmanifest">
 <title>Padeswood Works - Shift Tracker</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Figtree:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -54,41 +55,41 @@
     --glass-7: rgba(255,255,255,.95);
   }
   .dark {
-    --bg: #111418;
-    --bg2: #16191f;
-    --bg3: #222830;
-    --bg4: #1c2028;
+    --bg: #000000;
+    --bg2: #050607;
+    --bg3: #0b0c0e;
+    --bg4: #101115;
     --text: #dde4ee;
     --text2: #9aa9be;
     --text3: #6f8097;
     --border: #2f3a4a;
     --border2: #252c38;
-    --shadow: rgba(0,0,0,0.32);
+    --shadow: rgba(0,0,0,0.42);
     --accent: #4b5563;
     --accent2: #64748b;
     --accent-soft: rgba(100,116,139,.10);
     --accent-soft-2: rgba(100,116,139,.18);
     --accent-border: rgba(100,116,139,.28);
-    --palette-card-bg-1: rgba(100,116,139,.18);
-    --palette-card-bg-2: rgba(75,85,99,.10);
-    --palette-card-border: rgba(148,163,184,.22);
-    --palette-card-glow-1: rgba(148,163,184,.14);
-    --palette-card-glow-2: rgba(148,163,184,.08);
-    --tracker-back-accent: #4b5563;
-    --tracker-back-accent2: #64748b;
-    --tracker-back-soft: rgba(100,116,139,.10);
-    --tracker-back-soft-2: rgba(100,116,139,.18);
-    --tracker-back-border: rgba(100,116,139,.28);
-    --tracker-back-glow: rgba(100,116,139,.34);
+    --palette-card-bg-1: rgba(20,20,24,.88);
+    --palette-card-bg-2: rgba(10,10,12,.72);
+    --palette-card-border: rgba(255,255,255,.10);
+    --palette-card-glow-1: rgba(255,255,255,.04);
+    --palette-card-glow-2: rgba(255,255,255,.02);
+    --tracker-back-accent: #6b7280;
+    --tracker-back-accent2: #9ca3af;
+    --tracker-back-soft: rgba(255,255,255,.05);
+    --tracker-back-soft-2: rgba(255,255,255,.08);
+    --tracker-back-border: rgba(255,255,255,.10);
+    --tracker-back-glow: rgba(255,255,255,.12);
     --danger-soft: rgba(240,82,79,.10);
     --danger-border: rgba(240,82,79,.28);
-    --glass-1: rgba(22,25,31,.72);
-    --glass-2: rgba(22,25,31,.26);
-    --glass-3: rgba(22,25,31,.82);
-    --glass-4: rgba(22,25,31,.72);
-    --glass-5: rgba(22,25,31,.80);
-    --glass-6: rgba(22,25,31,.76);
-    --glass-7: rgba(22,25,31,.80);
+    --glass-1: rgba(5,6,7,.94);
+    --glass-2: rgba(5,6,7,.72);
+    --glass-3: rgba(8,9,11,.96);
+    --glass-4: rgba(7,8,10,.90);
+    --glass-5: rgba(8,9,11,.95);
+    --glass-6: rgba(6,7,9,.92);
+    --glass-7: rgba(7,8,10,.95);
   }
 
   body {
@@ -1938,10 +1939,13 @@
   </footer>
 </div>
 
+<script src="../shared-suite.js"></script>
 <script>
 // ---------------------------------------------------------------------------
 // Shift Tracker client UI
 // ---------------------------------------------------------------------------
+const suiteShared = window.PadeswoodSuite || null;
+
 function buildShiftCycle(){
   const c=[];
   for(let b=0;b<6;b++) c.push("D","D","N","N","O","O","O","O");
@@ -2004,9 +2008,9 @@ function getNextStatusChange(shift,date){
   return {days:i,date:addDays(date,i),status:CYCLE[(d+i)%70]};
 }
 
-function getDaysUntilLongBreak(shift){
+function getDaysUntilLongBreak(shift, baseDate=TODAY){
   let i=0;
-  while(i<140){ if(CYCLE[cycleIndexForDate(shift,addDays(TODAY,i))]==="X") break; i++; }
+  while(i<140){ if(CYCLE[cycleIndexForDate(shift,addDays(baseDate,i))]==="X") break; i++; }
   return i;
 }
 
@@ -2038,45 +2042,164 @@ function buildMonthGrid(year,month){
   return out;
 }
 
-function loadSwaps(){ try{return JSON.parse(localStorage.getItem("swaps")||"{}");}catch{return{};} }
-function loadNotes(){ try{return JSON.parse(localStorage.getItem("notes")||"{}");}catch{return{};} }
-function saveNote(shiftId,dateKey,note){
-  const n=loadNotes(); if(!n[shiftId])n[shiftId]={};
-  if(note.trim()) n[shiftId][dateKey]=note.trim();
-  else if(n[shiftId]) delete n[shiftId][dateKey];
-  localStorage.setItem("notes",JSON.stringify(n));
+const ST_TRACKER_DATA_CONFIG_PREFIX = 'shift_tracker_data_uid_';
+const ST_TRACKER_DATA_LOCAL_PREFIX = 'pw_shift_tracker_data_uid_';
+let stTrackerData = { swaps:{}, notes:{} };
+
+function stNormalizeNoteMap(value){
+  const out = {};
+  Object.entries(value || {}).forEach(function(entry){
+    const shiftId = entry[0];
+    const days = entry[1];
+    if(!days || typeof days !== 'object' || Array.isArray(days)) return;
+    const nextDays = {};
+    Object.entries(days).forEach(function(dayEntry){
+      const key = dayEntry[0];
+      const note = String(dayEntry[1] || '').trim();
+      if(note) nextDays[key] = note;
+    });
+    if(Object.keys(nextDays).length) out[shiftId] = nextDays;
+  });
+  return out;
 }
-function getSavedNote(shiftId,dateKey){ const n=loadNotes(); return(n[shiftId]&&n[shiftId][dateKey])||""; }
-function collectSavedNotes(){
-  const n=loadNotes(),list=[];
-  for(const[shiftId,days] of Object.entries(n))
-    for(const[key,note] of Object.entries(days)){
-      const[y,m,d]=key.split("-").map(Number);
-      list.push({shiftId,date:new Date(y,m,d),note,key});
-    }
-  return list.sort((a,b)=>a.date-b.date);
+
+function stNormalizeSwapMap(value){
+  const out = {};
+  Object.entries(value || {}).forEach(function(entry){
+    const shiftId = entry[0];
+    const days = entry[1];
+    if(!days || typeof days !== 'object' || Array.isArray(days)) return;
+    const nextDays = {};
+    Object.entries(days).forEach(function(dayEntry){
+      const key = dayEntry[0];
+      const state = String(dayEntry[1] || '').trim().toUpperCase();
+      if(['D','N','O','X'].includes(state)) nextDays[key] = state;
+    });
+    if(Object.keys(nextDays).length) out[shiftId] = nextDays;
+  });
+  return out;
 }
+
+function stNormalizeTrackerData(value){
+  return {
+    swaps: stNormalizeSwapMap(value && value.swaps),
+    notes: stNormalizeNoteMap(value && value.notes)
+  };
+}
+
+function stHasTrackerData(value){
+  const data = stNormalizeTrackerData(value);
+  return !!(Object.keys(data.swaps).length || Object.keys(data.notes).length);
+}
+
+function stTrackerDataConfigKey(user){
+  const uid = user && user.id ? String(user.id) : String(user || '');
+  return uid ? ST_TRACKER_DATA_CONFIG_PREFIX + uid : '';
+}
+
+function stTrackerDataLocalKey(user){
+  const uid = user && user.id ? String(user.id) : String(user || '');
+  return uid ? ST_TRACKER_DATA_LOCAL_PREFIX + uid : '';
+}
+
+function stReadTrackerDataLocal(user){
+  const key = stTrackerDataLocalKey(user);
+  if(!key) return null;
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+function stWriteTrackerDataLocal(user, value){
+  const key = stTrackerDataLocalKey(user);
+  if(!key) return;
+  try {
+    localStorage.setItem(key, JSON.stringify(stNormalizeTrackerData(value)));
+  } catch (e) {}
+}
+
+function stReadLegacyTrackerData(){
+  try {
+    return stNormalizeTrackerData({
+      swaps: JSON.parse(localStorage.getItem('swaps') || '{}'),
+      notes: JSON.parse(localStorage.getItem('notes') || '{}')
+    });
+  } catch (e) {
+    return { swaps:{}, notes:{} };
+  }
+}
+
+async function stHydrateTrackerData(user){
+  const uid = user && user.id ? String(user.id) : '';
+  let next = stNormalizeTrackerData(stReadTrackerDataLocal(uid));
+  const legacy = stReadLegacyTrackerData();
+  if(!stHasTrackerData(next) && stHasTrackerData(legacy)) next = legacy;
+
+  if(uid && stSb && suiteShared){
+    try {
+      const remote = await suiteShared.config.getJson(stSb, stTrackerDataConfigKey(uid));
+      if(stHasTrackerData(remote)) next = stNormalizeTrackerData(remote);
+      else if(stHasTrackerData(next)) await suiteShared.config.setJson(stSb, stTrackerDataConfigKey(uid), next);
+    } catch (e) {}
+    stWriteTrackerDataLocal(uid, next);
+  }
+
+  if(uid && stHasTrackerData(legacy)){
+    try {
+      localStorage.removeItem('swaps');
+      localStorage.removeItem('notes');
+    } catch (e) {}
+  }
+
+  stTrackerData = next;
+}
+
+function loadSwaps(){ return stTrackerData.swaps || {}; }
+function loadNotes(){ return stTrackerData.notes || {}; }
+
+async function stPersistTrackerData(){
+  const snapshot = stNormalizeTrackerData(stTrackerData);
+  if(stCurrentUser && stCurrentUser.id) stWriteTrackerDataLocal(stCurrentUser.id, snapshot);
+  if(stCurrentUser && stCurrentUser.id && stSb && suiteShared){
+    try {
+      await suiteShared.config.setJson(stSb, stTrackerDataConfigKey(stCurrentUser.id), snapshot);
+    } catch (e) {}
+  }
+}
+
 function syncThemeAlias(){
-  const stored = localStorage.getItem("pw_theme") || localStorage.getItem("kbl_theme") || (localStorage.getItem("dark") === "1" ? "dark" : null);
+  const stored = suiteShared ? suiteShared.storage.getThemePref() : (localStorage.getItem("pw_theme") || localStorage.getItem("kbl_theme") || (localStorage.getItem("dark") === "1" ? "dark" : null));
   const dark = stored ? stored !== "light" : true;
-  localStorage.setItem("pw_theme", dark ? "dark" : "light");
-  localStorage.setItem("kbl_theme", dark ? "dark" : "light");
-  localStorage.setItem("dark", dark ? "1" : "0");
+  if(suiteShared) suiteShared.storage.setThemePref(dark ? "dark" : "light");
+  else {
+    localStorage.setItem("pw_theme", dark ? "dark" : "light");
+    localStorage.setItem("kbl_theme", dark ? "dark" : "light");
+    localStorage.setItem("dark", dark ? "1" : "0");
+  }
   return dark;
 }
 function isDarkThemeEnabled(){ return syncThemeAlias(); }
 function persistDarkThemeState(v){
   const dark = !!v;
-  localStorage.setItem("dark", dark ? "1" : "0");
-  localStorage.setItem("pw_theme", dark ? "dark" : "light");
-  localStorage.setItem("kbl_theme", dark ? "dark" : "light");
+  if(suiteShared) suiteShared.storage.setThemePref(dark ? "dark" : "light");
+  else {
+    localStorage.setItem("dark", dark ? "1" : "0");
+    localStorage.setItem("pw_theme", dark ? "dark" : "light");
+    localStorage.setItem("kbl_theme", dark ? "dark" : "light");
+  }
 }
 function prefersLightTheme(){ return !syncThemeAlias(); }
 function persistLightThemeState(v){
   const light = !!v;
-  localStorage.setItem("pw_theme", light ? "light" : "dark");
-  localStorage.setItem("kbl_theme", light ? "light" : "dark");
-  localStorage.setItem("dark", light ? "0" : "1");
+  if(suiteShared) suiteShared.storage.setThemePref(light ? "light" : "dark");
+  else {
+    localStorage.setItem("pw_theme", light ? "light" : "dark");
+    localStorage.setItem("kbl_theme", light ? "light" : "dark");
+    localStorage.setItem("dark", light ? "0" : "1");
+  }
 }
 function updateTrackerDate(){
   const el = document.getElementById('stHeaderDate');
@@ -2146,16 +2269,10 @@ function trackerApplyBackButtonPalette(){
   }
 }
 async function trackerLoadSharedPalette(user){
-  if(!stSb || !user || !user.id) return null;
+  if(!stSb || !user || !user.id || !suiteShared) return null;
   try{
-    const { data } = await stSb.from('kiln_config')
-      .select('value')
-      .eq('key', 'palette_uid_' + user.id)
-      .maybeSingle();
-    if(data && data.value){
-      if(data.value === 'plain') return 'basic';
-      if(TRACKER_PALETTE_PRESETS[data.value]) return data.value;
-    }
+    const value = await suiteShared.preferences.loadPalette(stSb, user, Object.keys(TRACKER_PALETTE_PRESETS));
+    if(value && TRACKER_PALETTE_PRESETS[value]) return value;
   }catch(e){}
   return null;
 }
@@ -2224,7 +2341,7 @@ function renderTodayView(active){
   const offset=S.viewOffset,viewDate=addDays(TODAY,offset),isToday=offset===0;
   const tSt=status(active,viewDate),tM=meta(tSt);
   const nx=getNextStatusChange(active,viewDate),nxM=meta(nx.status);
-  const nb=getDaysUntilLongBreak(active);
+  const nb=getDaysUntilLongBreak(active,viewDate);
   const wrap=h("div",{class:"page"});
   const isBasic = trackerGetStoredPalettePreset()==='basic';
 
@@ -2296,16 +2413,16 @@ function renderTodayView(active){
   return wrap;
 }
 
-function renderShiftSummaryCard(active){
-  const tSt=status(active,TODAY),tM=meta(tSt);
-  const nx=getNextStatusChange(active,TODAY),nxM=meta(nx.status);
-  const nb=getDaysUntilLongBreak(active);
+function renderShiftSummaryCard(active, baseDate=TODAY){
+  const tSt=status(active,baseDate),tM=meta(tSt);
+  const nx=getNextStatusChange(active,baseDate),nxM=meta(nx.status);
+  const nb=getDaysUntilLongBreak(active,baseDate);
   return h("div",{class:"card",style:{border:"1px solid var(--border2)",boxShadow:"0 8px 20px rgba(15,23,42,.05)",padding:"12px 14px",marginBottom:"12px",animation:"none"}},
     h("div",{style:{display:"flex",gap:"10px",flexWrap:"wrap",alignItems:"center"}},
       h("div",{style:{flex:"1",minWidth:"120px"}},
-        h("div",{class:"mono",style:{fontSize:"9px",color:"var(--text3)",textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:"3px"}},`${active.id} Shift · ${formatShortDate(TODAY)}`),
+        h("div",{class:"mono",style:{fontSize:"9px",color:"var(--text3)",textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:"3px"}},`${active.id} Shift · ${formatShortDate(baseDate)}`),
         h("div",{style:{fontSize:"18px",fontWeight:"700",color:"var(--text)"}},`${tM.emoji} ${tM.label}`),
-        h("div",{class:"mono",style:{fontSize:"10px",color:"var(--text2)",marginTop:"2px"}},describeCyclePosition(active,TODAY))
+        h("div",{class:"mono",style:{fontSize:"10px",color:"var(--text2)",marginTop:"2px"}},describeCyclePosition(active,baseDate))
       ),
       h("div",{style:{textAlign:"right",minWidth:"110px"}},
         h("div",{class:"mono",style:{fontSize:"9px",color:"var(--text3)",textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:"3px"}},"Next change"),
@@ -2351,11 +2468,9 @@ function renderCalendarView(){
     if(!date){grid.appendChild(h("div",{style:{minHeight:"58px"}}));return;}
     const isToday=daysBetween(TODAY,date)===0;
     const fSt=status(active,date),fM=meta(fSt);
-    const hasNote=loadNotes()[active.id]&&loadNotes()[active.id][dateStorageKey(date)];
     const cell=h("div",{style:{borderRadius:"7px",background:isToday?active.color+"18":fM.bg+"bb",border:`1px solid ${isToday?active.color:fM.br+"88"}`,padding:"3px 2px 4px",minHeight:"58px",height:"100%",position:"relative",cursor:"pointer",transition:"transform .12s, box-shadow .12s, border-color .12s",display:"flex",flexDirection:"column"},title:formatLongDate(date),onClick:()=>set({tab:"Today",viewOffset:daysBetween(TODAY,date)})});
     cell.onmouseenter=function(){ this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,.08)'; };
     cell.onmouseleave=function(){ this.style.transform='none'; this.style.boxShadow='none'; };
-    if(hasNote) cell.appendChild(h("div",{style:{position:"absolute",top:"2px",right:"3px",fontSize:"8px"}},"📝"));
     cell.appendChild(h("div",{class:"mono",style:{textAlign:"center",fontSize:"10px",fontWeight:isToday?"700":"400",color:isToday?active.color:"var(--text2)",marginBottom:"2px"}},String(date.getDate())));
     const bdgs=h("div",{style:{display:"flex",flexDirection:"column",gap:"2px",padding:"0 1px",flex:"1"}});
     for(const sh of SHIFTS){
@@ -2387,7 +2502,7 @@ function renderSummaryView(){
   const list=h("div",{style:{display:"flex",flexDirection:"column",gap:"4px"}});
   for(let i=0;i<30;i++){
     const date=addDays(TODAY,i),st=status(active,date),m=meta(st);
-    const isToday=i===0,note=getSavedNote(active.id,dateStorageKey(date));
+    const isToday=i===0;
     const rowStyle={display:"flex",alignItems:"center",gap:"10px",padding:"9px 12px",borderRadius:"10px",background:isToday?active.color+"12":"var(--bg4)",border:`1px solid ${isToday?active.color+"44":"var(--border2)"}`,cursor:"pointer",transition:"transform .12s, box-shadow .12s, border-color .12s"};
     if(trackerGetStoredPalettePreset()!=='basic'){
       rowStyle.animation=`pageIn 0.3s ease both`;
@@ -2398,7 +2513,6 @@ function renderSummaryView(){
     row.onmouseleave=function(){ this.style.transform='none'; this.style.boxShadow='none'; };
     row.appendChild(h("div",{class:"mono",style:{fontSize:"11px",color:isToday?active.color:"var(--text2)",minWidth:"78px",fontWeight:isToday?"700":"400"}},formatShortDate(date)));
     row.appendChild(h("div",{class:"badge",style:{background:m.bg,color:m.fg,border:`1px solid ${m.br}`}},m.emoji," ",m.short));
-    if(note) row.appendChild(h("span",{style:{fontSize:"11px",color:"var(--text2)",flex:"1",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}},"📝 "+note));
     if(isToday) row.appendChild(h("span",{class:"mono",style:{fontSize:"10px",color:active.color,marginLeft:"auto",fontWeight:"700"}},"TODAY"));
     list.appendChild(row);
   }
@@ -2435,7 +2549,7 @@ function renderSearchView(){
     wrap.appendChild(h("div",{style:{fontWeight:"600",fontSize:"13px",color:"var(--text)",marginBottom:"8px"}},`All shifts on ${formatDateLabel(date)}`));
     const card=h("div",{class:"card",style:{padding:"10px"}});
     SHIFTS.forEach((sh,i)=>{
-      const st=status(sh,date),m2=meta(st),note=getSavedNote(sh.id,dateStorageKey(date));
+      const st=status(sh,date),m2=meta(st);
       const rowStyle={display:"flex",alignItems:"center",gap:"10px",padding:"9px 0",borderBottom:i<SHIFTS.length-1?"1px solid var(--border2)":"none"};
       if(trackerGetStoredPalettePreset()!=='basic'){
         rowStyle.animation=`pageIn 0.25s ease both`;
@@ -2445,8 +2559,7 @@ function renderSearchView(){
       row.appendChild(h("div",{style:{width:"28px",height:"28px",borderRadius:"8px",background:sh.color+"18",border:`2px solid ${sh.color}`,display:"flex",alignItems:"center",justifyContent:"center",fontWeight:"700",fontSize:"14px",color:sh.color}},sh.id));
       row.appendChild(h("div",{style:{flex:"1"}},
         h("div",{style:{fontSize:"13px",fontWeight:"600",color:"var(--text)"}},m2.label),
-        h("div",{class:"mono",style:{fontSize:"10px",color:"var(--text3)",marginTop:"1px"}},describeCyclePosition(sh,date)),
-        note?h("div",{style:{fontSize:"11px",color:"var(--text2)",marginTop:"2px"}},"📝 "+note):null
+        h("div",{class:"mono",style:{fontSize:"10px",color:"var(--text3)",marginTop:"1px"}},describeCyclePosition(sh,date))
       ));
       row.appendChild(h("span",{style:{fontSize:"20px"}},m2.emoji));
       card.appendChild(row);
@@ -2455,8 +2568,8 @@ function renderSearchView(){
     wrap.appendChild(h("button",{class:"share-btn",onClick:()=>{
       const lines=[`Shift Summary — ${formatDateLabel(date)}`,""];
       for(const sh of SHIFTS){
-        const m2=meta(status(sh,date)),note=getSavedNote(sh.id,dateStorageKey(date));
-        lines.push(`${sh.id} Shift: ${m2.emoji} ${m2.label}${note?" · "+note:""}`);
+        const m2=meta(status(sh,date));
+        lines.push(`${sh.id} Shift: ${m2.emoji} ${m2.label}`);
       }
       const txt=lines.join("\n");
       if(navigator.share){navigator.share({title:"Shift Summary",text:txt}).catch(()=>{});}
@@ -2469,9 +2582,10 @@ function renderSearchView(){
 function renderTrackerApp(){
   const{focus,tab,banner,dark}=S;
   const active=SHIFTS.find(s=>s.id===focus);
+  const selectedDate=addDays(TODAY,S.viewOffset||0);
   document.body.classList.toggle("dark",dark);
   document.getElementById("app-wrap").classList.toggle("dark",dark);
-  document.getElementById("theme-meta").content=dark?"#0f172a":"#f0f4f8";
+  document.getElementById("theme-meta").content=dark?"#000000":"#f0f4f8";
   trackerApplyBackButtonPalette();
   syncTrackerThemeButton();
   const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
@@ -2493,7 +2607,7 @@ function renderTrackerApp(){
 
   const pills=h("div",{style:{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:"6px",marginBottom:"12px"}});
   for(const sh of SHIFTS){
-    const st=status(sh,TODAY),m=meta(st),sel=sh.id===focus,phase=S.breakLabelsTrial ? getLongBreakPhaseShort(sh,TODAY) : "";
+    const st=status(sh,selectedDate),m=meta(st),sel=sh.id===focus,phase=S.breakLabelsTrial ? getLongBreakPhaseShort(sh,selectedDate) : "";
     pills.appendChild(h("div",{class:"pill",
       style:{background:sel?"var(--bg2)":"var(--bg3)",border:`2px solid ${sel?sh.color:"var(--border)"}`,borderRadius:"12px",padding:"9px 4px",textAlign:"center",boxShadow:sel?`0 3px 12px ${sh.color}30`:"none"},
       onClick:()=>set({focus:sh.id})},
@@ -2505,7 +2619,7 @@ function renderTrackerApp(){
   }
   app.appendChild(pills);
 
-  if(tab!=="Today") app.appendChild(renderShiftSummaryCard(active));
+  if(tab!=="Today") app.appendChild(renderShiftSummaryCard(active,selectedDate));
 
   const tabBar=h("div",{style:{display:"flex",gap:"3px",background:"var(--bg3)",borderRadius:"11px",padding:"3px",marginBottom:"14px",overflowX:"auto",WebkitOverflowScrolling:"touch",scrollbarWidth:"none"}});
   for(const t of TABS)
@@ -2581,23 +2695,17 @@ function stDisplayName(profile, kilnUser, user){
 }
 
 async function stPersistSharedTheme(user, light){
-  if(!stSb || !user || !user.id) return;
+  if(!stSb || !user || !user.id || !suiteShared) return;
   try{
-    await stSb.from('kiln_config').upsert({
-      key:'theme_uid_'+user.id,
-      value:light?'light':'dark'
-    });
+    await suiteShared.preferences.saveTheme(stSb, user, light);
   }catch(e){}
 }
 
 async function stLoadSharedTheme(user){
-  if(!stSb || !user || !user.id) return null;
+  if(!stSb || !user || !user.id || !suiteShared) return null;
   try{
-    const { data } = await stSb.from('kiln_config')
-      .select('value')
-      .eq('key','theme_uid_'+user.id)
-      .maybeSingle();
-    if(data && data.value) return data.value === 'light';
+    const value = await suiteShared.preferences.loadTheme(stSb, user);
+    if(value) return value === 'light';
   }catch(e){}
   return null;
 }
@@ -2614,7 +2722,7 @@ function initShiftTrackerUi(){
   const dark = isDarkThemeEnabled();
   document.body.classList.toggle('dark', dark);
   document.getElementById('app-wrap').classList.toggle('dark', dark);
-  document.getElementById('theme-meta').content = dark ? "#111418" : "#f0f4f8";
+  document.getElementById('theme-meta').content = dark ? "#000000" : "#f0f4f8";
   renderTrackerApp();
 }
 
@@ -2652,44 +2760,32 @@ async function stCheckLicence() {
     msg.textContent = '';
   }
   if (retry) retry.style.display = 'none';
-  try {
-    const licRes = await fetch(
-      ST_LIC_URL + '/rest/v1/kiln_licences?licence_key=eq.' + encodeURIComponent(ST_LICENCE_KEY) + '&select=paid,expires_at,customer,site',
-      {
-        method: 'GET',
-        mode: 'cors',
-        headers: {
-          'apikey': ST_LIC_KEY,
-          'Authorization': 'Bearer ' + ST_LIC_KEY,
-          'Content-Type': 'application/json'
-        }
-      }
-    );
-    if (!licRes.ok) {
-      throw new Error('Unable to confirm licence.');
-    }
-    const rows = await licRes.json();
-    const lic = rows && rows[0];
-    if (!lic || !lic.paid) {
-      throw new Error('Licence not active.');
-    }
-    if (new Date(lic.expires_at) < new Date()) {
-      throw new Error('Licence expired on ' + new Date(lic.expires_at).toLocaleDateString('en-GB') + '.');
-    }
-    if (overlay) {
-      overlay.style.opacity = '0';
-      setTimeout(function(){ overlay.style.display = 'none'; }, 280);
-    }
-    return true;
-  } catch (e) {
+  const showFailure = function(text){
     if (spinner) spinner.style.display = 'none';
     if (msg) {
-      msg.textContent = e && e.message ? e.message + ' Please contact your administrator.' : 'Unable to confirm licence. Please contact your administrator.';
+      msg.textContent = (text || 'Unable to confirm licence.') + ' Please contact your administrator.';
       msg.style.display = 'block';
     }
     if (retry) retry.style.display = 'block';
-    return false;
-  }
+  };
+  return suiteShared.licence.check({
+    url: ST_LIC_URL,
+    apiKey: ST_LIC_KEY,
+    licenceKey: ST_LICENCE_KEY,
+    failOpen: false,
+    onActive: async function(){
+      if (overlay) {
+        overlay.style.opacity = '0';
+        setTimeout(function(){ overlay.style.display = 'none'; }, 280);
+      }
+    },
+    onInactive: async function(_lic, text){
+      showFailure(text);
+    },
+    onError: async function(){
+      showFailure('Unable to confirm licence.');
+    }
+  });
 }
 
 function stCancelLoginReveal(){
@@ -2842,22 +2938,33 @@ function stApplyHeaderProfile(user, profile, kilnUser) {
 }
 
 async function stProfileAllowed(sb, user) {
-  const [profileRes, kilnRes] = await Promise.all([
-    sb.from('pw_profiles').select('id,full_name,email,approved,disabled,role,shift_tracker_access,must_reset_password').eq('id', user.id).maybeSingle(),
-    sb.from('kiln_users').select('auth_user_id,locked_name,email,username,is_admin,is_shift_manager,is_burner,is_electrician,is_mechanical,is_readonly,is_locked,shift_log_access,is_cement_analyst,is_day_staff,must_reset_password').eq('auth_user_id', user.id).maybeSingle()
-  ]);
-  if (profileRes.error) throw profileRes.error;
-  if (kilnRes.error && kilnRes.error.code !== 'PGRST116') throw kilnRes.error;
-  const data = profileRes.data || null;
-  const kilnUser = kilnRes.data || null;
-  if (!data) return { allowed: true, profile: null, kilnUser };
-  return { allowed: data.approved !== false && data.disabled !== true && data.shift_tracker_access !== false, profile: data, kilnUser };
+  return suiteShared.access.loadPwAppAccessState(sb, user, {
+    accessField: 'shift_tracker_access',
+    profileSelect: 'id,full_name,email,approved,disabled,role,shift_tracker_access,must_reset_password',
+    kilnSelect: 'auth_user_id,locked_name,email,username,is_admin,is_shift_manager,is_burner,is_electrician,is_mechanical,is_readonly,is_locked,shift_log_access,is_cement_analyst,is_day_staff,must_reset_password',
+    requiresProfile: true
+  });
+}
+
+function stAccessDeniedMessage(profileState){
+  const profile = profileState && profileState.profile;
+  if(!profile) return 'This account does not have Platform access yet.';
+  if(profile.disabled === true) return 'Your account has been disabled. Please contact an administrator.';
+  if(profile.shift_tracker_access === false) return 'You do not have Shift Tracker access.';
+  return 'Your account is not approved for access.';
+}
+
+function stRegisterPwa(){
+  if(!('serviceWorker' in navigator) || window.location.protocol === 'file:') return;
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(function(){});
+  }, { once: true });
 }
 
 async function initShiftTrackerSupabaseAuth() {
   stSyncSplashBrandLogo();
   if (!(await stCheckLicence())) return;
-  const sb = supabase.createClient(ST_SUPABASE_URL, ST_SUPABASE_ANON_KEY);
+  const sb = suiteShared.supabase.createClient(ST_SUPABASE_URL, ST_SUPABASE_ANON_KEY);
   stSb = sb;
   let els = stGetEls();
   if (!els.loginArea || !els.userInput || !els.passInput || !els.loginBtn) return;
@@ -2907,7 +3014,7 @@ async function initShiftTrackerSupabaseAuth() {
     try {
       const profileState = await stProfileAllowed(sb, user);
       if (!profileState.allowed) {
-        stShowAccessDenied('Your account is not approved for access.');
+        stShowAccessDenied(stAccessDeniedMessage(profileState));
         return false;
       }
       stCurrentUser = user;
@@ -2916,7 +3023,9 @@ async function initShiftTrackerSupabaseAuth() {
       stApplyHeaderProfile(user, profileState.profile, profileState.kilnUser);
       await stSyncThemeFromUser(user);
       await trackerSyncBackButtonPaletteFromUser(user);
+      await stHydrateTrackerData(user);
       stRevealApp();
+      renderTrackerApp();
       return true;
     } catch (e) {
       stScheduleLoginScreen();
@@ -2949,7 +3058,7 @@ async function initShiftTrackerSupabaseAuth() {
       }
       const profileState = await stProfileAllowed(sb, user);
       if (!profileState.allowed) {
-        stShowAccessDenied('Your account is not approved for access.');
+        stShowAccessDenied(stAccessDeniedMessage(profileState));
         return;
       }
       stCurrentUser = user;
@@ -2958,7 +3067,9 @@ async function initShiftTrackerSupabaseAuth() {
       stApplyHeaderProfile(user, profileState.profile, profileState.kilnUser);
       await stSyncThemeFromUser(user);
       await trackerSyncBackButtonPaletteFromUser(user);
+      await stHydrateTrackerData(user);
       stRevealApp();
+      renderTrackerApp();
     } catch (e) {
       stShowError(e.message || 'Sign-in failed.');
     } finally {
@@ -2997,6 +3108,7 @@ async function initShiftTrackerSupabaseAuth() {
       stCurrentUser = null;
       stCurrentProfile = null;
       stCurrentKilnUser = null;
+      stTrackerData = { swaps:{}, notes:{} };
       sessionStorage.removeItem('auth');
       window.location.href = '../index.html';
     });
@@ -3004,6 +3116,8 @@ async function initShiftTrackerSupabaseAuth() {
 
   await hydrateFromSession();
 }
+
+stRegisterPwa();
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initShiftTrackerSupabaseAuth);

@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Holiday Requests">
-<meta name="theme-color" content="#111418">
+<meta name="theme-color" content="#000000">
 <title>Padeswood Works — Holiday Requests</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Figtree:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -18,7 +18,7 @@
   --ff-body:'Helvetica Neue','Arial Nova',Arial,sans-serif;
   --ff-mono:'Fira Code',monospace;
   --ease-smooth:cubic-bezier(.22,1,.36,1);
-  --bg:#111418; --sf:#16191f; --sf2:#1c2028; --sf3:#222830; --sf4:#282f3a;
+  --bg:#000000; --sf:#050607; --sf2:#0b0c0e; --sf3:#101115; --sf4:#15171a;
   --bd:#252c38; --bd2:#2f3a4a; --bd3:#3d4e62;
   --ac:#1a7a35; --ac2:#2ecc5c; --ac3:#5ee27b;
   --acd1:rgba(26,122,53,.10); --acd2:rgba(26,122,53,.18); --acd3:rgba(26,122,53,.28);
@@ -35,11 +35,11 @@
   --r:10px; --rsm:7px; --rxs:5px;
   --e1:0 1px 3px rgba(0,0,0,.55),0 1px 2px rgba(0,0,0,.4);
   --e2:0 4px 18px rgba(0,0,0,.6); --e3:0 20px 56px rgba(0,0,0,.72);
-  --eac:0 4px 22px rgba(51,65,85,.30);
-  --glass-1: rgba(22,25,31,.82);
-  --glass-2: rgba(22,25,31,.72);
-  --glass-3: rgba(22,25,31,.68);
-  --glass-4: rgba(22,25,31,.56);
+  --eac:0 4px 22px rgba(0,0,0,.40);
+  --glass-1: rgba(5,6,7,.94);
+  --glass-2: rgba(5,6,7,.78);
+  --glass-3: rgba(8,9,11,.96);
+  --glass-4: rgba(7,8,10,.90);
   /* Alias tokens used by older/shared snippets. */
   --text: var(--tx);
   --text2: var(--tx2);
@@ -500,6 +500,88 @@ body.basic-mode .topbar .back-platform-btn:hover{
 .stat .label{font-size:9px;font-family:var(--ff-mono);text-transform:uppercase;letter-spacing:1px;color:var(--tx3)}
 .stat .value{font-family:var(--ff-head);font-size:22px;font-weight:800;line-height:1.05;margin-top:4px}
 .stat .sub{margin-top:4px;color:var(--tx2);font-size:11px;line-height:1.35}
+.stat.stat-remaining{
+  position:relative;
+  overflow:hidden;
+  transform:translateY(-1px);
+  --stat-accent: var(--amb);
+  border-color:color-mix(in srgb, var(--ambb) 74%, var(--bd));
+  background:
+    radial-gradient(120% 120% at 0% 0%, rgba(245,166,35,.22), transparent 44%),
+    radial-gradient(120% 120% at 100% 0%, rgba(94,226,123,.10), transparent 50%),
+    linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  box-shadow:0 0 0 1px rgba(245,166,35,.12), 0 12px 28px rgba(245,166,35,.10), var(--e2), var(--eac);
+}
+.stat.stat-remaining::before{
+  content:'';
+  position:absolute;
+  inset:0 auto 0 0;
+  width:4px;
+  background:linear-gradient(180deg,var(--amb),color-mix(in srgb, var(--amb) 35%, var(--ac3)));
+  box-shadow:0 0 18px rgba(245,166,35,.32);
+}
+.stat.stat-remaining .label,
+.stat.stat-remaining .value{
+  color:var(--stat-accent);
+}
+.stat.stat-remaining .value{
+  font-size:24px;
+}
+.stat.stat-remaining .sub{
+  color:var(--tx);
+}
+.stat.balance-red,
+.stat.balance-amber,
+.stat.balance-green{
+  position:relative;
+  overflow:hidden;
+  --stat-accent: var(--amb);
+}
+.stat.balance-red{
+  --stat-accent: var(--red);
+  border-color:color-mix(in srgb, var(--redb) 74%, var(--bd));
+  background:
+    radial-gradient(120% 120% at 0% 0%, rgba(240,82,79,.18), transparent 44%),
+    radial-gradient(120% 120% at 100% 0%, rgba(240,82,79,.09), transparent 50%),
+    linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  box-shadow:0 0 0 1px rgba(240,82,79,.10), 0 12px 28px rgba(240,82,79,.08), var(--e2), var(--eac);
+}
+.stat.balance-amber{
+  --stat-accent: var(--amb);
+  border-color:color-mix(in srgb, var(--ambb) 74%, var(--bd));
+  background:
+    radial-gradient(120% 120% at 0% 0%, rgba(245,166,35,.20), transparent 44%),
+    radial-gradient(120% 120% at 100% 0%, rgba(245,166,35,.10), transparent 50%),
+    linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  box-shadow:0 0 0 1px rgba(245,166,35,.10), 0 12px 28px rgba(245,166,35,.08), var(--e2), var(--eac);
+}
+.stat.balance-green{
+  --stat-accent: var(--grn);
+  border-color:color-mix(in srgb, var(--grnb) 74%, var(--bd));
+  background:
+    radial-gradient(120% 120% at 0% 0%, rgba(33,194,122,.18), transparent 44%),
+    radial-gradient(120% 120% at 100% 0%, rgba(33,194,122,.09), transparent 50%),
+    linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  box-shadow:0 0 0 1px rgba(33,194,122,.10), 0 12px 28px rgba(33,194,122,.08), var(--e2), var(--eac);
+}
+.stat.balance-red::before,
+.stat.balance-amber::before,
+.stat.balance-green::before{
+  content:'';
+  position:absolute;
+  inset:0 auto 0 0;
+  width:4px;
+  background:linear-gradient(180deg,var(--stat-accent),color-mix(in srgb, var(--stat-accent) 35%, var(--tx3)));
+  box-shadow:0 0 18px color-mix(in srgb, var(--stat-accent) 36%, transparent);
+}
+.stat.balance-red .label,
+.stat.balance-amber .label,
+.stat.balance-green .label,
+.stat.balance-red .value,
+.stat.balance-amber .value,
+.stat.balance-green .value{
+  color:var(--stat-accent);
+}
 .panel{
   border:1px solid var(--bd);
   border-radius:20px;
@@ -1518,7 +1600,7 @@ body:not(.basic-mode) .btn-primary:hover{
         <div class="value" id="statPending">0.0</div>
         <div class="sub">Waiting for a decision</div>
       </div>
-      <div class="stat">
+      <div class="stat stat-remaining">
         <div class="label">Remaining</div>
         <div class="value" id="statRemaining">0.0</div>
         <div class="sub">Entitlement minus approved</div>
@@ -1702,7 +1784,9 @@ body:not(.basic-mode) .btn-primary:hover{
 <div id="toast" class="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../shared-suite.js"></script>
 <script>
+const suiteShared = window.PadeswoodSuite || null;
 const SUPABASE_URL = 'https://xnkwrkoxvgptobnmekgv.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhua3dya294dmdwdG9ibm1la2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NjAxNTQsImV4cCI6MjA4ODIzNjE1NH0.PrmnJ4eGepac41bQuNPG7TcBaunrfTWdjLtkGLr_2LY';
 const LICENCE_KEY = 'KBL-HEIDELBERG-PADESWOOD-2026';
@@ -1946,40 +2030,30 @@ async function checkLicence(){
     msg.textContent = '';
   }
   if (retry) retry.style.display = 'none';
-  try {
-    const licRes = await fetch(
-      SB_LIC_URL + '/rest/v1/kiln_licences?licence_key=eq.' + encodeURIComponent(LICENCE_KEY) + '&select=paid,expires_at,customer,site',
-      {
-        method: 'GET',
-        mode: 'cors',
-        headers: {
-          'apikey': SB_LIC_KEY,
-          'Authorization': 'Bearer ' + SB_LIC_KEY,
-          'Content-Type': 'application/json'
-        }
-      }
-    );
-    if (!licRes.ok) throw new Error('Unable to confirm licence.');
-    const rows = await licRes.json();
-    const lic = rows && rows[0];
-    if (!lic || !lic.paid) throw new Error('Licence not active.');
-    if (new Date(lic.expires_at) < new Date()) {
-      throw new Error('Licence expired on ' + new Date(lic.expires_at).toLocaleDateString('en-GB') + '.');
-    }
-    return true;
-  } catch (e) {
+  const showFailure = function(text){
     if (overlay) {
       overlay.style.display = 'flex';
       overlay.style.opacity = '1';
     }
     if (spinner) spinner.style.display = 'none';
     if (msg) {
-      msg.textContent = (e && e.message ? e.message : 'Unable to confirm licence.') + ' Please contact your administrator.';
+      msg.textContent = (text || 'Unable to confirm licence.') + ' Please contact your administrator.';
       msg.style.display = 'block';
     }
     if (retry) retry.style.display = 'block';
-    return false;
-  }
+  };
+  return suiteShared.licence.check({
+    url: SB_LIC_URL,
+    apiKey: SB_LIC_KEY,
+    licenceKey: LICENCE_KEY,
+    failOpen: false,
+    onInactive: async function(_lic, text){
+      showFailure(text);
+    },
+    onError: async function(){
+      showFailure('Unable to confirm licence.');
+    }
+  });
 }
 function canEditCarryoverNow(){
   return new Date().getMonth() !== 11;
@@ -2277,35 +2351,26 @@ function reviewHolidayTextSafety(text) {
 }
 
 function getStoredThemePref(){
-  return localStorage.getItem('pw_theme') || localStorage.getItem('kbl_theme') || null;
+  return suiteShared.storage.getThemePref();
 }
 function applyTheme(isLight){
   const light = !!isLight;
   document.body.classList.toggle('light-mode', light);
   document.body.classList.toggle('dark', !light);
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', light ? '#f0f4f8' : '#111418');
-  localStorage.setItem('pw_theme', light ? 'light' : 'dark');
-  localStorage.setItem('kbl_theme', light ? 'light' : 'dark');
-  localStorage.setItem('dark', light ? '0' : '1');
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', light ? '#f0f4f8' : '#000000');
+  suiteShared.storage.setThemePref(light ? 'light' : 'dark');
   syncThemeButton();
 }
 async function persistSharedThemePreference(isLight){
   if (!sb || !currentUser || !currentUser.id) return;
   try {
-    await sb.from('kiln_config').upsert({
-      key: 'theme_uid_' + currentUser.id,
-      value: isLight ? 'light' : 'dark'
-    });
+    await suiteShared.preferences.saveTheme(sb, currentUser, isLight);
   } catch (e) {}
 }
 async function loadSharedThemePreference(){
   if (!sb || !currentUser || !currentUser.id) return null;
   try {
-    const { data } = await sb.from('kiln_config')
-      .select('value')
-      .eq('key', 'theme_uid_' + currentUser.id)
-      .maybeSingle();
-    if (data && (data.value === 'light' || data.value === 'dark')) return data.value;
+    return await suiteShared.preferences.loadTheme(sb, currentUser);
   } catch (e) {}
   return null;
 }
@@ -2344,31 +2409,13 @@ function getStoredPalettePreset(){
 async function persistSharedPalettePreference(key){
   if (!sb || !currentUser || !currentUser.id) return;
   try {
-    const themeKey = 'palette_uid_' + currentUser.id;
-    if (key === 'default') {
-      await sb.from('kiln_config').upsert({
-        key: themeKey,
-        value: 'default'
-      });
-      return;
-    }
-    await sb.from('kiln_config').upsert({
-      key: themeKey,
-      value: key
-    });
+    await suiteShared.preferences.savePalette(sb, currentUser, key);
   } catch (e) {}
 }
 async function loadSharedPalettePreference(){
   if (!sb || !currentUser || !currentUser.id) return null;
   try {
-    const { data } = await sb.from('kiln_config')
-      .select('value')
-      .eq('key', 'palette_uid_' + currentUser.id)
-      .maybeSingle();
-    if (data && data.value) {
-      if (data.value === 'plain') return 'basic';
-      if (PALETTE_PRESETS[data.value]) return data.value;
-    }
+    return await suiteShared.preferences.loadPalette(sb, currentUser, Object.keys(PALETTE_PRESETS));
   } catch (e) {}
   return null;
 }
@@ -3132,11 +3179,16 @@ function renderAllowanceList(){
 }
 function renderSummary(){
   const stats = statsForUser(currentUser.id, selectedYear);
+  const remainingCard = $('statRemaining') ? $('statRemaining').closest('.stat') : null;
   $('statEntitlement').textContent = requestWholeHoursText(stats.entitlement) + ' / ' + requestDaysText(stats.entitlement / SHIFT_HOURS);
   $('statUsed').textContent = requestWholeHoursText(stats.used) + ' / ' + requestDaysText(stats.used / SHIFT_HOURS);
   $('statPending').textContent = requestWholeHoursText(stats.pending) + ' / ' + requestDaysText(stats.pending / SHIFT_HOURS);
   $('statRemaining').textContent = requestWholeHoursText(stats.remaining) + ' / ' + requestDaysText(stats.remaining / SHIFT_HOURS);
   $('statProjected').textContent = requestWholeHoursText(stats.projected) + ' / ' + requestDaysText(stats.projected / SHIFT_HOURS);
+  if (remainingCard) {
+    remainingCard.classList.remove('balance-red', 'balance-amber', 'balance-green');
+    remainingCard.classList.add(balanceTrafficLightClass(stats.remaining / SHIFT_HOURS));
+  }
   $('statEntitlementSub').textContent = requestWholeHoursText(stats.allowance) + ' allowance + ' + requestWholeHoursText(stats.carryover) + ' carryover + ' + requestWholeHoursText(stats.extras) + ' extras';
 }
 function renderHolidayApp(){
@@ -3289,9 +3341,7 @@ async function initHolidayApp(){
   await applySuiteLogos();
   applyTheme((getStoredThemePref() || (new Date().getHours() >= 7 && new Date().getHours() < 18)) === 'light');
   applyStoredPalette();
-  sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-    auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false }
-  });
+  sb = suiteShared.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   sb.auth.onAuthStateChange(function(event, session) {
     if (event === 'SIGNED_IN' && session && session.user) {
       setTimeout(function() {
@@ -3329,9 +3379,14 @@ async function hydrateFromSession(){
       return false;
     }
     currentUser = data.session.user;
-    const { data: prof, error: profErr } = await sb.from('pw_profiles').select('id,full_name,email,approved,disabled,role,holiday_requests_access,holiday_manager_auth_user_id,must_reset_password').eq('id', currentUser.id).maybeSingle();
-    if (profErr) throw profErr;
-    if (!prof || prof.approved === false || prof.disabled === true || prof.role === 'none' || prof.holiday_requests_access === false) {
+    const accessState = await suiteShared.access.loadPwAppAccessState(sb, currentUser, {
+      accessField: 'holiday_requests_access',
+      profileSelect: 'id,full_name,email,approved,disabled,role,holiday_requests_access,holiday_manager_auth_user_id,must_reset_password',
+      kilnSelect: 'auth_user_id,is_admin,is_shift_manager,is_locked,shift_log_access,locked_name,email,username',
+      requiresProfile: true
+    });
+    const prof = accessState.profile || null;
+    if (!accessState.allowed) {
       currentProfile = null;
       showAccessDenied(!prof ? 'This account does not have Platform access yet.' : prof.disabled === true ? 'Your account has been disabled. Please contact an administrator.' : prof.holiday_requests_access === false ? 'You do not have Holiday Requests access.' : 'You do not have Platform access.');
       return false;
@@ -3348,9 +3403,7 @@ async function hydrateFromSession(){
       currentHolidayManagerKilnUser = mgrKiln || null;
       currentHolidayManagerLabel = holidayManagerDisplayNameFromRecords(currentHolidayManagerProfile, currentHolidayManagerKilnUser);
     }
-    const { data: kilnRow, error: kilnErr } = await sb.from('kiln_users').select('auth_user_id,is_admin,is_shift_manager,is_locked,shift_log_access,locked_name,email,username').eq('auth_user_id', currentUser.id).maybeSingle();
-    if (kilnErr) throw kilnErr;
-    currentKilnUser = kilnRow || null;
+    currentKilnUser = accessState.kilnUser || null;
     isApprover = !!(currentKilnUser && currentKilnUser.is_shift_manager && !(currentProfile && currentProfile.holiday_manager_auth_user_id));
     const sessionFullName = currentUser && currentUser.user_metadata && currentUser.user_metadata.full_name
       ? String(currentUser.user_metadata.full_name).trim()

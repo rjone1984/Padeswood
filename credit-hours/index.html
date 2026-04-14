@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Credit Hours">
-<meta name="theme-color" content="#111418">
+<meta name="theme-color" content="#000000">
 <title>Padeswood Works — Credit Hours</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Figtree:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -18,7 +18,7 @@
   --ff-body:'Helvetica Neue','Arial Nova',Arial,sans-serif;
   --ff-mono:'Fira Code',monospace;
   --ease-smooth:cubic-bezier(.22,1,.36,1);
-  --bg:#111418; --sf:#16191f; --sf2:#1c2028; --sf3:#222830; --sf4:#282f3a;
+  --bg:#000000; --sf:#050607; --sf2:#0b0c0e; --sf3:#101115; --sf4:#15171a;
   --bd:#252c38; --bd2:#2f3a4a; --bd3:#3d4e62;
   --ac:#1a7a35; --ac2:#2ecc5c; --ac3:#5ee27b;
   --acd1:rgba(26,122,53,.10); --acd2:rgba(26,122,53,.18); --acd3:rgba(26,122,53,.28);
@@ -35,11 +35,11 @@
   --r:10px; --rsm:7px; --rxs:5px;
   --e1:0 1px 3px rgba(0,0,0,.55),0 1px 2px rgba(0,0,0,.4);
   --e2:0 4px 18px rgba(0,0,0,.6); --e3:0 20px 56px rgba(0,0,0,.72);
-  --eac:0 4px 22px rgba(51,65,85,.30);
-  --glass-1: rgba(22,25,31,.82);
-  --glass-2: rgba(22,25,31,.72);
-  --glass-3: rgba(22,25,31,.68);
-  --glass-4: rgba(22,25,31,.56);
+  --eac:0 4px 22px rgba(0,0,0,.40);
+  --glass-1: rgba(5,6,7,.94);
+  --glass-2: rgba(5,6,7,.78);
+  --glass-3: rgba(8,9,11,.96);
+  --glass-4: rgba(7,8,10,.90);
   /* Alias tokens used by older/shared snippets. */
   --text: var(--tx);
   --text2: var(--tx2);
@@ -1895,7 +1895,7 @@ body:not(.basic-mode) .btn-primary:hover{
     </section>
 
     <section class="panel" id="myRequestsPanel">
-      <details class="activity-collapsible" open>
+      <details class="activity-collapsible">
         <summary>
           <div>
             <div class="panel-title">My entries</div>
@@ -1976,15 +1976,11 @@ body:not(.basic-mode) .btn-primary:hover{
           </div>
         </summary>
         <div class="content">
-          <div class="request-grid">
+          <div class="request-grid" style="grid-template-columns:1fr">
             <div class="card-box">
               <div class="box-label">HR mailbox</div>
               <input id="hrHandoverRecipient" class="input" type="email" placeholder="hr@company.com" oninput="setHrHandoverRecipient(this.value)">
               <div class="field-note">Saved in this browser so the next handover is quicker.</div>
-            </div>
-            <div class="card-box">
-              <div class="box-label">What will be sent</div>
-              <textarea id="hrHandoverSummary" class="textarea" rows="12" readonly style="margin:0;max-height:240px;overflow:auto;font-family:var(--ff-mono);line-height:1.5">0 approved hours ready for HR.</textarea>
             </div>
           </div>
           <div class="card-box">
@@ -2002,7 +1998,7 @@ body:not(.basic-mode) .btn-primary:hover{
       <div class="panel-head">
         <div>
           <div class="panel-title">Entitlements</div>
-          <div class="panel-sub">Shift managers can adjust annual allowances and carryover for their assigned staff.</div>
+          <div class="panel-sub">Shift managers can adjust annual allowances for their assigned staff.</div>
         </div>
       </div>
       <div id="allowanceList" class="list"></div>
@@ -2097,7 +2093,9 @@ body:not(.basic-mode) .btn-primary:hover{
 <div id="toast" class="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../shared-suite.js"></script>
 <script>
+const suiteShared = window.PadeswoodSuite || null;
 const SUPABASE_URL = 'https://xnkwrkoxvgptobnmekgv.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhua3dya294dmdwdG9ibm1la2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NjAxNTQsImV4cCI6MjA4ODIzNjE1NH0.PrmnJ4eGepac41bQuNPG7TcBaunrfTWdjLtkGLr_2LY';
 const LICENCE_KEY = 'KBL-HEIDELBERG-PADESWOOD-2026';
@@ -2351,43 +2349,30 @@ async function checkLicence(){
     msg.textContent = '';
   }
   if (retry) retry.style.display = 'none';
-  try {
-    const licRes = await fetch(
-      SB_LIC_URL + '/rest/v1/kiln_licences?licence_key=eq.' + encodeURIComponent(LICENCE_KEY) + '&select=paid,expires_at,customer,site',
-      {
-        method: 'GET',
-        mode: 'cors',
-        headers: {
-          'apikey': SB_LIC_KEY,
-          'Authorization': 'Bearer ' + SB_LIC_KEY,
-          'Content-Type': 'application/json'
-        }
-      }
-    );
-    if (!licRes.ok) throw new Error('Unable to confirm licence.');
-    const rows = await licRes.json();
-    const lic = rows && rows[0];
-    if (!lic || !lic.paid) throw new Error('Licence not active.');
-    if (new Date(lic.expires_at) < new Date()) {
-      throw new Error('Licence expired on ' + new Date(lic.expires_at).toLocaleDateString('en-GB') + '.');
-    }
-    return true;
-  } catch (e) {
+  const showFailure = function(text){
     if (overlay) {
       overlay.style.display = 'flex';
       overlay.style.opacity = '1';
     }
     if (spinner) spinner.style.display = 'none';
     if (msg) {
-      msg.textContent = (e && e.message ? e.message : 'Unable to confirm licence.') + ' Please contact your administrator.';
+      msg.textContent = (text || 'Unable to confirm licence.') + ' Please contact your administrator.';
       msg.style.display = 'block';
     }
     if (retry) retry.style.display = 'block';
-    return false;
-  }
-}
-function canEditCarryoverNow(){
-  return new Date().getMonth() !== 11;
+  };
+  return suiteShared.licence.check({
+    url: SB_LIC_URL,
+    apiKey: SB_LIC_KEY,
+    licenceKey: LICENCE_KEY,
+    failOpen: false,
+    onInactive: async function(_lic, text){
+      showFailure(text);
+    },
+    onError: async function(){
+      showFailure('Unable to confirm licence.');
+    }
+  });
 }
 function isWeekend(date){
   const d = date.getDay();
@@ -2810,35 +2795,26 @@ function setToast(msg, ms){
 }
 
 function getStoredThemePref(){
-  return localStorage.getItem('pw_theme') || localStorage.getItem('kbl_theme') || null;
+  return suiteShared.storage.getThemePref();
 }
 function applyTheme(isLight){
   const light = !!isLight;
   document.body.classList.toggle('light-mode', light);
   document.body.classList.toggle('dark', !light);
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', light ? '#f0f4f8' : '#111418');
-  localStorage.setItem('pw_theme', light ? 'light' : 'dark');
-  localStorage.setItem('kbl_theme', light ? 'light' : 'dark');
-  localStorage.setItem('dark', light ? '0' : '1');
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', light ? '#f0f4f8' : '#000000');
+  suiteShared.storage.setThemePref(light ? 'light' : 'dark');
   syncThemeButton();
 }
 async function persistSharedThemePreference(isLight){
   if (!sb || !currentUser || !currentUser.id) return;
   try {
-    await sb.from('kiln_config').upsert({
-      key: 'theme_uid_' + currentUser.id,
-      value: isLight ? 'light' : 'dark'
-    });
+    await suiteShared.preferences.saveTheme(sb, currentUser, isLight);
   } catch (e) {}
 }
 async function loadSharedThemePreference(){
   if (!sb || !currentUser || !currentUser.id) return null;
   try {
-    const { data } = await sb.from('kiln_config')
-      .select('value')
-      .eq('key', 'theme_uid_' + currentUser.id)
-      .maybeSingle();
-    if (data && (data.value === 'light' || data.value === 'dark')) return data.value;
+    return await suiteShared.preferences.loadTheme(sb, currentUser);
   } catch (e) {}
   return null;
 }
@@ -2877,42 +2853,13 @@ function getStoredPalettePreset(){
 async function persistSharedPalettePreference(key){
   if (!sb || !currentUser || !currentUser.id) return;
   try {
-    const session = await sb.auth.getSession();
-    const token = session && session.data && session.data.session && session.data.session.access_token;
-    const uid = session && session.data && session.data.session && session.data.session.user && session.data.session.user.id;
-    if (!token || !uid) return;
-    const value = key === 'default' ? 'default' : key;
-    await fetch(SUPABASE_URL + '/rest/v1/kiln_config', {
-      method: 'POST',
-      keepalive: true,
-      headers: {
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': 'Bearer ' + token,
-        'Content-Type': 'application/json',
-        'Prefer': 'resolution=merge-duplicates,return=minimal'
-      },
-      body: JSON.stringify({
-        key: 'palette_uid_' + uid,
-        value: value
-      })
-    });
+    await suiteShared.preferences.savePalette(sb, currentUser, key);
   } catch (e) {}
 }
 async function loadSharedPalettePreference(){
   try {
     if (!sb) return null;
-    const session = await sb.auth.getSession();
-    const token = session && session.data && session.data.session && session.data.session.access_token;
-    const uid = session && session.data && session.data.session && session.data.session.user && session.data.session.user.id;
-    if (!token || !uid) return null;
-    const res = await fetch(SUPABASE_URL + '/rest/v1/kiln_config?key=eq.palette_uid_' + uid + '&select=value', {
-      headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + token }
-    });
-    const rows = await res.json();
-    if (rows && rows.length && rows[0].value) {
-      if (rows[0].value === 'plain') return 'basic';
-      if (PALETTE_PRESETS[rows[0].value] || rows[0].value === 'default') return rows[0].value;
-    }
+    return await suiteShared.preferences.loadPalette(sb, currentUser, Object.keys(PALETTE_PRESETS));
   } catch (e) {}
   return null;
 }
@@ -3405,7 +3352,6 @@ function renderTeamOverviewCards(){
   const selectedQuarterRemaining = selectedStats.quarterRemaining;
   const selectedHp = holidayProfileFor(selectedUserId);
   const selectedEditable = isHolidayAdmin || String(selectedProfile.holiday_manager_auth_user_id || '') === String(currentUser.id || '');
-  const selectedCarryoverOpen = canEditCarryoverNow();
   const selectedRequestHistory = requestsForUser(selectedUserId)
     .filter(function(r){
       return requestMatchesYear(r, selectedYear) && r.status !== 'cancelled' && r.status !== 'denied';
@@ -3470,14 +3416,13 @@ function renderTeamOverviewCards(){
         '<summary style="list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:flex-start;gap:10px">'+
           '<div>'+
             '<div class="box-label">Entitlement adjustment</div>'+
-            '<div class="small" style="margin-top:4px">Add or remove annual allowance and carryover for this staff member.</div>'+
+            '<div class="small" style="margin-top:4px">Add or remove annual allowance and extras for this staff member.</div>'+
           '</div>'+
           '<span class="pill">'+(selectedEditable ? 'Edit entitlements' : 'View entitlements')+'</span>'+
         '</summary>'+
         '<div class="card-box" style="margin-top:10px">'+
           '<div class="small" style="margin-bottom:10px">Every save is written to the audit trail.</div>'+
           '<div class="field"><label class="small" style="margin-bottom:4px">Annual entitlement</label><input class="input" style="height:30px;font-size:11px" type="number" min="0" step="0.5" id="allow_'+esc(selectedUserId)+'" value="'+esc(num(selectedHp && selectedHp.annual_allowance_hours, 100))+'"'+(selectedEditable ? '' : ' disabled')+'><div class="field-note">Base credit-hours allowance for the year.</div></div>'+
-          '<div class="field"><label class="small" style="margin-bottom:4px">Carryover after 31 Dec</label><input class="input" style="height:30px;font-size:11px" type="number" min="0" step="0.5" id="carry_'+esc(selectedUserId)+'" value="'+esc(num(selectedHp && selectedHp.carryover_days, 0))+'"'+((selectedEditable && selectedCarryoverOpen) ? '' : ' disabled')+' title="'+esc(selectedCarryoverOpen ? 'Carryover can be adjusted now' : 'Carryover can only be adjusted after 31 December')+'"><div class="field-note">Extra holiday moved over into the new year.</div></div>'+
           '<div class="field"><label class="small" style="margin-bottom:4px">Extras</label><div class="row" style="gap:8px;align-items:flex-end">'+
             '<select class="select" id="extrasUnit_'+esc(selectedUserId)+'" style="width:120px;height:30px;font-size:11px" onchange="syncExtrasUnit(\'extrasUnit_'+esc(selectedUserId)+'\', \'extras_'+esc(selectedUserId)+'\')"'+(selectedEditable ? '' : ' disabled')+'>'+
               '<option value="days">Days</option>'+
@@ -3485,7 +3430,7 @@ function renderTeamOverviewCards(){
             '</select>'+
             '<input class="input" style="height:30px;font-size:11px;flex:1" type="number" min="-999" max="999" step="0.5" id="extras_'+esc(selectedUserId)+'" value="'+esc(num(selectedHp && selectedHp.entitlement_extras_days, 0))+'"'+(selectedEditable ? '' : ' disabled')+'>'+
           '</div><div class="field-note">Positive numbers add entitlement. Negative numbers take it away.</div></div>'+
-          '<div class="field"><label class="small" style="margin-bottom:4px">Reason / note for entitlement change</label><textarea class="textarea allowance-reason" id="allowReason_'+esc(selectedUserId)+'" placeholder="Explain why this allowance or carryover is being changed."'+(selectedEditable ? '' : ' disabled')+'></textarea><div class="field-note">This is stored in the allowance audit trail.</div></div>'+
+          '<div class="field"><label class="small" style="margin-bottom:4px">Reason / note for entitlement change</label><textarea class="textarea allowance-reason" id="allowReason_'+esc(selectedUserId)+'" placeholder="Explain why this allowance or extras are being changed."'+(selectedEditable ? '' : ' disabled')+'></textarea><div class="field-note">This is stored in the allowance audit trail.</div></div>'+
           '<div style="display:flex;justify-content:flex-end"><button class="btn btn-primary" type="button" onclick="saveAllowance(\''+esc(selectedUserId)+'\')"'+(selectedEditable ? '' : ' disabled')+'>Save entitlements</button></div>'+
         '</div>'+
       '</details>'+
@@ -3507,7 +3452,7 @@ function renderTeamOverviewCards(){
         '<summary>'+
           '<div>'+
             '<div class="box-label">Allowance history</div>'+
-            '<div class="small" style="margin-top:4px">Edits made to entitlement, carryover and extras are shown here in the order they were made.</div>'+
+            '<div class="small" style="margin-top:4px">Edits made to entitlement and extras are shown here in the order they were made.</div>'+
           '</div>'+
           '<span class="pill">Open history</span>'+
         '</summary>'+
@@ -3843,7 +3788,6 @@ function renderAllowanceList(){
   }
   if (!managerViewEnabled) { box.innerHTML = ''; return; }
   const activeProfiles = isHolidayAdmin ? allPwProfiles.filter(p => p && p.approved !== false && p.disabled !== true && p.role !== 'none') : assignedHolidayStaffForCurrentUser();
-  const carryoverOpen = canEditCarryoverNow();
   if (!activeProfiles.length) {
     box.innerHTML = '<div class="empty">' + (isHolidayAdmin ? 'No active platform users found.' : 'No active staff are assigned to you yet.') + '</div>';
     return;
@@ -3887,9 +3831,8 @@ function renderAllowanceList(){
         '<div class="meta" style="font-size:10px">Extras '+esc(allowanceExtrasText(extrasValue))+'</div>'+
         '<div class="staff-section">'+
           '<div class="staff-section-title">Entitlement adjustment</div>'+
-          '<div class="staff-section-sub">Add or remove holiday entitlement and carryover for this staff member. Every save is written to the audit trail.</div>'+
+          '<div class="staff-section-sub">Add or remove holiday entitlement and extras for this staff member. Every save is written to the audit trail.</div>'+
           '<div class="field"><label class="small" style="margin-bottom:4px">Annual entitlement</label><input class="input" style="height:30px;font-size:11px" type="number" min="0" step="0.5" id="allow_'+esc(p.id)+'" value="'+esc(num(hp && hp.annual_allowance_days, 72))+'"'+(editable ? '' : ' disabled')+'><div class="field-note">Base holiday allowance for the year.</div></div>'+
-          '<div class="field"><label class="small" style="margin-bottom:4px">Carryover after 31 Dec</label><input class="input" style="height:30px;font-size:11px" type="number" min="0" step="0.5" id="carry_'+esc(p.id)+'" value="'+esc(num(hp && hp.carryover_days, 0))+'"'+((editable && carryoverOpen) ? '' : ' disabled')+' title="'+esc(carryoverOpen ? 'Carryover can be adjusted now' : 'Carryover can only be adjusted after 31 December')+'"><div class="field-note">Extra holiday moved over into the new year.</div></div>'+
           '<div class="field"><label class="small" style="margin-bottom:4px">Extras</label><div class="row" style="gap:8px;align-items:flex-end">'+
             '<select class="select" id="extrasUnit_'+esc(p.id)+'" style="width:120px;height:30px;font-size:11px" onchange="syncExtrasUnit(\'extrasUnit_'+esc(p.id)+'\', \'extras_'+esc(p.id)+'\')"'+(editable ? '' : ' disabled')+'>'+
               '<option value="days">Days</option>'+
@@ -3897,7 +3840,7 @@ function renderAllowanceList(){
             '</select>'+
             '<input class="input" style="height:30px;font-size:11px;flex:1" type="number" min="-999" max="999" step="0.5" id="extras_'+esc(p.id)+'" value="'+esc(extrasValue)+'"'+(editable ? '' : ' disabled')+'>'+
           '</div><div class="field-note">Positive numbers add entitlement. Negative numbers take it away.</div></div>'+
-          '<div class="field"><label class="small" style="margin-bottom:4px">Reason / note for entitlement change</label><textarea class="textarea allowance-reason" id="allowReason_'+esc(p.id)+'" placeholder="Explain why this allowance or carryover is being changed."'+(editable ? '' : ' disabled')+'></textarea><div class="field-note">This is stored in the allowance audit trail.</div></div>'+
+          '<div class="field"><label class="small" style="margin-bottom:4px">Reason / note for entitlement change</label><textarea class="textarea allowance-reason" id="allowReason_'+esc(p.id)+'" placeholder="Explain why this allowance or extras are being changed."'+(editable ? '' : ' disabled')+'></textarea><div class="field-note">This is stored in the allowance audit trail.</div></div>'+
         '</div>'+
         '<div style="display:flex;justify-content:flex-end"><button class="btn btn-primary" type="button" onclick="saveAllowance(\''+esc(p.id)+'\')"'+(editable ? '' : ' disabled')+'>Save entitlements</button></div>'+
         '<div class="staff-history">'+
@@ -4145,15 +4088,6 @@ function buildHrHandoverEmailText(){
   });
   return lines.join('\n');
 }
-function updateHrHandoverPreviewText(){
-  const groups = hrHandoverGroupsForCurrentView();
-  const text = groups.length
-    ? buildHrHandoverEmailText()
-    : 'No approved credit hours or overtime ready for HR.';
-  const summary = $('hrHandoverSummary');
-  if (summary) summary.value = text;
-  return text;
-}
 function renderHrHandoverPanel(){
   const panel = $('hrHandoverPanel');
   if (!panel) return;
@@ -4163,8 +4097,6 @@ function renderHrHandoverPanel(){
   if (!managerViewEnabled) {
     const box = $('hrHandoverList');
     if (box) box.innerHTML = '';
-    const summary = $('hrHandoverSummary');
-    if (summary) summary.value = '0 approved hours ready for HR.';
     const staffCount = $('hrHandoverStaffCount');
     const hoursCount = $('hrHandoverHoursCount');
     if (staffCount) staffCount.textContent = 'Date range: ' + hrHandoverPeriodLabel();
@@ -4183,12 +4115,10 @@ function renderHrHandoverPanel(){
   const groups = hrHandoverGroupsForCurrentView();
   const totalCredit = groups.reduce(function(sum, group){ return sum + group.total; }, 0);
   const box = $('hrHandoverList');
-  const summary = $('hrHandoverSummary');
   const staffCount = $('hrHandoverStaffCount');
   const hoursCount = $('hrHandoverHoursCount');
   if (staffCount) staffCount.textContent = 'Date range: ' + hrHandoverPeriodLabel();
   if (hoursCount) hoursCount.textContent = hrHandoverApprovedHoursText(totalCredit);
-  if (summary) summary.value = groups.length ? updateHrHandoverPreviewText() : 'No approved credit hours or overtime ready for HR.';
   if (!box) return;
   if (!groups.length) {
     box.innerHTML = '<div class="empty">No approved credit hours or overtime to send for '+hrHandoverPeriodLabel()+'.</div>';
@@ -4207,7 +4137,7 @@ function sendHrHandoverEmail(){
   }
   const recipient = hrHandoverRecipient();
   const subject = encodeURIComponent('Approved credit hours from ' + currentDisplayName() + ' - ' + hrHandoverPeriodContextLabel());
-  const body = encodeURIComponent(updateHrHandoverPreviewText());
+  const body = encodeURIComponent(buildHrHandoverEmailText());
   const mailto = 'mailto:' + (recipient ? recipient : '') + '?subject=' + subject + '&body=' + body;
   window.location.href = mailto;
 }
@@ -4420,9 +4350,7 @@ async function initHolidayApp(){
   selectedMyRequestsGroup = getStoredMyRequestGroupMode();
   selectedHrHandoverPeriod = 'week';
   selectedHrHandoverOffset = 0;
-  sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-    auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false }
-  });
+  sb = suiteShared.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   sb.auth.onAuthStateChange(function(event, session) {
     if (event === 'SIGNED_IN' && session && session.user) {
       setTimeout(function() {
@@ -4470,9 +4398,14 @@ async function hydrateFromSession(){
       return false;
     }
     currentUser = data.session.user;
-    const { data: prof, error: profErr } = await sb.from('pw_profiles').select('id,full_name,email,approved,disabled,role,credit_hours_access,holiday_manager_auth_user_id,must_reset_password').eq('id', currentUser.id).maybeSingle();
-    if (profErr) throw profErr;
-    if (!prof || prof.approved === false || prof.disabled === true || prof.role === 'none' || prof.credit_hours_access === false) {
+    const accessState = await suiteShared.access.loadPwAppAccessState(sb, currentUser, {
+      accessField: 'credit_hours_access',
+      profileSelect: 'id,full_name,email,approved,disabled,role,credit_hours_access,holiday_manager_auth_user_id,must_reset_password',
+      kilnSelect: 'auth_user_id,is_admin,is_shift_manager,is_burner,is_cement_analyst,is_locked,shift_log_access,locked_name,email,username',
+      requiresProfile: true
+    });
+    const prof = accessState.profile || null;
+    if (!accessState.allowed) {
       currentProfile = null;
       showAccessDenied(!prof ? 'This account does not have Platform access yet.' : prof.disabled === true ? 'Your account has been disabled. Please contact an administrator.' : prof.credit_hours_access === false ? 'You do not have Credit Hours access.' : 'You do not have Platform access.');
       return false;
@@ -4489,9 +4422,7 @@ async function hydrateFromSession(){
       currentHolidayManagerKilnUser = mgrKiln || null;
       currentHolidayManagerLabel = holidayManagerDisplayNameFromRecords(currentHolidayManagerProfile, currentHolidayManagerKilnUser);
     }
-    const { data: kilnRow, error: kilnErr } = await sb.from('kiln_users').select('auth_user_id,is_admin,is_shift_manager,is_burner,is_cement_analyst,is_locked,shift_log_access,locked_name,email,username').eq('auth_user_id', currentUser.id).maybeSingle();
-    if (kilnErr) throw kilnErr;
-    currentKilnUser = kilnRow || null;
+    currentKilnUser = accessState.kilnUser || null;
     isApprover = !!(currentKilnUser && currentKilnUser.is_shift_manager && !(currentProfile && currentProfile.holiday_manager_auth_user_id));
     const sessionFullName = currentUser && currentUser.user_metadata && currentUser.user_metadata.full_name
       ? String(currentUser.user_metadata.full_name).trim()
@@ -4779,23 +4710,19 @@ async function decideRequest(id, decision){
   setToast(decision === 'approved' ? 'Entry approved ✓' : 'Entry denied ✓');
 }
 
-async function persistAllowance(userId, allowanceInputId, carryoverInputId, extrasUnitInputId, extrasInputId, reasonInputId){
+async function persistAllowance(userId, allowanceInputId, extrasUnitInputId, extrasInputId, reasonInputId){
   const target = allPwProfiles.find(p => String(p.id) === String(userId));
   if (!target) return;
   if (!isHolidayAdmin && String(target.holiday_manager_auth_user_id || '') !== String(currentUser.id || '')) return;
   const allowance = num($(allowanceInputId)?.value, 72);
-  const carryover = num($(carryoverInputId)?.value, 0);
+  const existing = holidayProfileFor(userId);
+  const carryover = num(existing && existing.carryover_days, 0);
   const extrasUnit = $(extrasUnitInputId)?.value === 'hours' ? 'hours' : 'days';
   const extrasValue = num($(extrasInputId)?.value, 0);
   const extras = extrasUnit === 'hours' ? extrasValue / SHIFT_HOURS : extrasValue;
   const reason = String($(reasonInputId)?.value || '').trim();
-  const existing = holidayProfileFor(userId);
   if (!reason) {
     setToast('Please add a reason for this allowance change.');
-    return;
-  }
-  if (!canEditCarryoverNow() && num(existing && existing.carryover_days, 0) !== carryover) {
-    setToast('Carryover can only be adjusted after 31 December, at manager discretion.');
     return;
   }
   $('syncLabel').textContent = 'Saving…';
@@ -4816,11 +4743,11 @@ async function persistAllowance(userId, allowanceInputId, carryoverInputId, extr
 }
 
 async function saveAllowance(userId){
-  return persistAllowance(userId, 'allow_' + userId, 'carry_' + userId, 'extrasUnit_' + userId, 'extras_' + userId, 'allowReason_' + userId);
+  return persistAllowance(userId, 'allow_' + userId, 'extrasUnit_' + userId, 'extras_' + userId, 'allowReason_' + userId);
 }
 
 async function saveTeamAllowance(userId){
-  return persistAllowance(userId, 'teamAllow_' + userId, 'teamCarry_' + userId, 'teamExtrasUnit_' + userId, 'teamExtras_' + userId, 'teamReason_' + userId);
+  return persistAllowance(userId, 'teamAllow_' + userId, 'teamExtrasUnit_' + userId, 'teamExtras_' + userId, 'teamReason_' + userId);
 }
 
 function renderBankHolidayList(){
