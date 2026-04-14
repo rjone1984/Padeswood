@@ -2317,9 +2317,19 @@ let S={
   breakLabelsTrial:loadBreakLabelTrial(),
   viewOffset:0,
 };
-const set=patch=>{S={...S,...patch};renderTrackerApp();};
+const set=patch=>{S=Object.assign({},S,patch);renderTrackerApp();};
 
-function h(tag,props,...kids){
+function flattenKids(input, out){
+  const list = out || [];
+  for(const item of input){
+    if(Array.isArray(item)) flattenKids(item, list);
+    else list.push(item);
+  }
+  return list;
+}
+
+function h(tag,props){
+  const kids=flattenKids(Array.prototype.slice.call(arguments,2));
   const e=document.createElement(tag);
   for(const[k,v] of Object.entries(props||{})){
     if(k==="style"&&typeof v==="object") Object.assign(e.style,v);
@@ -2327,7 +2337,7 @@ function h(tag,props,...kids){
     else if(k.startsWith("on")) e.addEventListener(k.slice(2).toLowerCase(),v);
     else e.setAttribute(k,v);
   }
-  for(const k of kids.flat(9)){
+  for(const k of kids){
     if(k==null) continue;
     e.appendChild(typeof k==="string"?document.createTextNode(k):k);
   }
@@ -2343,7 +2353,7 @@ function buildShiftBadge(m,id,color,isFocus,phaseShort=""){
     kids.push(h("span",{class:"mono",style:{fontSize:"6.5px",fontWeight:"700",letterSpacing:".06em",lineHeight:"1",padding:"1px 4px",borderRadius:"999px",background:"rgba(255,255,255,.28)",border:`1px solid ${m.br}88`,color:m.fg,whiteSpace:"nowrap"}},phaseShort));
   }
   return h("div",{style:{display:"flex",alignItems:"center",gap:"2px",padding:"1px 3px",borderRadius:"3px",background:m.bg,border:`1px solid ${isFocus?color:m.br+"66"}`,boxShadow:isFocus?`0 0 5px ${color}44`:"none",minHeight:"16px"}},
-    ...kids
+    kids
   );
 }
 
