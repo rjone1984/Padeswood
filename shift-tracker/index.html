@@ -1972,6 +1972,7 @@ const SHIFTS=[
   {id:"D",color:"#d97706",start:new Date(2025,9,27)},
   {id:"E",color:"#dc2626",start:new Date(2025,11,22)},
 ];
+const TOTAL_WORKED_SHIFTS=CYCLE.filter(function(step){ return step==="D"||step==="N"; }).length;
 
 function cycleIndexForDate(shift,date){ return ((daysBetween(shift.start,date)%70)+70)%70; }
 function cycleStatusForDate(shift,date){ return CYCLE[cycleIndexForDate(shift,date)]; }
@@ -2000,6 +2001,24 @@ function describeCyclePosition(shift,date){
   if(pos<2) return `Block ${block} · Day ${pos+1} of 2`;
   if(pos<4) return `Block ${block} · Night ${pos-1} of 2`;
   return `Block ${block} · Rest day ${pos-3} of 4`;
+}
+
+function workedShiftsCompleted(shift,date){
+  const idx=cycleIndexForDate(shift,date);
+  let total=0;
+  for(let i=0;i<=idx;i++){
+    if(CYCLE[i]==="D"||CYCLE[i]==="N") total++;
+  }
+  return total;
+}
+
+function cycleCompletionPercent(shift,date){
+  if(!TOTAL_WORKED_SHIFTS) return 0;
+  return (workedShiftsCompleted(shift,date)/TOTAL_WORKED_SHIFTS)*100;
+}
+
+function formatCycleCompletion(shift,date){
+  return `${cycleCompletionPercent(shift,date).toFixed(1)}% worked`;
 }
 
 function getNextStatusChange(shift,date){
@@ -2392,6 +2411,7 @@ function renderTodayView(active){
   hero.appendChild(heroEmojiWrap);
   hero.appendChild(h("div",{style:{fontSize:"24px",fontWeight:"700",color:"var(--text)",letterSpacing:"-0.02em",marginBottom:"4px"}},tM.label));
   hero.appendChild(h("div",{class:"mono",style:{fontSize:"11px",color:"var(--text3)",marginBottom:"18px"}},describeCyclePosition(active,viewDate)));
+  hero.appendChild(h("div",{class:"mono",style:{fontSize:"10px",fontWeight:"700",letterSpacing:".08em",textTransform:"uppercase",color:active.color,marginBottom:"18px"}},formatCycleCompletion(active,viewDate)));
   hero.appendChild(h("div",{style:{display:"inline-flex",alignItems:"center",gap:"10px",padding:"10px 18px",borderRadius:"12px",background:"var(--bg2)",border:"1px solid var(--border)",boxShadow:"0 2px 8px var(--shadow)"}},
     h("span",{style:{fontSize:"16px"}},nxM.emoji),
     h("div",{style:{textAlign:"left"}},
@@ -2437,12 +2457,14 @@ function renderShiftSummaryCard(active, baseDate=TODAY){
   const tSt=status(active,baseDate),tM=meta(tSt);
   const nx=getNextStatusChange(active,baseDate),nxM=meta(nx.status);
   const nb=getDaysUntilLongBreak(active,baseDate);
+  const progressText=formatCycleCompletion(active,baseDate);
   return h("div",{class:"card",style:{border:"1px solid var(--border2)",boxShadow:"0 8px 20px rgba(15,23,42,.05)",padding:"12px 14px",marginBottom:"12px",animation:"none"}},
     h("div",{style:{display:"flex",gap:"10px",flexWrap:"wrap",alignItems:"center"}},
       h("div",{style:{flex:"1",minWidth:"120px"}},
         h("div",{class:"mono",style:{fontSize:"9px",color:"var(--text3)",textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:"3px"}},`${active.id} Shift · ${formatShortDate(baseDate)}`),
         h("div",{style:{fontSize:"18px",fontWeight:"700",color:"var(--text)"}},`${tM.emoji} ${tM.label}`),
-        h("div",{class:"mono",style:{fontSize:"10px",color:"var(--text2)",marginTop:"2px"}},describeCyclePosition(active,baseDate))
+        h("div",{class:"mono",style:{fontSize:"10px",color:"var(--text2)",marginTop:"2px"}},describeCyclePosition(active,baseDate)),
+        h("div",{class:"mono",style:{fontSize:"10px",fontWeight:"700",letterSpacing:".08em",textTransform:"uppercase",color:active.color,marginTop:"6px"}},progressText)
       ),
       h("div",{style:{textAlign:"right",minWidth:"110px"}},
         h("div",{class:"mono",style:{fontSize:"9px",color:"var(--text3)",textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:"3px"}},"Next change"),
@@ -2631,13 +2653,14 @@ function renderTrackerApp(){
 
   const pills=h("div",{style:{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:"6px",marginBottom:"12px"}});
   for(const sh of SHIFTS){
-    const st=status(sh,selectedDate),m=meta(st),sel=sh.id===focus,phase=S.breakLabelsTrial ? getLongBreakPhaseShort(sh,selectedDate) : "";
+    const st=status(sh,selectedDate),m=meta(st),sel=sh.id===focus,phase=S.breakLabelsTrial ? getLongBreakPhaseShort(sh,selectedDate) : "",progress=formatCycleCompletion(sh,selectedDate);
     pills.appendChild(h("div",{class:"pill",
       style:{background:sel?"var(--bg2)":"var(--bg3)",border:`2px solid ${sel?sh.color:"var(--border)"}`,borderRadius:"12px",padding:"9px 4px",textAlign:"center",boxShadow:sel?`0 3px 12px ${sh.color}30`:"none"},
       onClick:()=>set({focus:sh.id})},
       h("div",{style:{fontSize:"18px",fontWeight:"700",color:sh.color}},sh.id),
       h("div",{style:{fontSize:"14px",margin:"2px 0"}},m.emoji),
       h("div",{class:"badge",style:{background:m.bg,color:m.fg,border:`1px solid ${m.br}`,fontSize:"9px"}},m.short),
+      h("div",{class:"mono",style:{fontSize:"8px",fontWeight:"700",letterSpacing:".06em",color:sel?sh.color:"var(--text3)",marginTop:"3px"}},progress),
       phase?h("div",{class:"mono",style:{fontSize:"8px",fontWeight:"700",letterSpacing:".06em",color:sh.color,marginTop:"2px"}},phase):null
     ));
   }
