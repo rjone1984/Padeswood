@@ -1330,14 +1330,22 @@ body.basic-mode :is(.palette-overlay,.manager-requests-overlay) {
   #accessDenied .splash-hero-sub{font-size:8px;letter-spacing:2px}
   #accessDenied .brand-title{font-size:22px}
   #accessDenied .brand-sub{font-size:12px}
-  .page{padding:14px 12px 24px}
-  .hero{padding:16px;align-items:flex-start}
-  .hero h2{font-size:22px}
-  .summary-grid{grid-template-columns:1fr}
-  .stat{padding:12px 13px}
+  .page{padding:12px 10px 20px;gap:12px}
+  .hero{padding:14px;align-items:flex-start;border-radius:18px}
+  .hero h2{font-size:20px;line-height:1.08}
+  .hero p{font-size:12px;line-height:1.5}
+  .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .stat{padding:10px 11px;border-radius:14px}
+  .stat .label{font-size:8px}
+  .stat .value{font-size:18px;margin-top:3px}
+  .stat .sub{display:none}
+  .panel{padding:14px;border-radius:18px}
   .form-grid{grid-template-columns:1fr}
   .field.wide,.field.full{grid-column:auto}
-  .field{padding:11px}
+  .field{padding:10px}
+  .field label,.help-label{font-size:10px;letter-spacing:.8px}
+  .input,.textarea,.select{padding:11px 12px;border-radius:11px}
+  .textarea{min-height:98px}
   .form-grid > *{min-width:0}
   .form-card .input[type="date"],
   .retro-date,
@@ -1345,11 +1353,111 @@ body.basic-mode :is(.palette-overlay,.manager-requests-overlay) {
     font-size:12px;
     padding-inline:10px;
     padding-block:0;
+    max-width:100%;
+    overflow:hidden;
+    appearance:none;
+    -webkit-appearance:none;
+  }
+  .form-actions{margin-top:10px}
+  .form-actions .btn{width:100%}
+  .request-target-box{margin-top:10px;padding:10px 12px}
+  .request-target-box .target-row{display:grid;gap:4px;justify-items:start}
+  .request-target-box .small{font-size:11px;line-height:1.45}
+  .request-target-box strong{font-size:14px}
+  #myRequestsPanel .panel-head{
+    flex-direction:column;
+    justify-content:center;
+    align-items:stretch;
+    text-align:center;
+  }
+  #myRequestsPanel .panel-head .panel-sub{margin:0 auto}
+  .queue-controls{
+    width:100%;
+    align-items:center;
+    justify-content:center;
+    margin:0 auto;
+  }
+  .queue-controls .pill{margin:0 auto}
+  .queue-controls .select{
+    width:min(100%, 260px);
+    min-width:0;
   }
   .request-grid{grid-template-columns:1fr}
+  .request-card,.event-card,.staff-row,.queue-card,.staff-card,.activity-card{border-radius:16px}
+  .request-card,.event-card,.staff-row,.queue-card,.staff-card,.activity-card{padding:12px}
+  .entry-group summary{padding:10px 11px;gap:10px}
+  .entry-group .entry-group-title{font-size:14px}
+  .entry-group .entry-group-sub{font-size:10px}
+  .entry-group .entry-group-body{padding:10px 11px 11px}
   .staff-row{grid-template-columns:1fr;gap:8px}
-  .staff-card summary{padding:12px}
-  .staff-card .staff-body{padding:12px}
+  .staff-card summary{padding:10px 11px;gap:10px}
+  .staff-card .staff-summary-right{justify-content:flex-start}
+  .staff-card .staff-summary-right .pill{padding:3px 6px;font-size:10px}
+  .staff-card .staff-body{padding:10px 11px;gap:8px}
+  .staff-card .staff-body .meta{font-size:11px !important;line-height:1.35}
+  .staff-card .staff-section{padding:10px;gap:8px}
+  .staff-card .staff-section-title{font-size:9px}
+  .staff-card .staff-section-sub{font-size:10px;line-height:1.4}
+  .staff-card .staff-request-audit{padding-top:8px;gap:6px}
+  .staff-card .staff-request-item{padding:7px 8px;border-radius:11px}
+  .staff-card .staff-request-item .title{font-size:10px}
+  .staff-card .staff-request-item .meta{font-size:9px}
+  .staff-card .staff-request-item .timeline-item{padding:6px 7px}
+  .staff-card .staff-request-item .timeline-item .t-note{font-size:10px}
+  #activityPanel .activity-layout{
+    display:flex;
+    flex-direction:column;
+  }
+  #activityPanel .activity-detail{order:-1}
+  #activityPanel .activity-roster{order:1}
+  #activityPanel .activity-stat-grid{
+    grid-template-columns:1fr;
+  }
+  #activityPanel .activity-detail{
+    padding:12px;
+    gap:12px;
+  }
+  #activityPanel .activity-roster-btn{
+    padding:11px 12px;
+  }
+  #activityPanel .activity-roster-name{
+    font-size:13px;
+  }
+  #insightsPanel .panel-head{
+    flex-direction:column;
+    justify-content:center;
+    align-items:stretch;
+    text-align:center;
+  }
+  #insightsPanel .panel-head .panel-sub{margin:0 auto}
+  .insight-card{border-radius:16px}
+  .insight-head{
+    padding:12px;
+    flex-direction:column;
+    align-items:stretch;
+  }
+  .insight-pills{
+    justify-content:flex-start;
+  }
+  .insight-body{
+    padding:12px;
+    gap:12px;
+  }
+  .insight-chart{
+    gap:4px;
+    min-height:124px;
+  }
+  .insight-member-chart{
+    gap:4px;
+  }
+  .insight-member-chart .insight-bars{
+    --bar-height:46px;
+  }
+  .insight-team-title{font-size:15px}
+  .insight-team-sub{font-size:10px}
+  .insight-member-sub{font-size:10px}
+  .insight-section-title{font-size:8px}
+  .insight-month-label{font-size:9px}
   .palette-grid{grid-template-columns:1fr}
   .topbar{
     padding:10px 12px;
@@ -1362,6 +1470,24 @@ body.basic-mode :is(.palette-overlay,.manager-requests-overlay) {
   .topbar-title .kicker{font-size:9px}
   .user-chip{max-width:180px}
   .brand-mark.logo-mark.md{width:28px;height:28px}
+  .panel-head{margin-bottom:10px}
+  .panel-title{font-size:16px}
+  .panel-sub{font-size:11px;line-height:1.45}
+  .summary-grid .stat .sub,
+  .requestPanel .panel-sub,
+  #myRequestsPanel .panel-sub,
+  #activityPanel .panel-sub{display:none}
+  #requestPanel .panel-sub{display:block;font-size:11px}
+  #myRequestsPanel .panel-head{margin-bottom:10px}
+  #activityPanel .panel-head{margin-bottom:10px}
+  #approverQueuePanel .panel-head{margin-bottom:10px}
+  .queue-controls{width:100%}
+  .queue-controls .select{width:100%;min-width:0}
+  .card-box{padding:10px;border-radius:12px}
+  .card-box .box-label{font-size:9px;margin-bottom:5px}
+  .timeline-item{padding:8px 10px;border-radius:11px}
+  .activity-card{padding:10px 11px}
+  .activity-card .detail{font-size:12px}
 }
 
 /* Final Apple-style override layer. Preserve structure/behavior; simplify glass, motion, and backgrounds. */
@@ -1620,6 +1746,11 @@ body:not(.basic-mode) .btn-primary:hover{
     </section>
 
     <section class="summary-grid" id="personalSummarySection">
+      <div class="stat stat-remaining">
+        <div class="label">Remaining</div>
+        <div class="value" id="statRemaining">0.0</div>
+        <div class="sub">Entitlement minus approved</div>
+      </div>
       <div class="stat">
         <div class="label">Entitlement</div>
         <div class="value" id="statEntitlement">0.0</div>
@@ -1634,11 +1765,6 @@ body:not(.basic-mode) .btn-primary:hover{
         <div class="label">Pending</div>
         <div class="value" id="statPending">0.0</div>
         <div class="sub">Waiting for a decision</div>
-      </div>
-      <div class="stat stat-remaining">
-        <div class="label">Remaining</div>
-        <div class="value" id="statRemaining">0.0</div>
-        <div class="sub">Entitlement minus approved</div>
       </div>
       <div class="stat">
         <div class="label">Projected</div>
@@ -1937,7 +2063,11 @@ let selectedYear = new Date().getFullYear();
 let selectedHolidayActivityUserId = null;
 let loginReady = false;
 let focusApprovalsOnRender = new URLSearchParams(window.location.search).get('focus') === 'approvals';
-const SHIFT_HOURS = 12;
+const DEFAULT_SHIFT_WORKDAY_HOURS = 12;
+const DEFAULT_DAY_WORKDAY_HOURS = 8;
+const DEFAULT_SHIFT_ANNUAL_ALLOWANCE_DAYS = 6;
+const DEFAULT_DAY_ANNUAL_ALLOWANCE_DAYS = 35;
+const SHIFT_HOURS = DEFAULT_SHIFT_WORKDAY_HOURS;
 
 function $(id) { return document.getElementById(id); }
 function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
@@ -2050,6 +2180,33 @@ function num(value, fallback){
   const n = Number(value);
   return Number.isFinite(n) ? n : (fallback || 0);
 }
+function normalizeWorkRoleType(value){
+  return String(value || '').toLowerCase() === 'day' ? 'day' : 'shift';
+}
+function workDayHoursForRoleType(roleType){
+  return normalizeWorkRoleType(roleType) === 'day' ? DEFAULT_DAY_WORKDAY_HOURS : DEFAULT_SHIFT_WORKDAY_HOURS;
+}
+function defaultAnnualAllowanceDaysForRoleType(roleType){
+  return normalizeWorkRoleType(roleType) === 'day' ? DEFAULT_DAY_ANNUAL_ALLOWANCE_DAYS : DEFAULT_SHIFT_ANNUAL_ALLOWANCE_DAYS;
+}
+function workRoleTypeForProfile(profile){
+  return normalizeWorkRoleType(profile && profile.work_role_type);
+}
+function workRoleTypeForUserId(userId){
+  const profile = allPwProfiles.find(function(p){ return String(p.id) === String(userId); }) || (currentProfile && String(currentProfile.id) === String(userId) ? currentProfile : null);
+  return workRoleTypeForProfile(profile);
+}
+function workDayHoursForUserId(userId){
+  return workDayHoursForRoleType(workRoleTypeForUserId(userId));
+}
+function defaultAnnualAllowanceDaysForUserId(userId){
+  return defaultAnnualAllowanceDaysForRoleType(workRoleTypeForUserId(userId));
+}
+function requestWorkDayHours(req){
+  const stored = num(req && req.work_day_hours, 0);
+  if (stored === DEFAULT_DAY_WORKDAY_HOURS || stored === DEFAULT_SHIFT_WORKDAY_HOURS) return stored;
+  return workDayHoursForUserId(req && req.auth_user_id);
+}
 async function checkLicence(){
   const overlay = $('licenceOverlay');
   const msg = $('licenceMsg');
@@ -2128,7 +2285,8 @@ function addWeekdays(startStr, weekdayCount){
 function calcRequestedWeekdayEquivalent(){
   const unit = $('reqUnit').value === 'hours' ? 'hours' : 'days';
   const amount = num($('reqDays').value, 0);
-  return unit === 'hours' ? amount / SHIFT_HOURS : amount;
+  const hoursPerDay = workDayHoursForUserId(currentUser && currentUser.id);
+  return unit === 'hours' ? amount / hoursPerDay : amount;
 }
 function syncRequestedEndDate(){
   const start = $('reqStart').value;
@@ -2150,7 +2308,8 @@ function syncDateRangeEndDate(startId, unitId, amountId, endId){
   const start = startEl.value;
   const unit = unitEl.value === 'hours' ? 'hours' : 'days';
   const amount = num(amountEl.value, 0);
-  const days = unit === 'hours' ? amount / SHIFT_HOURS : amount;
+  const hoursPerDay = num(unitEl.dataset.hoursPerDay, DEFAULT_SHIFT_WORKDAY_HOURS);
+  const days = unit === 'hours' ? amount / hoursPerDay : amount;
   if (!start || days <= 0) {
     endEl.value = '';
     return;
@@ -2181,15 +2340,16 @@ function requestWholeHoursText(hours){
   const n = Math.round(num(hours, 0));
   return n.toFixed(0) + ' hour' + (n === 1 ? '' : 's');
 }
-function allowanceExtrasText(days){
+function allowanceExtrasText(days, hoursPerDay){
   const n = num(days, 0);
-  return requestDaysText(n) + ' / ' + requestWholeHoursText(n * SHIFT_HOURS);
+  const dayHours = num(hoursPerDay, DEFAULT_SHIFT_WORKDAY_HOURS);
+  return requestDaysText(n) + ' / ' + requestWholeHoursText(n * dayHours);
 }
 function holidayExtrasDays(profile){
   return num(profile && profile.entitlement_extras_days, 0);
 }
 function holidayExtrasHours(profile){
-  return holidayExtrasDays(profile) * SHIFT_HOURS;
+  return holidayExtrasDays(profile) * DEFAULT_SHIFT_WORKDAY_HOURS;
 }
 function requestKindFromReason(reason){
   return 'holiday';
@@ -2206,9 +2366,10 @@ function requestDisplayReason(reason){
 function requestAmountText(req){
   const unit = req && req.requested_unit === 'hours' ? 'hours' : 'days';
   const amount = num(req && req.requested_amount, 0) || num(req && req.requested_days, 0);
+  const hoursPerDay = requestWorkDayHours(req);
   return unit === 'hours'
-    ? requestHoursText(amount) + ' (' + requestDaysText(amount / SHIFT_HOURS) + ')'
-    : requestDaysText(amount) + ' (' + requestHoursText(amount * SHIFT_HOURS) + ')';
+    ? requestHoursText(amount) + ' (' + requestDaysText(amount / hoursPerDay) + ')'
+    : requestDaysText(amount) + ' (' + requestHoursText(amount * hoursPerDay) + ')';
 }
 function requestKindFromRequest(req){
   return requestKindFromReason(req && req.reason);
@@ -2217,7 +2378,7 @@ function requestHours(req){
   const unit = req && req.requested_unit === 'hours' ? 'hours' : 'days';
   const amount = num(req && req.requested_amount, 0) || num(req && req.requested_days, 0);
   if (unit === 'hours') return amount;
-  return amount * SHIFT_HOURS;
+  return amount * requestWorkDayHours(req);
 }
 function balanceTrafficLightClass(days){
   const n = num(days, 0);
@@ -2261,12 +2422,13 @@ async function addRetrospectiveHoliday(userId, startId, endId, amountId, unitId,
   const reasonReview = reviewHolidayTextSafety(reason);
   if (!reasonReview.ok) { showHolidayRequestError(reasonReview.reason); return; }
   const formattedReason = tidyRequestText(reason);
-  const fallbackAmount = unit === 'hours' ? countWeekdays(start, end) * SHIFT_HOURS : countWeekdays(start, end);
+  const workDayHours = workDayHoursForUserId(userId);
+  const fallbackAmount = unit === 'hours' ? countWeekdays(start, end) * workDayHours : countWeekdays(start, end);
   const amount = amountRaw > 0 ? amountRaw : fallbackAmount;
   if (amount <= 0) { showHolidayRequestError('Please enter at least one day or hour.'); return; }
-  const days = unit === 'hours' ? amount / SHIFT_HOURS : amount;
+  const days = unit === 'hours' ? amount / workDayHours : amount;
   const stats = statsForUser(userId, selectedYear);
-  const needed = unit === 'hours' ? amount : days * SHIFT_HOURS;
+  const needed = unit === 'hours' ? amount : days * workDayHours;
   if (stats.remaining < needed) {
     showHolidayRequestError('Not enough holiday balance remaining for this retrospective entry.');
     return;
@@ -2605,12 +2767,13 @@ function syncExtrasUnit(unitInputId, amountInputId){
   if (!unitEl || !amountEl) return;
   const next = unitEl.value === 'hours' ? 'hours' : 'days';
   const prev = unitEl.dataset.unit || next;
+  const hoursPerDay = num(unitEl.dataset.hoursPerDay, DEFAULT_SHIFT_WORKDAY_HOURS);
   if (prev !== next) {
     const current = num(amountEl.value, 0);
     amountEl.value = String(prev === 'hours' && next === 'days'
-      ? current / SHIFT_HOURS
+      ? current / hoursPerDay
       : prev === 'days' && next === 'hours'
-        ? current * SHIFT_HOURS
+        ? current * hoursPerDay
         : current);
   }
   unitEl.dataset.unit = next;
@@ -2653,6 +2816,9 @@ function holidayManagerDisplayNameForUser(userId){
   const label = holidayManagerDisplayNameFromRecords(manager, kilnUser);
   if (label && label !== '—') return label;
   return currentHolidayManagerLabel || 'No manager assigned';
+}
+function isManagerApproverKilnUser(ku){
+  return !!(ku && (ku.is_shift_manager || ku.is_day_manager));
 }
 function isAssignedHolidayManagerForRequest(req){
   if (!isApprover || isHolidayAdmin || !req || !currentUser) return false;
@@ -2704,18 +2870,26 @@ function renderRequestAuditItem(req){
 }
 function statsForUser(userId, year){
   const profile = holidayProfileFor(userId);
-  const allowance = num(profile && profile.annual_allowance_days, 72 / SHIFT_HOURS);
+  const workDayHours = workDayHoursForUserId(userId);
+  const allowanceDays = num(profile && profile.annual_allowance_days, defaultAnnualAllowanceDaysForUserId(userId));
   const carryover = num(profile && profile.carryover_days, 0);
-  const extras = holidayExtrasHours(profile);
-  const entitlement = allowance + carryover + extras;
+  const extrasDays = holidayExtrasDays(profile);
+  const allowanceHours = allowanceDays * workDayHours;
+  const carryoverHours = carryover * workDayHours;
+  const extrasHours = extrasDays * workDayHours;
+  const entitlement = allowanceHours + carryoverHours + extrasHours;
   const yearRequests = allHolidayRequests.filter(r => r.auth_user_id === userId && requestMatchesYear(r, year));
   const countable = yearRequests.filter(r => requestConsumesBalance(r));
   const used = countable.filter(r => r.status === 'approved').reduce((sum, r) => sum + requestBalanceHours(r), 0);
   const pending = countable.filter(r => r.status === 'pending').reduce((sum, r) => sum + requestBalanceHours(r), 0);
   return {
-    allowance,
+    workDayHours,
+    allowanceDays,
+    allowanceHours,
     carryover,
-    extras,
+    carryoverHours,
+    extrasDays,
+    extrasHours,
     entitlement,
     used,
     pending,
@@ -2827,15 +3001,16 @@ function renderHolidayRequestMiniItem(req){
     (noteText && noteText !== reasonText ? '<div class="meta">'+esc(noteText)+'</div>' : '')+
   '</div>';
 }
-function renderHolidayAllowanceMiniItem(ev){
+function renderHolidayAllowanceMiniItem(ev, hoursPerDay){
+  const dayHours = num(hoursPerDay, DEFAULT_SHIFT_WORKDAY_HOURS);
   const allowanceText = typeof ev.new_annual_allowance_days !== 'undefined'
-    ? requestWholeHoursText(num(ev.old_annual_allowance_days, 0)) + ' → ' + requestWholeHoursText(num(ev.new_annual_allowance_days, 0)) + ' allowance'
+    ? requestWholeHoursText(num(ev.old_annual_allowance_days, 0) * dayHours) + ' → ' + requestWholeHoursText(num(ev.new_annual_allowance_days, 0) * dayHours) + ' allowance'
     : '';
   const carryText = typeof ev.new_carryover_days !== 'undefined'
-    ? requestWholeHoursText(num(ev.old_carryover_days, 0)) + ' → ' + requestWholeHoursText(num(ev.new_carryover_days, 0)) + ' carryover'
+    ? requestWholeHoursText(num(ev.old_carryover_days, 0) * dayHours) + ' → ' + requestWholeHoursText(num(ev.new_carryover_days, 0) * dayHours) + ' carryover'
     : '';
   const extrasText = typeof ev.new_extras_days !== 'undefined'
-    ? allowanceExtrasText(num(ev.old_extras_days, 0)) + ' → ' + allowanceExtrasText(num(ev.new_extras_days, 0)) + ' extras'
+    ? allowanceExtrasText(num(ev.old_extras_days, 0), dayHours) + ' → ' + allowanceExtrasText(num(ev.new_extras_days, 0), dayHours) + ' extras'
     : '';
   const changeText = [allowanceText, carryText, extrasText].filter(Boolean).join(' · ') || 'Allowance updated';
   return '<div class="activity-mini-item">'+
@@ -2874,10 +3049,10 @@ function renderTeamOverviewCards(){
   const selectedDisplayName = personDisplayNameFromRecords(selectedProfile, selectedKu, 'Unknown');
   const selectedManagerName = holidayManagerDisplayNameForUser(selectedProfile.id);
   const selectedEditable = canEditAllowanceFor(selectedProfile);
-  const selectedEntitlementValue = num(selectedHp && selectedHp.annual_allowance_days, 72 / SHIFT_HOURS);
+  const selectedEntitlementValue = num(selectedHp && selectedHp.annual_allowance_days, defaultAnnualAllowanceDaysForUserId(selectedProfile.id));
   const selectedCarryoverValue = num(selectedHp && selectedHp.carryover_days, 0);
   const selectedExtrasValue = num(selectedHp && selectedHp.entitlement_extras_days, 0);
-  const selectedRemainingDays = selectedStats.remaining / SHIFT_HOURS;
+  const selectedRemainingDays = selectedStats.remaining / selectedStats.workDayHours;
   const selectedRemainingClass = balanceTrafficLightClass(selectedRemainingDays);
   const selectedRequestHistory = requestsForUser(selectedProfile.id)
     .filter(function(r){ return requestMatchesYear(r, selectedYear); })
@@ -2887,7 +3062,7 @@ function renderTeamOverviewCards(){
     .slice(0, 3);
   const rosterHtml = activeProfiles.map(function(p){
     const stats = statsForUser(p.id, selectedYear);
-    const remainingDays = stats.remaining / SHIFT_HOURS;
+    const remainingDays = stats.remaining / stats.workDayHours;
     const remainingClass = balanceTrafficLightClass(remainingDays);
     const latestReq = requestsForUser(p.id).filter(function(r){ return requestMatchesYear(r, selectedYear); })[0] || null;
     const displayName = personDisplayNameFromRecords(p, kilnUserFor(p.id), 'Unknown');
@@ -2897,8 +3072,8 @@ function renderTeamOverviewCards(){
       '<div class="name">'+esc(displayName)+'</div>'+
       '<div class="sub">'+
         '<span class="pill '+remainingClass+'">'+esc(requestDaysText(remainingDays))+' left</span>'+
-        '<span class="pill">'+esc(requestDaysText(stats.pending / SHIFT_HOURS))+' pending</span>'+
-        '<span class="pill">'+esc(requestDaysText(stats.projected / SHIFT_HOURS))+' projected</span>'+
+        '<span class="pill">'+esc(requestDaysText(stats.pending / stats.workDayHours))+' pending</span>'+
+        '<span class="pill">'+esc(requestDaysText(stats.projected / stats.workDayHours))+' projected</span>'+
       '</div>'+
       '<div class="mini">'+(latestReq ? esc(requestSummaryText(latestReq)) + ' · ' + esc(formatDateTime(latestReq.requested_at)) : 'No requests yet')+'</div>'+
       '<div class="mini">'+(isHolidayAdmin && managerName ? 'Manager: ' + esc(managerName) : 'Click to open the detail panel')+'</div>'+
@@ -2908,23 +3083,23 @@ function renderTeamOverviewCards(){
     ? selectedRequestHistory.map(renderHolidayRequestMiniItem).join('')
     : '<div class="small">No leave requests logged yet.</div>';
   const allowanceAuditHtml = selectedAllowanceHistory.length
-    ? selectedAllowanceHistory.map(renderHolidayAllowanceMiniItem).join('')
+    ? selectedAllowanceHistory.map(function(ev){ return renderHolidayAllowanceMiniItem(ev, selectedStats.workDayHours); }).join('')
     : '<div class="small">No allowance changes logged yet.</div>';
   const editSectionHtml = selectedEditable ? (
     '<details class="activity-collapsible">'+
       '<summary><div><div style="font-weight:800;color:var(--tx)">Edit entitlements</div><div class="small">Adjust allowance, carryover and extras for this person.</div></div><span class="pill">'+esc(requestWholeHoursText(selectedStats.entitlement))+'</span></summary>'+
       '<div class="content">'+
         '<div class="activity-stat-grid">'+
-          '<div class="activity-stat"><div class="label">Entitlement</div><div class="value">'+esc(requestWholeHoursText(selectedStats.entitlement))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.entitlement / SHIFT_HOURS))+'</div></div>'+
-          '<div class="activity-stat"><div class="label">Used</div><div class="value">'+esc(requestWholeHoursText(selectedStats.used))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.used / SHIFT_HOURS))+'</div></div>'+
-          '<div class="activity-stat"><div class="label">Pending</div><div class="value">'+esc(requestWholeHoursText(selectedStats.pending))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.pending / SHIFT_HOURS))+'</div></div>'+
-          '<div class="activity-stat"><div class="label">Remaining</div><div class="value">'+esc(requestWholeHoursText(selectedStats.remaining))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.remaining / SHIFT_HOURS))+'</div></div>'+
-          '<div class="activity-stat"><div class="label">Projected</div><div class="value">'+esc(requestWholeHoursText(selectedStats.projected))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.projected / SHIFT_HOURS))+'</div></div>'+
+          '<div class="activity-stat"><div class="label">Entitlement</div><div class="value">'+esc(requestWholeHoursText(selectedStats.entitlement))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.entitlement / selectedStats.workDayHours))+'</div></div>'+
+          '<div class="activity-stat"><div class="label">Used</div><div class="value">'+esc(requestWholeHoursText(selectedStats.used))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.used / selectedStats.workDayHours))+'</div></div>'+
+          '<div class="activity-stat"><div class="label">Pending</div><div class="value">'+esc(requestWholeHoursText(selectedStats.pending))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.pending / selectedStats.workDayHours))+'</div></div>'+
+          '<div class="activity-stat"><div class="label">Remaining</div><div class="value">'+esc(requestWholeHoursText(selectedStats.remaining))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.remaining / selectedStats.workDayHours))+'</div></div>'+
+          '<div class="activity-stat"><div class="label">Projected</div><div class="value">'+esc(requestWholeHoursText(selectedStats.projected))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.projected / selectedStats.workDayHours))+'</div></div>'+
         '</div>'+
         '<div class="field"><label class="small" style="margin-bottom:4px">Annual entitlement</label><input class="input" style="height:34px;font-size:11px" type="number" min="0" step="0.5" id="allow_'+esc(selectedProfile.id)+'" value="'+esc(selectedEntitlementValue)+'"'+(selectedEditable ? '' : ' disabled')+'><div class="field-note">Set the base holiday allowance for this year.</div></div>'+
         '<div class="field"><label class="small" style="margin-bottom:4px">Carryover after 31 Dec</label><input class="input" style="height:34px;font-size:11px" type="number" min="0" step="0.5" id="carry_'+esc(selectedProfile.id)+'" value="'+esc(selectedCarryoverValue)+'"'+((selectedEditable && carryoverOpen) ? '' : ' disabled')+' title="'+esc(carryoverOpen ? 'Carryover can be adjusted now' : 'Carryover can only be adjusted after 31 December')+'"><div class="field-note">'+esc(carryoverOpen ? 'Adjust carried-over holiday for the new year.' : 'Carryover can only be changed after 31 December.')+'</div></div>'+
         '<div class="field"><label class="small" style="margin-bottom:4px">Extras</label><div class="row" style="gap:8px;align-items:flex-end">'+
-          '<select class="select" id="extrasUnit_'+esc(selectedProfile.id)+'" style="width:120px;height:34px;font-size:11px" onchange="syncExtrasUnit(\'extrasUnit_'+esc(selectedProfile.id)+'\', \'extras_'+esc(selectedProfile.id)+'\')"'+(selectedEditable ? '' : ' disabled')+'>'+
+          '<select class="select" id="extrasUnit_'+esc(selectedProfile.id)+'" style="width:120px;height:34px;font-size:11px" data-hours-per-day="'+esc(selectedStats.workDayHours)+'" onchange="syncExtrasUnit(\'extrasUnit_'+esc(selectedProfile.id)+'\', \'extras_'+esc(selectedProfile.id)+'\')"'+(selectedEditable ? '' : ' disabled')+'>'+
             '<option value="days">Days</option>'+
             '<option value="hours">Hours</option>'+
           '</select>'+
@@ -2940,7 +3115,7 @@ function renderTeamOverviewCards(){
       '<summary><div><div style="font-weight:800;color:var(--tx)">Retrospective holiday</div><div class="small">Add a backdated approved request for this person.</div></div></summary>'+
       '<div class="content">'+
         '<div class="field"><label class="small" style="margin-bottom:4px">Start date</label><input class="input retro-date" type="date" id="retroStart_'+esc(selectedProfile.id)+'" onchange="syncDateRangeEndDate(\'retroStart_'+esc(selectedProfile.id)+'\', \'retroUnit_'+esc(selectedProfile.id)+'\', \'retroAmount_'+esc(selectedProfile.id)+'\', \'retroEnd_'+esc(selectedProfile.id)+'\')"></div>'+
-        '<div class="field"><label class="small" style="margin-bottom:4px">Request as</label><select class="select retro-unit" id="retroUnit_'+esc(selectedProfile.id)+'" onchange="syncDateRangeEndDate(\'retroStart_'+esc(selectedProfile.id)+'\', \'retroUnit_'+esc(selectedProfile.id)+'\', \'retroAmount_'+esc(selectedProfile.id)+'\', \'retroEnd_'+esc(selectedProfile.id)+'\')"><option value="days">Days</option><option value="hours">Hours</option></select></div>'+
+        '<div class="field"><label class="small" style="margin-bottom:4px">Request as</label><select class="select retro-unit" id="retroUnit_'+esc(selectedProfile.id)+'" data-hours-per-day="'+esc(selectedStats.workDayHours)+'" onchange="syncDateRangeEndDate(\'retroStart_'+esc(selectedProfile.id)+'\', \'retroUnit_'+esc(selectedProfile.id)+'\', \'retroAmount_'+esc(selectedProfile.id)+'\', \'retroEnd_'+esc(selectedProfile.id)+'\')"><option value="days">Days</option><option value="hours">Hours</option></select></div>'+
         '<div class="field"><label class="small" style="margin-bottom:4px">Amount</label><input class="input retro-amount" type="number" min="0" step="0.5" id="retroAmount_'+esc(selectedProfile.id)+'" onchange="syncDateRangeEndDate(\'retroStart_'+esc(selectedProfile.id)+'\', \'retroUnit_'+esc(selectedProfile.id)+'\', \'retroAmount_'+esc(selectedProfile.id)+'\', \'retroEnd_'+esc(selectedProfile.id)+'\')"></div>'+
         '<div class="field"><label class="small" style="margin-bottom:4px">End date</label><input class="input retro-end" type="date" id="retroEnd_'+esc(selectedProfile.id)+'" readonly></div>'+
         '<div class="field"><label class="small" style="margin-bottom:4px">Reason / note</label><textarea class="textarea allowance-reason" id="retroReason_'+esc(selectedProfile.id)+'" placeholder="Explain why this retrospective holiday is being added."></textarea><div class="field-note">This is stored on the approved request and its audit trail.</div></div>'+
@@ -2959,11 +3134,11 @@ function renderTeamOverviewCards(){
         '<span class="pill '+selectedRemainingClass+'">'+esc(requestDaysText(selectedRemainingDays))+' left</span>'+
       '</div>'+
       '<div class="activity-stat-grid">'+
-        '<div class="activity-stat"><div class="label">Entitlement</div><div class="value">'+esc(requestWholeHoursText(selectedStats.entitlement))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.entitlement / SHIFT_HOURS))+'</div></div>'+
-        '<div class="activity-stat"><div class="label">Used</div><div class="value">'+esc(requestWholeHoursText(selectedStats.used))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.used / SHIFT_HOURS))+'</div></div>'+
-        '<div class="activity-stat"><div class="label">Pending</div><div class="value">'+esc(requestWholeHoursText(selectedStats.pending))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.pending / SHIFT_HOURS))+'</div></div>'+
-        '<div class="activity-stat"><div class="label">Remaining</div><div class="value">'+esc(requestWholeHoursText(selectedStats.remaining))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.remaining / SHIFT_HOURS))+'</div></div>'+
-        '<div class="activity-stat"><div class="label">Projected</div><div class="value">'+esc(requestWholeHoursText(selectedStats.projected))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.projected / SHIFT_HOURS))+'</div></div>'+
+        '<div class="activity-stat"><div class="label">Entitlement</div><div class="value">'+esc(requestWholeHoursText(selectedStats.entitlement))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.entitlement / selectedStats.workDayHours))+'</div></div>'+
+        '<div class="activity-stat"><div class="label">Used</div><div class="value">'+esc(requestWholeHoursText(selectedStats.used))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.used / selectedStats.workDayHours))+'</div></div>'+
+        '<div class="activity-stat"><div class="label">Pending</div><div class="value">'+esc(requestWholeHoursText(selectedStats.pending))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.pending / selectedStats.workDayHours))+'</div></div>'+
+        '<div class="activity-stat"><div class="label">Remaining</div><div class="value">'+esc(requestWholeHoursText(selectedStats.remaining))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.remaining / selectedStats.workDayHours))+'</div></div>'+
+        '<div class="activity-stat"><div class="label">Projected</div><div class="value">'+esc(requestWholeHoursText(selectedStats.projected))+'</div><div class="sub">'+esc(requestDaysText(selectedStats.projected / selectedStats.workDayHours))+'</div></div>'+
       '</div>'+
       '<div class="activity-section">'+
         '<div class="activity-section-title">Recent request audit</div>'+
@@ -3004,13 +3179,13 @@ function renderApproverQueue(){
   }
   if (isHolidayAdmin) {
     $('approverQueuePanel').querySelector('.panel-title').textContent = 'Leave overview';
-    $('approverQueuePanel').querySelector('.panel-sub').textContent = 'Requests grouped into users and shift managers.';
+    $('approverQueuePanel').querySelector('.panel-sub').textContent = 'Requests grouped into users and managers.';
     $('managerFilter').closest('.queue-controls').style.display = 'none';
     allowancePanel.style.display = '';
     const grouped = { users: [], managers: [] };
     rows.forEach(function(req) {
       const ku = allKilnUsers.find(function(x){ return String(x.auth_user_id) === String(req.auth_user_id); }) || null;
-      (ku && ku.is_shift_manager ? grouped.managers : grouped.users).push(req);
+      (isManagerApproverKilnUser(ku) ? grouped.managers : grouped.users).push(req);
     });
     const groupBlock = function(title, list) {
       if (!list.length) return '<div class="empty">'+title+' requests are empty for '+selectedYear+'.</div>';
@@ -3043,7 +3218,7 @@ function renderApproverQueue(){
         '</article>';
       }).join('')+'</div>';
     };
-    box.innerHTML = groupBlock('Users', grouped.users) + groupBlock('Shift Managers', grouped.managers);
+    box.innerHTML = groupBlock('Users', grouped.users) + groupBlock('Managers', grouped.managers);
     return;
   }
   allowancePanel.style.display = isHolidayAdmin ? '' : 'none';
@@ -3138,7 +3313,7 @@ function renderAllowanceList(){
     const editable = canEditAllowanceFor(p);
     const managerName = holidayManagerDisplayNameForUser(p.id);
     const extrasValue = num(hp && hp.entitlement_extras_days, 0);
-    const remainingDays = stats.remaining / SHIFT_HOURS;
+    const remainingDays = stats.remaining / stats.workDayHours;
     const remainingClass = balanceTrafficLightClass(remainingDays);
     const allowanceHistory = profileEventsForUser(p.id)
       .filter(function(e){ return e && requestMatchesYear({ start_date: e.created_at }, selectedYear); })
@@ -3154,25 +3329,25 @@ function renderAllowanceList(){
         '</div>'+
         '<div class="staff-summary-right">'+
           (showManagerLabel ? '<span class="pill">'+esc(managerName)+'</span>' : '')+
-          '<span class="pill">'+esc(requestDaysText(stats.used / SHIFT_HOURS))+' taken</span>'+
+          '<span class="pill">'+esc(requestDaysText(stats.used / stats.workDayHours))+' taken</span>'+
           '<span class="pill '+remainingClass+'">'+esc(requestDaysText(remainingDays))+' left</span>'+
-          '<span class="pill">'+esc(requestDaysText(stats.pending / SHIFT_HOURS))+' pending</span>'+
-          '<span class="pill">'+esc(requestDaysText(stats.projected / SHIFT_HOURS))+' projected</span>'+
+          '<span class="pill">'+esc(requestDaysText(stats.pending / stats.workDayHours))+' pending</span>'+
+          '<span class="pill">'+esc(requestDaysText(stats.projected / stats.workDayHours))+' projected</span>'+
         '</div>'+
       '</summary>'+
       '<div class="staff-body">'+
-        '<div class="meta" style="font-size:10px">Used '+esc(requestWholeHoursText(stats.used))+' / '+esc(requestDaysText(stats.used / SHIFT_HOURS))+'</div>'+
-        '<div class="meta" style="font-size:10px">Pending '+esc(requestWholeHoursText(stats.pending))+' / '+esc(requestDaysText(stats.pending / SHIFT_HOURS))+'</div>'+
-        '<div class="meta" style="font-size:10px">Remaining '+esc(requestWholeHoursText(stats.remaining))+' / '+esc(requestDaysText(stats.remaining / SHIFT_HOURS))+'</div>'+
-        '<div class="meta" style="font-size:10px">Projected '+esc(requestWholeHoursText(stats.projected))+' / '+esc(requestDaysText(stats.projected / SHIFT_HOURS))+'</div>'+
-        '<div class="meta" style="font-size:10px">Extras '+esc(allowanceExtrasText(extrasValue))+'</div>'+
+        '<div class="meta" style="font-size:10px">Used '+esc(requestWholeHoursText(stats.used))+' / '+esc(requestDaysText(stats.used / stats.workDayHours))+'</div>'+
+        '<div class="meta" style="font-size:10px">Pending '+esc(requestWholeHoursText(stats.pending))+' / '+esc(requestDaysText(stats.pending / stats.workDayHours))+'</div>'+
+        '<div class="meta" style="font-size:10px">Remaining '+esc(requestWholeHoursText(stats.remaining))+' / '+esc(requestDaysText(stats.remaining / stats.workDayHours))+'</div>'+
+        '<div class="meta" style="font-size:10px">Projected '+esc(requestWholeHoursText(stats.projected))+' / '+esc(requestDaysText(stats.projected / stats.workDayHours))+'</div>'+
+        '<div class="meta" style="font-size:10px">Extras '+esc(allowanceExtrasText(extrasValue, stats.workDayHours))+'</div>'+
         '<div class="staff-section">'+
           '<div class="staff-section-title">Entitlement adjustment</div>'+
           '<div class="staff-section-sub">Add or remove holiday entitlement and carryover for this staff member. Every save is written to the audit trail.</div>'+
-          '<div class="field"><label class="small" style="margin-bottom:4px">Annual entitlement</label><input class="input" style="height:30px;font-size:11px" type="number" min="0" step="0.5" id="allow_'+esc(p.id)+'" value="'+esc(num(hp && hp.annual_allowance_days, 72 / SHIFT_HOURS))+'"'+(editable ? '' : ' disabled')+'><div class="field-note">Base holiday allowance for the year.</div></div>'+
+          '<div class="field"><label class="small" style="margin-bottom:4px">Annual entitlement</label><input class="input" style="height:30px;font-size:11px" type="number" min="0" step="0.5" id="allow_'+esc(p.id)+'" value="'+esc(num(hp && hp.annual_allowance_days, defaultAnnualAllowanceDaysForUserId(p.id)))+'"'+(editable ? '' : ' disabled')+'><div class="field-note">Base holiday allowance for the year.</div></div>'+
           '<div class="field"><label class="small" style="margin-bottom:4px">Carryover after 31 Dec</label><input class="input" style="height:30px;font-size:11px" type="number" min="0" step="0.5" id="carry_'+esc(p.id)+'" value="'+esc(num(hp && hp.carryover_days, 0))+'"'+((editable && carryoverOpen) ? '' : ' disabled')+' title="'+esc(carryoverOpen ? 'Carryover can be adjusted now' : 'Carryover can only be adjusted after 31 December')+'"><div class="field-note">Extra holiday moved over into the new year.</div></div>'+
           '<div class="field"><label class="small" style="margin-bottom:4px">Extras</label><div class="row" style="gap:8px;align-items:flex-end">'+
-            '<select class="select" id="extrasUnit_'+esc(p.id)+'" style="width:120px;height:30px;font-size:11px" onchange="syncExtrasUnit(\'extrasUnit_'+esc(p.id)+'\', \'extras_'+esc(p.id)+'\')"'+(editable ? '' : ' disabled')+'>'+
+            '<select class="select" id="extrasUnit_'+esc(p.id)+'" style="width:120px;height:30px;font-size:11px" data-hours-per-day="'+esc(stats.workDayHours)+'" onchange="syncExtrasUnit(\'extrasUnit_'+esc(p.id)+'\', \'extras_'+esc(p.id)+'\')"'+(editable ? '' : ' disabled')+'>'+
               '<option value="days">Days</option>'+
               '<option value="hours">Hours</option>'+
             '</select>'+
@@ -3185,13 +3360,13 @@ function renderAllowanceList(){
           '<div class="staff-history-title">Allowance audit</div>'+
           (allowanceHistory.length ? allowanceHistory.map(function(ev){
             const allowanceText = typeof ev.new_annual_allowance_days !== 'undefined'
-              ? requestWholeHoursText(num(ev.old_annual_allowance_days, 0)) + ' → ' + requestWholeHoursText(num(ev.new_annual_allowance_days, 0)) + ' allowance'
+              ? requestWholeHoursText(num(ev.old_annual_allowance_days, 0) * stats.workDayHours) + ' → ' + requestWholeHoursText(num(ev.new_annual_allowance_days, 0) * stats.workDayHours) + ' allowance'
               : '';
             const carryText = typeof ev.new_carryover_days !== 'undefined'
-              ? requestWholeHoursText(num(ev.old_carryover_days, 0)) + ' → ' + requestWholeHoursText(num(ev.new_carryover_days, 0)) + ' carryover'
+              ? requestWholeHoursText(num(ev.old_carryover_days, 0) * stats.workDayHours) + ' → ' + requestWholeHoursText(num(ev.new_carryover_days, 0) * stats.workDayHours) + ' carryover'
               : '';
             const extrasText = typeof ev.new_extras_days !== 'undefined'
-              ? allowanceExtrasText(num(ev.old_extras_days, 0)) + ' → ' + allowanceExtrasText(num(ev.new_extras_days, 0)) + ' extras'
+              ? allowanceExtrasText(num(ev.old_extras_days, 0), stats.workDayHours) + ' → ' + allowanceExtrasText(num(ev.new_extras_days, 0), stats.workDayHours) + ' extras'
               : '';
             const changeText = [allowanceText, carryText, extrasText].filter(Boolean).join(' · ') || 'Allowance updated';
             return '<div class="staff-history-item">'+
@@ -3215,16 +3390,16 @@ function renderAllowanceList(){
 function renderSummary(){
   const stats = statsForUser(currentUser.id, selectedYear);
   const remainingCard = $('statRemaining') ? $('statRemaining').closest('.stat') : null;
-  $('statEntitlement').textContent = requestWholeHoursText(stats.entitlement) + ' / ' + requestDaysText(stats.entitlement / SHIFT_HOURS);
-  $('statUsed').textContent = requestWholeHoursText(stats.used) + ' / ' + requestDaysText(stats.used / SHIFT_HOURS);
-  $('statPending').textContent = requestWholeHoursText(stats.pending) + ' / ' + requestDaysText(stats.pending / SHIFT_HOURS);
-  $('statRemaining').textContent = requestWholeHoursText(stats.remaining) + ' / ' + requestDaysText(stats.remaining / SHIFT_HOURS);
-  $('statProjected').textContent = requestWholeHoursText(stats.projected) + ' / ' + requestDaysText(stats.projected / SHIFT_HOURS);
+  $('statEntitlement').textContent = requestWholeHoursText(stats.entitlement) + ' / ' + requestDaysText(stats.entitlement / stats.workDayHours);
+  $('statUsed').textContent = requestWholeHoursText(stats.used) + ' / ' + requestDaysText(stats.used / stats.workDayHours);
+  $('statPending').textContent = requestWholeHoursText(stats.pending) + ' / ' + requestDaysText(stats.pending / stats.workDayHours);
+  $('statRemaining').textContent = requestWholeHoursText(stats.remaining) + ' / ' + requestDaysText(stats.remaining / stats.workDayHours);
+  $('statProjected').textContent = requestWholeHoursText(stats.projected) + ' / ' + requestDaysText(stats.projected / stats.workDayHours);
   if (remainingCard) {
     remainingCard.classList.remove('balance-red', 'balance-amber', 'balance-green');
-    remainingCard.classList.add(balanceTrafficLightClass(stats.remaining / SHIFT_HOURS));
+    remainingCard.classList.add(balanceTrafficLightClass(stats.remaining / stats.workDayHours));
   }
-  $('statEntitlementSub').textContent = requestWholeHoursText(stats.allowance) + ' allowance + ' + requestWholeHoursText(stats.carryover) + ' carryover + ' + requestWholeHoursText(stats.extras) + ' extras';
+  $('statEntitlementSub').textContent = requestWholeHoursText(stats.allowanceHours) + ' allowance + ' + requestWholeHoursText(stats.carryoverHours) + ' carryover + ' + requestWholeHoursText(stats.extrasHours) + ' extras';
 }
 function renderHolidayApp(){
   $('yearSelect').value = String(selectedYear);
@@ -3305,7 +3480,12 @@ async function ensureHolidayProfile(){
   if (!data) {
     const { error } = await sb.from('holiday_profiles').insert({ auth_user_id: currentUser.id });
     if (error) throw error;
-    currentHolidayProfile = { auth_user_id: currentUser.id, annual_allowance_days: 72 / SHIFT_HOURS, carryover_days: 0, entitlement_extras_days: 0 };
+    currentHolidayProfile = {
+      auth_user_id: currentUser.id,
+      annual_allowance_days: defaultAnnualAllowanceDaysForUserId(currentUser.id),
+      carryover_days: 0,
+      entitlement_extras_days: 0
+    };
   } else {
     currentHolidayProfile = data;
   }
@@ -3331,8 +3511,8 @@ async function loadHolidayData(){
     const eventPromise = sb.from('holiday_request_events').select('*');
     const profilePromise = sb.from('holiday_profiles').select('auth_user_id,annual_allowance_days,carryover_days,entitlement_extras_days');
     const profileEventPromise = sb.from('holiday_profile_events').select('*');
-    const extraProfilePromise = sb.from('pw_profiles').select('id,full_name,email,approved,disabled,role,holiday_requests_access,holiday_manager_auth_user_id').order('full_name', { ascending: true });
-    const kilnUserPromise = sb.from('kiln_users').select('auth_user_id,is_admin,is_shift_manager,is_locked,locked_name,email,username').order('username', { ascending: true });
+    const extraProfilePromise = sb.from('pw_profiles').select('id,full_name,email,approved,disabled,role,holiday_requests_access,holiday_manager_auth_user_id,work_role_type').order('full_name', { ascending: true });
+    const kilnUserPromise = sb.from('kiln_users').select('auth_user_id,is_admin,is_shift_manager,is_day_manager,is_locked,locked_name,email,username').order('username', { ascending: true });
     const results = await Promise.all([requestPromise, eventPromise, profilePromise, profileEventPromise, extraProfilePromise, kilnUserPromise]);
     const [reqRes, evRes, hpRes, hpEventRes, extraRes, kilnRes] = results;
     if (reqRes.error) throw reqRes.error;
@@ -3416,8 +3596,8 @@ async function hydrateFromSession(){
     currentUser = data.session.user;
     const accessState = await suiteShared.access.loadPwAppAccessState(sb, currentUser, {
       accessField: 'holiday_requests_access',
-      profileSelect: 'id,full_name,email,approved,disabled,role,holiday_requests_access,holiday_manager_auth_user_id,must_reset_password',
-      kilnSelect: 'auth_user_id,is_admin,is_shift_manager,is_locked,shift_log_access,locked_name,email,username',
+      profileSelect: 'id,full_name,email,approved,disabled,role,holiday_requests_access,holiday_manager_auth_user_id,must_reset_password,work_role_type',
+      kilnSelect: 'auth_user_id,is_admin,is_shift_manager,is_day_manager,is_locked,shift_log_access,locked_name,email,username',
       requiresProfile: true
     });
     const prof = accessState.profile || null;
@@ -3439,7 +3619,7 @@ async function hydrateFromSession(){
       currentHolidayManagerLabel = holidayManagerDisplayNameFromRecords(currentHolidayManagerProfile, currentHolidayManagerKilnUser);
     }
     currentKilnUser = accessState.kilnUser || null;
-    isApprover = !!(currentKilnUser && currentKilnUser.is_shift_manager && !(currentProfile && currentProfile.holiday_manager_auth_user_id));
+    isApprover = !!(currentKilnUser && isManagerApproverKilnUser(currentKilnUser) && !(currentProfile && currentProfile.holiday_manager_auth_user_id));
     const sessionFullName = currentUser && currentUser.user_metadata && currentUser.user_metadata.full_name
       ? String(currentUser.user_metadata.full_name).trim()
       : '';
@@ -3510,10 +3690,11 @@ async function submitHolidayRequest(){
     ? 'No manager is assigned yet. Submit this holiday request for admin review?'
     : 'Submit this holiday request to ' + managerName + '?';
   if (!confirm(confirmText)) return;
-  const fallbackAmount = unit === 'hours' ? countWeekdays(start, end) * SHIFT_HOURS : countWeekdays(start, end);
+  const workDayHours = workDayHoursForUserId(currentUser.id);
+  const fallbackAmount = unit === 'hours' ? countWeekdays(start, end) * workDayHours : countWeekdays(start, end);
   const amount = daysRaw > 0 ? daysRaw : fallbackAmount;
   if (amount <= 0) { setToast('Please enter at least one day or hour.'); return; }
-  const days = unit === 'hours' ? amount / SHIFT_HOURS : amount;
+  const days = unit === 'hours' ? amount / workDayHours : amount;
   $('syncLabel').textContent = 'Saving…';
   const payload = {
     auth_user_id: currentUser.id,
@@ -3524,6 +3705,7 @@ async function submitHolidayRequest(){
     requested_unit: unit,
     requested_amount: amount,
     requested_days: days,
+    work_day_hours: workDayHours,
     reason: formattedReason,
     status: 'pending'
   };
@@ -3642,11 +3824,12 @@ async function persistAllowance(userId, allowanceInputId, carryoverInputId, extr
   const target = allPwProfiles.find(p => String(p.id) === String(userId));
   if (!target) return;
   if (!isHolidayAdmin && String(target.holiday_manager_auth_user_id || '') !== String(currentUser.id || '')) return;
-  const allowance = num($(allowanceInputId)?.value, 72 / SHIFT_HOURS);
+  const allowance = num($(allowanceInputId)?.value, defaultAnnualAllowanceDaysForUserId(userId));
   const carryover = num($(carryoverInputId)?.value, 0);
   const extrasUnit = $(extrasUnitInputId)?.value === 'hours' ? 'hours' : 'days';
   const extrasValue = num($(extrasInputId)?.value, 0);
-  const extras = extrasUnit === 'hours' ? extrasValue / SHIFT_HOURS : extrasValue;
+  const workDayHours = workDayHoursForUserId(userId);
+  const extras = extrasUnit === 'hours' ? extrasValue / workDayHours : extrasValue;
   const reason = String($(reasonInputId)?.value || '').trim();
   const existing = holidayProfileFor(userId);
   if (!reason) {

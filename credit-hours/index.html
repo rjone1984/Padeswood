@@ -728,9 +728,15 @@ body.basic-mode .topbar .back-platform-btn:hover{
 }
 .staff-card summary::-webkit-details-marker{display:none}
 .staff-card .staff-summary-left{min-width:0;display:grid;gap:3px}
-.staff-card .staff-summary-right{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
-.staff-card .staff-summary-right .pill{
-  animation:chipBreath 7.4s ease-in-out infinite;
+.staff-card .staff-summary-right{display:grid;gap:2px;justify-items:end;text-align:right;max-width:56%}
+.staff-card .staff-summary-right .line{
+  font-size:10px;
+  color:var(--tx2);
+  line-height:1.35;
+}
+.staff-card .staff-summary-right .line strong{
+  color:var(--tx);
+  font-weight:700;
 }
 .staff-card .staff-body{
   border-top:1px solid var(--bd);
@@ -1014,10 +1020,8 @@ body.basic-mode .topbar .back-platform-btn:hover{
 .staff-card .staff-section{
   display:grid;
   gap:10px;
-  padding:12px;
-  border:1px solid var(--bd);
-  border-radius:16px;
-  background:var(--sf3);
+  padding-top:10px;
+  border-top:1px solid var(--bd);
 }
 .staff-card .staff-section-title{
   font-size:10px;
@@ -1030,6 +1034,10 @@ body.basic-mode .topbar .back-platform-btn:hover{
   font-size:11px;
   color:var(--tx2);
   line-height:1.45;
+}
+.staff-card .staff-subsection{
+  display:grid;
+  gap:8px;
 }
 .staff-card .staff-mini{
   font-size:10px;
@@ -1059,7 +1067,7 @@ body.basic-mode .topbar .back-platform-btn:hover{
   box-shadow:var(--e1), var(--eac);
   cursor:pointer;
   display:grid;
-  gap:8px;
+  gap:7px;
   transition:transform .24s var(--ease-smooth), box-shadow .24s var(--ease-smooth), border-color .24s var(--ease-smooth), background .24s var(--ease-smooth);
 }
 #activityPanel .activity-roster-btn:hover{
@@ -1088,11 +1096,12 @@ body.basic-mode .topbar .back-platform-btn:hover{
   font-size:11px;
   color:var(--tx2);
   margin-top:2px;
+  display:grid;
+  gap:2px;
 }
-#activityPanel .activity-roster-stats{
-  display:flex;
-  gap:6px;
-  flex-wrap:wrap;
+#activityPanel .activity-roster-sub .line strong{
+  color:var(--tx);
+  font-weight:700;
 }
 #activityPanel .activity-detail{
   border:1px solid var(--bd);
@@ -1221,6 +1230,13 @@ body.basic-mode .topbar .back-platform-btn:hover{
   padding:12px 14px 14px;
   display:grid;
   gap:12px;
+}
+.activity-collapsible .content .section-body{
+  display:grid;
+  gap:12px;
+}
+#activityPanel .activity-collapsible .content .field{
+  margin:0;
 }
 #activityPanel .activity-empty{
   padding:14px 12px;
@@ -1466,7 +1482,8 @@ body.basic-mode :is(.palette-overlay,.manager-requests-overlay) {
   .staff-row{grid-template-columns:1fr;gap:8px}
   .staff-card summary{padding:10px 11px;gap:10px}
   .staff-card .staff-summary-right{justify-content:flex-start}
-  .staff-card .staff-summary-right .pill{padding:3px 6px;font-size:10px}
+  .staff-card .staff-summary-right{max-width:100%;text-align:left;justify-items:start}
+  .staff-card .staff-summary-right .line{font-size:10px}
   .staff-card .staff-body{padding:10px 11px;gap:8px}
   .staff-card .staff-body .meta{font-size:11px !important;line-height:1.35}
   .staff-card .staff-section{padding:10px;gap:8px}
@@ -1841,9 +1858,9 @@ body:not(.basic-mode) .btn-primary:hover{
         <div class="sub">Allowance minus approved credit hours worked</div>
       </div>
       <div class="stat">
-        <div class="label">Overtime</div>
-        <div class="value" id="statProjected">0.0</div>
-        <div class="sub">Approved paid overtime this year</div>
+        <div class="label">Paid Overtime</div>
+        <div class="value" id="statPaidOvertime">0.0</div>
+        <div class="sub">Approved overtime accrued this year</div>
       </div>
       <div class="stat hidden" id="statBreakCover">
         <div class="label">Break cover</div>
@@ -2599,8 +2616,14 @@ function requestCreditMultiplierReason(req){
   return '';
 }
 function requestCreditHoursEarned(req){
+  if (req && req.status === 'approved' && hasApprovedSplitValues(req)) {
+    return normalizeCreditHours(num(req.approved_credit_hours, 0));
+  }
   if (!requestConsumesBalance(req)) return 0;
   return normalizeCreditHours(num(req.hours_claimed, 0) * requestCreditMultiplier(req));
+}
+function hasApprovedSplitValues(req){
+  return !!req && (req.approved_credit_hours != null || req.approved_overtime_hours != null);
 }
 function requestCreditMultiplierLabel(req){
   const m = requestCreditMultiplier(req);
@@ -2621,12 +2644,15 @@ function requestQuarterDateKey(req, pivotDate){
   const fallback = dateKeyFrom(req && (req.requested_at || req.created_at || req.decided_at));
   return fallback || workKey || '';
 }
-function rollingQuarterStatsForUser(userId, pivotDate){
+function rollingQuarterStatsForUser(userId, pivotDate, options){
+  const opts = options || {};
+  const excludeRequestId = opts.excludeRequestId == null ? null : String(opts.excludeRequestId);
   const pivot = pivotDate instanceof Date
     ? toLocalDateString(pivotDate)
     : dateKeyFrom(pivotDate || new Date());
   const start = quarterStartForDate(pivot);
   const active = allHolidayRequests.filter(function(r){
+    if (excludeRequestId && String(r.id || '') === excludeRequestId) return false;
     const workKey = requestQuarterDateKey(r, pivot);
     return String(r.auth_user_id || '') === String(userId || '')
       && requestConsumesBalance(r)
@@ -2635,13 +2661,16 @@ function rollingQuarterStatsForUser(userId, pivotDate){
       && workKey >= start
       && workKey <= pivot;
   });
+  const approved = active.filter(function(r){
+    return r.status === 'approved';
+  });
   const pending = active.filter(function(r){
     return r.status === 'pending';
   });
-  const used = active.reduce(function(sum, r){ return sum + requestCreditHoursEarned(r); }, 0);
+  const used = approved.reduce(function(sum, r){ return sum + requestCreditHoursEarned(r); }, 0);
   const pendingHours = pending.reduce(function(sum, r){ return sum + requestCreditHoursEarned(r); }, 0);
   const remaining = Math.max(0, 48 - used);
-  const projected = remaining;
+  const projected = Math.max(0, remaining - pendingHours);
   return { used: used, pending: pendingHours, remaining: remaining, projected: projected, start: start, end: pivot };
 }
 function countWeekdays(startStr, endStr){
@@ -2699,7 +2728,7 @@ function creditPreviewText(){
   };
   const estimated = requestCreditHoursEarned(previewReq);
   const quarterStats = rollingQuarterStatsForUser(currentUser && currentUser.id ? currentUser.id : '', start);
-  const capRemaining = Math.max(0, quarterStats.projected - estimated);
+  const capRemaining = Math.max(0, quarterStats.remaining - estimated);
   const reason = requestCreditMultiplierReason(previewReq);
   return 'Estimated credit: ' + requestHoursText(estimated) + ' (' + requestCreditMultiplierLabel(previewReq) + ')' + (reason ? ' · ' + reason : '') + ' · rolling quarter left after this entry: ' + requestHoursText(capRemaining);
 }
@@ -2738,10 +2767,21 @@ function requestKindFromReason(reason){
   return /overtime/i.test(String(reason || '')) ? 'overtime' : 'credit';
 }
 function requestKindLabel(kind){
+  if (kind === 'split') return 'Credit + overtime';
   return kind === 'overtime' ? 'Paid overtime' : 'Credit hours';
 }
 function requestKindClass(kind){
-  return kind === 'overtime' ? 'overtime' : 'credit';
+  return kind === 'overtime' ? 'overtime' : kind === 'split' ? 'other' : 'credit';
+}
+function requestDisplayKind(req){
+  if (req && req.status === 'approved' && hasApprovedSplitValues(req)) {
+    const credit = requestApprovedCreditHours(req);
+    const overtime = requestApprovedOvertimeHours(req);
+    if (credit > 0 && overtime > 0) return 'split';
+    if (credit > 0) return 'credit';
+    if (overtime > 0) return 'overtime';
+  }
+  return requestKindFromRequest(req);
 }
 function requestDisplayReason(reason){
   return String(reason ?? '').replace(/^\[[^\]]+\]\s*/, '').trim();
@@ -2763,6 +2803,14 @@ function tidyRequestText(text){
 function requestAmountText(req){
   const worked = requestHoursText(num(req && req.hours_worked, 0));
   const claimed = requestHoursText(num(req && req.hours_claimed, 0));
+  if (req && req.status === 'approved' && hasApprovedSplitValues(req)) {
+    const approvedCredit = requestApprovedCreditHours(req);
+    const approvedOvertime = requestApprovedOvertimeHours(req);
+    const parts = [];
+    if (approvedCredit > 0) parts.push(creditHoursText(approvedCredit));
+    if (approvedOvertime > 0) parts.push(requestHoursText(approvedOvertime) + ' overtime');
+    return worked + ' worked · ' + claimed + ' claimed · ' + (parts.length ? parts.join(' + ') : 'approved');
+  }
   if (requestConsumesBalance(req)) {
     const earned = requestCreditHoursEarned(req);
     const multiplier = requestCreditMultiplier(req);
@@ -2773,7 +2821,20 @@ function requestAmountText(req){
 function requestKindFromRequest(req){
   return req && req.claim_type === 'overtime' ? 'overtime' : 'credit';
 }
+function requestApprovedCreditHours(req){
+  if (!req || req.status !== 'approved') return 0;
+  if (hasApprovedSplitValues(req)) return normalizeCreditHours(num(req.approved_credit_hours, 0));
+  return requestConsumesBalance(req) ? requestCreditHoursEarned(req) : 0;
+}
+function requestApprovedOvertimeHours(req){
+  if (!req || req.status !== 'approved') return 0;
+  if (hasApprovedSplitValues(req)) return normalizeCreditHours(num(req.approved_overtime_hours, 0));
+  return requestConsumesBalance(req) ? 0 : normalizeCreditHours(num(req.hours_claimed, 0));
+}
 function requestHours(req){
+  if (req && req.status === 'approved' && hasApprovedSplitValues(req)) {
+    return normalizeCreditHours(requestApprovedCreditHours(req) + requestApprovedOvertimeHours(req));
+  }
   return requestConsumesBalance(req) ? requestCreditHoursEarned(req) : num(req && req.hours_claimed, 0);
 }
 function breakCoverCreditHoursForUser(userId, year){
@@ -2799,18 +2860,43 @@ function balanceTrafficLightClass(days){
   return 'balance-green';
 }
 function requestConsumesBalance(req){
+  if (!req) return false;
+  if (req.status === 'approved' && hasApprovedSplitValues(req)) {
+    return requestApprovedCreditHours(req) > 0;
+  }
   return requestKindFromRequest(req) === 'credit';
 }
 function requestBalanceHours(req){
+  if (req && req.status === 'approved' && hasApprovedSplitValues(req)) {
+    return requestApprovedCreditHours(req);
+  }
   return requestConsumesBalance(req) ? requestHours(req) : 0;
 }
+function resolveCreditApprovalSplit(req){
+  const creditRequested = requestCreditHoursEarned(req);
+  const quarterStats = rollingQuarterStatsForUser(req.auth_user_id, req.work_date, { excludeRequestId: req && req.id });
+  const annualStats = statsForUser(req.auth_user_id, requestYear(req));
+  const creditApproved = Math.max(0, Math.min(creditRequested, num(quarterStats.remaining, 0), num(annualStats.remaining, 0)));
+  const overtimeApproved = Math.max(0, normalizeCreditHours(num(req && req.hours_claimed, 0) - creditApproved));
+  const quarterRemainingAfter = Math.max(0, num(quarterStats.remaining, 0) - creditApproved);
+  const annualRemainingAfter = Math.max(0, num(annualStats.remaining, 0) - creditApproved);
+  return {
+    requestedCredit: normalizeCreditHours(creditRequested),
+    credit: normalizeCreditHours(creditApproved),
+    overtime: normalizeCreditHours(overtimeApproved),
+    quarterRemaining: num(quarterStats.remaining, 0),
+    annualRemaining: num(annualStats.remaining, 0),
+    quarterRemainingAfter: normalizeCreditHours(quarterRemainingAfter),
+    annualRemainingAfter: normalizeCreditHours(annualRemainingAfter)
+  };
+}
 function makeKindPill(req){
-  const kind = requestKindFromRequest(req);
+  const kind = requestDisplayKind(req);
   return '<span class="pill kind-' + requestKindClass(kind) + '">' + esc(requestKindLabel(kind)) + '</span>';
 }
 function requestSummaryText(req){
   const amountText = requestAmountText(req);
-  const kind = requestKindLabel(requestKindFromRequest(req));
+  const kind = requestKindLabel(requestDisplayKind(req));
   return kind + ' · ' + amountText;
 }
 function setToast(msg, ms){
@@ -3069,8 +3155,8 @@ function syncRequestedDays(){
     const creditAllowed = creditClaimAvailableForDate($('reqStart') ? $('reqStart').value : '');
     const creditOption = Array.from(unitEl.options || []).find(function(opt){ return opt.value === 'credit'; });
     if (creditOption) {
+      creditOption.hidden = !creditAllowed;
       creditOption.disabled = !creditAllowed;
-      creditOption.textContent = creditAllowed ? 'Credit hours' : 'Credit hours (unavailable)';
     }
     if (!creditAllowed && unitEl.value === 'credit') {
       unitEl.value = 'overtime';
@@ -3108,6 +3194,12 @@ function currentDisplayName(){
 function holidayProfileFor(userId){
   return allHolidayProfiles.find(p => p.auth_user_id === userId) || null;
 }
+function creditAdjustmentHoursForProfile(profile){
+  return normalizeCreditHours(num(profile && profile.credit_adjustment_hours, 0));
+}
+function overtimeAdjustmentHoursForProfile(profile){
+  return normalizeCreditHours(num(profile && profile.overtime_adjustment_hours, 0));
+}
 function profileFor(userId){
   return allPwProfiles.find(p => p.id === userId) || null;
 }
@@ -3126,6 +3218,9 @@ function holidayManagerDisplayNameForUser(userId){
   const label = holidayManagerDisplayNameFromRecords(manager, kilnUser);
   if (label && label !== '—') return label;
   return currentHolidayManagerLabel || 'No manager assigned';
+}
+function isManagerApproverKilnUser(ku){
+  return !!(ku && (ku.is_shift_manager || ku.is_day_manager));
 }
 function isAssignedHolidayManagerForRequest(req){
   if (isHolidayAdmin || !req || !currentUser) return false;
@@ -3157,7 +3252,7 @@ function assignedHolidayStaffForCurrentUser(){
   });
 }
 function canViewManagerSections(){
-  return !!(isHolidayAdmin || (currentKilnUser && currentKilnUser.is_shift_manager));
+  return !!(isHolidayAdmin || isManagerApproverKilnUser(currentKilnUser) || assignedHolidayStaffForCurrentUser().length);
 }
 function hasAssignedHolidayStaff(){
   return assignedHolidayStaffForCurrentUser().length > 0;
@@ -3197,16 +3292,7 @@ function renderCreditActivityClaimItem(req){
   '</div>';
 }
 function renderCreditAllowanceItem(ev){
-  const allowanceText = typeof ev.new_annual_allowance_days !== 'undefined'
-    ? requestHoursText(num(ev.old_annual_allowance_days, 0)) + ' → ' + requestHoursText(num(ev.new_annual_allowance_days, 0)) + ' allowance'
-    : '';
-  const carryText = typeof ev.new_carryover_days !== 'undefined'
-    ? requestHoursText(num(ev.old_carryover_days, 0)) + ' → ' + requestHoursText(num(ev.new_carryover_days, 0)) + ' carryover'
-    : '';
-  const extrasText = typeof ev.new_extras_days !== 'undefined'
-    ? allowanceExtrasText(num(ev.old_extras_days, 0)) + ' → ' + allowanceExtrasText(num(ev.new_extras_days, 0)) + ' extras'
-    : '';
-  const changeText = [allowanceText, carryText, extrasText].filter(Boolean).join(' · ') || 'Allowance updated';
+  const changeText = profileAllowanceChangeText(ev);
   return '<div class="activity-mini-item">'+
     '<div class="top">'+
       '<div>'+
@@ -3218,16 +3304,37 @@ function renderCreditAllowanceItem(ev){
     '<div class="meta">'+esc(requestDisplayReason(ev.note || '—'))+'</div>'+
   '</div>';
 }
+function profileAllowanceChangeText(ev){
+  const allowanceText = typeof ev.new_annual_allowance_hours !== 'undefined'
+    ? creditHoursText(num(ev.old_annual_allowance_hours, 0)) + ' → ' + creditHoursText(num(ev.new_annual_allowance_hours, 0)) + ' allowance'
+    : typeof ev.new_annual_allowance_days !== 'undefined'
+      ? requestHoursText(num(ev.old_annual_allowance_days, 0)) + ' → ' + requestHoursText(num(ev.new_annual_allowance_days, 0)) + ' allowance'
+    : '';
+  const carryText = typeof ev.new_carryover_days !== 'undefined'
+    ? requestHoursText(num(ev.old_carryover_days, 0)) + ' → ' + requestHoursText(num(ev.new_carryover_days, 0)) + ' carryover'
+    : '';
+  const creditAdjText = typeof ev.new_extras_days !== 'undefined'
+    ? allowanceExtrasText(num(ev.old_extras_days, 0)) + ' → ' + allowanceExtrasText(num(ev.new_extras_days, 0)) + ' credit adjustment'
+    : typeof ev.new_credit_adjustment_hours !== 'undefined'
+      ? requestHoursText(num(ev.old_credit_adjustment_hours, 0)) + ' → ' + requestHoursText(num(ev.new_credit_adjustment_hours, 0)) + ' credit adjustment'
+      : '';
+  const overtimeAdjText = typeof ev.new_overtime_adjustment_hours !== 'undefined'
+    ? requestHoursText(num(ev.old_overtime_adjustment_hours, 0)) + ' → ' + requestHoursText(num(ev.new_overtime_adjustment_hours, 0)) + ' overtime adjustment'
+    : '';
+  return [allowanceText, carryText, creditAdjText, overtimeAdjText].filter(Boolean).join(' · ') || 'Allowance updated';
+}
 function statsForUser(userId, year){
   const profile = holidayProfileFor(userId);
-  const allowance = creditHoursAllowanceFromProfile(profile);
+  const creditAdjustment = creditAdjustmentHoursForProfile(profile);
+  const overtimeAdjustment = overtimeAdjustmentHoursForProfile(profile);
+  const allowance = creditHoursAllowanceFromProfile(profile) + creditAdjustment;
   const yearRequests = allHolidayRequests.filter(r => r.auth_user_id === userId && requestMatchesYear(r, year));
   const approvedCredit = yearRequests
-    .filter(r => r.status === 'approved' && requestConsumesBalance(r))
-    .reduce((sum, r) => sum + requestBalanceHours(r), 0);
+    .filter(r => r.status === 'approved')
+    .reduce((sum, r) => sum + requestApprovedCreditHours(r), 0);
   const approvedOvertime = yearRequests
-    .filter(r => r.status === 'approved' && !requestConsumesBalance(r))
-    .reduce((sum, r) => sum + requestHours(r), 0);
+    .filter(r => r.status === 'approved')
+    .reduce((sum, r) => sum + requestApprovedOvertimeHours(r) + (!hasApprovedSplitValues(r) && !requestConsumesBalance(r) ? requestHours(r) : 0), 0);
   const pending = yearRequests
     .filter(r => r.status === 'pending')
     .reduce((sum, r) => sum + requestHours(r), 0);
@@ -3237,9 +3344,12 @@ function statsForUser(userId, year){
   const quarterStats = rollingQuarterStatsForUser(userId, new Date());
   return {
     allowance,
+    baseAllowance: creditHoursAllowanceFromProfile(profile),
+    creditAdjustment,
+    overtimeAdjustment,
     entitlement: allowance,
     used: approvedCredit,
-    overtime: approvedOvertime,
+    overtime: approvedOvertime + overtimeAdjustment,
     pending,
     remaining: allowance - approvedCredit,
     projected: allowance - approvedCredit - pendingCredit,
@@ -3386,6 +3496,8 @@ function renderTeamOverviewCards(){
   const selectedQuarterUsed = selectedStats.quarterUsed;
   const selectedQuarterRemaining = selectedStats.quarterRemaining;
   const selectedHp = holidayProfileFor(selectedUserId);
+  const selectedCreditAdjustment = creditAdjustmentHoursForProfile(selectedHp);
+  const selectedOvertimeAdjustment = overtimeAdjustmentHoursForProfile(selectedHp);
   const selectedEditable = isHolidayAdmin || String(selectedProfile.holiday_manager_auth_user_id || '') === String(currentUser.id || '');
   const selectedRequestHistory = requestsForUser(selectedUserId)
     .filter(function(r){
@@ -3412,13 +3524,11 @@ function renderTeamOverviewCards(){
       '<div class="activity-roster-head">'+
         '<div style="min-width:0">'+
           '<div class="activity-roster-name">'+esc(displayName)+'</div>'+
-          '<div class="activity-roster-sub">'+esc(creditHoursText(stats.remaining))+' remaining · '+esc(creditHoursText(stats.pending))+' pending'+(isHolidayAdmin && holidayManagerDisplayNameForUser(p.id) ? ' · '+esc(holidayManagerDisplayNameForUser(p.id)) : '')+'</div>'+
+          '<div class="activity-roster-sub">'+
+            '<div class="line">'+esc(creditHoursText(stats.remaining))+' remaining · '+esc(creditHoursText(stats.pending))+' pending'+(isHolidayAdmin && holidayManagerDisplayNameForUser(p.id) ? ' · '+esc(holidayManagerDisplayNameForUser(p.id)) : '')+'</div>'+
+            '<div class="line">'+esc(creditHoursText(stats.used))+' worked · '+esc(creditHoursText(stats.quarterRemaining))+' quarter left · '+esc(requestHoursText(stats.overtime))+' paid overtime</div>'+
+          '</div>'+
         '</div>'+
-      '</div>'+
-      '<div class="activity-roster-stats">'+
-        '<span class="pill">'+esc(creditHoursText(stats.used))+' worked</span>'+
-        '<span class="pill">'+esc(creditHoursText(stats.quarterRemaining))+' quarter left</span>'+
-        '<span class="pill">'+esc(requestHoursText(stats.overtime))+' overtime</span>'+
       '</div>'+
     '</button>';
   }).join('');
@@ -3430,43 +3540,48 @@ function renderTeamOverviewCards(){
           '<div class="title">'+esc(selectedDisplayName)+'</div>'+
           '<div class="sub">'+
             esc(creditHoursText(selectedStats.entitlement))+' annual allowance · '+
-            esc(creditHoursText(selectedStats.used))+' worked · '+
-            esc(creditHoursText(selectedQuarterUsed))+' rolling quarter worked · '+
-            esc(creditHoursText(selectedQuarterRemaining))+' rolling quarter remaining'+
+            esc(creditHoursText(selectedStats.used))+' worked this year'+
+            (selectedCreditAdjustment ? ' · credit adjustment '+esc(creditHoursText(selectedCreditAdjustment)) : '')+
+            (selectedOvertimeAdjustment ? ' · overtime adjustment '+esc(requestHoursText(selectedOvertimeAdjustment)) : '')+
             (isHolidayAdmin && holidayManagerDisplayNameForUser(selectedUserId) ? ' · manager '+esc(holidayManagerDisplayNameForUser(selectedUserId)) : '')+
           '</div>'+
         '</div>'+
-        '<div class="activity-roster-stats">'+
-          '<span class="pill">'+esc(creditHoursText(selectedStats.remaining))+' remaining</span>'+
-          '<span class="pill">'+esc(requestHoursText(selectedStats.overtime))+' overtime</span>'+
-        '</div>'+
       '</div>'+
       '<div class="activity-stat-grid">'+
-        '<div class="activity-stat"><div class="label">Annual allowance</div><div class="value">'+esc(creditHoursText(selectedStats.entitlement))+'</div></div>'+
-        '<div class="activity-stat"><div class="label">Credit hours remaining</div><div class="value">'+esc(creditHoursText(selectedStats.remaining))+'</div></div>'+
-        '<div class="activity-stat"><div class="label">Rolling quarter worked</div><div class="value">'+esc(creditHoursText(selectedQuarterUsed))+'</div></div>'+
-        '<div class="activity-stat"><div class="label">Rolling quarter remaining</div><div class="value">'+esc(creditHoursText(selectedQuarterRemaining))+'</div></div>'+
+        '<div class="activity-stat"><div class="label">Remaining credit hours</div><div class="value">'+esc(creditHoursText(selectedStats.remaining))+'</div></div>'+
+        '<div class="activity-stat"><div class="label">Credit hours worked</div><div class="value">'+esc(creditHoursText(selectedStats.used))+'</div></div>'+
+        '<div class="activity-stat"><div class="label">Quarter left</div><div class="value">'+esc(creditHoursText(selectedQuarterRemaining))+'</div></div>'+
+        '<div class="activity-stat"><div class="label">Paid overtime</div><div class="value">'+esc(requestHoursText(selectedStats.overtime))+'</div></div>'+
       '</div>'+
       '<details class="activity-collapsible">'+
         '<summary style="list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:flex-start;gap:10px">'+
           '<div>'+
-            '<div class="box-label">Entitlement adjustment</div>'+
-            '<div class="small" style="margin-top:4px">Add or remove annual allowance and extras for this staff member.</div>'+
+            '<div class="box-label">Credit hours adjustment</div>'+
+            '<div class="small" style="margin-top:4px">Add or remove base allowance and credit-hours adjustment for this staff member.</div>'+
           '</div>'+
-          '<span class="pill">'+(selectedEditable ? 'Edit entitlements' : 'View entitlements')+'</span>'+
+          '<span class="pill">'+(selectedEditable ? 'Edit credit hours' : 'View credit hours')+'</span>'+
         '</summary>'+
-        '<div class="card-box" style="margin-top:10px">'+
+        '<div class="section-body">'+
           '<div class="small" style="margin-bottom:10px">Every save is written to the audit trail.</div>'+
-          '<div class="field"><label class="small" style="margin-bottom:4px">Annual entitlement</label><input class="input" style="height:30px;font-size:11px" type="number" min="0" step="0.5" id="allow_'+esc(selectedUserId)+'" value="'+esc(num(selectedHp && selectedHp.annual_allowance_hours, 100))+'"'+(selectedEditable ? '' : ' disabled')+'><div class="field-note">Base credit-hours allowance for the year.</div></div>'+
-          '<div class="field"><label class="small" style="margin-bottom:4px">Extras</label><div class="row" style="gap:8px;align-items:flex-end">'+
-            '<select class="select" id="extrasUnit_'+esc(selectedUserId)+'" style="width:120px;height:30px;font-size:11px" onchange="syncExtrasUnit(\'extrasUnit_'+esc(selectedUserId)+'\', \'extras_'+esc(selectedUserId)+'\')"'+(selectedEditable ? '' : ' disabled')+'>'+
-              '<option value="days">Days</option>'+
-              '<option value="hours">Hours</option>'+
-            '</select>'+
-            '<input class="input" style="height:30px;font-size:11px;flex:1" type="number" min="-999" max="999" step="0.5" id="extras_'+esc(selectedUserId)+'" value="'+esc(num(selectedHp && selectedHp.entitlement_extras_days, 0))+'"'+(selectedEditable ? '' : ' disabled')+'>'+
-          '</div><div class="field-note">Positive numbers add entitlement. Negative numbers take it away.</div></div>'+
-          '<div class="field"><label class="small" style="margin-bottom:4px">Reason / note for entitlement change</label><textarea class="textarea allowance-reason" id="allowReason_'+esc(selectedUserId)+'" placeholder="Explain why this allowance or extras are being changed."'+(selectedEditable ? '' : ' disabled')+'></textarea><div class="field-note">This is stored in the allowance audit trail.</div></div>'+
-          '<div style="display:flex;justify-content:flex-end"><button class="btn btn-primary" type="button" onclick="saveAllowance(\''+esc(selectedUserId)+'\')"'+(selectedEditable ? '' : ' disabled')+'>Save entitlements</button></div>'+
+          '<div class="field"><label class="small" style="margin-bottom:4px">Base annual entitlement</label><input class="input" style="height:30px;font-size:11px" type="number" min="0" step="0.5" id="allow_'+esc(selectedUserId)+'" value="'+esc(num(selectedHp && selectedHp.annual_allowance_hours, 100))+'" readonly><div class="field-note">This is the base credit-hours allowance. Use the adjustment below to add or remove hours.</div></div>'+
+          '<div class="field"><label class="small" style="margin-bottom:4px">Credit hours adjustment</label><input class="input" style="height:30px;font-size:11px" type="number" step="0.5" id="creditAdj_'+esc(selectedUserId)+'" value="'+esc(num(selectedHp && selectedHp.credit_adjustment_hours, 0))+'"'+(selectedEditable ? '' : ' disabled')+'><div class="field-note">Use positive numbers to add hours and negative numbers to remove them.</div></div>'+
+          '<div class="field"><label class="small" style="margin-bottom:4px">Reason / note for credit hours change</label><textarea class="textarea allowance-reason" id="allowReason_'+esc(selectedUserId)+'" placeholder="Explain why this credit-hours adjustment is being changed."'+(selectedEditable ? '' : ' disabled')+'></textarea><div class="field-note">This is stored in the allowance audit trail.</div></div>'+
+          '<div style="display:flex;justify-content:flex-end"><button class="btn btn-primary" type="button" onclick="saveAllowance(\''+esc(selectedUserId)+'\')"'+(selectedEditable ? '' : ' disabled')+'>Save credit hours adjustment</button></div>'+
+        '</div>'+
+      '</details>'+
+      '<details class="activity-collapsible">'+
+        '<summary style="list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:flex-start;gap:10px">'+
+          '<div>'+
+          '<div class="box-label">Paid overtime adjustment</div>'+
+          '<div class="small" style="margin-top:4px">Add or remove manual paid overtime for this staff member.</div>'+
+          '</div>'+
+          '<span class="pill">'+(selectedEditable ? 'Edit overtime' : 'View overtime')+'</span>'+
+        '</summary>'+
+        '<div class="section-body">'+
+          '<div class="small" style="margin-bottom:10px">This is separate from approved overtime claims.</div>'+
+          '<div class="field"><label class="small" style="margin-bottom:4px">Paid overtime adjustment</label><input class="input" style="height:30px;font-size:11px" type="number" step="0.5" id="overtimeAdj_'+esc(selectedUserId)+'" value="'+esc(num(selectedHp && selectedHp.overtime_adjustment_hours, 0))+'"'+(selectedEditable ? '' : ' disabled')+'><div class="field-note">Use positive numbers to add overtime and negative numbers to remove it.</div></div>'+
+          '<div class="field"><label class="small" style="margin-bottom:4px">Reason / note for overtime adjustment</label><textarea class="textarea allowance-reason" id="overtimeReason_'+esc(selectedUserId)+'" placeholder="Explain why this paid overtime is being changed."'+(selectedEditable ? '' : ' disabled')+'></textarea><div class="field-note">This is stored in the overtime adjustment audit trail.</div></div>'+
+          '<div style="display:flex;justify-content:flex-end"><button class="btn btn-primary" type="button" onclick="saveOvertimeAdjustment(\''+esc(selectedUserId)+'\')"'+(selectedEditable ? '' : ' disabled')+'>Save overtime adjustment</button></div>'+
         '</div>'+
       '</details>'+
       '<details class="activity-collapsible">'+
@@ -3516,8 +3631,12 @@ function insightBucketsForRequests(rows){
     if (monthIndex < 0 || monthIndex > 11) return;
     const amount = requestHours(req);
     if (req.status === 'approved') {
-      if (requestConsumesBalance(req)) buckets[monthIndex].credit += amount;
-      else buckets[monthIndex].overtime += amount;
+      const credit = requestApprovedCreditHours(req);
+      const overtime = requestApprovedOvertimeHours(req);
+      if (credit > 0) buckets[monthIndex].credit += credit;
+      if (overtime > 0 || (!hasApprovedSplitValues(req) && !requestConsumesBalance(req))) {
+        buckets[monthIndex].overtime += hasApprovedSplitValues(req) ? overtime : amount;
+      }
     } else if (req.status === 'pending') {
       if (requestConsumesBalance(req)) buckets[monthIndex].pendingCredit += amount;
       else buckets[monthIndex].pendingOvertime += amount;
@@ -3529,8 +3648,12 @@ function insightBucketsForRequests(rows){
 function insightTotalsForRequests(rows){
   return rows.reduce(function(acc, req){
     if (req.status === 'approved') {
-      if (requestConsumesBalance(req)) acc.credit += requestHours(req);
-      else acc.overtime += requestHours(req);
+      const credit = requestApprovedCreditHours(req);
+      const overtime = requestApprovedOvertimeHours(req);
+      if (credit > 0) acc.credit += credit;
+      if (overtime > 0 || (!hasApprovedSplitValues(req) && !requestConsumesBalance(req))) {
+        acc.overtime += hasApprovedSplitValues(req) ? overtime : requestHours(req);
+      }
     } else if (req.status === 'pending') {
       if (requestConsumesBalance(req)) acc.pendingCredit += requestHours(req);
       else acc.pendingOvertime += requestHours(req);
@@ -3732,27 +3855,45 @@ function renderApproverQueue(){
   }
   if (isHolidayAdmin) {
     $('approverQueuePanel').querySelector('.panel-title').textContent = 'Credit-hours overview';
-    $('approverQueuePanel').querySelector('.panel-sub').textContent = 'Entries grouped into users and shift managers.';
+    $('approverQueuePanel').querySelector('.panel-sub').textContent = 'Entries grouped into users and managers.';
     $('managerFilter').closest('.queue-controls').style.display = 'none';
     const grouped = { users: [], managers: [] };
     rows.forEach(function(req) {
       const ku = allKilnUsers.find(function(x){ return String(x.auth_user_id) === String(req.auth_user_id); }) || null;
-      (ku && ku.is_shift_manager ? grouped.managers : grouped.users).push(req);
+      (isManagerApproverKilnUser(ku) ? grouped.managers : grouped.users).push(req);
     });
     const groupBlock = function(title, list) {
       if (!list.length) return '<div class="empty">'+title+' entries are empty for '+selectedYear+'.</div>';
       return '<div style="display:flex;flex-direction:column;gap:12px;margin-bottom:18px"><div style="font-family:var(--ff-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--tx3)">'+esc(title)+'</div>'+list.map(function(req){
         const person = personDisplayNameFromRecords(profileFor(req.auth_user_id), kilnUserFor(req.auth_user_id), req.requester_name || req.requester_email || 'Unknown');
         const stats = statsForUser(req.auth_user_id, selectedYear);
-        const quarterStats = rollingQuarterStatsForUser(req.auth_user_id, req.work_date);
         const needsBalance = requestConsumesBalance(req);
-        const requestBalance = needsBalance ? requestBalanceHours(req) : 0;
-        const enoughBalance = !needsBalance || (stats.quarterRemaining >= requestBalance && stats.remaining >= requestBalance);
-        const balanceMarkup = needsBalance
-          ? (enoughBalance
-            ? esc(requestHoursText(quarterStats.remaining)) + ' quarter left<div class="small" style="margin-top:4px">' + esc(requestHoursText(stats.remaining)) + ' annual left</div>'
-            : '<span style="color:var(--amb);font-weight:700">Insufficient balance to approve</span><div class="small" style="margin-top:4px">' + esc(requestHoursText(quarterStats.remaining)) + ' quarter left</div><div class="small" style="margin-top:4px">' + esc(requestHoursText(stats.remaining)) + ' annual left</div>')
-          : 'Paid overtime entry<div class="small" style="margin-top:4px">' + esc(requestHoursText(stats.remaining)) + ' annual left</div>';
+        let balanceMarkup = '';
+        if (req.status === 'approved') {
+          const approvedCredit = requestApprovedCreditHours(req);
+          const approvedOvertime = requestApprovedOvertimeHours(req);
+          if (approvedCredit > 0 || approvedOvertime > 0) {
+            const approvedParts = [];
+            if (approvedCredit > 0) approvedParts.push(esc(creditHoursText(approvedCredit)) + ' credit hours');
+            if (approvedOvertime > 0) approvedParts.push(esc(requestHoursText(approvedOvertime)) + ' overtime');
+            balanceMarkup = approvedParts.join(' + ') + ' approved';
+          } else {
+            balanceMarkup = requestConsumesBalance(req)
+              ? esc(requestHoursText(requestHours(req))) + ' credit hours approved'
+              : esc(requestHoursText(requestHours(req))) + ' overtime approved';
+          }
+        } else if (needsBalance) {
+          const splitPreview = resolveCreditApprovalSplit(req);
+          if (splitPreview && splitPreview.credit > 0) {
+            balanceMarkup = '<span style="color:var(--grn);font-weight:700">' + esc(creditHoursText(splitPreview.credit)) + '</span> credit hours will be approved'
+              + (splitPreview.overtime > 0 ? '<div class="small" style="margin-top:4px">' + esc(requestHoursText(splitPreview.overtime)) + ' will switch to paid overtime</div>' : '')
+              + '<div class="small" style="margin-top:4px">' + esc(requestHoursText(splitPreview.quarterRemainingAfter != null ? splitPreview.quarterRemainingAfter : splitPreview.quarterRemaining)) + ' quarter left after approval · ' + esc(requestHoursText(splitPreview.annualRemainingAfter != null ? splitPreview.annualRemainingAfter : splitPreview.annualRemaining)) + ' annual left after approval</div>';
+          } else {
+            balanceMarkup = '<span style="color:var(--amb);font-weight:700">' + esc(requestHoursText(num(req.hours_claimed, 0))) + ' will be paid overtime</span><div class="small" style="margin-top:4px">' + esc(requestHoursText(stats.remaining)) + ' annual left</div>';
+          }
+        } else {
+          balanceMarkup = 'Paid overtime entry<div class="small" style="margin-top:4px">' + esc(requestHoursText(stats.remaining)) + ' annual left</div>';
+        }
         return '<article class="queue-card">'+
           '<div class="request-head">'+
             '<div>'+
@@ -3761,7 +3902,7 @@ function renderApproverQueue(){
             '</div>'+
             makeStatusPill(req.status)+
           '</div>'+
-          '<div class="request-grid">'+
+      '<div class="request-grid">'+
             '<div class="card-box"><div class="box-label">Reason</div><div>'+esc(requestDisplayReason(req.reason) || '—')+'</div></div>'+
             '<div class="card-box"><div class="box-label">Balance</div><div>'+balanceMarkup+'</div></div>'+
           '</div>'+
@@ -3769,7 +3910,7 @@ function renderApproverQueue(){
         '</article>';
       }).join('')+'</div>';
     };
-    box.innerHTML = groupBlock('Users', grouped.users) + groupBlock('Shift Managers', grouped.managers);
+    box.innerHTML = groupBlock('Users', grouped.users) + groupBlock('Managers', grouped.managers);
     return;
   }
   $('approverQueuePanel').querySelector('.panel-title').textContent = 'Team approvals';
@@ -3784,13 +3925,11 @@ function renderApproverQueue(){
     const person = personDisplayNameFromRecords(profileFor(req.auth_user_id), kilnUserFor(req.auth_user_id), req.requester_name || req.requester_email || 'Unknown');
     const stats = statsForUser(req.auth_user_id, selectedYear);
     const needsBalance = requestConsumesBalance(req);
-    const requestBalance = needsBalance ? requestBalanceHours(req) : 0;
-    const enoughBalance = !needsBalance || (stats.quarterRemaining >= requestBalance && stats.remaining >= requestBalance);
-    const isPending = req.status === 'pending';
+    const splitPreview = needsBalance ? resolveCreditApprovalSplit(req) : null;
     const balanceMarkup = needsBalance
-      ? (enoughBalance
-        ? esc(requestHoursText(stats.quarterRemaining)) + ' quarter left<div class="small" style="margin-top:4px">' + esc(requestHoursText(stats.remaining)) + ' annual left</div>'
-        : '<span style="color:var(--amb);font-weight:700">Insufficient balance to approve</span><div class="small" style="margin-top:4px">' + esc(requestHoursText(stats.quarterRemaining)) + ' quarter left</div><div class="small" style="margin-top:4px">' + esc(requestHoursText(stats.remaining)) + ' annual left</div>')
+      ? (splitPreview && splitPreview.credit > 0
+        ? '<span style="color:var(--grn);font-weight:700">' + esc(creditHoursText(splitPreview.credit)) + '</span> credit hours will be approved' + (splitPreview.overtime > 0 ? '<div class="small" style="margin-top:4px">' + esc(requestHoursText(splitPreview.overtime)) + ' will switch to paid overtime</div>' : '') + '<div class="small" style="margin-top:4px">' + esc(requestHoursText(splitPreview.quarterRemainingAfter != null ? splitPreview.quarterRemainingAfter : splitPreview.quarterRemaining)) + ' quarter left after approval · ' + esc(requestHoursText(splitPreview.annualRemainingAfter != null ? splitPreview.annualRemainingAfter : splitPreview.annualRemaining)) + ' annual left after approval</div>'
+        : '<span style="color:var(--amb);font-weight:700">' + esc(requestHoursText(num(req.hours_claimed, 0))) + ' will be paid overtime</span><div class="small" style="margin-top:4px">' + esc(requestHoursText(stats.remaining)) + ' annual left</div>')
       : 'Paid overtime entry<div class="small" style="margin-top:4px">' + esc(requestHoursText(stats.remaining)) + ' annual left</div>';
     return '<article class="queue-card">'+
       '<div class="request-head">'+
@@ -3806,7 +3945,7 @@ function renderApproverQueue(){
       '</div>'+
       '<div class="field full"><label class="help-label" for="mgrNote_'+esc(req.id)+'">Manager note / denial or cancellation reason</label><textarea id="mgrNote_'+esc(req.id)+'" class="textarea" placeholder="Required for denials and cancellations."></textarea></div>'+
       '<div class="actions">'+
-        '<button class="btn btn-primary" type="button" onclick="decideRequest(\''+esc(req.id)+'\',\'approved\')"'+(enoughBalance ? '' : ' disabled')+'>Approve</button>'+
+        '<button class="btn btn-primary" type="button" onclick="decideRequest(\''+esc(req.id)+'\',\'approved\')">Approve</button>'+
         '<button class="btn btn-danger" type="button" onclick="decideRequest(\''+esc(req.id)+'\',\'denied\')">Deny</button>'+
         (req.status !== 'cancelled' && req.status !== 'denied' ? '<button class="btn btn-ghost" type="button" onclick="cancelManagedRequest(\''+esc(req.id)+'\')">Cancel entry</button>' : '')+
       '</div>'+
@@ -3835,7 +3974,6 @@ function renderAllowanceList(){
     const displayName = personDisplayNameFromRecords(p, ku, 'Unknown');
     const editable = canEditAllowanceFor(p);
     const managerName = holidayManagerDisplayNameForUser(p.id);
-    const extrasValue = num(hp && hp.entitlement_extras_days, 0);
     const remainingDays = stats.remaining / SHIFT_HOURS;
     const remainingClass = balanceTrafficLightClass(remainingDays);
     const allowanceHistory = profileEventsForUser(p.id)
@@ -3851,11 +3989,9 @@ function renderAllowanceList(){
           '<div class="name" style="font-size:13px">'+esc(displayName)+'</div>'+
         '</div>'+
         '<div class="staff-summary-right">'+
-          (showManagerLabel ? '<span class="pill">'+esc(managerName)+'</span>' : '')+
-          '<span class="pill">'+esc(requestDaysText(stats.used / SHIFT_HOURS))+' taken</span>'+
-          '<span class="pill '+remainingClass+'">'+esc(requestDaysText(remainingDays))+' left</span>'+
-          '<span class="pill">'+esc(requestDaysText(stats.pending / SHIFT_HOURS))+' pending</span>'+
-          '<span class="pill">'+esc(requestDaysText(stats.projected / SHIFT_HOURS))+' projected</span>'+
+          '<div class="line">'+esc(requestDaysText(stats.used / SHIFT_HOURS))+' taken · '+esc(requestDaysText(remainingDays))+' left</div>'+
+          '<div class="line">'+esc(requestDaysText(stats.pending / SHIFT_HOURS))+' pending · '+esc(requestDaysText(stats.projected / SHIFT_HOURS))+' projected</div>'+
+          (showManagerLabel ? '<div class="line"><strong>'+esc(managerName)+'</strong></div>' : '')+
         '</div>'+
       '</summary>'+
       '<div class="staff-body">'+
@@ -3863,34 +3999,30 @@ function renderAllowanceList(){
         '<div class="meta" style="font-size:10px">Pending '+esc(requestHoursText(stats.pending))+' / '+esc(requestDaysText(stats.pending / SHIFT_HOURS))+'</div>'+
         '<div class="meta" style="font-size:10px">Remaining '+esc(requestHoursText(stats.remaining))+' / '+esc(requestDaysText(stats.remaining / SHIFT_HOURS))+'</div>'+
         '<div class="meta" style="font-size:10px">Projected '+esc(requestHoursText(stats.projected))+' / '+esc(requestDaysText(stats.projected / SHIFT_HOURS))+'</div>'+
-        '<div class="meta" style="font-size:10px">Extras '+esc(allowanceExtrasText(extrasValue))+'</div>'+
+        '<div class="meta" style="font-size:10px">Credit adjustment '+esc(requestHoursText(num(hp && hp.credit_adjustment_hours, 0)))+' · Paid overtime '+esc(requestHoursText(num(hp && hp.overtime_adjustment_hours, 0)))+'</div>'+
         '<div class="staff-section">'+
-          '<div class="staff-section-title">Entitlement adjustment</div>'+
-          '<div class="staff-section-sub">Add or remove holiday entitlement and extras for this staff member. Every save is written to the audit trail.</div>'+
-          '<div class="field"><label class="small" style="margin-bottom:4px">Annual entitlement</label><input class="input" style="height:30px;font-size:11px" type="number" min="0" step="0.5" id="allow_'+esc(p.id)+'" value="'+esc(num(hp && hp.annual_allowance_days, 72))+'"'+(editable ? '' : ' disabled')+'><div class="field-note">Base holiday allowance for the year.</div></div>'+
-          '<div class="field"><label class="small" style="margin-bottom:4px">Extras</label><div class="row" style="gap:8px;align-items:flex-end">'+
-            '<select class="select" id="extrasUnit_'+esc(p.id)+'" style="width:120px;height:30px;font-size:11px" onchange="syncExtrasUnit(\'extrasUnit_'+esc(p.id)+'\', \'extras_'+esc(p.id)+'\')"'+(editable ? '' : ' disabled')+'>'+
-              '<option value="days">Days</option>'+
-              '<option value="hours">Hours</option>'+
-            '</select>'+
-            '<input class="input" style="height:30px;font-size:11px;flex:1" type="number" min="-999" max="999" step="0.5" id="extras_'+esc(p.id)+'" value="'+esc(extrasValue)+'"'+(editable ? '' : ' disabled')+'>'+
-          '</div><div class="field-note">Positive numbers add entitlement. Negative numbers take it away.</div></div>'+
-          '<div class="field"><label class="small" style="margin-bottom:4px">Reason / note for entitlement change</label><textarea class="textarea allowance-reason" id="allowReason_'+esc(p.id)+'" placeholder="Explain why this allowance or extras are being changed."'+(editable ? '' : ' disabled')+'></textarea><div class="field-note">This is stored in the allowance audit trail.</div></div>'+
+          '<div class="staff-section-title">Credit hours adjustment</div>'+
+          '<div class="staff-section-sub">Add or remove base allowance and credit-hours adjustment for this staff member. Every save is written to the audit trail.</div>'+
+          '<div class="staff-subsection">'+
+            '<div class="field"><label class="small" style="margin-bottom:4px">Base annual entitlement</label><input class="input" style="height:30px;font-size:11px" type="number" min="0" step="0.5" id="teamAllow_'+esc(p.id)+'" value="'+esc(num(hp && hp.annual_allowance_hours, 100))+'" readonly><div class="field-note">This is the base credit-hours allowance. Use the adjustment below to add or remove hours.</div></div>'+
+            '<div class="field"><label class="small" style="margin-bottom:4px">Credit hours adjustment</label><input class="input" style="height:30px;font-size:11px" type="number" step="0.5" id="teamCreditAdj_'+esc(p.id)+'" value="'+esc(num(hp && hp.credit_adjustment_hours, 0))+'"'+(editable ? '' : ' disabled')+'><div class="field-note">Use positive numbers to add hours and negative numbers to remove them.</div></div>'+
+            '<div class="field"><label class="small" style="margin-bottom:4px">Reason / note for credit hours change</label><textarea class="textarea allowance-reason" id="teamAllowReason_'+esc(p.id)+'" placeholder="Explain why this credit-hours adjustment is being changed."'+(editable ? '' : ' disabled')+'></textarea><div class="field-note">This is stored in the allowance audit trail.</div></div>'+
+            '<div style="display:flex;justify-content:flex-end"><button class="btn btn-primary" type="button" onclick="saveTeamAllowance(\''+esc(p.id)+'\')"'+(editable ? '' : ' disabled')+'>Save credit hours adjustment</button></div>'+
+          '</div>'+
         '</div>'+
-        '<div style="display:flex;justify-content:flex-end"><button class="btn btn-primary" type="button" onclick="saveAllowance(\''+esc(p.id)+'\')"'+(editable ? '' : ' disabled')+'>Save entitlements</button></div>'+
+        '<div class="staff-section">'+
+          '<div class="staff-section-title">Paid overtime adjustment</div>'+
+          '<div class="staff-section-sub">Add or remove manual paid overtime for this staff member. This stays separate from approved overtime claims.</div>'+
+          '<div class="staff-subsection">'+
+            '<div class="field"><label class="small" style="margin-bottom:4px">Paid overtime adjustment</label><input class="input" style="height:30px;font-size:11px" type="number" step="0.5" id="teamOvertimeAdj_'+esc(p.id)+'" value="'+esc(num(hp && hp.overtime_adjustment_hours, 0))+'"'+(editable ? '' : ' disabled')+'><div class="field-note">Use positive numbers to add overtime and negative numbers to remove it.</div></div>'+
+            '<div class="field"><label class="small" style="margin-bottom:4px">Reason / note for overtime adjustment</label><textarea class="textarea allowance-reason" id="teamOvertimeReason_'+esc(p.id)+'" placeholder="Explain why this paid overtime is being changed."'+(editable ? '' : ' disabled')+'></textarea><div class="field-note">This is stored in the overtime adjustment audit trail.</div></div>'+
+            '<div style="display:flex;justify-content:flex-end"><button class="btn btn-primary" type="button" onclick="saveTeamOvertimeAdjustment(\''+esc(p.id)+'\')"'+(editable ? '' : ' disabled')+'>Save overtime adjustment</button></div>'+
+          '</div>'+
+        '</div>'+
         '<div class="staff-history">'+
           '<div class="staff-history-title">Allowance audit</div>'+
           (allowanceHistory.length ? allowanceHistory.map(function(ev){
-            const allowanceText = typeof ev.new_annual_allowance_days !== 'undefined'
-              ? requestHoursText(num(ev.old_annual_allowance_days, 0)) + ' → ' + requestHoursText(num(ev.new_annual_allowance_days, 0)) + ' allowance'
-              : '';
-            const carryText = typeof ev.new_carryover_days !== 'undefined'
-              ? requestHoursText(num(ev.old_carryover_days, 0)) + ' → ' + requestHoursText(num(ev.new_carryover_days, 0)) + ' carryover'
-              : '';
-            const extrasText = typeof ev.new_extras_days !== 'undefined'
-              ? allowanceExtrasText(num(ev.old_extras_days, 0)) + ' → ' + allowanceExtrasText(num(ev.new_extras_days, 0)) + ' extras'
-              : '';
-            const changeText = [allowanceText, carryText, extrasText].filter(Boolean).join(' · ') || 'Allowance updated';
+            const changeText = profileAllowanceChangeText(ev);
             return '<div class="staff-history-item">'+
               '<div class="left">'+
                 '<div class="title">'+esc(changeText)+'</div>'+
@@ -3908,15 +4040,6 @@ function renderAllowanceList(){
       '</div>'+
     '</details>';
   }).join('');
-}
-function renderAllowanceList(){
-  const box = $('allowanceList');
-  const panel = $('allowancePanel');
-  if (panel) {
-    panel.style.display = 'none';
-    panel.classList.add('hidden');
-  }
-  if (box) box.innerHTML = '';
 }
 function hrHandoverRecipient(){
   const saved = String(localStorage.getItem(HR_HANDOVER_RECIPIENT_STORAGE_KEY) || '').trim();
@@ -4051,7 +4174,8 @@ function hrHandoverGroupsForCurrentView(){
         return String(b.decided_at || b.requested_at || b.created_at || '').localeCompare(String(a.decided_at || a.requested_at || a.created_at || ''));
       });
     requests.forEach(function(req){
-      const kind = requestConsumesBalance(req) ? 'credit' : 'overtime';
+      const credit = requestApprovedCreditHours(req);
+      const overtime = requestApprovedOvertimeHours(req) + (!hasApprovedSplitValues(req) && !requestConsumesBalance(req) ? requestHours(req) : 0);
       const personKey = String(p.id || '');
       const person = grouped.people.get(personKey) || {
         id: personKey,
@@ -4060,17 +4184,22 @@ function hrHandoverGroupsForCurrentView(){
         overtime: 0,
         approvals: []
       };
-      const hours = requestHours(req);
       const approvalText = {
         worked: formatDateOnly(req.work_date || req.requested_at || req.created_at || ''),
         date: formatDateOnly(req.decided_at || req.requested_at || req.created_at || ''),
         manager: req.decided_by_name || 'Unknown manager',
-        amount: requestConsumesBalance(req) ? creditHoursText(hours) + ' credit hours' : requestHoursText(hours) + ' overtime'
+        amount: credit > 0 && overtime > 0
+          ? creditHoursText(credit) + ' credit hours + ' + requestHoursText(overtime) + ' overtime'
+          : credit > 0
+            ? creditHoursText(credit) + ' credit hours'
+            : requestHoursText(overtime) + ' overtime'
       };
-      person[kind] += hours;
+      person.credit += credit;
+      person.overtime += overtime;
       person.approvals.push(approvalText);
-      grouped.total += hours;
-      grouped[kind] += hours;
+      grouped.total += credit + overtime;
+      grouped.credit += credit;
+      grouped.overtime += overtime;
       grouped.people.set(personKey, person);
     });
   });
@@ -4171,9 +4300,13 @@ function sendHrHandoverEmail(){
     return;
   }
   const recipient = hrHandoverRecipient();
-  const subject = encodeURIComponent('Approved credit hours from ' + currentDisplayName() + ' - ' + hrHandoverPeriodContextLabel());
-  const body = encodeURIComponent(buildHrHandoverEmailText());
-  const mailto = 'mailto:' + (recipient ? recipient : '') + '?subject=' + subject + '&body=' + body;
+  if (!recipient) {
+    setToast('Please add an HR mailbox first.');
+    return;
+  }
+  const subject = 'Approved credit hours from ' + currentDisplayName() + ' - ' + hrHandoverPeriodContextLabel();
+  const body = buildHrHandoverEmailText();
+  const mailto = 'mailto:' + String(recipient || '').trim() + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
   window.location.href = mailto;
 }
 function renderSummary(){
@@ -4185,7 +4318,7 @@ function renderSummary(){
   $('statUsed').textContent = creditHoursText(stats.used);
   $('statPending').textContent = creditHoursText(stats.pending);
   $('statRemaining').textContent = creditHoursText(stats.remaining);
-  $('statProjected').textContent = requestHoursText(stats.overtime);
+  $('statPaidOvertime').textContent = requestHoursText(stats.overtime);
   $('statEntitlementSub').textContent = 'Default annual credit-hours allowance';
   const quarterUsed = $('statQuarterUsed');
   const quarterRemaining = $('statQuarterRemaining');
@@ -4242,6 +4375,7 @@ function renderHolidayApp(){
       ? 'Credit-hours entries will be sent to ' + requestTarget + '.'
       : 'No manager is assigned yet. An admin can still see your entry.';
   }
+  syncRequestedDays();
   renderSummary();
   renderMyRequests();
   renderInsightsPanel();
@@ -4302,11 +4436,11 @@ function renderHolidayApp(){
 }
 
 async function ensureHolidayProfile(){
-  const { data } = await sb.from('credit_hour_profiles').select('auth_user_id,annual_allowance_hours').eq('auth_user_id', currentUser.id).maybeSingle();
+  const { data } = await sb.from('credit_hour_profiles').select('*').eq('auth_user_id', currentUser.id).maybeSingle();
   if (!data) {
     const { error } = await sb.from('credit_hour_profiles').insert({ auth_user_id: currentUser.id });
     if (error) throw error;
-    currentHolidayProfile = { auth_user_id: currentUser.id, annual_allowance_hours: 100 };
+    currentHolidayProfile = { auth_user_id: currentUser.id, annual_allowance_hours: 100, credit_adjustment_hours: 0, overtime_adjustment_hours: 0 };
   } else {
     currentHolidayProfile = {
       ...data,
@@ -4337,10 +4471,10 @@ async function loadHolidayData(){
   if (managerScopeEnabled) {
     const requestPromise = sb.from('credit_hour_entries').select('*');
     const eventPromise = sb.from('credit_hour_events').select('*');
-    const profilePromise = sb.from('credit_hour_profiles').select('auth_user_id,annual_allowance_hours,annual_allowance_days,carryover_days,entitlement_extras_days');
+    const profilePromise = sb.from('credit_hour_profiles').select('*');
     const profileEventPromise = sb.from('credit_hour_profile_events').select('*');
     const extraProfilePromise = sb.from('pw_profiles').select('id,full_name,email,approved,disabled,role,credit_hours_access,holiday_manager_auth_user_id').order('full_name', { ascending: true });
-    const kilnUserPromise = sb.from('kiln_users').select('auth_user_id,is_admin,is_shift_manager,is_burner,is_cement_analyst,is_locked,locked_name,email,username').order('username', { ascending: true });
+    const kilnUserPromise = sb.from('kiln_users').select('auth_user_id,is_admin,is_shift_manager,is_day_manager,is_burner,is_cement_analyst,is_locked,locked_name,email,username').order('username', { ascending: true });
     const results = await Promise.all([requestPromise, eventPromise, profilePromise, profileEventPromise, bankHolidayPromise, extraProfilePromise, kilnUserPromise]);
     const [reqRes, evRes, hpRes, hpEventRes, bankHolidayRes, extraRes, kilnRes] = results;
     if (reqRes.error) throw reqRes.error;
@@ -4357,7 +4491,7 @@ async function loadHolidayData(){
     return;
   }
   const requestPromise = sb.from('credit_hour_entries').select('*').eq('auth_user_id', currentUser.id);
-  const profilePromise = sb.from('credit_hour_profiles').select('auth_user_id,annual_allowance_hours,annual_allowance_days,carryover_days,entitlement_extras_days').eq('auth_user_id', currentUser.id);
+  const profilePromise = sb.from('credit_hour_profiles').select('*').eq('auth_user_id', currentUser.id);
   const profileEventPromise = sb.from('credit_hour_profile_events').select('*').eq('profile_user_id', currentUser.id);
   const [reqRes, hpRes, hpEventRes, bankHolidayRes] = await Promise.all([requestPromise, profilePromise, profileEventPromise, bankHolidayPromise]);
   if (reqRes.error) throw reqRes.error;
@@ -4436,7 +4570,7 @@ async function hydrateFromSession(){
     const accessState = await suiteShared.access.loadPwAppAccessState(sb, currentUser, {
       accessField: 'credit_hours_access',
       profileSelect: 'id,full_name,email,approved,disabled,role,credit_hours_access,holiday_manager_auth_user_id,must_reset_password',
-      kilnSelect: 'auth_user_id,is_admin,is_shift_manager,is_burner,is_cement_analyst,is_locked,shift_log_access,locked_name,email,username',
+      kilnSelect: 'auth_user_id,is_admin,is_shift_manager,is_day_manager,is_burner,is_cement_analyst,is_locked,shift_log_access,locked_name,email,username',
       requiresProfile: true
     });
     const prof = accessState.profile || null;
@@ -4458,7 +4592,7 @@ async function hydrateFromSession(){
       currentHolidayManagerLabel = holidayManagerDisplayNameFromRecords(currentHolidayManagerProfile, currentHolidayManagerKilnUser);
     }
     currentKilnUser = accessState.kilnUser || null;
-    isApprover = !!(currentKilnUser && currentKilnUser.is_shift_manager && !(currentProfile && currentProfile.holiday_manager_auth_user_id));
+    isApprover = !!(currentKilnUser && isManagerApproverKilnUser(currentKilnUser) && !(currentProfile && currentProfile.holiday_manager_auth_user_id));
     const sessionFullName = currentUser && currentUser.user_metadata && currentUser.user_metadata.full_name
       ? String(currentUser.user_metadata.full_name).trim()
       : '';
@@ -4518,7 +4652,7 @@ async function submitHolidayRequest(){
     const workDate = $('reqStart').value;
     const hoursWorked = num($('reqWorkedHours').value, 0);
     const hoursClaimed = num($('reqDays').value, 0);
-    const claimType = $('reqUnit').value === 'overtime' ? 'overtime' : 'credit';
+    let claimType = $('reqUnit').value === 'overtime' ? 'overtime' : 'credit';
     const reason = $('reqReason').value.trim();
     if (statusEl) statusEl.textContent = '';
     if (!workDate) { setToast('Please choose the date worked.'); return; }
@@ -4528,8 +4662,8 @@ async function submitHolidayRequest(){
     if (!reason) { setToast('Please add a reason or note.'); return; }
     const formattedReason = tidyRequestText(reason);
     if (claimType === 'credit' && !creditClaimAvailableForDate(workDate)) {
-      setToast('Credit hours are unavailable right now. Please choose paid overtime.');
-      return;
+      claimType = 'overtime';
+      if ($('reqUnit')) $('reqUnit').value = 'overtime';
     }
     const managerName = holidayManagerDisplayNameForUser(currentUser.id);
     const previewReq = {
@@ -4540,22 +4674,10 @@ async function submitHolidayRequest(){
       claim_type: claimType,
       status: 'pending'
     };
-    if (claimType === 'credit') {
-      const effectiveClaim = requestCreditHoursEarned(previewReq);
-      const quarterStats = rollingQuarterStatsForUser(currentUser.id, workDate);
-      if (effectiveClaim > quarterStats.projected) {
-        setToast('This entry would exceed the 48-hour rolling quarter limit.');
-        return;
-      }
-      const annualStats = statsForUser(currentUser.id, requestYear(previewReq));
-      if (effectiveClaim > annualStats.remaining) {
-        setToast('This entry would exceed your annual credit-hours allowance.');
-        return;
-      }
-    }
+    const entryLabel = claimType === 'overtime' ? 'paid overtime entry' : 'credit-hours entry';
     const confirmText = managerName === 'No manager assigned'
-      ? 'No manager is assigned yet. Submit this credit-hours entry for admin review?'
-      : 'Submit this credit-hours entry to ' + managerName + '?';
+      ? 'No manager is assigned yet. Submit this ' + entryLabel + ' for admin review?'
+      : 'Submit this ' + entryLabel + ' to ' + managerName + '?';
     if (!confirm(confirmText)) return;
     $('syncLabel').textContent = 'Saving…';
     if (statusEl) statusEl.textContent = 'Saving your entry...';
@@ -4711,32 +4833,30 @@ async function decideRequest(id, decision){
   if (req.status !== 'pending') return;
   const before = Object.assign({}, req);
   const noteEl = $('mgrNote_' + id);
-  const note = noteEl ? noteEl.value.trim() : '';
-  if (decision === 'approved' && requestConsumesBalance(req)) {
-    const stats = rollingQuarterStatsForUser(req.auth_user_id, req.work_date);
-    const annualStats = statsForUser(req.auth_user_id, requestYear(req));
-    const needed = requestBalanceHours(req);
-    if (stats.quarterRemaining < needed) {
-      setToast('Not enough credit-hours room remains in the rolling quarter to approve this claim.');
-      return;
-    }
-    if (annualStats.remaining < needed) {
-      setToast('Not enough annual credit-hours allowance remains to approve this claim.');
-      return;
-    }
-  }
+    const note = noteEl ? noteEl.value.trim() : '';
   if ((decision === 'denied' || decision === 'cancelled') && !note) {
     setToast(decision === 'denied' ? 'Please add a denial reason.' : 'Please add a reason before cancelling this entry.');
     return;
   }
   if (!confirm((decision === 'approved' ? 'Approve' : 'Deny') + ' this entry?')) return;
   $('syncLabel').textContent = 'Saving…';
+  const split = decision === 'approved' && requestKindFromRequest(req) === 'credit'
+    ? resolveCreditApprovalSplit(req)
+    : null;
   const { error } = await sb.from('credit_hour_entries').update({
     status: decision,
     manager_note: note || '',
     decided_by: currentUser.id,
     decided_by_name: currentDisplayName(),
-    decided_at: new Date().toISOString()
+    decided_at: new Date().toISOString(),
+    approved_credit_hours: decision === 'approved'
+      ? (requestKindFromRequest(req) === 'credit' ? num(split && split.credit, 0) : 0)
+      : null,
+    approved_overtime_hours: decision === 'approved'
+      ? (requestKindFromRequest(req) === 'credit'
+        ? num(split && split.overtime, 0)
+        : num(req.hours_claimed, 0))
+      : null
   }).eq('id', id);
   $('syncLabel').textContent = 'Synced';
   if (error) { setToast('Could not update request: ' + error.message); return; }
@@ -4745,28 +4865,27 @@ async function decideRequest(id, decision){
   setToast(decision === 'approved' ? 'Entry approved ✓' : 'Entry denied ✓');
 }
 
-async function persistAllowance(userId, allowanceInputId, extrasUnitInputId, extrasInputId, reasonInputId){
+async function persistAllowance(userId, allowanceInputId, adjustmentInputId, reasonInputId){
   const target = allPwProfiles.find(p => String(p.id) === String(userId));
   if (!target) return;
   if (!isHolidayAdmin && String(target.holiday_manager_auth_user_id || '') !== String(currentUser.id || '')) return;
   const allowance = num($(allowanceInputId)?.value, 72);
   const existing = holidayProfileFor(userId);
   const carryover = num(existing && existing.carryover_days, 0);
-  const extrasUnit = $(extrasUnitInputId)?.value === 'hours' ? 'hours' : 'days';
-  const extrasValue = num($(extrasInputId)?.value, 0);
-  const extras = extrasUnit === 'hours' ? extrasValue / SHIFT_HOURS : extrasValue;
+  const creditAdjustment = num($(adjustmentInputId)?.value, 0);
   const reason = String($(reasonInputId)?.value || '').trim();
   if (!reason) {
     setToast('Please add a reason for this allowance change.');
     return;
   }
   $('syncLabel').textContent = 'Saving…';
-  const { error } = await sb.rpc('update_holiday_profile_allowance', {
+  const { error } = await sb.rpc('update_credit_hours_profile_allowance', {
     p_user_id: userId,
-    p_allowance: allowance,
-    p_carryover: carryover,
-    p_extras: extras,
-    p_reason: reason
+    p_allowance_hours: allowance,
+    p_carryover_days: carryover,
+    p_credit_adjustment_hours: creditAdjustment,
+    p_reason: reason,
+    p_actor_name: currentDisplayName()
   });
   $('syncLabel').textContent = 'Synced';
   if (error) { setToast('Could not save allowance: ' + error.message); return; }
@@ -4778,11 +4897,45 @@ async function persistAllowance(userId, allowanceInputId, extrasUnitInputId, ext
 }
 
 async function saveAllowance(userId){
-  return persistAllowance(userId, 'allow_' + userId, 'extrasUnit_' + userId, 'extras_' + userId, 'allowReason_' + userId);
+  return persistAllowance(userId, 'allow_' + userId, 'creditAdj_' + userId, 'allowReason_' + userId);
 }
 
 async function saveTeamAllowance(userId){
-  return persistAllowance(userId, 'teamAllow_' + userId, 'teamExtrasUnit_' + userId, 'teamExtras_' + userId, 'teamReason_' + userId);
+  return persistAllowance(userId, 'teamAllow_' + userId, 'teamCreditAdj_' + userId, 'teamAllowReason_' + userId);
+}
+
+async function saveTeamOvertimeAdjustment(userId){
+  return persistOvertimeAdjustment(userId, 'teamOvertimeAdj_' + userId, 'teamOvertimeReason_' + userId);
+}
+
+async function persistOvertimeAdjustment(userId, amountInputId, reasonInputId){
+  const target = allPwProfiles.find(p => String(p.id) === String(userId));
+  if (!target) return;
+  if (!isHolidayAdmin && String(target.holiday_manager_auth_user_id || '') !== String(currentUser.id || '')) return;
+  const overtimeAdjustment = num($(amountInputId)?.value, 0);
+  const reason = String($(reasonInputId)?.value || '').trim();
+  if (!reason) {
+    setToast('Please add a reason for this overtime adjustment.');
+    return;
+  }
+  $('syncLabel').textContent = 'Saving…';
+  const { error } = await sb.rpc('update_credit_hours_profile_overtime_adjustment', {
+    p_user_id: userId,
+    p_overtime_adjustment_hours: overtimeAdjustment,
+    p_reason: reason,
+    p_actor_name: currentDisplayName()
+  });
+  $('syncLabel').textContent = 'Synced';
+  if (error) { setToast('Could not save overtime adjustment: ' + error.message); return; }
+  await loadHolidayData();
+  renderHolidayApp();
+  const reasonField = $(reasonInputId);
+  if (reasonField) reasonField.value = '';
+  setToast('Overtime adjustment saved ✓');
+}
+
+async function saveOvertimeAdjustment(userId){
+  return persistOvertimeAdjustment(userId, 'overtimeAdj_' + userId, 'overtimeReason_' + userId);
 }
 
 function renderBankHolidayList(){

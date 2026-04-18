@@ -856,6 +856,52 @@
     border-color: var(--accent2);
     color: var(--text);
   }
+  #access-denied{
+    text-size-adjust:100%;
+    -webkit-text-size-adjust:100%;
+  }
+  #access-denied .row{
+    justify-content:flex-start;
+  }
+  #access-denied .btn{
+    padding:12px 16px;
+    font-size:13.5px;
+    line-height:1.2;
+    font-weight:700;
+    -webkit-appearance:none;
+    appearance:none;
+  }
+  #access-denied .btn-primary{
+    background:linear-gradient(180deg, var(--accent2), var(--accent));
+    border-color:var(--accent2);
+    color:#fff;
+  }
+  #access-denied .splash-hero-title{
+    font-family:var(--ff-head);
+    font-size:25px;
+    line-height:1.02;
+    font-weight:800;
+    letter-spacing:-0.03em;
+  }
+  #access-denied .brand-title{
+    font-family:var(--ff-head);
+    font-size:24px;
+    line-height:1.1;
+    font-weight:800;
+    margin:0;
+  }
+  #access-denied .brand-sub{
+    margin:3px 0 0;
+    font-family:var(--ff-body);
+    font-size:13px;
+    font-weight:400;
+    letter-spacing:normal;
+    text-transform:none;
+    color:var(--text2);
+  }
+  #access-denied .small{
+    font-size:12px;
+  }
   @keyframes trackerCardBreath {
     0%, 100% {
       transform: scale(1);
@@ -1568,6 +1614,19 @@
       font-size: 22px;
     }
     .auth-screen .brand-sub {
+      font-size: 12px;
+    }
+    #access-denied .splash-hero-title {
+      font-size: 22px;
+    }
+    #access-denied .splash-hero-sub {
+      font-size: 8px;
+      letter-spacing: 2px;
+    }
+    #access-denied .brand-title {
+      font-size: 22px;
+    }
+    #access-denied .brand-sub {
       font-size: 12px;
     }
     #splash {
@@ -2988,7 +3047,7 @@ async function stProfileAllowed(sb, user) {
   return suiteShared.access.loadPwAppAccessState(sb, user, {
     accessField: 'shift_tracker_access',
     profileSelect: 'id,full_name,email,approved,disabled,role,shift_tracker_access,must_reset_password',
-    kilnSelect: 'auth_user_id,locked_name,email,username,is_admin,is_shift_manager,is_burner,is_electrician,is_mechanical,is_readonly,is_locked,shift_log_access,is_cement_analyst,is_day_staff,must_reset_password',
+    kilnSelect: 'auth_user_id,locked_name,email,username,is_admin,is_shift_manager,is_burner,is_electrician,is_mechanical,is_locked,shift_log_access,is_cement_analyst,is_day_staff,must_reset_password',
     requiresProfile: true
   });
 }

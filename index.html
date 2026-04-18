@@ -537,7 +537,7 @@ body.basic-mode button {
   color: var(--tx) !important;
   text-shadow: none !important;
 }
-body.basic-mode :is(.app-card,.coming-card,#mainHeader,.login-card,.lic-inner,.panel,.modal,.toast,.palette-panel,.manager-requests-panel,.header-user,.section-label,.palette-option,.palette-close,.icon-btn,.btn,.btn-ghost,.btn-primary,.btn-secondary,.btn-iso,.button,.card-arrow,.user-chip) {
+body.basic-mode :is(.app-card,.coming-card,#mainHeader,.login-card,.lic-inner,.panel,.modal,.toast,.palette-panel,.manager-requests-panel,.header-user,.section-label,.palette-option,.palette-close,.icon-btn,.btn,.btn-ghost,.btn-primary,.btn-secondary,.btn-iso,.button,.card-arrow,.card-chip,.card-footer,.card-foot-label,.hero-kicker,.hero-panel,.user-chip) {
   background: var(--sf) !important;
   background-image: none !important;
   border-color: var(--bd2) !important;
@@ -711,18 +711,49 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
   opacity: 1;
 }
 #mainContent{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:48px 28px 64px;}
-.platform-hero{margin-bottom:40px;}
-.platform-hero h1{font-family:var(--ff-head);font-weight:800;font-size:clamp(22px,3.5vw,32px);
-  color:var(--tx);letter-spacing:-.6px;margin-bottom:8px;}
+.platform-hero{display:block;margin-bottom:34px;}
+.platform-hero h1{
+  font-family:var(--ff-head);
+  font-weight:800;
+  font-size:clamp(28px,4.2vw,46px);
+  color:var(--tx);
+  letter-spacing:-1.2px;
+  margin-bottom:10px;
+  line-height:1;
+}
 .platform-hero p{
-  color:var(--ac3);
-  font-size:8px;
+  color:var(--tx2);
+  font-size:13px;
   font-family:var(--ff-mono);
-  letter-spacing:.4px;
-  max-width:480px;
+  letter-spacing:.08em;
+  max-width:620px;
   line-height:1.6;
-  opacity:.78;
-  text-shadow:0 0 4px var(--acd1);
+  opacity:.94;
+  text-shadow:none;
+}
+.hero-kicker{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:7px 12px;
+  margin-bottom:14px;
+  border:1px solid var(--bd2);
+  border-radius:999px;
+  background:var(--glass-1);
+  box-shadow:var(--e1);
+  font-family:var(--ff-mono);
+  font-size:9px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:var(--tx2);
+}
+.hero-kicker::before{
+  content:'';
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--ac2);
+  box-shadow:0 0 0 4px var(--acd1);
 }
 .section-label{font-family:var(--ff-mono);font-size:9px;letter-spacing:2.5px;
   text-transform:uppercase;color:var(--tx3);margin-bottom:14px;
@@ -735,48 +766,48 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
   background-size:200% 100%;
   animation:lineFlow 8s ease-in-out infinite;
 }
-.app-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;margin-bottom:40px;}
+.app-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-bottom:40px;}
 .app-card{background:
-  radial-gradient(130% 150% at 0% 0%, rgba(255,255,255,.10), transparent 34%),
+  radial-gradient(130% 150% at 0% 0%, rgba(255,255,255,.12), transparent 34%),
   radial-gradient(110% 120% at 100% 100%, var(--palette-card-glow-1), transparent 42%),
-  linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.03)),
-  var(--glass-3);border:1px solid color-mix(in srgb, var(--bd2) 82%, rgba(255,255,255,.28) 18%);border-radius:20px;padding:24px;
+  linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03)),
+  var(--glass-3);border:1px solid color-mix(in srgb, var(--bd2) 82%, rgba(255,255,255,.22) 18%);border-radius:24px;padding:22px 22px 20px;
   position:relative;overflow:hidden;transition:border-color .28s,box-shadow .28s,transform .28s,filter .28s;
   cursor:pointer;text-decoration:none;display:block;color:inherit;
-  box-shadow:0 20px 48px rgba(0,0,0,.14), inset 0 1px 0 rgba(255,255,255,.14);backdrop-filter:blur(30px) saturate(1.12);-webkit-backdrop-filter:blur(30px) saturate(1.12);
-  will-change:transform,box-shadow;}
+  box-shadow:0 14px 32px rgba(0,0,0,.11), inset 0 1px 0 rgba(255,255,255,.12);backdrop-filter:blur(24px) saturate(1.08);-webkit-backdrop-filter:blur(24px) saturate(1.08);
+  will-change:transform,box-shadow;
+  min-height:246px;
+  display:flex;
+  flex-direction:column;}
 .app-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
   background:linear-gradient(90deg,transparent,var(--ac3),transparent);
   background-size:200% 100%;
-  opacity:.3;transition:opacity .22s;
-  animation:lineFlow 8s ease-in-out infinite;
+  opacity:.18;transition:opacity .22s;
+  animation:none;
 }
 .app-card::before,
 .app-card::after{pointer-events:none}
-.palette-option.active{
-  animation:chipBreath 6.8s ease-in-out infinite;
-}
-.app-card::after{content:'';position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;opacity:.2;
+.app-card::after{content:'';position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;opacity:.12;
   background:
     radial-gradient(circle at 18% 0%, rgba(255,255,255,.12), transparent 42%),
     radial-gradient(circle at 82% 100%, var(--palette-card-glow-1), transparent 44%);
-  box-shadow:0 0 0 1px var(--palette-card-border),0 0 18px var(--palette-card-glow-2),0 0 36px var(--palette-card-glow-1);
+  box-shadow:0 0 0 1px var(--palette-card-border),0 0 12px var(--palette-card-glow-2);
   transform:scale(1);
-  transition:opacity 1s ease, box-shadow 1s ease, transform 1s ease, filter 1s ease;
-  animation:appBorderPulse 12s ease-in-out infinite;}
-.app-card:hover{border-color:color-mix(in srgb, var(--ac3) 58%, var(--bd2));box-shadow:0 24px 58px rgba(0,0,0,.18),0 0 0 1px var(--palette-card-border),0 0 18px var(--palette-card-glow-2);transform:translateY(-4px) scale(1.01);}
+  transition:opacity .55s ease, box-shadow .55s ease, transform .55s ease, filter .55s ease;
+  animation:none;}
+.app-card:hover{border-color:color-mix(in srgb, var(--ac3) 42%, var(--bd2));box-shadow:0 18px 40px rgba(0,0,0,.14);transform:translateY(-3px);}
 .app-card:hover::before{opacity:1;}
 .app-card:hover::after{
-  opacity:.42;
-  transform:scale(1.016);
-  box-shadow:0 0 0 1px var(--palette-card-border),0 0 12px var(--palette-card-glow-2),0 0 28px var(--palette-card-glow-1);
-  filter:brightness(1.03);
+  opacity:.18;
+  transform:scale(1.01);
+  box-shadow:0 0 0 1px var(--palette-card-border),0 0 10px var(--palette-card-glow-2);
+  filter:brightness(1.01);
 }
 .app-card:nth-child(2)::after{animation-delay:-4.6s;}
-.card-icon{width:60px;height:60px;border-radius:18px;display:flex;align-items:center;
+.card-icon{width:56px;height:56px;border-radius:18px;display:flex;align-items:center;
   justify-content:center;flex-shrink:0;position:relative;overflow:hidden;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.22), 0 14px 26px rgba(15,23,42,.10);
-  animation:appIconFloat 9.8s cubic-bezier(.22,1,.36,1) infinite;}
+  animation:none;}
 .card-icon.fire-icon,
 .card-icon.calendar-icon{
   background:linear-gradient(180deg,var(--palette-card-bg-1),var(--palette-card-bg-2));
@@ -809,17 +840,73 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
 .app-card:nth-child(4) .card-icon.tracker-icon .dial-hand{animation-duration:7.8s;}
 .app-card:hover .card-icon::after{opacity:.9;transform:scale(1.05);}
 .app-card:hover .card-icon{
-  transform:translateY(-3px) scale(1.06);
+  transform:translateY(-2px) scale(1.03);
 }
-.card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;}
-.card-title{font-family:var(--ff-head);font-weight:700;font-size:16px;
-  color:var(--tx);letter-spacing:-.3px;margin-bottom:5px;}
-.card-desc{font-size:12.5px;color:var(--tx2);line-height:1.55;margin-bottom:16px;}
-.card-arrow{position:absolute;bottom:20px;right:20px;width:28px;height:28px;border-radius:8px;
-  background:var(--acd1);border:1px solid var(--acd3);color:var(--ac3);
-  display:flex;align-items:center;justify-content:center;font-size:14px;
-  transition:background .18s,transform .18s;}
-.app-card:hover .card-arrow{background:var(--acd2);transform:translate(4px,-3px) scale(1.03);}
+.card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px;}
+.card-chip{
+  display:inline-flex;
+  align-items:center;
+  padding:7px 10px;
+  border-radius:999px;
+  border:1px solid var(--bd2);
+  background:var(--sf2);
+  color:var(--tx2);
+  font-family:var(--ff-mono);
+  font-size:9px;
+  letter-spacing:1.8px;
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+.card-title{
+  font-family:var(--ff-head);
+  font-weight:700;
+  font-size:18px;
+  color:var(--tx);
+  letter-spacing:-.4px;
+  margin-bottom:8px;
+  line-height:1.15;
+}
+.card-desc{
+  font-size:13px;
+  color:var(--tx2);
+  line-height:1.55;
+  margin-bottom:0;
+}
+.card-footer{
+  margin-top:auto;
+  padding-top:16px;
+  border-top:1px solid var(--bd2);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+.card-foot-label{
+  font-family:var(--ff-mono);
+  font-size:9px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:var(--tx3);
+}
+.card-arrow{
+  width:30px;
+  height:30px;
+  border-radius:999px;
+  background:var(--sf2);
+  border:1px solid var(--bd2);
+  color:var(--tx2);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:14px;
+  transition:background .18s,transform .18s,border-color .18s,color .18s;
+}
+.app-card:hover .card-arrow{
+  background:var(--sf3);
+  border-color:var(--bd3);
+  color:var(--tx);
+  transform:translateX(2px);
+}
 .coming-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;}
 .coming-card{background:var(--glass-4);border:1px dashed var(--bd2);border-radius:12px;
   padding:20px 18px;display:flex;align-items:center;gap:14px;opacity:.45;}
@@ -1032,8 +1119,7 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
 
   <main id="mainContent">
     <div class="platform-hero">
-      <h1>Platform Apps</h1>
-      <p>Created by Rob Jones @ Padeswood</p>
+      <h1>Padeswood Works</h1>
     </div>
 
     <div class="section-label">Live Applications</div>
@@ -1060,7 +1146,10 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
         </div>
         <div class="card-title">Padeswood Logs</div>
         <div class="card-desc">Role-based shift logging for burners, shift managers, electricians, mechanical teams and cement analysts, with overview reporting, search, AI summaries, feedback tracking and print-ready handovers.</div>
-        <div class="card-arrow">→</div>
+        <div class="card-footer">
+          <div class="card-foot-label">Open app</div>
+          <div class="card-arrow">→</div>
+        </div>
       </a>
 
       <a href="holiday-request/index.html" class="app-card" onclick="return openHolidayApp(event)">
@@ -1084,7 +1173,10 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
         </div>
         <div class="card-title">Holiday Requests</div>
         <div class="card-desc">Request leave, track balance, review approvals and keep a clean per-person audit trail with manager decisions.</div>
-        <div class="card-arrow">→</div>
+        <div class="card-footer">
+          <div class="card-foot-label">Open app</div>
+          <div class="card-arrow">→</div>
+        </div>
       </a>
 
       <a href="credit-hours/index.html" class="app-card" onclick="return openCreditHoursApp(event)">
@@ -1106,7 +1198,10 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
         </div>
         <div class="card-title">Credit Hours</div>
         <div class="card-desc">Submit credit-hours and overtime claims, route them to the assigned shift manager, and keep a per-person approval and audit trail.</div>
-        <div class="card-arrow">→</div>
+        <div class="card-footer">
+          <div class="card-foot-label">Open app</div>
+          <div class="card-arrow">→</div>
+        </div>
       </a>
 
       <a href="shift-tracker/index.html" class="app-card">
@@ -1130,7 +1225,10 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
         </div>
         <div class="card-title">Shift Tracker</div>
         <div class="card-desc">Shift rotation lookup for A, B, C, D and E teams, with date search, calendar view and quick shift summaries.</div>
-        <div class="card-arrow">→</div>
+        <div class="card-footer">
+          <div class="card-foot-label">Open app</div>
+          <div class="card-arrow">→</div>
+        </div>
       </a>
 
     </div>
@@ -1233,7 +1331,7 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
             <input type="hidden" id="inviteEmail" value="">
           </div>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;align-items:stretch">
+        <div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;align-items:stretch">
           <div style="display:grid;grid-template-rows:16px 38px;gap:4px;height:58px;align-content:start"><label style="display:block;height:16px;line-height:16px;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Platform Access</label>
             <select id="inviteRole" style="width:100%;height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
               <option value="true">Allow Access</option>
@@ -1260,9 +1358,9 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
               <option value="mechanical">Mechanical</option>
               <option value="process_operator">Process Operator</option>
               <option value="shift_manager">Shift Manager</option>
+              <option value="day_manager">Day Manager</option>
               <option value="cement_analyst">Cement Analyst</option>
               <option value="day_staff">Day Staff</option>
-              <option value="read_only">Read Only</option>
               <option value="admin">Admin</option>
             </select>
           </div>
@@ -1270,6 +1368,12 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
             <select id="inviteTrackerAccess" style="width:100%;height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
               <option value="true">Allow Access</option>
               <option value="false">No Access</option>
+            </select>
+          </div>
+          <div style="display:grid;grid-template-rows:16px 38px;gap:4px;height:58px;align-content:start"><label style="display:block;height:16px;line-height:16px;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Role Type</label>
+            <select id="inviteWorkRoleType" style="width:100%;height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
+              <option value="shift">Shift Role</option>
+              <option value="day">Day Role</option>
             </select>
           </div>
         </div>
@@ -1339,7 +1443,7 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
         <div style="font-size:10px;color:var(--tx3);line-height:1.45;font-family:var(--ff-mono)">This updates the suite profile email and kiln record. It does not change the Supabase login email.</div>
       </label>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;align-items:stretch">
+    <div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;align-items:stretch">
       <label style="display:grid;grid-template-rows:16px 38px;gap:4px;height:58px;align-content:start">
         <div style="font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;height:16px;line-height:16px">Platform Access</div>
         <select id="roleEditDocs" style="height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
@@ -1375,11 +1479,18 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
           <option value="false">No Access</option>
         </select>
       </label>
+      <label style="display:grid;grid-template-rows:16px 38px;gap:4px;height:58px;align-content:start">
+        <div style="font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;height:16px;line-height:16px">Role Type</div>
+        <select id="roleEditWorkRoleType" style="height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
+          <option value="shift">Shift Role</option>
+          <option value="day">Day Role</option>
+        </select>
+      </label>
     </div>
     <div style="display:grid;grid-template-columns:1fr;gap:6px">
       <div style="font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3)">Holiday Manager</div>
       <select id="roleEditHolidayManager" style="height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none"></select>
-      <div style="font-size:11px;color:var(--tx3);line-height:1.45;font-family:var(--ff-mono)">Optional. Leave blank for shift managers and admins.</div>
+      <div style="font-size:11px;color:var(--tx3);line-height:1.45;font-family:var(--ff-mono)">Optional. Leave blank for shift managers, day managers and admins.</div>
       <div style="font-size:11px;color:var(--tx3);line-height:1.45;font-family:var(--ff-mono)">Changing the name and email updates the suite profile records shown across the apps.</div>
     </div>
     <div style="border:1px solid var(--bd);border-radius:var(--rsm);background:var(--sf2);padding:14px 14px 12px">
@@ -1396,6 +1507,10 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
         <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--bd2);border-radius:var(--rsm);background:var(--sf);cursor:pointer">
           <input type="checkbox" id="roleEditKilnManager" style="accent-color:var(--ac3)">
           <span style="font-size:12px;color:var(--tx)">Shift Manager</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--bd2);border-radius:var(--rsm);background:var(--sf);cursor:pointer">
+          <input type="checkbox" id="roleEditKilnDayManager" style="accent-color:var(--ac3)">
+          <span style="font-size:12px;color:var(--tx)">Day Manager</span>
         </label>
         <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--bd2);border-radius:var(--rsm);background:var(--sf);cursor:pointer">
           <input type="checkbox" id="roleEditKilnElectrician" style="accent-color:var(--role-electrician)">
@@ -1420,10 +1535,6 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
         <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--bd2);border-radius:var(--rsm);background:var(--sf);cursor:pointer">
           <input type="checkbox" id="roleEditKilnBurner" style="accent-color:var(--ac3)">
           <span style="font-size:12px;color:var(--tx)">Burner</span>
-        </label>
-        <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--bd2);border-radius:var(--rsm);background:var(--sf);cursor:pointer">
-          <input type="checkbox" id="roleEditKilnReadOnly" style="accent-color:var(--ac3)">
-          <span style="font-size:12px;color:var(--tx)">Read Only</span>
         </label>
       </div>
       <div style="margin-top:10px;font-size:11px;color:var(--tx3);line-height:1.45;font-family:var(--ff-mono)">Uncheck Shift Log Access to clear all shift-log roles at once.</div>
@@ -1598,13 +1709,18 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
   .header-user{display:inline-flex;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .icon-btn{width:30px;height:30px;flex-shrink:0;}
   #mainContent{padding:24px 12px 44px;}
-  .platform-hero h1{font-size:20px;}
   .platform-hero{margin-bottom:24px;}
+  .platform-hero h1{font-size:24px;}
+  .platform-hero p{font-size:12px;line-height:1.55;}
   .app-grid{grid-template-columns:1fr;gap:10px;margin-bottom:28px;}
   .card{padding:18px 14px;}
-  .app-card{padding:18px 14px;}
-  .card-desc{font-size:12px;line-height:1.45;}
-  .card-arrow{bottom:16px;right:14px;}
+  .app-card{padding:18px 16px;min-height:auto;}
+  .card-top{margin-bottom:14px;}
+  .card-chip{padding:6px 9px;font-size:8px;letter-spacing:1.6px;}
+  .card-icon{width:52px;height:52px;}
+  .card-title{font-size:17px;}
+  .card-desc{font-size:12px;line-height:1.5;}
+  .card-footer{padding-top:14px;}
   #adminPanel{
     width:100vw;
     max-width:100vw;
@@ -1705,7 +1821,7 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
 @media(max-width:400px){
   .header-logo{width:28px;height:28px;font-size:11px;}
   #mainContent{padding-left:10px;padding-right:10px;}
-  .platform-hero h1{font-size:19px;}
+  .platform-hero h1{font-size:22px;}
 }
 
 /* ------------------------------------------------------------------------- */
@@ -1741,12 +1857,14 @@ body:not(.basic-mode) #loginScreen::after{
 
 /* Calm, consistent surfaces: subtle glass only where it helps (header/panels). */
 body:not(.basic-mode) #mainHeader{
-  background:var(--sf) !important;
+  background:
+    radial-gradient(120% 150% at 0% 0%, var(--palette-card-glow-1), transparent 44%),
+    linear-gradient(180deg,var(--glass-1),var(--glass-2)) !important;
   background-image:none !important;
   border-bottom-color:var(--bd2) !important;
   box-shadow:var(--e1) !important;
-  backdrop-filter:blur(14px) !important;
-  -webkit-backdrop-filter:blur(14px) !important;
+  backdrop-filter:blur(16px) saturate(1.05) !important;
+  -webkit-backdrop-filter:blur(16px) saturate(1.05) !important;
 }
 body:not(.basic-mode) .header-logo{
   box-shadow:none !important;
@@ -1763,9 +1881,11 @@ body:not(.basic-mode) .icon-btn:hover{
 
 /* App cards: remove heavy glass/glow, keep a clean macOS-like card. */
 body:not(.basic-mode) .app-card{
-  background:var(--sf) !important;
+  background:
+    radial-gradient(130% 150% at 0% 0%, rgba(255,255,255,.07), transparent 32%),
+    linear-gradient(180deg, var(--glass-1), var(--glass-2)) !important;
   border:1px solid var(--bd2) !important;
-  border-radius:18px !important;
+  border-radius:24px !important;
   box-shadow:var(--e1) !important;
   backdrop-filter:none !important;
   -webkit-backdrop-filter:none !important;
@@ -1838,7 +1958,11 @@ body:not(.basic-mode) button[style*="linear-gradient(135deg,var(--ac),var(--ac3)
 /* Calm the hero subtitle from accent-green to neutral text. */
 body:not(.basic-mode) .platform-hero p{
   color:var(--tx2) !important;
-  opacity:.78 !important;
+  opacity:.95 !important;
+}
+body:not(.basic-mode) .hero-kicker{
+  background:var(--glass-1) !important;
+  border-color:var(--bd2) !important;
 }
 
 /* Login/licence: flatten heavy glass and remove big shadows. */
@@ -2222,13 +2346,13 @@ async function showAppSelector(user, opts) {
     }
     try {
       const {data: ku} = await sb.from('kiln_users')
-        .select('must_reset_password,username,locked_name,shift_log_access,is_admin,is_shift_manager,is_electrician,is_mechanical,is_cement_analyst,is_day_staff,is_burner,is_readonly')
+        .select('must_reset_password,username,locked_name,shift_log_access,is_admin,is_shift_manager,is_day_manager,is_electrician,is_mechanical,is_cement_analyst,is_day_staff,is_burner')
         .eq('auth_user_id', user.id)
         .maybeSingle();
       _platformKilnUser = ku || null;
       const holidayBtn = document.getElementById('holidayReqBtn');
       if (holidayBtn) {
-        holidayBtn.style.display = (ku && ku.is_shift_manager && (data && (data.holiday_requests_access !== false || data.credit_hours_access !== false))) ? 'flex' : 'none';
+        holidayBtn.style.display = (ku && isManagerApproverKilnUser(ku) && (data && (data.holiday_requests_access !== false || data.credit_hours_access !== false))) ? 'flex' : 'none';
       }
       if (ku) {
         const sessionFullName = user && user.user_metadata && user.user_metadata.full_name
@@ -2342,7 +2466,7 @@ async function doRegister() {
     if (await hasPendingRequestByEmail('access', normalizedEmail)) { showRegMsg('err', 'A request for this email is already pending approval.'); btn.disabled=false; btn.textContent='Request Access'; return; }
     await saveRequestRow('access', {
       email: normalizedEmail, full_name: name, role: 'viewer',
-      kiln_role: 'read_only', status: 'pending', requested_at: new Date().toISOString()
+      kiln_role: 'none', status: 'pending', requested_at: new Date().toISOString()
     });
     showRegMsg('ok', 'Request submitted! An administrator will review your request and set up your account.');
     document.getElementById('regName').value = '';
@@ -2824,6 +2948,73 @@ async function handleEmailConfirmation() {
 let _usersCache = [];
 let _kilnUsersCache = [];
 let _platformProfile = null;
+const WORK_ROLE_TYPE_FIELD = 'work_role_type';
+let _warnedMissingWorkRoleTypeColumn = false;
+
+function normalizeWorkRoleType(value) {
+  const v = String(value || '').trim().toLowerCase();
+  if (v === 'day') return 'day';
+  if (v === 'shift') return 'shift';
+  return '';
+}
+
+function inferWorkRoleType(profile, kilnUser, fallbackKilnRole) {
+  const stored = normalizeWorkRoleType(profile && profile[WORK_ROLE_TYPE_FIELD]);
+  if (stored) return stored;
+  if (kilnUser && kilnUser.is_day_staff) return 'day';
+  if (kilnUser && kilnUser.is_day_manager) return 'day';
+  if (String(fallbackKilnRole || '') === 'day_staff' || String(fallbackKilnRole || '') === 'day_manager') return 'day';
+  return 'shift';
+}
+
+function workRoleTypeLabel(value) {
+  return normalizeWorkRoleType(value) === 'day' ? 'Day Role' : 'Shift Role';
+}
+
+function isDayManagerKilnUser(ku) {
+  return !!(ku && ku.is_day_manager);
+}
+
+function isManagerApproverKilnUser(ku) {
+  return !!(ku && (ku.is_shift_manager || ku.is_day_manager));
+}
+
+function isMissingColumnError(err, column) {
+  if (!err || !column) return false;
+  const msg = String(err.message || err.details || err.hint || '').toLowerCase();
+  return msg.indexOf('column') >= 0 && msg.indexOf(String(column).toLowerCase()) >= 0;
+}
+
+function warnMissingWorkRoleTypeColumn() {
+  if (_warnedMissingWorkRoleTypeColumn) return;
+  _warnedMissingWorkRoleTypeColumn = true;
+  console.warn('pw_profiles.' + WORK_ROLE_TYPE_FIELD + ' is missing; falling back without role-type persistence.');
+  showPlatformToast('Role type saved in UI; add pw_profiles.' + WORK_ROLE_TYPE_FIELD + ' to persist suite-wide.');
+}
+
+async function updateProfileWithWorkRoleType(profileId, payload) {
+  const updatePayload = Object.assign({}, payload);
+  const { error } = await sb.from('pw_profiles').update(updatePayload).eq('id', profileId);
+  if (!error) return true;
+  if (!isMissingColumnError(error, WORK_ROLE_TYPE_FIELD)) throw error;
+  delete updatePayload[WORK_ROLE_TYPE_FIELD];
+  const retry = await sb.from('pw_profiles').update(updatePayload).eq('id', profileId);
+  if (retry.error) throw retry.error;
+  warnMissingWorkRoleTypeColumn();
+  return false;
+}
+
+async function upsertProfileWithWorkRoleType(payload) {
+  const upsertPayload = Object.assign({}, payload);
+  const { error } = await sb.from('pw_profiles').upsert(upsertPayload);
+  if (!error) return true;
+  if (!isMissingColumnError(error, WORK_ROLE_TYPE_FIELD)) throw error;
+  delete upsertPayload[WORK_ROLE_TYPE_FIELD];
+  const retry = await sb.from('pw_profiles').upsert(upsertPayload);
+  if (retry.error) throw retry.error;
+  warnMissingWorkRoleTypeColumn();
+  return false;
+}
 let _platformKilnUser = null;
 let _feedbackDoneRequestsCache = [];
 const SB_URL_PLATFORM = 'https://xnkwrkoxvgptobnmekgv.supabase.co';
@@ -2845,7 +3036,7 @@ function getActiveHolidayManagerProfiles(excludeProfileId) {
       if (!p || p.approved === false || p.disabled === true || p.role === 'none') return false;
       if (excludeProfileId && String(p.id) === String(excludeProfileId)) return false;
       const ku = (_kilnUsersCache || []).find(function(x) { return String(x.auth_user_id) === String(p.id); }) || null;
-      return !!(ku && ku.is_shift_manager);
+      return isManagerApproverKilnUser(ku);
     })
     .sort(function(a, b) {
       const an = (a.full_name || a.email || '').toLowerCase();
@@ -3889,6 +4080,7 @@ async function createAccessRequestAccount(target, passwordValue) {
   const trackerAllowed = accessReq ? accessReq.shift_tracker_access !== false : true;
   const creditHoursAllowed = accessReq ? accessReq.credit_hours_access !== false : true;
   const holidayAllowed = accessReq ? accessReq.holiday_requests_access !== false : true;
+  const workRoleType = normalizeWorkRoleType(accessReq && accessReq[WORK_ROLE_TYPE_FIELD]) || inferWorkRoleType(null, null, target.kilnRole);
   const holidayManagerAuthUserId = accessReq ? (accessReq.holiday_manager_auth_user_id || null) : null;
   const holidayManagerValue = holidayManagerAuthUserId && getActiveHolidayManagerProfiles(null).some(function(m) { return String(m.id) === String(holidayManagerAuthUserId); }) ? holidayManagerAuthUserId : null;
   const createRes = await callAdminPwFunction({
@@ -3899,25 +4091,27 @@ async function createAccessRequestAccount(target, passwordValue) {
   });
   const userId = createRes && createRes.userId ? createRes.userId : null;
   if (!userId) throw new Error('Failed to create auth user');
-  const { error: profErr } = await sb.from('pw_profiles').upsert({
+  const kilnRoleIsDayManager = target.kilnRole === 'day_manager';
+  await upsertProfileWithWorkRoleType({
     id: userId, email: target.email, full_name: target.fullName,
     role: target.role || 'viewer',
     credit_hours_access: creditHoursAllowed,
     shift_tracker_access: trackerAllowed,
     holiday_requests_access: holidayAllowed,
     holiday_manager_auth_user_id: (target.kilnRole === 'admin') ? null : holidayManagerValue,
+    work_role_type: kilnRoleIsDayManager ? 'day' : workRoleType,
     approved: true
   });
-  if (profErr) throw new Error(profErr.message || 'Failed to save platform profile');
   if (target.kilnRole && target.kilnRole !== 'none') {
     const flags = {
       is_admin: target.kilnRole==='admin', is_shift_manager: target.kilnRole==='shift_manager',
+      is_day_manager: target.kilnRole==='day_manager',
       is_electrician: target.kilnRole==='electrician',
       is_mechanical: target.kilnRole==='mechanical',
       is_process_operator: target.kilnRole==='process_operator',
       is_cement_analyst: target.kilnRole==='cement_analyst', is_day_staff: target.kilnRole==='day_staff',
-      is_burner: target.kilnRole==='burner', is_readonly: target.kilnRole==='read_only'
-    };
+    is_burner: target.kilnRole==='burner'
+  };
     const username = target.email.split('@')[0].replace(/[^a-z0-9_]/gi,'').toLowerCase();
     const { error: kilnErr } = await sb.from('kiln_users').upsert({
       ...flags, auth_user_id: userId, username, locked_name: target.fullName, email: target.email,
@@ -3938,13 +4132,13 @@ function getPlatformRoleGroups() {
   return [
     { label:'Admins',           key:'admin',          color:'#16a34a', bg:'linear-gradient(90deg, rgba(22,163,74,.16), rgba(22,163,74,.08))', border:'rgba(22,163,74,.34)', test: function(m){ const ku=m.kiln; const p=m.prof; return (ku&&ku.is_admin)||(p&&p.role==='admin'); } },
     { label:'Shift Managers',   key:'shift_manager',  color:'var(--role-manager)',  bg:'rgba(124,58,237,.10)',  border:'rgba(124,58,237,.26)',  test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_shift_manager); } },
+    { label:'Day Managers',     key:'day_manager',    color:'var(--role-manager)',  bg:'rgba(124,58,237,.10)',  border:'rgba(124,58,237,.26)',  test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_day_manager); } },
     { label:'Electricians',     key:'electrician',    color:'var(--role-electrician)', bg:'rgba(56,189,248,.10)',  border:'rgba(56,189,248,.26)',  test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_electrician); } },
     { label:'Mechanical',       key:'mechanical',     color:'var(--role-mechanical)', bg:'rgba(37,99,235,.10)',   border:'rgba(37,99,235,.26)',   test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_mechanical); } },
     { label:'Process Operators',key:'process_operator',color:'var(--role-operator)', bg:'rgba(225,29,72,.10)',   border:'rgba(225,29,72,.26)',   test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_process_operator); } },
     { label:'Cement Analysts',  key:'cement_analyst', color:'var(--role-analyst)', bg:'rgba(180,83,9,.10)',    border:'rgba(180,83,9,.26)',    test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_cement_analyst); } },
     { label:'Day Staff',        key:'day_staff',      color:'#0891b2', bg:'rgba(8,145,178,.10)',   border:'rgba(8,145,178,.26)',   test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_day_staff); } },
     { label:'Burners',          key:'burner',         color:'#d97706', bg:'rgba(217,119,6,.10)',   border:'rgba(217,119,6,.26)',   test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_burner); } },
-    { label:'Read Only',        key:'readonly',       color:'#64748b', bg:'rgba(100,116,139,.10)', border:'rgba(100,116,139,.24)', test: function(m){ const ku=m.kiln; return !!(ku&&ku.is_readonly); } },
     { label:'Platform Only',    key:'platform',       color:'#94a3b8', bg:'rgba(148,163,184,.10)', border:'rgba(148,163,184,.24)', test: function(m){ return !!(m.prof && !m.kiln); } },
   ];
 }
@@ -4003,13 +4197,13 @@ function hasAnyKilnRole(ku) {
   return !!(ku && (
     ku.is_admin ||
     ku.is_shift_manager ||
+    ku.is_day_manager ||
     ku.is_electrician ||
     ku.is_mechanical ||
     ku.is_process_operator ||
     ku.is_cement_analyst ||
     ku.is_day_staff ||
-    ku.is_burner ||
-    ku.is_readonly
+    ku.is_burner
   ));
 }
 
@@ -4157,7 +4351,7 @@ async function loadAllUsers() {
 
     const [profRes, kilnRes] = await withTimeout(Promise.all([
       sb.from('pw_profiles').select('*').order('email'),
-      sb.from('kiln_users').select('username,locked_name,email,is_admin,is_burner,is_shift_manager,is_electrician,is_mechanical,is_process_operator,is_cement_analyst,is_day_staff,is_readonly,is_locked,shift_log_access,must_reset_password,auth_user_id').order('username')
+      sb.from('kiln_users').select('username,locked_name,email,is_admin,is_burner,is_shift_manager,is_day_manager,is_electrician,is_mechanical,is_process_operator,is_cement_analyst,is_day_staff,is_locked,shift_log_access,must_reset_password,auth_user_id').order('username')
     ]), 10000);
 
     if (profRes.error) {
@@ -4233,10 +4427,11 @@ function renderAllUsers() {
         +'<div style="flex:1;min-width:0">'
         +'<div style="font-size:12px;font-weight:600;color:var(--tx);font-family:var(--ff-head)">'+esc(req.full_name||'—')+'</div>'
         +'<div style="font-size:11px;color:var(--tx3);font-family:var(--ff-mono)">'+esc(req.email)+'</div>'
+        +(req[WORK_ROLE_TYPE_FIELD] ? '<div style="font-size:10px;color:var(--tx3);font-family:var(--ff-mono);margin-top:2px">Role type: '+esc(workRoleTypeLabel(req[WORK_ROLE_TYPE_FIELD]))+'</div>' : '')
         +(req.holiday_manager_auth_user_id ? '<div style="font-size:10px;color:var(--tx3);font-family:var(--ff-mono);margin-top:2px">Holiday manager: '+esc(holidayManagerLabel(req.holiday_manager_auth_user_id) || '—')+'</div>' : '')
         +'<div style="font-size:10px;color:var(--amb);font-family:var(--ff-mono);margin-top:2px">Requested '+new Date(req.requested_at).toLocaleDateString('en-GB')+'</div>'
         +'</div>'
-        +'<button data-req-id="'+esc(req.id)+'" data-req-email="'+esc(req.email)+'" data-req-name="'+esc(req.full_name||'')+'" data-req-role="'+esc(req.role||'viewer')+'" data-req-kiln="'+esc(req.kiln_role||'read_only')+'" onclick="activateRequestFromBtn(this)" style="height:28px;padding:0 12px;font-size:11px;font-family:var(--ff-head);font-weight:600;background:var(--grnd);border:1px solid var(--grnb);border-radius:var(--rsm);color:var(--grn);cursor:pointer;white-space:nowrap">\u2713 Activate</button>'
+        +'<button data-req-id="'+esc(req.id)+'" data-req-email="'+esc(req.email)+'" data-req-name="'+esc(req.full_name||'')+'" data-req-role="'+esc(req.role||'viewer')+'" data-req-kiln="'+esc(req.kiln_role||'none')+'" onclick="activateRequestFromBtn(this)" style="height:28px;padding:0 12px;font-size:11px;font-family:var(--ff-head);font-weight:600;background:var(--grnd);border:1px solid var(--grnb);border-radius:var(--rsm);color:var(--grn);cursor:pointer;white-space:nowrap">\u2713 Activate</button>'
         +'<button data-req-id="'+esc(req.id)+'" onclick="denyRequestFromBtn(this)" style="height:28px;padding:0 10px;font-size:11px;font-family:var(--ff-mono);background:transparent;border:1px solid var(--redb);border-radius:var(--rsm);color:var(--red);cursor:pointer">Deny</button>'
         +'</div>';
     });
@@ -4296,19 +4491,21 @@ function renderUserCard(m, DS, LS, RS, rc) {
   const email = (p&&p.email)||(ku&&ku.email)||'\u2014';
   const initials = displayName.split(' ').map(function(w){return w[0]||'';}).join('').slice(0,2).toUpperCase()||'?';
   const kilnAccess = ku ? (ku.is_admin || ku.shift_log_access !== false) : null;
-  const kilnRole = !ku ? null : (kilnAccess === false ? 'none' : ku.is_admin ? 'admin' : ku.is_shift_manager ? 'shift_manager' : ku.is_electrician ? 'electrician' : ku.is_mechanical ? 'mechanical' : ku.is_process_operator ? 'process_operator' : ku.is_cement_analyst ? 'cement_analyst' : ku.is_day_staff ? 'day_staff' : ku.is_burner ? 'burner' : 'read_only');
+  const kilnRole = !ku ? null : (kilnAccess === false ? 'none' : ku.is_admin ? 'admin' : ku.is_shift_manager ? 'shift_manager' : ku.is_day_manager ? 'day_manager' : ku.is_electrician ? 'electrician' : ku.is_mechanical ? 'mechanical' : ku.is_process_operator ? 'process_operator' : ku.is_cement_analyst ? 'cement_analyst' : ku.is_day_staff ? 'day_staff' : ku.is_burner ? 'burner' : 'view_only');
   const holidayManagerId = p ? (p.holiday_manager_auth_user_id || null) : null;
+  const workRoleType = inferWorkRoleType(p, ku, kilnRole);
   const kilnRoles = [];
   if (ku) {
     if (ku.is_admin) kilnRoles.push('Admin');
     if (ku.is_shift_manager) kilnRoles.push('Shift Manager');
+    if (ku.is_day_manager) kilnRoles.push('Day Manager');
     if (ku.is_electrician) kilnRoles.push('Electrician');
     if (ku.is_mechanical) kilnRoles.push('Mechanical');
     if (ku.is_process_operator) kilnRoles.push('Process Operator');
     if (ku.is_cement_analyst) kilnRoles.push('Cement Analyst');
     if (ku.is_day_staff) kilnRoles.push('Day Staff');
     if (ku.is_burner) kilnRoles.push('Burner');
-    if (ku.is_readonly) kilnRoles.push('Read Only');
+    if (kilnAccess !== false && !kilnRoles.length) kilnRoles.push('View Only');
   }
   const col = rc.viewer || 'var(--tx3)';
   let h = '<div style="background:var(--sf2);border:1px solid var(--bd);border-radius:var(--r);padding:14px 16px;margin-bottom:6px">';
@@ -4337,6 +4534,7 @@ function renderUserCard(m, DS, LS, RS, rc) {
       +'<span style="font-size:9px;font-family:var(--ff-mono);letter-spacing:1px;text-transform:uppercase;border:1px solid var(--bd2);border-radius:999px;padding:3px 7px;color:var(--tx3);background:var(--sf3)">Credit Hours: '+(p.credit_hours_access === false ? 'No Access' : 'Allow')+'</span>'
       +'<span style="font-size:9px;font-family:var(--ff-mono);letter-spacing:1px;text-transform:uppercase;border:1px solid var(--bd2);border-radius:999px;padding:3px 7px;color:var(--tx3);background:var(--sf3)">Tracker: '+(p.shift_tracker_access === false ? 'No Access' : 'Allow')+'</span>'
       +'<span style="font-size:9px;font-family:var(--ff-mono);letter-spacing:1px;text-transform:uppercase;border:1px solid var(--bd2);border-radius:999px;padding:3px 7px;color:var(--tx3);background:var(--sf3)">Holiday: '+(p.holiday_requests_access === false ? 'No Access' : 'Allow')+'</span>'
+      +'<span style="font-size:9px;font-family:var(--ff-mono);letter-spacing:1px;text-transform:uppercase;border:1px solid var(--bd2);border-radius:999px;padding:3px 7px;color:var(--tx3);background:var(--sf3)">Role Type: '+esc(workRoleTypeLabel(workRoleType))+'</span>'
       +'<span style="font-size:9px;font-family:var(--ff-mono);letter-spacing:1px;text-transform:uppercase;border:1px solid var(--bd2);border-radius:999px;padding:3px 7px;color:var(--tx3);background:var(--sf3);max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Holiday Manager: '+esc(holidayManagerLabel(holidayManagerId) || 'None')+'</span>'
       +'</div>';
   }
@@ -4378,25 +4576,25 @@ async function updateKilnRole(username, role) {
   const flags = {
     is_admin:          role === 'admin',
     is_shift_manager:  role === 'shift_manager',
+    is_day_manager:    role === 'day_manager',
     is_electrician:    role === 'electrician',
     is_mechanical:     role === 'mechanical',
     is_process_operator: role === 'process_operator',
     is_cement_analyst: role === 'cement_analyst',
     is_day_staff:      role === 'day_staff',
     is_burner:         role === 'burner',
-    is_readonly:       role === 'read_only',
     shift_log_access:  role !== 'none',
   };
   if (role === 'none') {
     flags.is_admin = false;
     flags.is_shift_manager = false;
+    flags.is_day_manager = false;
     flags.is_electrician = false;
     flags.is_mechanical = false;
     flags.is_process_operator = false;
     flags.is_cement_analyst = false;
     flags.is_day_staff = false;
     flags.is_burner = false;
-    flags.is_readonly = false;
   }
   const {error} = await sb.from('kiln_users').update(flags).eq('username', username);
   if (error) { showPlatformToast('Failed: '+error.message); return; }
@@ -4488,18 +4686,19 @@ function openRoleEditor(profileId) {
   document.getElementById('roleEditCreditHours').value = p.credit_hours_access === false ? 'false' : 'true';
   document.getElementById('roleEditTracker').value = p.shift_tracker_access === false ? 'false' : 'true';
   document.getElementById('roleEditHoliday').value = p.holiday_requests_access === false ? 'false' : 'true';
+  document.getElementById('roleEditWorkRoleType').value = inferWorkRoleType(p, ku);
   const access = !ku ? false : (ku.is_admin || ku.shift_log_access !== false);
   document.getElementById('roleEditKilnAccess').value = access ? 'true' : 'false';
   populateHolidayManagerSelect('roleEditHolidayManager', p.holiday_manager_auth_user_id || '', profileId);
   document.getElementById('roleEditKilnAdmin').checked = !!(ku && ku.is_admin);
   document.getElementById('roleEditKilnManager').checked = !!(ku && ku.is_shift_manager);
+  document.getElementById('roleEditKilnDayManager').checked = !!(ku && ku.is_day_manager);
   document.getElementById('roleEditKilnElectrician').checked = !!(ku && ku.is_electrician);
   document.getElementById('roleEditKilnMechanical').checked = !!(ku && ku.is_mechanical);
   document.getElementById('roleEditKilnOperator').checked = !!(ku && ku.is_process_operator);
   document.getElementById('roleEditKilnAnalyst').checked = !!(ku && ku.is_cement_analyst);
   document.getElementById('roleEditKilnDay').checked = !!(ku && ku.is_day_staff);
   document.getElementById('roleEditKilnBurner').checked = !!(ku && ku.is_burner);
-  document.getElementById('roleEditKilnReadOnly').checked = !!(ku && ku.is_readonly);
   const isProtectedAdmin = !!(ku && ku.username === PLATFORM_PROTECTED_USERNAME);
   const remainingAdmins = getShiftLogAdminCount(profileId);
   const lockAdminToggle = !!(ku && ku.is_admin && (isProtectedAdmin || remainingAdmins <= 0));
@@ -4549,28 +4748,17 @@ async function saveRoleEditor() {
     roleEditorShowMsg('err', 'Please enter a valid email address.');
     return;
   }
-  const requestedKilnRole = !!(
-    document.getElementById('roleEditKilnAdmin').checked ||
-    document.getElementById('roleEditKilnManager').checked ||
-    document.getElementById('roleEditKilnElectrician').checked ||
-    document.getElementById('roleEditKilnMechanical').checked ||
-    document.getElementById('roleEditKilnOperator').checked ||
-    document.getElementById('roleEditKilnAnalyst').checked ||
-    document.getElementById('roleEditKilnDay').checked ||
-    document.getElementById('roleEditKilnBurner').checked ||
-    document.getElementById('roleEditKilnReadOnly').checked
-  );
   const shouldEnableKilnAccess = kilnAccess;
   const kilnFlags = {
     is_admin: !!document.getElementById('roleEditKilnAdmin').checked,
     is_shift_manager: !!document.getElementById('roleEditKilnManager').checked,
+    is_day_manager: !!document.getElementById('roleEditKilnDayManager').checked,
     is_electrician: !!document.getElementById('roleEditKilnElectrician').checked,
     is_mechanical: !!document.getElementById('roleEditKilnMechanical').checked,
     is_process_operator: !!document.getElementById('roleEditKilnOperator').checked,
     is_cement_analyst: !!document.getElementById('roleEditKilnAnalyst').checked,
     is_day_staff: !!document.getElementById('roleEditKilnDay').checked,
     is_burner: !!document.getElementById('roleEditKilnBurner').checked,
-    is_readonly: !!document.getElementById('roleEditKilnReadOnly').checked,
     shift_log_access: shouldEnableKilnAccess
   };
   let holidayManagerAuthUserId = document.getElementById('roleEditHolidayManager').value || null;
@@ -4582,27 +4770,27 @@ async function saveRoleEditor() {
     roleEditorShowMsg('err', 'The last admin account must stay admin.');
     return;
   }
-  if (kilnFlags.shift_log_access && !kilnFlags.is_admin && !kilnFlags.is_shift_manager && !kilnFlags.is_electrician && !kilnFlags.is_mechanical && !kilnFlags.is_process_operator && !kilnFlags.is_cement_analyst && !kilnFlags.is_day_staff && !kilnFlags.is_burner && !kilnFlags.is_readonly) {
-    kilnFlags.is_readonly = true;
-  }
   if (kilnFlags.is_admin) {
     holidayManagerAuthUserId = null;
   }
   if (holidayManagerAuthUserId && !getActiveHolidayManagerProfiles(profileId).some(function(m) { return String(m.id) === String(holidayManagerAuthUserId); })) {
     holidayManagerAuthUserId = null;
   }
+  const workRoleType = (kilnFlags.is_day_manager || kilnFlags.is_day_staff)
+    ? 'day'
+    : (normalizeWorkRoleType(document.getElementById('roleEditWorkRoleType').value) || 'shift');
   roleEditorShowMsg('', '');
   try {
-    const {error: profErr} = await sb.from('pw_profiles').update({
+    const savedWorkRoleType = await updateProfileWithWorkRoleType(profileId, {
       full_name: fullNameInput,
       email: emailInput,
       role: platformAccess ? (p.role && p.role !== 'none' ? p.role : 'viewer') : 'none',
       credit_hours_access: creditHoursAccess,
       shift_tracker_access: trackerAccess,
       holiday_requests_access: holidayAccess,
-      holiday_manager_auth_user_id: holidayManagerAuthUserId
-    }).eq('id', profileId);
-    if (profErr) throw profErr;
+      holiday_manager_auth_user_id: holidayManagerAuthUserId,
+      work_role_type: workRoleType
+    });
     if (ku) {
       const {error: kilnErr} = await sb.from('kiln_users').update({
         ...kilnFlags,
@@ -4641,6 +4829,7 @@ async function saveRoleEditor() {
     p.shift_tracker_access = trackerAccess;
     p.holiday_requests_access = holidayAccess;
     p.holiday_manager_auth_user_id = holidayManagerAuthUserId;
+    p[WORK_ROLE_TYPE_FIELD] = savedWorkRoleType ? workRoleType : inferWorkRoleType(p, ku);
     if (ku) Object.assign(ku, kilnFlags, { locked_name: fullNameInput, email: emailInput });
     renderAllUsers();
     closeRoleEditor();
@@ -4730,6 +4919,7 @@ async function inviteUser() {
   const creditHoursAccessVal = document.getElementById('inviteCreditHoursAccess').value !== 'false';
   const holidayAccessVal = document.getElementById('inviteHolidayAccess').value !== 'false';
   const kilnRoleVal = document.getElementById('inviteKilnRole').value;
+  const workRoleTypeVal = normalizeWorkRoleType(document.getElementById('inviteWorkRoleType').value) || inferWorkRoleType(null, null, kilnRoleVal);
   const trackerAccessVal = document.getElementById('inviteTrackerAccess').value === 'true';
   const holidayManagerAuthUserId = document.getElementById('inviteHolidayManager').value || null;
   const btn = document.getElementById('inviteBtn');
@@ -4759,7 +4949,7 @@ async function inviteUser() {
     if (holidayManagerValue && !getActiveHolidayManagerProfiles(null).some(function(m) { return String(m.id) === String(holidayManagerValue); })) {
       holidayManagerValue = null;
     }
-    await saveRequestRow('access', {
+    const requestPayload = {
       email,
       full_name: name,
       role: platformAccess ? 'viewer' : 'none',
@@ -4767,10 +4957,20 @@ async function inviteUser() {
       holiday_requests_access: holidayAccessVal,
       holiday_manager_auth_user_id: (kilnRoleVal === 'admin') ? null : holidayManagerValue,
       kiln_role: kilnRoleVal,
+      work_role_type: workRoleTypeVal,
       shift_tracker_access: trackerAccessVal,
       status: 'pending',
       requested_at: new Date().toISOString()
-    });
+    };
+    try {
+      await saveRequestRow('access', requestPayload);
+    } catch (requestErr) {
+      if (!isMissingColumnError(requestErr, WORK_ROLE_TYPE_FIELD)) throw requestErr;
+      const fallbackRequestPayload = Object.assign({}, requestPayload);
+      delete fallbackRequestPayload[WORK_ROLE_TYPE_FIELD];
+      await saveRequestRow('access', fallbackRequestPayload);
+      warnMissingWorkRoleTypeColumn();
+    }
     document.getElementById('inviteEmailUser').value = '';
     document.getElementById('inviteEmail').value = '';
     document.getElementById('inviteName').value = '';
@@ -4780,6 +4980,7 @@ async function inviteUser() {
     document.getElementById('inviteHolidayAccess').value='true';
     document.getElementById('inviteHolidayManager').value='';
     document.getElementById('inviteKilnRole').value='none';
+    document.getElementById('inviteWorkRoleType').value='shift';
     document.getElementById('inviteTrackerAccess').value='true';
     document.getElementById('inviteEmailUser').placeholder = 'username';
     document.getElementById('inviteEmailUser').type = 'text';
@@ -4856,7 +5057,7 @@ function openCreditHoursApp(event) {
 function canOpenManagerRequests(){
   const profile = _platformProfile || null;
   const ku = _platformKilnUser || null;
-  if (!profile || !ku || !ku.is_shift_manager) return false;
+  if (!profile || !isManagerApproverKilnUser(ku)) return false;
   return !!(profile.holiday_requests_access !== false || profile.credit_hours_access !== false);
 }
 
@@ -4891,7 +5092,7 @@ function closeManagerRequestsMenu(){
 async function loadManagerRequestCounts() {
   const userId = _platformProfile && _platformProfile.id ? _platformProfile.id : null;
   const ku = _platformKilnUser || null;
-  if (!userId || !ku || !ku.is_shift_manager || !canOpenManagerRequests()) {
+  if (!userId || !isManagerApproverKilnUser(ku) || !canOpenManagerRequests()) {
     return { holiday: 0, credit: 0 };
   }
   const { data: staffRows } = await sb.from('pw_profiles').select('id').eq('holiday_manager_auth_user_id', userId);
@@ -4941,7 +5142,7 @@ async function openManagerRequestsMenu(){
 function openManagerRequests(event) {
   const ku = _platformKilnUser || null;
   const hasPlatformSession = !!_platformProfile;
-  if (hasPlatformSession && !(ku && ku.is_shift_manager)) {
+  if (hasPlatformSession && !isManagerApproverKilnUser(ku)) {
     if (event) event.preventDefault();
     showPlatformToast('Manager requests not available');
     return false;
