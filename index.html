@@ -3538,7 +3538,8 @@ function getFeedbackAllowedApps() {
       { value: 'Holiday Requests', label: 'Holiday Requests' },
       { value: 'Credit Hours', label: 'Credit Hours' },
       { value: 'Shift Tracker', label: 'Shift Tracker' },
-      { value: 'Logs', label: 'Logs' }
+      { value: 'Logs', label: 'Logs' },
+      { value: 'Message Board', label: 'Message Board' }
     ]);
   }
   const profile = _platformProfile || null;
@@ -3554,6 +3555,9 @@ function getFeedbackAllowedApps() {
   }
   if (ku && (ku.is_admin || ku.shift_log_access !== false)) {
     apps.push({ value: 'Logs', label: 'Logs' });
+  }
+  if (profile && profile.message_board_access !== false) {
+    apps.push({ value: 'Message Board', label: 'Message Board' });
   }
   return apps;
 }
@@ -4975,6 +4979,27 @@ async function updateHolidayRequestsAccess(profileId, value) {
   showPlatformToast('Holiday Requests access updated ✓');
 }
 
+async function refreshManagedUserRecord(profileId) {
+  if (!profileId) return { profile: null, kiln: null };
+  const [profileRes, kilnRes] = await Promise.all([
+    sb.from('pw_profiles').select('*').eq('id', profileId).maybeSingle(),
+    sb.from('kiln_users').select('*').eq('auth_user_id', profileId).maybeSingle()
+  ]);
+  const profile = profileRes && profileRes.data ? profileRes.data : null;
+  const kiln = kilnRes && kilnRes.data ? kilnRes.data : null;
+  if (profile) {
+    const profileIndex = _usersCache.findIndex(function(x){ return x && String(x.id) === String(profileId); });
+    if (profileIndex >= 0) _usersCache[profileIndex] = profile;
+    else _usersCache.push(profile);
+  }
+  if (kiln) {
+    const kilnIndex = _kilnUsersCache.findIndex(function(x){ return x && String(x.auth_user_id) === String(profileId); });
+    if (kilnIndex >= 0) _kilnUsersCache[kilnIndex] = kiln;
+    else _kilnUsersCache.push(kiln);
+  }
+  return { profile: profile, kiln: kiln };
+}
+
 function roleEditorShowMsg(type, text) {
   const msg = document.getElementById('roleEditMsg');
   if (!msg) return;
@@ -4985,14 +5010,15 @@ function roleEditorShowMsg(type, text) {
   msg.style.border = type === 'ok' ? '1px solid var(--grnb)' : type === 'err' ? '1px solid var(--redb)' : 'none';
 }
 
-function openRoleEditor(profileId) {
+async function openRoleEditor(profileId) {
   if (!_platformProfile || _platformProfile.role !== 'admin') {
     showPlatformToast('Admin only');
     return;
   }
-  const p = _usersCache.find(function(x){ return x.id === profileId; });
+  const refreshed = await refreshManagedUserRecord(profileId);
+  const p = refreshed.profile || _usersCache.find(function(x){ return x.id === profileId; });
   if (!p) { showPlatformToast('User not found'); return; }
-  const ku = _kilnUsersCache.find(function(x){ return x.auth_user_id === profileId; }) || null;
+  const ku = refreshed.kiln || _kilnUsersCache.find(function(x){ return x.auth_user_id === profileId; }) || null;
   document.getElementById('roleEditProfileId').value = profileId;
   document.getElementById('roleEditKilnUsername').value = ku ? (ku.username || '') : '';
   document.getElementById('roleEditSub').textContent = getSuiteDisplayName(p || null, ku || null, 'User') + ' · ' + (p.email || (ku && ku.email) || '—');

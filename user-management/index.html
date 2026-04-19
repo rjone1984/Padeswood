@@ -2203,8 +2203,11 @@ function renderCompletedFeedbackRequestsSection(){
   return html;
 }
 
-function openEditorByRow(row){
+async function openEditorByRow(row){
   if (!row || !row.profile || !row.profile.id) return;
+  const refreshed = await refreshManagedUserRecord(row.profile.id);
+  if (refreshed && refreshed.profile) row.profile = refreshed.profile;
+  if (refreshed && refreshed.kiln) row.kiln = refreshed.kiln;
   editingUserKey = row.key;
   const p = row.profile;
   const k = row.kiln || null;
@@ -2762,6 +2765,25 @@ async function loadDirectory(){
   return true;
 }
 
+async function refreshManagedUserRecord(profileId){
+  if (!profileId) return { profile: null, kiln: null };
+  const [profileRes, kilnRes] = await Promise.all([
+    sb.from('pw_profiles').select('*').eq('id', profileId).maybeSingle(),
+    sb.from('kiln_users').select('*').eq('auth_user_id', profileId).maybeSingle()
+  ]);
+  const profile = profileRes && profileRes.data ? profileRes.data : null;
+  const kiln = kilnRes && kilnRes.data ? kilnRes.data : null;
+  if (profile) {
+    const profileIndex = usersMerged.findIndex(function(row){ return row && row.profile && String(row.profile.id) === String(profileId); });
+    if (profileIndex >= 0) usersMerged[profileIndex].profile = profile;
+  }
+  if (kiln) {
+    const kilnIndex = usersMerged.findIndex(function(row){ return row && row.kiln && String(row.kiln.auth_user_id) === String(profileId); });
+    if (kilnIndex >= 0) usersMerged[kilnIndex].kiln = kiln;
+  }
+  return { profile: profile, kiln: kiln };
+}
+
 function managerOptionsForUser(userId){
   return usersMerged
     .filter(function(row){
@@ -2778,7 +2800,7 @@ function managerOptionsForUser(userId){
 function openEditorByIndex(index){
   const row = filteredUsers[index];
   if (!row || !row.profile || !row.profile.id) return;
-  openEditorByRow(row);
+  void openEditorByRow(row);
 }
 
 function closeEditor(){
@@ -2864,17 +2886,113 @@ async function saveEditorChanges(){
     p_is_locked: isLocked,
     p_must_reset_password: mustReset
   };
-  const result = await sb.rpc('pw_admin_user_management_update_user', payload);
-  $('editorSaveBtn').disabled = false;
-  if (result.error) {
-    showEditorMsg('err', result.error.message || 'Could not save changes.');
-    setSyncLabel('Sync error');
-    return;
+  try {
+    const result = await sb.rpc('pw_admin_user_management_update_user', payload);
+    if (result.error) throw result.error;
+  } catch (e) {
+    if (!hasMissingFunctionError(e, 'pw_admin_user_management_update_user') && !String(e && e.message ? e.message : e).toLowerCase().includes('schema cache')) {
+      $('editorSaveBtn').disabled = false;
+      showEditorMsg('err', e && e.message ? e.message : 'Could not save changes.');
+      setSyncLabel('Sync error');
+      return;
+    }
+    try {
+      await saveEditorChangesFallback({
+        row: row,
+        fullName: fullName,
+        email: email,
+        platformRole: platformRole,
+        approved: approved,
+        disabled: disabled,
+        shiftTrackerAccess: shiftTrackerAccess,
+        holidayAccess: holidayAccess,
+        creditAccess: creditAccess,
+        messageBoardAccess: messageBoardAccess,
+        managerId: managerId,
+        workRoleType: (kilnRole === 'day_manager' || kilnRole === 'day_staff') ? 'day' : workRoleType,
+        kilnRole: kilnRole,
+        shiftLogAccess: shiftLogAccess,
+        isLocked: isLocked,
+        mustReset: mustReset
+      });
+    } catch (fallbackErr) {
+      $('editorSaveBtn').disabled = false;
+      showEditorMsg('err', fallbackErr && fallbackErr.message ? fallbackErr.message : 'Could not save changes.');
+      setSyncLabel('Sync error');
+      return;
+    }
   }
+  $('editorSaveBtn').disabled = false;
   showEditorMsg('ok', 'Saved.');
   setToast('User updated successfully.');
   await loadDirectory();
   closeEditor();
+}
+
+async function saveEditorChangesFallback(opts){
+  const row = opts && opts.row ? opts.row : null;
+  if (!row || !row.profile || !row.profile.id) {
+    throw new Error('Profile not found for this account.');
+  }
+  const profilePatch = {
+    full_name: opts.fullName,
+    email: opts.email,
+    role: opts.platformRole,
+    approved: opts.approved,
+    disabled: opts.disabled,
+    shift_tracker_access: opts.shiftTrackerAccess,
+    holiday_requests_access: opts.holidayAccess,
+    credit_hours_access: opts.creditAccess,
+    message_board_access: opts.messageBoardAccess,
+    holiday_manager_auth_user_id: opts.kilnRole === 'admin' ? null : opts.managerId,
+    work_role_type: opts.workRoleType
+  };
+  const { error: profileError } = await sb.from('pw_profiles').update(profilePatch).eq('id', row.profile.id);
+  if (profileError) throw profileError;
+
+  const kilnRole = toLower(opts.kilnRole || 'none');
+  const kilnFlags = {
+    is_admin: kilnRole === 'admin',
+    is_shift_manager: kilnRole === 'shift_manager',
+    is_day_manager: kilnRole === 'day_manager',
+    is_electrician: kilnRole === 'electrician',
+    is_mechanical: kilnRole === 'mechanical',
+    is_process_operator: kilnRole === 'process_operator',
+    is_cement_analyst: kilnRole === 'cement_analyst',
+    is_day_staff: kilnRole === 'day_staff',
+    is_burner: kilnRole === 'burner',
+    shift_log_access: kilnRole === 'none' ? false : !!opts.shiftLogAccess,
+    is_locked: !!opts.isLocked,
+    must_reset_password: !!opts.mustReset,
+    locked_name: opts.fullName,
+    email: opts.email
+  };
+  const existingKiln = row.kiln || null;
+  const hasExistingKiln = !!(existingKiln && (existingKiln.auth_user_id || existingKiln.username));
+  if (hasExistingKiln) {
+    const query = existingKiln.auth_user_id
+      ? sb.from('kiln_users').update(kilnFlags).eq('auth_user_id', existingKiln.auth_user_id)
+      : sb.from('kiln_users').update(kilnFlags).eq('username', existingKiln.username);
+    const { error: kilnUpdateError } = await query;
+    if (kilnUpdateError) throw kilnUpdateError;
+  } else if (kilnRole !== 'none' || opts.shiftLogAccess) {
+    const baseUsername = (opts.email || '')
+      .split('@')[0]
+      .replace(/[^a-z0-9_]/gi, '')
+      .toLowerCase() || ('user_' + String(row.profile.id).slice(0, 8).toLowerCase());
+    let username = baseUsername;
+    let suffix = 2;
+    while (_kilnUsersCache.some(function(x){ return x && x.username === username; })) {
+      username = baseUsername + '_' + suffix;
+      suffix += 1;
+    }
+    const { error: kilnInsertError } = await sb.from('kiln_users').upsert({
+      auth_user_id: row.profile.id,
+      username: username,
+      ...kilnFlags
+    });
+    if (kilnInsertError) throw kilnInsertError;
+  }
 }
 
 async function queueQuickUser(){

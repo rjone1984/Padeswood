@@ -7533,13 +7533,17 @@ const AI_PROXY_URL = 'https://xnkwrkoxvgptobnmekgv.supabase.co/functions/v1/hype
 // ---------------------------------------------------------------------------
 async function callKilnAiProxy(question, summary) {
   if (!_sbSession) throw new Error('Please sign in again.');
+  const enrichedQuestion = [
+    'Use relevant general knowledge about cement kilns, cement-factory operations, raw mills, clinker production, preheaters, precalciners, coolers, burners, fans, emissions, and common process faults when that helps answer the question.',
+    String(question || '').trim()
+  ].filter(Boolean).join(' ');
   const res = await fetch(AI_PROXY_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + _sbSession
     },
-    body: JSON.stringify({ app: 'kiln-log', question: question, summary: summary })
+    body: JSON.stringify({ app: 'kiln-log', question: enrichedQuestion, summary: summary })
   });
   const raw = await res.text();
   let data = {};
@@ -7572,7 +7576,7 @@ function renderReports(){
       <div class="reports-header">
         <div>
           <div class="reports-title">AI Reporting</div>
-          <div class="reports-sub">Ask anything about the logs</div>
+          <div class="reports-sub">Ask anything about the logs, kiln operation, or cement plant behaviour</div>
         </div>
       </div>
       <div class="reports-scope-row">

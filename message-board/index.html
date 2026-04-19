@@ -129,7 +129,21 @@ body::before{
 .btn-ghost:hover,.icon-btn:hover{border-color:var(--bd3);background:var(--sf3)}
 .icon-btn{width:38px;height:38px;display:grid;place-items:center;cursor:pointer}
 .status-dot{width:10px;height:10px;border-radius:999px;background:var(--grn);box-shadow:0 0 0 4px var(--grnd)}
-.user-chip{max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:8px 12px;border:1px solid var(--bd2);border-radius:999px;background:var(--sf2);font:700 12px/1 var(--ff-head);color:var(--tx2)}
+.user-chip{
+  max-width:260px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  padding:4px 10px;
+  border:1px solid var(--bd);
+  border-radius:var(--rxs);
+  background:var(--sf2);
+  font:10px/1 var(--ff-mono);
+  color:var(--tx3);
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
 .visually-hidden{
   position:absolute !important;
   width:1px !important;
@@ -199,6 +213,7 @@ body::before{
   border:1px solid var(--bd2);
   background:var(--sf2);
   display:block;
+  transition:filter .28s var(--ease-smooth), opacity .28s var(--ease-smooth);
 }
 .empty{padding:20px;border:1px dashed var(--bd2);border-radius:14px;color:var(--tx3);text-align:center}
 .toast{
@@ -269,16 +284,18 @@ body.basic-mode::after{
 </div>
 
 <div id="accessDenied" class="hidden">
-  <div class="access-wrap panel">
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
-      <div class="brand-mark"><img data-suite-logo alt="Padeswood Works"></div>
+  <div class="panel auth-card" style="width:min(560px,100%);margin:40px auto;padding:20px">
+    <div class="brand-row" style="display:flex;align-items:center;gap:12px">
+      <div class="brand-mark logo-mark lg" aria-hidden="true"><img data-suite-logo alt="Padeswood Works"></div>
       <div>
-        <h1 style="margin:0;font:800 44px/1 var(--ff-head)">No Access</h1>
-        <div class="panel-sub">You do not have access to Message Board.</div>
+        <h1 class="auth-title" style="margin:0">No Access</h1>
+        <div class="auth-sub" style="margin:4px 0 0">You do not have access to Message Board.</div>
       </div>
     </div>
-    <p class="panel-sub" style="margin:10px 0 14px">Your account is not currently approved for this suite.</p>
-    <button class="btn btn-primary" onclick="goBackToPlatform()">Back to Platform</button>
+    <div class="small" style="margin-top:14px">Please contact an administrator if you think this is wrong.</div>
+    <div class="row" style="margin-top:14px">
+      <button class="btn btn-primary" type="button" onclick="goBackToPlatform()">Back to Platform</button>
+    </div>
   </div>
 </div>
 
@@ -402,6 +419,7 @@ let handCanvas = null;
 let handCtx = null;
 let handDrawing = false;
 let handDirty = false;
+const MESSAGE_BOARD_SEEN_AT_KEY_PREFIX = 'pw_message_board_seen_at:';
 
 function $(id){ return document.getElementById(id); }
 function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
@@ -435,6 +453,75 @@ function formatExpiry(expiresAt){
   return hrs + 'h ' + rem + 'm left';
 }
 
+function getBoardTheme(){
+  return document.body.classList.contains('light-mode') ? 'light' : 'dark';
+}
+
+function messageBoardSeenAtKey(){
+  const profileId = currentProfile && currentProfile.id ? String(currentProfile.id) : '';
+  return profileId ? (MESSAGE_BOARD_SEEN_AT_KEY_PREFIX + profileId) : '';
+}
+
+function markMessageBoardSeen(ts){
+  const key = messageBoardSeenAtKey();
+  if (!key) return;
+  try { localStorage.setItem(key, String(ts || new Date().toISOString())); } catch (e) {}
+}
+
+function inferDrawingThemeFromDataUrl(dataUrl){
+  return new Promise(function(resolve){
+    if (!dataUrl) return resolve('');
+    const img = new Image();
+    img.onload = function(){
+      try {
+        const w = Math.max(1, img.naturalWidth || img.width || 1);
+        const h = Math.max(1, img.naturalHeight || img.height || 1);
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        if (!ctx) return resolve('');
+        ctx.drawImage(img, 0, 0, w, h);
+        const samplePoints = [
+          [2, 2],
+          [Math.max(1, w - 3), 2],
+          [2, Math.max(1, h - 3)],
+          [Math.max(1, w - 3), Math.max(1, h - 3)]
+        ];
+        let total = 0;
+        let count = 0;
+        samplePoints.forEach(function(point){
+          const x = Math.min(Math.max(0, point[0]), w - 1);
+          const y = Math.min(Math.max(0, point[1]), h - 1);
+          const rgba = ctx.getImageData(x, y, 1, 1).data;
+          total += (rgba[0] + rgba[1] + rgba[2]) / 3;
+          count++;
+        });
+        resolve((count && (total / count) > 140) ? 'light' : 'dark');
+      } catch (e) {
+        resolve('');
+      }
+    };
+    img.onerror = function(){ resolve(''); };
+    img.src = dataUrl;
+  });
+}
+
+async function refreshDrawingThemeFilters(host){
+  if (!host) return;
+  const currentTheme = getBoardTheme();
+  const imgs = Array.from(host.querySelectorAll('.note-drawing'));
+  await Promise.all(imgs.map(async function(img){
+    const declaredTheme = String(img.dataset.drawingTheme || '').toLowerCase();
+    let sourceTheme = declaredTheme === 'light' || declaredTheme === 'dark' ? declaredTheme : '';
+    if (!sourceTheme) {
+      sourceTheme = await inferDrawingThemeFromDataUrl(img.currentSrc || img.src);
+      if (sourceTheme) img.dataset.drawingTheme = sourceTheme;
+    }
+    img.style.filter = sourceTheme && sourceTheme !== currentTheme ? 'invert(1)' : '';
+  }));
+}
+
 function setTheme(isLight){
   document.body.classList.toggle('light-mode', !!isLight);
   if (suiteShared && suiteShared.storage) suiteShared.storage.setThemePref(isLight ? 'light' : 'dark');
@@ -445,6 +532,8 @@ function setTheme(isLight){
       : '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/>';
   }
   if (handCanvas && handCtx) resizeHandwritePad();
+  const boardHost = $('boardList');
+  if (boardHost) refreshDrawingThemeFilters(boardHost);
 }
 
 function toggleTheme(){
@@ -624,6 +713,9 @@ async function loadMessages(){
       .limit(300);
     if (error) throw error;
     renderMessages(data || []);
+    if (Array.isArray(data) && data.length && data[0] && data[0].created_at) {
+      markMessageBoardSeen(data[0].created_at);
+    }
     updateStatusDot('Database connected');
   } catch (err) {
     renderMessages([], err);
@@ -650,11 +742,12 @@ function renderMessages(rows, err){
     const caption = (hasDrawing && noteText === '[Handwritten note]') ? '' : noteText;
     return '<article class="note">'
       + '<div class="note-meta"><span class="pill">Anonymous</span><span class="pill ' + leftClass + '">' + esc(left) + '</span></div>'
-      + (hasDrawing ? ('<img class="note-drawing" src="' + esc(row.message_drawing) + '" alt="Handwritten anonymous note">') : '')
+      + (hasDrawing ? ('<img class="note-drawing" data-drawing-theme="' + esc(String(row.message_drawing_theme || '')) + '" src="' + esc(row.message_drawing) + '" alt="Handwritten anonymous note">') : '')
       + (caption ? ('<div class="note-text">' + esc(caption) + '</div>') : '')
       + '<div class="small">Posted ' + esc(formatAge(row.created_at)) + '</div>'
       + '</article>';
   }).join('');
+  refreshDrawingThemeFilters(host);
 }
 
 async function submitMessage(){
@@ -673,16 +766,45 @@ async function submitMessage(){
       message_text: text || (drawingData ? '[Handwritten note]' : ''),
       expires_at: expiresAt
     };
-    if (drawingData) payload.message_drawing = drawingData;
-    const { error } = await sb.from(MESSAGE_TABLE).insert(payload);
+    if (drawingData) {
+      payload.message_drawing = drawingData;
+      payload.message_drawing_theme = getBoardTheme();
+    }
+    const { data: insertedRows, error } = await sb.from(MESSAGE_TABLE).insert(payload).select('created_at').limit(1);
     if (error) throw error;
     textarea.value = '';
     clearHandwritePad();
     updateCharCount();
+    if (insertedRows && insertedRows[0] && insertedRows[0].created_at) {
+      markMessageBoardSeen(insertedRows[0].created_at);
+    } else {
+      markMessageBoardSeen();
+    }
     setToast('Posted anonymously.');
     await loadMessages();
   } catch (err) {
-    if (drawingData && /message_drawing|schema cache/i.test(String(err && (err.message || err)))) {
+    const msg = String(err && (err.message || err || '')).toLowerCase();
+    if (drawingData && /message_drawing_theme|schema cache/i.test(msg)) {
+      try {
+        const fallbackPayload = {
+          message_text: text || '[Handwritten note]',
+          expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+          message_drawing: drawingData
+        };
+        const retry = await sb.from(MESSAGE_TABLE).insert(fallbackPayload);
+        if (retry && retry.error) throw retry.error;
+        textarea.value = '';
+        clearHandwritePad();
+        updateCharCount();
+        setToast('Posted anonymously.');
+        await loadMessages();
+        return;
+      } catch (retryErr) {
+        setToast('Run the Message Board SQL update to enable handwriting posts.');
+        return;
+      }
+    }
+    if (drawingData && /message_drawing/i.test(msg)) {
       setToast('Run the Message Board SQL update to enable handwriting posts.');
       return;
     }
@@ -830,9 +952,7 @@ async function doLogout(){
   currentUser = null;
   currentProfile = null;
   if ($('userChip')) $('userChip').textContent = '—';
-  $('appShell').classList.add('hidden');
-  $('accessDenied').classList.add('hidden');
-  $('loginScreen').classList.remove('hidden');
+  window.location.href = '../index.html';
 }
 
 async function bootstrap(){
@@ -880,6 +1000,7 @@ async function bootstrap(){
   $('appShell').classList.remove('hidden');
   updateCharCount();
   await loadMessages();
+  markMessageBoardSeen();
   if (refreshTimer) clearInterval(refreshTimer);
   refreshTimer = setInterval(loadMessages, 60000);
 }
