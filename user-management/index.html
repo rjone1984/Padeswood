@@ -421,6 +421,26 @@ body.light-mode{
   padding:12px 14px;
 }
 .group summary::-webkit-details-marker{display:none}
+.group-summary-right{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.group-summary-action{
+  height:24px;
+  padding:0 8px;
+  font-size:10px;
+  font-family:var(--ff-head);
+  font-weight:600;
+  border-radius:var(--rxs);
+  cursor:pointer;
+  white-space:nowrap;
+}
+.group-summary-action:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
 .group .group-name::after{
   content:'';
   width:8px;height:8px;
@@ -487,7 +507,7 @@ body.light-mode{
 }
 .modal-overlay.open{display:flex}
 .modal{
-  width:min(860px,100%);
+  width:min(960px,100%);
   max-height:min(90vh,860px);
   overflow:auto;
   border:1px solid var(--bd);
@@ -496,11 +516,47 @@ body.light-mode{
   box-shadow:var(--e3), var(--eac);
   padding:18px;
 }
-.modal-grid{
+.modal-body{
+  display:grid;
+  gap:14px;
+}
+.editor-section{
+  display:grid;
+  gap:12px;
+  padding:14px;
+  border:1px solid var(--bd);
+  border-radius:18px;
+  background:linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  box-shadow:var(--e1);
+}
+.editor-section-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:10px;
+}
+.editor-section-title{
+  font-family:var(--ff-head);
+  font-size:14px;
+  font-weight:800;
+  line-height:1.2;
+}
+.editor-section-sub{
+  margin-top:3px;
+  font-size:11px;
+  color:var(--tx2);
+  line-height:1.45;
+}
+.editor-grid{
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
   gap:12px;
 }
+.editor-grid.cols-3{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+}
+.editor-grid .field{margin-bottom:0}
+.editor-grid .field.wide{grid-column:1 / -1}
 .check-grid{
   margin-top:12px;
   display:grid;
@@ -524,6 +580,12 @@ body.light-mode{
   justify-content:flex-end;
   gap:8px;
   flex-wrap:wrap;
+}
+@media (max-width: 860px){
+  .editor-grid,
+  .editor-grid.cols-3{
+    grid-template-columns:1fr;
+  }
 }
 .palette-overlay{
   position:fixed;
@@ -794,7 +856,14 @@ body.basic-mode *::after{
         </div>
         <div class="field">
           <label for="quickEmailUser">Email Address</label>
-          <input id="quickEmailUser" class="input" type="email" placeholder="name@heidelbergmaterials.com">
+          <div id="quickEmailWrap" style="display:flex;align-items:stretch;overflow:hidden;background:var(--sf2);border:1px solid var(--bd);border-radius:12px;box-sizing:border-box">
+            <input id="quickEmailUser" type="text" placeholder="username" oninput="syncQuickEmail()" style="border:none;border-radius:0;flex:1;min-width:0;background:transparent;height:44px;padding:0 12px;color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
+            <select id="quickEmailDomain" onchange="syncQuickEmail();if(this.value==='other'){document.getElementById('quickEmailUser').placeholder='full@address.com';document.getElementById('quickEmailUser').type='email';}else{document.getElementById('quickEmailUser').placeholder='username';document.getElementById('quickEmailUser').type='text';}" style="height:44px;padding:0 10px 0 4px;background:var(--sf2);border:none;border-left:1px solid var(--bd);color:var(--tx2);font-family:var(--ff-mono);font-size:10px;cursor:pointer;outline:none;flex-shrink:0;max-width:190px">
+              <option value="@heidelbergmaterials.com">@heidelbergmaterials.com</option>
+              <option value="other">Full email</option>
+            </select>
+          </div>
+          <input id="quickEmail" type="hidden" value="">
         </div>
         <div class="field">
           <label for="quickKilnRole">Job role</label>
@@ -934,95 +1003,137 @@ body.basic-mode *::after{
       </div>
       <button class="btn btn-ghost" type="button" onclick="closeEditor()">Close</button>
     </div>
-    <div class="modal-grid">
-      <div class="field">
-        <label for="editFullName">Full Name</label>
-        <input id="editFullName" class="input" type="text">
-      </div>
-      <div class="field">
-        <label for="editEmail">Email</label>
-        <input id="editEmail" class="input" type="email">
-      </div>
-      <div class="field">
-        <label for="editKilnRole">Job role</label>
-        <select id="editKilnRole" class="select">
-          <option value="none">No job role</option>
-          <option value="admin">Admin</option>
-          <option value="shift_manager">Shift manager</option>
-          <option value="day_manager">Day manager</option>
-          <option value="burner">Burner</option>
-          <option value="cement_analyst">Cement analyst</option>
-          <option value="electrician">Electrician</option>
-          <option value="mechanical">Mechanical</option>
-          <option value="process_operator">Process operator</option>
-          <option value="day_staff">Day staff</option>
-        </select>
-      </div>
-      <div class="field">
-        <label for="editWorkRoleType">Work Role Type</label>
-        <select id="editWorkRoleType" class="select">
-          <option value="shift">Shift role</option>
-          <option value="day">Day role</option>
-        </select>
-      </div>
-      <div class="field">
-        <label for="editHolidayManager">Assigned Manager</label>
-        <select id="editHolidayManager" class="select"></select>
-      </div>
-    </div>
-    <div class="modal-grid">
-      <div class="field">
-        <label for="editApproved">Account approval</label>
-        <select id="editApproved" class="select">
-          <option value="true">Approved</option>
-          <option value="false">Not approved</option>
-        </select>
-      </div>
-      <div class="field">
-        <label for="editDisabled">Account enabled</label>
-        <select id="editDisabled" class="select">
-          <option value="false">Enabled</option>
-          <option value="true">Disabled</option>
-        </select>
-      </div>
-      <div class="field">
-        <label for="editTrackerAccess">Shift Tracker</label>
-        <select id="editTrackerAccess" class="select">
-          <option value="true">Allow Access</option>
-          <option value="false">No Access</option>
-        </select>
-      </div>
-      <div class="field">
-        <label for="editHolidayAccess">Holiday Requests</label>
-        <select id="editHolidayAccess" class="select">
-          <option value="true">Allow Access</option>
-          <option value="false">No Access</option>
-        </select>
-      </div>
-      <div class="field">
-        <label for="editCreditAccess">Credit Hours</label>
-        <select id="editCreditAccess" class="select">
-          <option value="true">Allow Access</option>
-          <option value="false">No Access</option>
-        </select>
-      </div>
-      <div class="field">
-        <label for="editLogsAccess">Logs access</label>
-        <select id="editLogsAccess" class="select">
-          <option value="true">Allow Access</option>
-          <option value="false">No Access</option>
-        </select>
-      </div>
-      <div class="field">
-        <label for="editMustReset">Password Reset</label>
-        <select id="editMustReset" class="select">
-          <option value="false">No reset required</option>
-          <option value="true">Force reset on next login</option>
-        </select>
-      </div>
+    <div class="modal-body">
+      <section class="editor-section">
+        <div class="editor-section-head">
+          <div>
+            <div class="editor-section-title">Identity</div>
+            <div class="editor-section-sub">Basic account details and contact info.</div>
+          </div>
+        </div>
+        <div class="editor-grid">
+          <div class="field">
+            <label for="editFullName">Full Name</label>
+            <input id="editFullName" class="input" type="text">
+          </div>
+          <div class="field">
+            <label for="editEmail">Email</label>
+            <input id="editEmail" class="input" type="email">
+          </div>
+        </div>
+      </section>
+
+      <section class="editor-section">
+        <div class="editor-section-head">
+          <div>
+            <div class="editor-section-title">Job Details</div>
+            <div class="editor-section-sub">The user’s job role and how they work.</div>
+          </div>
+        </div>
+        <div class="editor-grid cols-3">
+          <div class="field">
+            <label for="editKilnRole">Job role</label>
+            <select id="editKilnRole" class="select">
+              <option value="none">No job role</option>
+              <option value="admin">Admin</option>
+              <option value="shift_manager">Shift manager</option>
+              <option value="day_manager">Day manager</option>
+              <option value="burner">Burner</option>
+              <option value="cement_analyst">Cement analyst</option>
+              <option value="electrician">Electrician</option>
+              <option value="mechanical">Mechanical</option>
+              <option value="process_operator">Process operator</option>
+              <option value="day_staff">Day staff</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="editWorkRoleType">Work Role Type</label>
+            <select id="editWorkRoleType" class="select">
+              <option value="shift">Shift role</option>
+              <option value="day">Day role</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="editHolidayManager">Assigned Manager</label>
+            <select id="editHolidayManager" class="select"></select>
+          </div>
+        </div>
+      </section>
+
+      <section class="editor-section">
+        <div class="editor-section-head">
+          <div>
+            <div class="editor-section-title">Access</div>
+            <div class="editor-section-sub">Which suite apps this user can enter.</div>
+          </div>
+        </div>
+        <div class="editor-grid cols-3">
+          <div class="field">
+            <label for="editTrackerAccess">Shift Tracker</label>
+            <select id="editTrackerAccess" class="select">
+              <option value="true">Allow Access</option>
+              <option value="false">No Access</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="editHolidayAccess">Holiday Requests</label>
+            <select id="editHolidayAccess" class="select">
+              <option value="true">Allow Access</option>
+              <option value="false">No Access</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="editCreditAccess">Credit Hours</label>
+            <select id="editCreditAccess" class="select">
+              <option value="true">Allow Access</option>
+              <option value="false">No Access</option>
+            </select>
+          </div>
+          <div class="field wide">
+            <label for="editLogsAccess">Logs access</label>
+            <select id="editLogsAccess" class="select">
+              <option value="true">Allow Access</option>
+              <option value="false">No Access</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <section class="editor-section">
+        <div class="editor-section-head">
+          <div>
+            <div class="editor-section-title">Security</div>
+            <div class="editor-section-sub">Approval, account state, and password handling.</div>
+          </div>
+        </div>
+        <div class="editor-grid cols-3">
+          <div class="field">
+            <label for="editApproved">Account approval</label>
+            <select id="editApproved" class="select">
+              <option value="true">Approved</option>
+              <option value="false">Not approved</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="editDisabled">Account enabled</label>
+            <select id="editDisabled" class="select">
+              <option value="false">Enabled</option>
+              <option value="true">Disabled</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="editMustReset">Password Reset</label>
+            <select id="editMustReset" class="select">
+              <option value="false">No reset required</option>
+              <option value="true">Force reset on next login</option>
+            </select>
+          </div>
+        </div>
+      </section>
     </div>
     <div class="small" id="editorMsg"></div>
     <div class="modal-actions">
+      <button class="btn btn-ghost" type="button" id="editorPwBtn" onclick="openEditorPasswordModal()">Set Password</button>
       <button class="btn btn-ghost" type="button" onclick="closeEditor()">Cancel</button>
       <button class="btn btn-primary" type="button" id="editorSaveBtn" onclick="saveEditorChanges()">Save Changes</button>
     </div>
@@ -1237,6 +1348,16 @@ function bindLogsAccessRolePair(accessId, roleId){
   roleEl.addEventListener('change', sync);
   sync();
 }
+function syncQuickEmail(){
+  const userEl = $('quickEmailUser');
+  const domainEl = $('quickEmailDomain');
+  const hiddenEl = $('quickEmail');
+  if (!userEl || !domainEl || !hiddenEl) return;
+  const raw = String(userEl.value || '').trim();
+  const domain = String(domainEl.value || '@heidelbergmaterials.com');
+  const email = raw.includes('@') ? raw.toLowerCase() : (domain === 'other' ? raw.toLowerCase() : (raw ? (raw + domain).toLowerCase() : ''));
+  hiddenEl.value = email;
+}
 function platformRoleLabel(role){
   const v = toLower(role);
   if (!v || v === 'none') return 'No platform access';
@@ -1285,6 +1406,41 @@ function groupColor(key){
     pending: 'var(--amb)'
   };
   return map[key] || 'var(--tx2)';
+}
+function getManagedUsersForGroup(groupKey){
+  return usersMerged.filter(function(row){
+    if (!row || userIsAdmin(row)) return false;
+    return userRoleGroup(row) === groupKey;
+  });
+}
+function getManagedUsersForGroupTargets(groupKey, shouldDisable){
+  return getManagedUsersForGroup(groupKey)
+    .filter(function(row){
+      return shouldDisable ? !userIsDisabled(row) : userIsDisabled(row);
+    });
+}
+async function bulkSetGroupDisabled(groupKey, shouldDisable){
+  const label = groupMetaLabel(groupKey);
+  if (groupKey === 'admin') {
+    setToast('Admins cannot be bulk updated.');
+    return;
+  }
+  const targets = getManagedUsersForGroupTargets(groupKey, shouldDisable);
+  if (!targets.length) {
+    setToast(shouldDisable ? 'No active ' + label.toLowerCase() + ' users to disable.' : 'No disabled ' + label.toLowerCase() + ' users to enable.');
+    return;
+  }
+  const confirmText = shouldDisable
+    ? 'Disable ' + targets.length + ' user' + (targets.length !== 1 ? 's' : '') + ' in ' + label + '?\n\nThis will block them from the suite.'
+    : 'Enable ' + targets.length + ' user' + (targets.length !== 1 ? 's' : '') + ' in ' + label + '?\n\nThey will be able to sign in again.';
+  if (!window.confirm(confirmText)) return;
+  try {
+    await setManagedUsersDisabled(targets, shouldDisable);
+    setToast(label + ' ' + (shouldDisable ? 'disabled' : 'enabled') + ' ✓');
+    await loadDirectory();
+  } catch (e) {
+    setToast('Could not update ' + label.toLowerCase() + ': ' + (e && e.message ? e.message : String(e)));
+  }
 }
 function hasMissingFunctionError(err, fnName){
   const msg = toLower(err && (err.message || err.details || err.hint || err.code || ''));
@@ -1846,9 +2002,20 @@ function renderGroupSection(groupKey, rows){
   const open = !!roleGroupsOpen[groupKey];
   const title = groupMetaLabel(groupKey);
   const color = groupColor(groupKey);
+  const eligibleRows = rows.filter(function(row){ return !userIsAdmin(row); });
+  const disabledCount = eligibleRows.filter(userIsDisabled).length;
+  const activeCount = eligibleRows.length - disabledCount;
+  const canBulkUpdate = groupKey !== 'admin' && groupKey !== 'pending';
+  const bulkButtons = canBulkUpdate
+    ? '<div class="group-summary-right" onclick="event.stopPropagation()">'
+      + '<button type="button" class="btn btn-danger group-summary-action" onclick="bulkSetGroupDisabled(\'' + esc(groupKey) + '\', true)"' + (activeCount ? '' : ' disabled') + '>Disable All</button>'
+      + '<button type="button" class="btn btn-primary group-summary-action" onclick="bulkSetGroupDisabled(\'' + esc(groupKey) + '\', false)"' + (disabledCount ? '' : ' disabled') + '>Enable All</button>'
+      + '</div>'
+    : '';
   let html = '<details class="group" ' + (open ? 'open' : '') + ' data-group="' + esc(groupKey) + '" ontoggle="roleGroupsOpen[\'' + esc(groupKey) + '\'] = this.open">';
   html += '<summary>';
-  html += '<div class="group-title"><div class="group-name" style="color:' + color + '">' + esc(title) + '</div><div class="group-sub">' + esc(String(count)) + ' user' + (count !== 1 ? 's' : '') + '</div></div>';
+  html += '<div class="group-title"><div class="group-name" style="color:' + color + '">' + esc(title) + '</div><div class="group-sub">' + esc(String(count)) + ' user' + (count !== 1 ? 's' : '') + (eligibleRows.length ? ' · ' + esc(String(activeCount)) + ' active, ' + esc(String(disabledCount)) + ' disabled' : '') + '</div></div>';
+  html += bulkButtons;
   html += '</summary>';
   html += '<div class="group-body">';
   if (rows.length) {
@@ -1883,9 +2050,6 @@ function renderUserCard(row){
   html += '<div class="user-actions">';
   html += '<button class="btn btn-ghost" type="button"' + (canEdit ? ' onclick="openEditorByRow(usersMerged.find(function(r){ return r.key === \'' + esc(row.key) + '\'; }))"' : ' disabled style="opacity:.55;cursor:not-allowed"') + '>' + (canEdit ? 'Edit' : 'Profile missing') + '</button>';
   if (canEdit) {
-    const authUserId = p && p.id ? String(p.id) : '';
-    const kilnUsername = k && k.username ? String(k.username) : '';
-    html += '<button class="btn btn-ghost" type="button"' + (authUserId ? ' onclick="openAdminSetPwModal(\'' + esc(authUserId) + '\', \'' + esc(kilnUsername) + '\', \'' + esc(displayName) + '\')"' : ' disabled style="opacity:.55;cursor:not-allowed"') + '>Set Password</button>';
     html += '<button class="btn ' + (userIsDisabled(row) ? 'btn-primary' : 'btn-danger') + '" type="button" onclick="toggleUserAccessByKey(\'' + esc(row.key) + '\')">' + (userIsDisabled(row) ? 'Enable Account' : 'Disable Account') + '</button>';
   }
   html += '</div>';
@@ -2354,6 +2518,21 @@ function currentEditingRow(){
   return usersMerged.find(function(row){ return row.key === editingUserKey; }) || null;
 }
 
+function openEditorPasswordModal(){
+  const row = currentEditingRow();
+  if (!row || !row.profile || !row.profile.id) {
+    showEditorMsg('err', 'Profile not found for this account.');
+    return;
+  }
+  const p = row.profile || null;
+  const k = row.kiln || null;
+  openAdminSetPwModal(
+    p.id,
+    k && k.username ? k.username : null,
+    displayNameFor(row)
+  );
+}
+
 async function saveEditorChanges(){
   const row = currentEditingRow();
   if (!row || !row.profile || !row.profile.id) {
@@ -2424,7 +2603,8 @@ async function saveEditorChanges(){
 
 async function queueQuickUser(){
   const fullName = $('quickFullName').value.trim();
-  const email = $('quickEmailUser').value.trim().toLowerCase();
+  syncQuickEmail();
+  const email = $('quickEmail').value.trim().toLowerCase();
   const platformRole = 'viewer';
   const logsAccess = toLower($('quickLogsAccess').value || 'true') !== 'false';
   const kilnRole = toLower($('quickKilnRole').value || 'none');
@@ -2464,7 +2644,10 @@ async function queueQuickUser(){
     $('quickHolidayAccess').value = 'true';
     $('quickCreditAccess').value = 'true';
     $('quickLogsAccess').value = 'true';
+    $('quickEmailUser').value = '';
+    $('quickEmailDomain').value = '@heidelbergmaterials.com';
     syncLogsAccessRolePair('quickLogsAccess', 'quickKilnRole');
+    syncQuickEmail();
     setToast('Added to the access queue.');
     await loadDirectory();
   } catch (e) {
@@ -2686,6 +2869,8 @@ async function initUserManagementApp(){
   $('roleFilter').addEventListener('change', renderApp);
   bindLogsAccessRolePair('quickLogsAccess', 'quickKilnRole');
   bindLogsAccessRolePair('editLogsAccess', 'editKilnRole');
+  if ($('quickEmailDomain')) $('quickEmailDomain').value = '@heidelbergmaterials.com';
+  syncQuickEmail();
 
   async function tryHydrateSession(retries){
     const session = await sb.auth.getSession();

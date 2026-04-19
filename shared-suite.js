@@ -388,6 +388,23 @@
     return target;
   }
 
+  function ensureStatusDotStyles(){
+    if(!global.document || global.document.getElementById('padeswood-status-dot-styles')) return;
+    var style = global.document.createElement('style');
+    style.id = 'padeswood-status-dot-styles';
+    style.textContent = '' +
+      '@keyframes padeswoodStatusDotPulse{' +
+        '0%,100%{transform:scale(1);box-shadow:0 0 0 1px rgba(255,255,255,.05),0 0 0 var(--status-dot-ring-size,4px) var(--status-dot-ring-color,rgba(245,158,11,.12)),0 0 var(--status-dot-glow-size,12px) var(--status-dot-glow-color,rgba(245,158,11,.22));}' +
+        '50%{transform:scale(1.24);box-shadow:0 0 0 1px rgba(255,255,255,.08),0 0 0 var(--status-dot-ring-size-grow,7px) var(--status-dot-ring-color-grow,rgba(245,158,11,.18)),0 0 var(--status-dot-glow-size-grow,20px) var(--status-dot-glow-color-grow,rgba(245,158,11,.34));}' +
+      '}' ;
+    (global.document.head || global.document.documentElement).appendChild(style);
+  }
+
+  function isBasicPaletteMode(){
+    if(!global.document) return false;
+    return !!((global.document.body && global.document.body.classList && global.document.body.classList.contains('basic-mode')) || (global.document.documentElement && global.document.documentElement.classList && global.document.documentElement.classList.contains('basic-mode')));
+  }
+
   function normalizeStatusDotState(state){
     var raw = String(state || '').trim().toLowerCase();
     if(!raw) return 'ok';
@@ -401,12 +418,43 @@
   function applyStatusDot(target, state){
     var dot = getStatusDotTarget(target);
     if(!dot) return null;
+    ensureStatusDotStyles();
     var next = normalizeStatusDotState(state);
     var cfg = {
       ok: { title: 'Database connected', label: 'Database connected', bg: 'var(--grn)', shadow: '0 0 0 4px var(--grnd)', anim: 'none' },
-      local: { title: 'Database unavailable (local cache)', label: 'Database unavailable (local cache)', bg: 'var(--amb)', shadow: '0 0 0 4px rgba(245,158,11,.10)', anim: 'none' },
-      warn: { title: 'Database fault', label: 'Database fault', bg: 'var(--red)', shadow: '0 0 0 4px rgba(239,68,68,.12)', anim: 'none' },
-      syncing: { title: 'Database reconnecting', label: 'Database reconnecting', bg: 'var(--amb)', shadow: '0 0 0 4px rgba(245,158,11,.12)', anim: 'none' }
+      local: {
+        title: 'Database unavailable (local cache)',
+        label: 'Database unavailable (local cache)',
+        bg: 'var(--amb)',
+        shadow: '0 0 0 4px rgba(245,158,11,.10)',
+        anim: 'padeswoodStatusDotPulse 1.8s ease-in-out infinite',
+        ring: 'rgba(245,158,11,.14)',
+        ringGrow: 'rgba(245,158,11,.20)',
+        glow: 'rgba(245,158,11,.22)',
+        glowGrow: 'rgba(245,158,11,.38)'
+      },
+      warn: {
+        title: 'Database fault',
+        label: 'Database fault',
+        bg: 'var(--red)',
+        shadow: '0 0 0 4px rgba(239,68,68,.12)',
+        anim: 'padeswoodStatusDotPulse 1.4s ease-in-out infinite',
+        ring: 'rgba(239,68,68,.16)',
+        ringGrow: 'rgba(239,68,68,.24)',
+        glow: 'rgba(239,68,68,.28)',
+        glowGrow: 'rgba(239,68,68,.48)'
+      },
+      syncing: {
+        title: 'Database reconnecting',
+        label: 'Database reconnecting',
+        bg: 'var(--amb)',
+        shadow: '0 0 0 4px rgba(245,158,11,.12)',
+        anim: 'padeswoodStatusDotPulse 1.8s ease-in-out infinite',
+        ring: 'rgba(245,158,11,.12)',
+        ringGrow: 'rgba(245,158,11,.18)',
+        glow: 'rgba(245,158,11,.20)',
+        glowGrow: 'rgba(245,158,11,.34)'
+      }
     }[next];
     dot.classList.remove('local', 'warn', 'syncing', 'ok');
     dot.classList.add(next);
@@ -418,7 +466,29 @@
     dot.style.flexShrink = '0';
     dot.style.background = cfg.bg;
     dot.style.boxShadow = cfg.shadow;
-    dot.style.animation = cfg.anim;
+    dot.style.transform = 'scale(1)';
+    dot.style.willChange = cfg.anim && !isBasicPaletteMode() ? 'transform, box-shadow' : 'auto';
+    if(cfg.anim && !isBasicPaletteMode()){
+      dot.style.setProperty('--status-dot-ring-size', '4px');
+      dot.style.setProperty('--status-dot-ring-size-grow', '7px');
+      dot.style.setProperty('--status-dot-glow-size', '12px');
+      dot.style.setProperty('--status-dot-glow-size-grow', '20px');
+      dot.style.setProperty('--status-dot-ring-color', cfg.ring);
+      dot.style.setProperty('--status-dot-ring-color-grow', cfg.ringGrow);
+      dot.style.setProperty('--status-dot-glow-color', cfg.glow);
+      dot.style.setProperty('--status-dot-glow-color-grow', cfg.glowGrow);
+      dot.style.animation = cfg.anim;
+    } else {
+      dot.style.animation = 'none';
+      dot.style.removeProperty('--status-dot-ring-size');
+      dot.style.removeProperty('--status-dot-ring-size-grow');
+      dot.style.removeProperty('--status-dot-glow-size');
+      dot.style.removeProperty('--status-dot-glow-size-grow');
+      dot.style.removeProperty('--status-dot-ring-color');
+      dot.style.removeProperty('--status-dot-ring-color-grow');
+      dot.style.removeProperty('--status-dot-glow-color');
+      dot.style.removeProperty('--status-dot-glow-color-grow');
+    }
     dot.setAttribute('aria-hidden', 'true');
     dot.title = cfg.title;
     dot.setAttribute('aria-label', cfg.label);
