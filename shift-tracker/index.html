@@ -1095,6 +1095,221 @@
     margin-top: -4.5px;
     animation-delay: 1.2s;
   }
+  .mini-emoji-wrap {
+    position: relative;
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    line-height: 1;
+  }
+  .mini-emoji-wrap.large{
+    width:40px;
+    height:40px;
+  }
+  .mini-emoji-wrap.large .mini-emoji{
+    font-size:28px;
+  }
+  .mini-emoji-wrap.large.plane::before,
+  .mini-emoji-wrap.large.plane::after{
+    top:19px;
+    width:4px;
+    height:4px;
+  }
+  .mini-emoji-wrap.large.plane::before{ left:4px; }
+  .mini-emoji-wrap.large.plane::after{ right:4px; }
+  .mini-emoji-wrap.large.plane .mini-emoji::after{
+    right:-1px;
+    top:10px;
+    width:3px;
+    height:3px;
+  }
+  .mini-emoji-wrap.large.plane .mini-plane-smoke{
+    left:4px;
+    width:6px;
+    height:6px;
+    margin-top:-3px;
+  }
+  .mini-emoji-wrap.large.plane .mini-plane-smoke:nth-child(2){
+    left:0;
+    width:4px;
+    height:4px;
+    margin-top:-2px;
+  }
+  .mini-emoji-wrap.large.plane .mini-plane-smoke:nth-child(3){
+    left:-5px;
+    width:7px;
+    height:7px;
+    margin-top:-3.5px;
+  }
+  .mini-emoji-wrap.large.plane .mini-plane-smoke:nth-child(4){
+    left:-10px;
+    width:5px;
+    height:5px;
+    margin-top:-2.5px;
+  }
+  .mini-emoji-wrap.large.bed::before,
+  .mini-emoji-wrap.large.bed::after{
+    font-size:8px;
+    right:-3px;
+  }
+  .mini-emoji-wrap.large.bed::after{
+    right:7px;
+    top:6px;
+  }
+  .mini-emoji {
+    position: relative;
+    z-index: 2;
+    font-size: 19px;
+    line-height: 1;
+    display: block;
+    will-change: transform, filter, opacity;
+  }
+  .mini-emoji-wrap.sun .mini-emoji {
+    animation: heroSunSizzle 1.75s ease-in-out infinite;
+    filter: drop-shadow(0 0 5px rgba(253,186,116,.24));
+  }
+  .mini-emoji-wrap.moon .mini-emoji {
+    animation: heroMoonBreath 5.8s ease-in-out infinite;
+    filter: drop-shadow(0 0 5px rgba(99,102,241,.18));
+  }
+  .mini-emoji-wrap.moon {
+    animation: miniMoonDrift 3.9s ease-in-out infinite;
+  }
+  .mini-emoji-wrap.moon::before {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border-radius: 50%;
+    border: 1px solid rgba(99,102,241,.24);
+    box-shadow: 0 0 0 4px rgba(99,102,241,.06), 0 0 10px rgba(99,102,241,.11);
+    animation: heroMoonHalo 4.8s ease-in-out infinite;
+    pointer-events: none;
+  }
+  .mini-emoji-wrap.moon::after {
+    content: '';
+    position: absolute;
+    inset: 5px;
+    border-radius: 50%;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 26% 24%, rgba(255,255,255,.94) 0 1px, transparent 1.35px),
+      radial-gradient(circle at 72% 32%, rgba(255,255,255,.82) 0 .9px, transparent 1.3px),
+      radial-gradient(circle at 60% 72%, rgba(199,210,254,.80) 0 .9px, transparent 1.2px);
+    animation: heroMoonTwinkle 2.8s ease-in-out infinite;
+    opacity: .78;
+  }
+  .mini-emoji-wrap.bed .mini-emoji {
+    animation: heroBedBreathe 5.6s ease-in-out infinite;
+  }
+  .mini-emoji-wrap.bed::before,
+  .mini-emoji-wrap.bed::after {
+    content: 'zzz';
+    position: absolute;
+    top: 0;
+    right: -2px;
+    font-family: var(--ff-mono);
+    font-size: 7px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    color: rgba(13,21,38,.76);
+    text-shadow: 0 0 2px rgba(255,255,255,.88), 0 0 8px rgba(255,255,255,.45);
+    animation: heroZzzFloat 2.5s ease-in-out infinite;
+    pointer-events: none;
+  }
+  .mini-emoji-wrap.bed::after {
+    top: 5px;
+    right: 6px;
+    animation-delay: .65s;
+    opacity: .72;
+  }
+  .dark .mini-emoji-wrap.bed::before,
+  .dark .mini-emoji-wrap.bed::after {
+    color: rgba(255,255,255,.96);
+    text-shadow: 0 0 3px rgba(255,255,255,.28), 0 0 8px rgba(251,191,36,.14);
+  }
+  .mini-emoji-wrap.plane .mini-emoji {
+    animation: heroPlaneGlide 5.5s ease-in-out infinite;
+  }
+  .mini-emoji-wrap.plane::before,
+  .mini-emoji-wrap.plane::after {
+    content: '';
+    position: absolute;
+    top: 13px;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 3;
+  }
+  .mini-emoji-wrap.plane::before {
+    left: 3px;
+    background: rgba(239,68,68,.88);
+    box-shadow: 0 0 0 1px rgba(239,68,68,.16), 0 0 5px rgba(239,68,68,.52);
+    animation: heroPlaneNavRed 1.8s ease-in-out infinite;
+  }
+  .mini-emoji-wrap.plane::after {
+    right: 3px;
+    background: rgba(34,197,94,.88);
+    box-shadow: 0 0 0 1px rgba(34,197,94,.16), 0 0 5px rgba(34,197,94,.52);
+    animation: heroPlaneNavGreen 1.8s ease-in-out infinite;
+  }
+  .mini-emoji-wrap.plane .mini-emoji::after {
+    content: '';
+    position: absolute;
+    right: -1px;
+    top: 7px;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.95);
+    box-shadow: 0 0 0 1px rgba(255,255,255,.18), 0 0 6px rgba(255,255,255,.55);
+    animation: heroPlaneStrobe 2.4s ease-in-out infinite;
+    pointer-events: none;
+  }
+  .mini-emoji-wrap.plane .mini-plane-smoke {
+    position: absolute;
+    left: 2px;
+    top: 52%;
+    width: 4px;
+    height: 4px;
+    margin-top: -2px;
+    border-radius: 50%;
+    background: rgba(148,163,184,.5);
+    filter: blur(.12px);
+    animation: heroPlaneSmoke 2.4s ease-in-out infinite;
+    pointer-events: none;
+  }
+  .mini-emoji-wrap.plane .mini-plane-smoke:nth-child(2) {
+    left: -1px;
+    width: 3px;
+    height: 3px;
+    margin-top: -1.5px;
+    animation-delay: .5s;
+  }
+  .mini-emoji-wrap.plane .mini-plane-smoke:nth-child(3) {
+    left: -4px;
+    width: 5px;
+    height: 5px;
+    margin-top: -2.5px;
+    animation-delay: .9s;
+  }
+  .mini-emoji-wrap.plane .mini-plane-smoke:nth-child(4) {
+    left: -7px;
+    width: 3px;
+    height: 3px;
+    margin-top: -1.5px;
+    animation-delay: 1.2s;
+  }
+  body.basic-mode .mini-emoji-wrap,
+  body.basic-mode .mini-emoji-wrap::before,
+  body.basic-mode .mini-emoji-wrap::after,
+  body.basic-mode .mini-emoji-wrap * {
+    animation: none !important;
+    transition: none !important;
+  }
   @keyframes heroSunSizzle {
     0% { transform: translate(0,0) rotate(0deg) scale(1); }
     12% { transform: translate(.2px,-.5px) rotate(-2deg) scale(1.01); }
@@ -1104,6 +1319,10 @@
     68% { transform: translate(.3px,-.4px) rotate(-2deg) scale(1.02); }
     84% { transform: translate(-.1px,.2px) rotate(1deg) scale(.998); }
     100% { transform: translate(0,0) rotate(0deg) scale(1); }
+  }
+  @keyframes miniMoonDrift {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-1px); }
   }
   @keyframes heroSunSizzleRing {
     0%, 100% {
@@ -2386,16 +2605,18 @@ function updateTrackerDate(){
 }
 updateTrackerDate();
 
-const TRACKER_PALETTE_STORAGE_KEY = 'pw_palette_scheme';
-const TRACKER_PALETTE_PRESETS = {
-  default: { accent: '#1a7a35', accent2: '#2ecc5c', accent3: '#5ee27b' },
-  ocean: { accent: '#0f766e', accent2: '#14b8a6', accent3: '#2dd4bf' },
-  sky: { accent: '#2563eb', accent2: '#3b82f6', accent3: '#60a5fa' },
-  violet: { accent: '#6d28d9', accent2: '#8b5cf6', accent3: '#a78bfa' },
-  amber: { accent: '#b45309', accent2: '#d97706', accent3: '#f59e0b' },
-  basic: { accent: '#4b5563', accent2: '#6b7280', accent3: '#9ca3af' },
-  slate: { accent: '#334155', accent2: '#475569', accent3: '#64748b' }
-};
+const sharedPalette = suiteShared && suiteShared.palette ? suiteShared.palette : null;
+const TRACKER_PALETTE_STORAGE_KEY = (sharedPalette && sharedPalette.STORAGE_KEY) || 'pw_palette_scheme';
+const TRACKER_PALETTE_PRESETS = (sharedPalette && sharedPalette.getPresetMap)
+  ? (function(){
+      const map = Object.assign({}, sharedPalette.getPresetMap());
+      map.default = { accent: '#1a7a35', accent2: '#2ecc5c', accent3: '#5ee27b' };
+      return map;
+    })()
+  : {
+      default: { accent: '#1a7a35', accent2: '#2ecc5c', accent3: '#5ee27b' },
+      basic: { accent: '#4b5563', accent2: '#6b7280', accent3: '#9ca3af' }
+    };
 function trackerHexToRgb(hex){
   const raw = String(hex || '').trim().replace(/^#/, '');
   if(raw.length === 3){
@@ -2525,6 +2746,33 @@ function buildShiftBadge(m,id,color,isFocus,phaseShort=""){
   );
 }
 
+function statusEmojiClassFor(emoji){
+  return emoji === "☀️" ? "sun" :
+    emoji === "🌙" ? "moon" :
+    emoji === "🛌" ? "bed" :
+    emoji === "✈️" ? "plane" : "";
+}
+
+function buildMiniStatusEmoji(emoji, options){
+  const opts = options || {};
+  const emojiClass = statusEmojiClassFor(emoji);
+  const sizeClass = opts.size === 'large' ? ' large' : '';
+  if(!emojiClass){
+    const baseFontSize = opts.size === 'large' ? '28px' : '20px';
+    const baseWidth = opts.size === 'large' ? '40px' : '28px';
+    return h("span",{style:{fontSize:baseFontSize,lineHeight:"1",display:"inline-block",width:baseWidth,textAlign:"center"}},emoji);
+  }
+  const wrap = h("span",{class:`mini-emoji-wrap ${emojiClass}${sizeClass}`});
+  if(emojiClass === "plane"){
+    wrap.appendChild(h("span",{class:"mini-plane-smoke"}));
+    wrap.appendChild(h("span",{class:"mini-plane-smoke"}));
+    wrap.appendChild(h("span",{class:"mini-plane-smoke"}));
+    wrap.appendChild(h("span",{class:"mini-plane-smoke"}));
+  }
+  wrap.appendChild(h("span",{class:"mini-emoji"},emoji));
+  return wrap;
+}
+
 function renderTodayView(active){
   const offset=S.viewOffset,viewDate=addDays(TODAY,offset),isToday=offset===0;
   const tSt=status(active,viewDate),tM=meta(tSt);
@@ -2544,11 +2792,7 @@ function renderTodayView(active){
 
   const hero=h("div",{class:"card",style:{background:`linear-gradient(180deg, ${active.color}18, var(--bg2))`,border:`1px solid ${active.color}2e`,textAlign:"center",padding:"28px 20px",marginBottom:"12px",position:"relative",overflow:"hidden",animation:"none"}});
   hero.appendChild(h("div",{style:{position:"absolute",top:"-30px",right:"-30px",width:"120px",height:"120px",borderRadius:"50%",background:`radial-gradient(circle, ${active.color}12 0%, transparent 72%)`,pointerEvents:"none"}}));
-  const heroEmojiClass =
-    tM.emoji === "☀️" ? "sun" :
-    tM.emoji === "🌙" ? "moon" :
-    tM.emoji === "🛌" ? "bed" :
-    tM.emoji === "✈️" ? "plane" : "";
+  const heroEmojiClass = statusEmojiClassFor(tM.emoji);
   const heroEmojiWrap = h("div",{class:`hero-emoji-wrap ${heroEmojiClass}`});
   if(heroEmojiClass === "plane"){
     heroEmojiWrap.appendChild(h("span",{class:"plane-smoke"}));
@@ -2572,7 +2816,7 @@ function renderTodayView(active){
 
   if(isToday){
     const bc=h("div",{class:"card",style:{display:"flex",alignItems:"center",gap:"14px"}});
-    bc.appendChild(h("div",{style:{fontSize:"28px",lineHeight:"1"}},nb===0?"🛌":"✈️"));
+    bc.appendChild(buildMiniStatusEmoji(nb===0?"🛌":"✈️",{size:"large"}));
     bc.appendChild(h("div",{},
       nb===0
         ?[h("div",{style:{fontWeight:"700",fontSize:"15px",color:"var(--text)"}}, "On Long Break!"),
@@ -2595,7 +2839,7 @@ function renderTodayView(active){
       h("div",{style:{fontSize:"13px",fontWeight:"600",color:"var(--text)"}},m.label),
       h("div",{class:"mono",style:{fontSize:"10px",color:"var(--text3)",marginTop:"1px"}},describeCyclePosition(sh,viewDate))
     ));
-    row.appendChild(h("span",{style:{fontSize:"20px"}},m.emoji));
+    row.appendChild(buildMiniStatusEmoji(m.emoji));
     allCard.appendChild(row);
   });
   wrap.appendChild(allCard);
@@ -2664,7 +2908,7 @@ function renderCalendarView(){
     cell.onmouseenter=function(){ this.style.transform='translateY(-1px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,.08)'; };
     cell.onmouseleave=function(){ this.style.transform='none'; this.style.boxShadow='none'; };
     if(hasNote) cell.appendChild(h("div",{style:{position:"absolute",top:"2px",right:"3px",fontSize:"8px"}},"📝"));
-    cell.appendChild(h("div",{class:"mono",style:{textAlign:"center",fontSize:"10px",fontWeight:isToday?"700":"400",color:isToday?active.color:"var(--text2)",marginBottom:"2px"}},String(date.getDate())));
+    cell.appendChild(h("div",{class:"mono",style:{textAlign:"center",fontSize:"10px",fontWeight:isToday?"700":"500",color:isToday?active.color:(S.dark?"var(--text)":"var(--text2)"),marginBottom:"2px"}},String(date.getDate())));
     const bdgs=h("div",{style:{display:"flex",flexDirection:"column",gap:"2px",padding:"0 1px",flex:"1"}});
     for(const sh of SHIFTS){
       const st=status(sh,date);

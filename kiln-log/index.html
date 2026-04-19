@@ -232,6 +232,22 @@ body::before {
 body.light-mode::before {
   background-image:radial-gradient(circle, var(--palette-card-glow-2) 1px, transparent 1px);
 }
+body.basic-mode,
+body.basic-mode::before,
+body.basic-mode::after{
+  background-image:none !important;
+}
+body.basic-mode,
+body.basic-mode *,
+body.basic-mode *::before,
+body.basic-mode *::after{
+  animation:none !important;
+  transition:none !important;
+}
+body.basic-mode *{
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
 
 .boot-shield {
   position:fixed; inset:0; z-index:9998;
@@ -4086,52 +4102,11 @@ function toggleTheme(){
   sbSaveTheme(document.body.classList.contains('light-mode'));
 }
 
-const PALETTE_STORAGE_KEY = 'pw_palette_scheme';
-const PALETTE_PRESETS = {
-  default: null,
-  ocean: {
-    label: 'Ocean',
-    description: 'Cool teal tones with a calmer feel.',
-    accent: '#0f766e',
-    accent2: '#14b8a6',
-    accent3: '#2dd4bf'
-  },
-  sky: {
-    label: 'Sky',
-    description: 'Brighter blue accents for a sharper read.',
-    accent: '#2563eb',
-    accent2: '#3b82f6',
-    accent3: '#60a5fa'
-  },
-  violet: {
-    label: 'Violet',
-    description: 'A more premium purple accent without layout changes.',
-    accent: '#6d28d9',
-    accent2: '#8b5cf6',
-    accent3: '#a78bfa'
-  },
-  amber: {
-    label: 'Amber',
-    description: 'Warm industrial tones with a bit more glow.',
-    accent: '#b45309',
-    accent2: '#d97706',
-    accent3: '#f59e0b'
-  },
-  basic: {
-    label: 'Basic',
-    description: 'A grayscale, non-distracting mode with neutral accents.',
-    accent: '#4b5563',
-    accent2: '#6b7280',
-    accent3: '#9ca3af'
-  },
-  slate: {
-    label: 'Graphite',
-    description: 'A darker neutral scheme if you want less colour.',
-    accent: '#334155',
-    accent2: '#475569',
-    accent3: '#64748b'
-  }
-};
+const sharedPalette = suiteShared && suiteShared.palette ? suiteShared.palette : null;
+const PALETTE_STORAGE_KEY = (sharedPalette && sharedPalette.STORAGE_KEY) || 'pw_palette_scheme';
+const PALETTE_PRESETS = (sharedPalette && sharedPalette.getPresetMap)
+  ? sharedPalette.getPresetMap()
+  : { default: null, basic: { label: 'Basic', accent: '#4b5563', accent2: '#6b7280', accent3: '#9ca3af' } };
 const PALETTE_VARS = ['--ac','--ac2','--ac3','--acd1','--acd2','--acd3','--acgl','--eac','--green-wash-1','--green-wash-2','--green-wash-3','--green-edge','--palette-card-bg-1','--palette-card-bg-2','--palette-card-border','--palette-card-glow-1','--palette-card-glow-2'];
 
 function hexToRgb(hex){
@@ -4236,6 +4211,8 @@ function updatePaletteUi(){
 
 function applyStoredPalette(){
   const preset = getStoredPalettePreset();
+  document.body.classList.toggle('basic-mode', preset === 'basic');
+  document.documentElement.classList.toggle('basic-mode', preset === 'basic');
   if(preset === 'default'){
     clearPaletteVars();
   } else {

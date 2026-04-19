@@ -39,6 +39,158 @@
     }
   };
 
+  var PALETTE_STORAGE_KEY = 'pw_palette_scheme';
+  var PALETTE_ORDER = ['default','ocean','sky','violet','amber','basic','slate'];
+  var PALETTE_META = {
+    default: {
+      label: 'Default Green',
+      description: 'The original Padeswood green scheme.',
+      accent: '#1a7a35',
+      accent2: '#2ecc5c',
+      accent3: '#5ee27b'
+    },
+    ocean: {
+      label: 'Ocean',
+      description: 'Cool teal tones with a calmer feel.',
+      accent: '#0f766e',
+      accent2: '#14b8a6',
+      accent3: '#2dd4bf'
+    },
+    sky: {
+      label: 'Sky',
+      description: 'Brighter blue accents for a sharper read.',
+      accent: '#2563eb',
+      accent2: '#3b82f6',
+      accent3: '#60a5fa'
+    },
+    violet: {
+      label: 'Violet',
+      description: 'A more premium purple accent without layout changes.',
+      accent: '#6d28d9',
+      accent2: '#8b5cf6',
+      accent3: '#a78bfa'
+    },
+    amber: {
+      label: 'Amber',
+      description: 'Warm industrial tones with a bit more glow.',
+      accent: '#b45309',
+      accent2: '#d97706',
+      accent3: '#f59e0b'
+    },
+    basic: {
+      label: 'Basic',
+      description: 'A flat grayscale mode with glass and motion stripped back.',
+      accent: '#4b5563',
+      accent2: '#6b7280',
+      accent3: '#9ca3af'
+    },
+    slate: {
+      label: 'Graphite',
+      description: 'A darker neutral scheme if you want less colour.',
+      accent: '#334155',
+      accent2: '#475569',
+      accent3: '#64748b'
+    }
+  };
+  var DEFAULT_PALETTE_VARS = ['--ac','--ac2','--ac3','--acd1','--acd2','--acd3','--palette-card-bg-1','--palette-card-bg-2','--palette-card-border','--palette-card-glow-1','--palette-card-glow-2','--eac'];
+
+  function paletteHexToRgb(hex){
+    var raw = String(hex || '').trim().replace(/^#/, '');
+    if(raw.length === 3){
+      return {
+        r: parseInt(raw[0] + raw[0], 16),
+        g: parseInt(raw[1] + raw[1], 16),
+        b: parseInt(raw[2] + raw[2], 16)
+      };
+    }
+    if(raw.length === 6){
+      return {
+        r: parseInt(raw.slice(0, 2), 16),
+        g: parseInt(raw.slice(2, 4), 16),
+        b: parseInt(raw.slice(4, 6), 16)
+      };
+    }
+    return null;
+  }
+
+  function paletteRgbaFromHex(hex, alpha){
+    var rgb = paletteHexToRgb(hex);
+    if(!rgb) return '';
+    return 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',' + alpha + ')';
+  }
+
+  function normalizePalettePresetKey(key){
+    var normalized = String(key || '').trim().toLowerCase();
+    if(!normalized || normalized === 'plain') normalized = 'basic';
+    if(normalized !== 'default' && !PALETTE_META[normalized]) return 'default';
+    return normalized;
+  }
+
+  function getPalettePresetMap(){
+    var map = { default: null };
+    PALETTE_ORDER.forEach(function(key){
+      if(key === 'default') return;
+      var meta = PALETTE_META[key];
+      if(!meta) return;
+      map[key] = {
+        label: meta.label,
+        description: meta.description,
+        accent: meta.accent,
+        accent2: meta.accent2,
+        accent3: meta.accent3
+      };
+    });
+    return map;
+  }
+
+  function getPalettePresetVarsMap(options){
+    var opts = options || {};
+    var includeDescriptions = opts.includeDescriptions !== false;
+    var map = {};
+    PALETTE_ORDER.forEach(function(key){
+      var meta = PALETTE_META[key];
+      if(!meta) return;
+      var ac = meta.accent;
+      var ac2 = meta.accent2 || ac;
+      var ac3 = meta.accent3 || ac2 || ac;
+      var entry = {
+        label: meta.label,
+        vars: {
+          '--ac': ac,
+          '--ac2': ac2,
+          '--ac3': ac3,
+          '--acd1': paletteRgbaFromHex(ac, .08),
+          '--acd2': paletteRgbaFromHex(ac, .14),
+          '--acd3': paletteRgbaFromHex(ac, .22),
+          '--palette-card-bg-1': paletteRgbaFromHex(ac2, .18),
+          '--palette-card-bg-2': paletteRgbaFromHex(ac, .08),
+          '--palette-card-border': paletteRgbaFromHex(ac3, .18),
+          '--palette-card-glow-1': paletteRgbaFromHex(ac3, .12),
+          '--palette-card-glow-2': paletteRgbaFromHex(ac3, .06),
+          '--eac': '0 4px 22px ' + paletteRgbaFromHex(ac, .25)
+        }
+      };
+      if(includeDescriptions) entry.description = meta.description;
+      map[key] = entry;
+    });
+    return map;
+  }
+
+  function getStoredPalettePreset(allowedValues){
+    var key;
+    try {
+      key = global.localStorage.getItem(PALETTE_STORAGE_KEY);
+    } catch (e) {
+      key = null;
+    }
+    if(!key) return 'default';
+    key = normalizePalettePresetKey(key);
+    if(Array.isArray(allowedValues) && allowedValues.length && allowedValues.indexOf(key) === -1){
+      return 'default';
+    }
+    return key;
+  }
+
   var supabaseApi = {
     createClient: function(url, key, options){
       ensureSupabase();
@@ -122,6 +274,16 @@
       }
       return value;
     }
+  };
+
+  var palette = {
+    STORAGE_KEY: PALETTE_STORAGE_KEY,
+    DEFAULT_VARS: DEFAULT_PALETTE_VARS.slice(),
+    normalizePresetKey: normalizePalettePresetKey,
+    getPresetMap: getPalettePresetMap,
+    getPresetVarsMap: getPalettePresetVarsMap,
+    getStoredPreset: getStoredPalettePreset,
+    rgbaFromHex: paletteRgbaFromHex
   };
 
   var access = {
@@ -223,6 +385,7 @@
     supabase: supabaseApi,
     config: config,
     preferences: preferences,
+    palette: palette,
     access: access,
     licence: licence
   };

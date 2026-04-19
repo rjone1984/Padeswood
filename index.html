@@ -1678,6 +1678,7 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
   </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./shared-suite.js"></script>
 <style>
 .user-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--sf3);border:1px solid var(--bd);border-radius:var(--rsm)}
 .user-avatar{width:34px;height:34px;border-radius:50%;border:1px solid;display:flex;align-items:center;justify-content:center;font-family:var(--ff-head);font-weight:700;font-size:12px;flex-shrink:0}
@@ -2093,6 +2094,7 @@ body:not(.basic-mode) .card-icon{animation:none !important;}
 // ---------------------------------------------------------------------------
 // Platform bootstrap: licence gate, auth, and landing shell
 // ---------------------------------------------------------------------------
+const suiteShared = window.PadeswoodSuite || null;
 const SUPABASE_URL      = 'https://xnkwrkoxvgptobnmekgv.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhua3dya294dmdwdG9ibm1la2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NjAxNTQsImV4cCI6MjA4ODIzNjE1NH0.PrmnJ4eGepac41bQuNPG7TcBaunrfTWdjLtkGLr_2LY';
 const LICENCE_KEY = 'KBL-HEIDELBERG-PADESWOOD-2026';
@@ -2642,17 +2644,24 @@ document.addEventListener('keydown', function(e) {
 });
 
 function readStoredThemePref() {
-  return localStorage.getItem('pw_theme') || localStorage.getItem('pw_platform_theme') || localStorage.getItem('kbl_theme') || null;
+  const sharedTheme = suiteShared && suiteShared.storage && suiteShared.storage.getThemePref
+    ? suiteShared.storage.getThemePref()
+    : null;
+  return sharedTheme || localStorage.getItem('pw_platform_theme') || null;
 }
 function applyTheme(light) {
   const isLight = !!light;
   document.body.classList.toggle('light-mode', isLight);
   document.body.classList.toggle('dark', !isLight);
   document.querySelector('meta[name="theme-color"]')?.setAttribute('content', isLight ? '#f0f4f8' : '#111418');
-  localStorage.setItem('pw_theme', isLight ? 'light' : 'dark');
+  if (suiteShared && suiteShared.storage && suiteShared.storage.setThemePref) {
+    suiteShared.storage.setThemePref(isLight ? 'light' : 'dark');
+  } else {
+    localStorage.setItem('pw_theme', isLight ? 'light' : 'dark');
+    localStorage.setItem('kbl_theme', isLight ? 'light' : 'dark');
+    localStorage.setItem('dark', isLight ? '0' : '1');
+  }
   localStorage.setItem('pw_platform_theme', isLight ? 'light' : 'dark');
-  localStorage.setItem('kbl_theme', isLight ? 'light' : 'dark');
-  localStorage.setItem('dark', isLight ? '0' : '1');
   updateThemeButton();
 }
 
@@ -2682,52 +2691,11 @@ function updateThemeButton() {
   btn.setAttribute('aria-label', btn.title);
 }
 
-const PALETTE_STORAGE_KEY = 'pw_palette_scheme';
-const PALETTE_PRESETS = {
-  default: null,
-  ocean: {
-    label: 'Ocean',
-    description: 'Cool teal tones with a calmer feel.',
-    accent: '#0f766e',
-    accent2: '#14b8a6',
-    accent3: '#2dd4bf'
-  },
-  sky: {
-    label: 'Sky',
-    description: 'Brighter blue accents for a sharper read.',
-    accent: '#2563eb',
-    accent2: '#3b82f6',
-    accent3: '#60a5fa'
-  },
-  violet: {
-    label: 'Violet',
-    description: 'A more premium purple accent without layout changes.',
-    accent: '#6d28d9',
-    accent2: '#8b5cf6',
-    accent3: '#a78bfa'
-  },
-  amber: {
-    label: 'Amber',
-    description: 'Warm industrial tones with a bit more glow.',
-    accent: '#b45309',
-    accent2: '#d97706',
-    accent3: '#f59e0b'
-  },
-  basic: {
-    label: 'Basic',
-    description: 'A flat grayscale mode with glass and motion stripped back.',
-    accent: '#4b5563',
-    accent2: '#6b7280',
-    accent3: '#9ca3af'
-  },
-  slate: {
-    label: 'Graphite',
-    description: 'A darker neutral scheme if you want less colour.',
-    accent: '#334155',
-    accent2: '#475569',
-    accent3: '#64748b'
-  }
-};
+const sharedPalette = suiteShared && suiteShared.palette ? suiteShared.palette : null;
+const PALETTE_STORAGE_KEY = (sharedPalette && sharedPalette.STORAGE_KEY) || 'pw_palette_scheme';
+const PALETTE_PRESETS = (sharedPalette && sharedPalette.getPresetMap)
+  ? sharedPalette.getPresetMap()
+  : { default: null, basic: { label: 'Basic', accent: '#4b5563', accent2: '#6b7280', accent3: '#9ca3af' } };
 const PALETTE_VARS = [
   '--ac','--ac2','--ac3','--acd1','--acd2','--acd3','--acgl','--eac',
   '--palette-card-bg-1','--palette-card-bg-2','--palette-card-border','--palette-card-glow-1','--palette-card-glow-2'

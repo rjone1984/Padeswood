@@ -631,6 +631,18 @@ body.basic-mode :is(.hero,.stat,.panel,.login-card,.topbar,.user-card,.modal,.pa
   box-shadow:none !important;
   background:var(--sf) !important;
 }
+body.basic-mode,
+body.basic-mode::before,
+body.basic-mode::after{
+  background-image:none !important;
+}
+body.basic-mode,
+body.basic-mode *,
+body.basic-mode *::before,
+body.basic-mode *::after{
+  animation:none !important;
+  transition:none !important;
+}
 @media (max-width:1020px){
   .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
@@ -1140,73 +1152,14 @@ const ADMIN_ACCESS_DENIED_LAUNCH = new URLSearchParams(window.location.search).g
 const SUITE_LOGO_FALLBACK_SRC = 'data:image/svg+xml;utf8,' + encodeURIComponent(
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="Padeswood Works"><defs><linearGradient id="g" x1="16" y1="12" x2="80" y2="84" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#1a7a35"/><stop offset="1" stop-color="#2ecc5c"/></linearGradient></defs><rect x="8" y="8" width="80" height="80" rx="22" fill="url(#g)"/><rect x="14" y="14" width="68" height="68" rx="18" fill="rgba(255,255,255,.10)"/><path d="M30 66V30h17.5c8.5 0 13.5 4.8 13.5 11.8 0 7.2-5.3 12.1-13.2 12.1H39V66H30Zm9-19h7.7c3.7 0 5.8-1.9 5.8-5s-2.1-5.1-5.8-5.1H39V47Zm22 19V30h8.7l8 16.6L85.7 30H94v36h-8V46.1l-6.7 13.5h-5.4L67.2 46V66h-8Z" fill="#fff"/></svg>'
 );
-const PALETTE_STORAGE_KEY = 'pw_palette_scheme';
-const PALETTE_VARS = ['--ac','--ac2','--ac3','--acd1','--acd2','--acd3','--palette-card-bg-1','--palette-card-bg-2','--palette-card-border','--palette-card-glow-1','--palette-card-glow-2','--eac'];
-const PALETTE_PRESETS = {
-  default: {
-    vars: {
-      '--ac':'#1a7a35','--ac2':'#2ecc5c','--ac3':'#5ee27b',
-      '--acd1':'rgba(26,122,53,.08)','--acd2':'rgba(26,122,53,.14)','--acd3':'rgba(26,122,53,.22)',
-      '--palette-card-bg-1':'rgba(46,204,92,.18)','--palette-card-bg-2':'rgba(26,122,53,.08)',
-      '--palette-card-border':'rgba(94,226,123,.18)','--palette-card-glow-1':'rgba(94,226,123,.12)','--palette-card-glow-2':'rgba(94,226,123,.06)',
-      '--eac':'0 4px 22px rgba(26,122,53,.25)'
-    }
-  },
-  ocean: {
-    vars: {
-      '--ac':'#0f766e','--ac2':'#14b8a6','--ac3':'#2dd4bf',
-      '--acd1':'rgba(15,118,110,.08)','--acd2':'rgba(15,118,110,.14)','--acd3':'rgba(15,118,110,.22)',
-      '--palette-card-bg-1':'rgba(20,184,166,.18)','--palette-card-bg-2':'rgba(15,118,110,.08)',
-      '--palette-card-border':'rgba(45,212,191,.18)','--palette-card-glow-1':'rgba(45,212,191,.12)','--palette-card-glow-2':'rgba(45,212,191,.06)',
-      '--eac':'0 4px 22px rgba(15,118,110,.25)'
-    }
-  },
-  sky: {
-    vars: {
-      '--ac':'#2563eb','--ac2':'#3b82f6','--ac3':'#60a5fa',
-      '--acd1':'rgba(37,99,235,.08)','--acd2':'rgba(37,99,235,.14)','--acd3':'rgba(37,99,235,.22)',
-      '--palette-card-bg-1':'rgba(59,130,246,.18)','--palette-card-bg-2':'rgba(37,99,235,.08)',
-      '--palette-card-border':'rgba(96,165,250,.18)','--palette-card-glow-1':'rgba(96,165,250,.12)','--palette-card-glow-2':'rgba(96,165,250,.06)',
-      '--eac':'0 4px 22px rgba(37,99,235,.25)'
-    }
-  },
-  violet: {
-    vars: {
-      '--ac':'#6d28d9','--ac2':'#8b5cf6','--ac3':'#a78bfa',
-      '--acd1':'rgba(109,40,217,.08)','--acd2':'rgba(109,40,217,.14)','--acd3':'rgba(109,40,217,.22)',
-      '--palette-card-bg-1':'rgba(139,92,246,.18)','--palette-card-bg-2':'rgba(109,40,217,.08)',
-      '--palette-card-border':'rgba(167,139,250,.18)','--palette-card-glow-1':'rgba(167,139,250,.12)','--palette-card-glow-2':'rgba(167,139,250,.06)',
-      '--eac':'0 4px 22px rgba(109,40,217,.25)'
-    }
-  },
-  amber: {
-    vars: {
-      '--ac':'#b45309','--ac2':'#d97706','--ac3':'#f59e0b',
-      '--acd1':'rgba(180,83,9,.08)','--acd2':'rgba(180,83,9,.14)','--acd3':'rgba(180,83,9,.22)',
-      '--palette-card-bg-1':'rgba(245,158,11,.18)','--palette-card-bg-2':'rgba(180,83,9,.08)',
-      '--palette-card-border':'rgba(245,158,11,.18)','--palette-card-glow-1':'rgba(245,158,11,.12)','--palette-card-glow-2':'rgba(245,158,11,.06)',
-      '--eac':'0 4px 22px rgba(180,83,9,.25)'
-    }
-  },
-  basic: {
-    vars: {
-      '--ac':'#4b5563','--ac2':'#6b7280','--ac3':'#9ca3af',
-      '--acd1':'rgba(75,85,99,.08)','--acd2':'rgba(75,85,99,.14)','--acd3':'rgba(75,85,99,.22)',
-      '--palette-card-bg-1':'rgba(107,114,128,.18)','--palette-card-bg-2':'rgba(75,85,99,.08)',
-      '--palette-card-border':'rgba(156,163,175,.18)','--palette-card-glow-1':'rgba(156,163,175,.10)','--palette-card-glow-2':'rgba(156,163,175,.05)',
-      '--eac':'0 4px 22px rgba(75,85,99,.20)'
-    }
-  },
-  slate: {
-    vars: {
-      '--ac':'#334155','--ac2':'#475569','--ac3':'#64748b',
-      '--acd1':'rgba(51,65,85,.08)','--acd2':'rgba(51,65,85,.14)','--acd3':'rgba(51,65,85,.22)',
-      '--palette-card-bg-1':'rgba(71,85,105,.18)','--palette-card-bg-2':'rgba(51,65,85,.08)',
-      '--palette-card-border':'rgba(100,116,139,.18)','--palette-card-glow-1':'rgba(100,116,139,.12)','--palette-card-glow-2':'rgba(100,116,139,.06)',
-      '--eac':'0 4px 22px rgba(51,65,85,.25)'
-    }
-  }
-};
+const sharedPalette = suiteShared && suiteShared.palette ? suiteShared.palette : null;
+const PALETTE_STORAGE_KEY = (sharedPalette && sharedPalette.STORAGE_KEY) || 'pw_palette_scheme';
+const PALETTE_VARS = (sharedPalette && Array.isArray(sharedPalette.DEFAULT_VARS))
+  ? sharedPalette.DEFAULT_VARS.slice()
+  : ['--ac','--ac2','--ac3','--acd1','--acd2','--acd3','--palette-card-bg-1','--palette-card-bg-2','--palette-card-border','--palette-card-glow-1','--palette-card-glow-2','--eac'];
+const PALETTE_PRESETS = (sharedPalette && sharedPalette.getPresetVarsMap)
+  ? sharedPalette.getPresetVarsMap({ includeDescriptions: true })
+  : { default: { label: 'Default Green', vars: {} }, basic: { label: 'Basic', vars: {} } };
 const KILN_ROLE_OPTIONS = ['none','admin','shift_manager','day_manager','burner','cement_analyst','electrician','mechanical','process_operator','day_staff'];
 
 let sb = null;

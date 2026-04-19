@@ -457,8 +457,13 @@ body.basic-mode .topbar .back-platform-btn:hover{
   background:var(--sf3);border:1px solid var(--bd);color:var(--tx2);
 }
 .pill.pending{color:var(--amb);border-color:color-mix(in srgb, var(--ambb) 72%, var(--bd));background:color-mix(in srgb, var(--ambd) 58%, var(--sf2))}
-.pill.queue-ok{color:var(--grn);border-color:color-mix(in srgb, var(--grnb) 72%, var(--bd));background:color-mix(in srgb, var(--grnd) 58%, var(--sf2))}
-.pill.queue-warn{color:var(--amb);border-color:color-mix(in srgb, var(--ambb) 72%, var(--bd));background:color-mix(in srgb, var(--ambd) 58%, var(--sf2))}
+.pill.queue-ok{color:var(--tx2);border-color:color-mix(in srgb, var(--bd2) 84%, var(--bd));background:color-mix(in srgb, var(--sf3) 84%, var(--sf2))}
+.pill.queue-warn{
+  color:var(--ac3);
+  border-color:color-mix(in srgb, var(--ac3) 72%, var(--bd));
+  background:color-mix(in srgb, var(--acd1) 74%, var(--sf2));
+  box-shadow:0 0 0 1px color-mix(in srgb, var(--ac3) 22%, transparent) inset;
+}
 .pill.approved{color:var(--grn);border-color:color-mix(in srgb, var(--grnb) 72%, var(--bd));background:color-mix(in srgb, var(--grnd) 58%, var(--sf2))}
 .pill.denied,.pill.cancelled{color:var(--red);border-color:color-mix(in srgb, var(--redb) 72%, var(--bd));background:color-mix(in srgb, var(--redd) 58%, var(--sf2))}
 .pill.kind-holiday{color:var(--grn);border-color:color-mix(in srgb, var(--grnb) 72%, var(--bd));background:color-mix(in srgb, var(--grnd) 58%, var(--sf2))}
@@ -2010,80 +2015,14 @@ const SUITE_LOGO_FALLBACK_SRC = 'data:image/svg+xml;utf8,' + encodeURIComponent(
 </svg>`.trim());
 let SUITE_LOGO_SRC = null;
 let SUITE_LOGO_PROMISE = null;
-const PALETTE_STORAGE_KEY = 'pw_palette_scheme';
-const PALETTE_VARS = ['--ac','--ac2','--ac3','--acd1','--acd2','--acd3','--palette-card-bg-1','--palette-card-bg-2','--palette-card-border','--palette-card-glow-1','--palette-card-glow-2','--eac'];
-const PALETTE_PRESETS = {
-  default: {
-    label: 'Default Green',
-    vars: {
-      '--ac':'#1a7a35','--ac2':'#2ecc5c','--ac3':'#5ee27b',
-      '--acd1':'rgba(26,122,53,.08)','--acd2':'rgba(26,122,53,.14)','--acd3':'rgba(26,122,53,.22)',
-      '--palette-card-bg-1':'rgba(46,204,92,.18)','--palette-card-bg-2':'rgba(26,122,53,.08)',
-      '--palette-card-border':'rgba(94,226,123,.18)','--palette-card-glow-1':'rgba(94,226,123,.12)','--palette-card-glow-2':'rgba(94,226,123,.06)',
-      '--eac':'0 4px 22px rgba(26,122,53,.25)'
-    }
-  },
-  ocean: {
-    label: 'Ocean',
-    vars: {
-      '--ac':'#0f766e','--ac2':'#14b8a6','--ac3':'#2dd4bf',
-      '--acd1':'rgba(15,118,110,.08)','--acd2':'rgba(15,118,110,.14)','--acd3':'rgba(15,118,110,.22)',
-      '--palette-card-bg-1':'rgba(20,184,166,.18)','--palette-card-bg-2':'rgba(15,118,110,.08)',
-      '--palette-card-border':'rgba(45,212,191,.18)','--palette-card-glow-1':'rgba(45,212,191,.12)','--palette-card-glow-2':'rgba(45,212,191,.06)',
-      '--eac':'0 4px 22px rgba(15,118,110,.25)'
-    }
-  },
-  sky: {
-    label: 'Sky',
-    vars: {
-      '--ac':'#2563eb','--ac2':'#3b82f6','--ac3':'#60a5fa',
-      '--acd1':'rgba(37,99,235,.08)','--acd2':'rgba(37,99,235,.14)','--acd3':'rgba(37,99,235,.22)',
-      '--palette-card-bg-1':'rgba(59,130,246,.18)','--palette-card-bg-2':'rgba(37,99,235,.08)',
-      '--palette-card-border':'rgba(96,165,250,.18)','--palette-card-glow-1':'rgba(96,165,250,.12)','--palette-card-glow-2':'rgba(96,165,250,.06)',
-      '--eac':'0 4px 22px rgba(37,99,235,.25)'
-    }
-  },
-  violet: {
-    label: 'Violet',
-    vars: {
-      '--ac':'#6d28d9','--ac2':'#8b5cf6','--ac3':'#a78bfa',
-      '--acd1':'rgba(109,40,217,.08)','--acd2':'rgba(109,40,217,.14)','--acd3':'rgba(109,40,217,.22)',
-      '--palette-card-bg-1':'rgba(139,92,246,.18)','--palette-card-bg-2':'rgba(109,40,217,.08)',
-      '--palette-card-border':'rgba(167,139,250,.18)','--palette-card-glow-1':'rgba(167,139,250,.12)','--palette-card-glow-2':'rgba(167,139,250,.06)',
-      '--eac':'0 4px 22px rgba(109,40,217,.25)'
-    }
-  },
-  amber: {
-    label: 'Amber',
-    vars: {
-      '--ac':'#b45309','--ac2':'#d97706','--ac3':'#f59e0b',
-      '--acd1':'rgba(180,83,9,.08)','--acd2':'rgba(180,83,9,.14)','--acd3':'rgba(180,83,9,.22)',
-      '--palette-card-bg-1':'rgba(245,158,11,.18)','--palette-card-bg-2':'rgba(180,83,9,.08)',
-      '--palette-card-border':'rgba(245,158,11,.18)','--palette-card-glow-1':'rgba(245,158,11,.12)','--palette-card-glow-2':'rgba(245,158,11,.06)',
-      '--eac':'0 4px 22px rgba(180,83,9,.25)'
-    }
-  },
-  basic: {
-    label: 'Basic',
-    vars: {
-      '--ac':'#4b5563','--ac2':'#6b7280','--ac3':'#9ca3af',
-      '--acd1':'rgba(75,85,99,.08)','--acd2':'rgba(75,85,99,.14)','--acd3':'rgba(75,85,99,.22)',
-      '--palette-card-bg-1':'rgba(107,114,128,.18)','--palette-card-bg-2':'rgba(75,85,99,.08)',
-      '--palette-card-border':'rgba(156,163,175,.18)','--palette-card-glow-1':'rgba(156,163,175,.10)','--palette-card-glow-2':'rgba(156,163,175,.05)',
-      '--eac':'0 4px 22px rgba(75,85,99,.20)'
-    }
-  },
-  slate: {
-    label: 'Graphite',
-    vars: {
-      '--ac':'#334155','--ac2':'#475569','--ac3':'#64748b',
-      '--acd1':'rgba(51,65,85,.08)','--acd2':'rgba(51,65,85,.14)','--acd3':'rgba(51,65,85,.22)',
-      '--palette-card-bg-1':'rgba(71,85,105,.18)','--palette-card-bg-2':'rgba(51,65,85,.08)',
-      '--palette-card-border':'rgba(100,116,139,.18)','--palette-card-glow-1':'rgba(100,116,139,.12)','--palette-card-glow-2':'rgba(100,116,139,.06)',
-      '--eac':'0 4px 22px rgba(51,65,85,.25)'
-    }
-  }
-};
+const sharedPalette = suiteShared && suiteShared.palette ? suiteShared.palette : null;
+const PALETTE_STORAGE_KEY = (sharedPalette && sharedPalette.STORAGE_KEY) || 'pw_palette_scheme';
+const PALETTE_VARS = (sharedPalette && Array.isArray(sharedPalette.DEFAULT_VARS))
+  ? sharedPalette.DEFAULT_VARS.slice()
+  : ['--ac','--ac2','--ac3','--acd1','--acd2','--acd3','--palette-card-bg-1','--palette-card-bg-2','--palette-card-border','--palette-card-glow-1','--palette-card-glow-2','--eac'];
+const PALETTE_PRESETS = (sharedPalette && sharedPalette.getPresetVarsMap)
+  ? sharedPalette.getPresetVarsMap({ includeDescriptions: true })
+  : { default: { label: 'Default Green', vars: {} }, basic: { label: 'Basic', vars: {} } };
 
 let sb = null;
 let currentUser = null;
