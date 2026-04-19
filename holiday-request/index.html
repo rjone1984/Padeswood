@@ -1325,6 +1325,28 @@ body.basic-mode :is(.palette-overlay,.manager-requests-overlay) {
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
+body.basic-mode .stat.stat-remaining,
+body.basic-mode .stat.balance-red,
+body.basic-mode .stat.balance-amber,
+body.basic-mode .stat.balance-green{
+  transform:none !important;
+  border-color:var(--bd) !important;
+  background:var(--sf) !important;
+  box-shadow:none !important;
+}
+body.basic-mode .stat.stat-remaining::before,
+body.basic-mode .stat.balance-red::before,
+body.basic-mode .stat.balance-amber::before,
+body.basic-mode .stat.balance-green::before{
+  display:none !important;
+}
+body.basic-mode .stat.stat-remaining .label,
+body.basic-mode .stat.stat-remaining .sub{
+  color:var(--tx3) !important;
+}
+body.basic-mode .stat.stat-remaining .value{
+  color:var(--grn) !important;
+}
 @media (max-width: 720px){
   .palette-panel{
     max-height: calc(100dvh - 24px);

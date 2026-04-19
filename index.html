@@ -2336,10 +2336,17 @@ async function doLogin() {
   const err   = document.getElementById('loginErr');
   err.style.display = 'none';
   if (!email || !pass) { err.textContent = 'Please enter your email and password.'; err.style.display = 'block'; return; }
+  setPlatformDbDot('syncing');
   btn.disabled = true; btn.textContent = 'Signing in…';
   const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
   btn.disabled = false; btn.textContent = 'Sign In';
-  if (error) { err.textContent = error.message; err.style.display = 'block'; return; }
+  if (error) {
+    err.textContent = error.message;
+    err.style.display = 'block';
+    setPlatformDbDot(isConnectivityFailureMessage(error.message) ? 'syncing' : 'warn');
+    return;
+  }
+  setPlatformDbDot('ok');
   if (data.session) {
     sb.auth.setSession(data.session).catch(function(e) {
       console.warn('Session handoff failed:', e);
@@ -2691,6 +2698,50 @@ function updateThemeButton() {
   btn.setAttribute('aria-label', btn.title);
 }
 
+function setPlatformDbDot(state){
+  if (!suiteShared || !suiteShared.ui || typeof suiteShared.ui.applyStatusDot !== 'function') return;
+  suiteShared.ui.applyStatusDot(document.querySelector('#mainHeader .db-dot'), state);
+}
+
+function isConnectivityFailureMessage(message){
+  const msg = String(message || '').toLowerCase();
+  if(!msg) return false;
+  return msg.includes('failed to fetch') ||
+    msg.includes('fetch failed') ||
+    msg.includes('network') ||
+    msg.includes('offline') ||
+    msg.includes('timeout') ||
+    msg.includes('timed out');
+}
+
+async function probePlatformDatabaseConnection(){
+  if(!sb){
+    setPlatformDbDot('syncing');
+    return;
+  }
+  setPlatformDbDot('syncing');
+  try{
+    const result = await sb.from('pw_profiles').select('id').limit(1);
+    const err = result && result.error ? result.error : null;
+    if(!err){
+      setPlatformDbDot('ok');
+      return;
+    }
+    const msg = String(err.message || err.details || err.hint || err.code || '');
+    if(isConnectivityFailureMessage(msg)){
+      setPlatformDbDot('syncing');
+      return;
+    }
+    if(msg.toLowerCase().includes('permission') || msg.toLowerCase().includes('jwt') || msg.toLowerCase().includes('row-level')){
+      setPlatformDbDot('ok');
+      return;
+    }
+    setPlatformDbDot('warn');
+  }catch(error){
+    setPlatformDbDot(isConnectivityFailureMessage(error && error.message) ? 'syncing' : 'warn');
+  }
+}
+
 const sharedPalette = suiteShared && suiteShared.palette ? suiteShared.palette : null;
 const PALETTE_STORAGE_KEY = (sharedPalette && sharedPalette.STORAGE_KEY) || 'pw_palette_scheme';
 const PALETTE_PRESETS = (sharedPalette && sharedPalette.getPresetMap)
@@ -2946,6 +2997,14 @@ window.addEventListener('load', function() {
   } else {
     checkLicence();
   }
+  probePlatformDatabaseConnection();
+});
+
+window.addEventListener('offline', function(){
+  setPlatformDbDot('syncing');
+});
+window.addEventListener('online', function(){
+  probePlatformDatabaseConnection();
 });
 
 async function handleEmailConfirmation() {

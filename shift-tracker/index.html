@@ -3143,7 +3143,6 @@ function syncTrackerStatusDots(){
   if (!(window.PadeswoodSuite && PadeswoodSuite.ui)) return;
   document.querySelectorAll('.db-dot, .status-dot').forEach(function(dot){
     PadeswoodSuite.ui.applyStatusDot(dot, 'ok');
-    dot.title = 'Synced';
   });
 }
 

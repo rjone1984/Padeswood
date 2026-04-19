@@ -47,12 +47,12 @@
   --sf:#ffffff; --sf2:#f8fbff; --sf3:#f2f7fd; --sf4:#edf3fa;
   --bd:#dce5f0; --bd2:#cdd8e6; --bd3:#a9bbd3;
   --ac:#1a7a35; --ac2:#2ecc5c; --ac3:#5ee27b;
-  --acd1:rgba(26,122,53,.07); --acd2:rgba(26,122,53,.14); --acd3:rgba(26,122,53,.24);
-  --palette-card-bg-1:rgba(46,204,92,.18);
-  --palette-card-bg-2:rgba(26,122,53,.10);
-  --palette-card-border:rgba(94,226,123,.22);
-  --palette-card-glow-1:rgba(94,226,123,.14);
-  --palette-card-glow-2:rgba(94,226,123,.08);
+  --acd1:rgba(26,122,53,.045); --acd2:rgba(26,122,53,.09); --acd3:rgba(26,122,53,.16);
+  --palette-card-bg-1:rgba(46,204,92,.05);
+  --palette-card-bg-2:rgba(26,122,53,.03);
+  --palette-card-border:rgba(94,226,123,.08);
+  --palette-card-glow-1:rgba(94,226,123,.03);
+  --palette-card-glow-2:rgba(94,226,123,.015);
   --tx:#0d1526; --tx2:#405063; --tx3:#74839a;
   --red:#d93f3c; --redd:rgba(217,63,60,.07); --redb:rgba(217,63,60,.22);
   --grn:#15924f; --grnd:rgba(21,146,79,.07); --grnb:rgba(21,146,79,.22);
@@ -61,10 +61,10 @@
   --e1:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
   --e2:0 4px 18px rgba(0,0,0,.07);
   --e3:0 20px 56px rgba(0,0,0,.10);
-  --eac:0 4px 22px rgba(51,65,85,.16);
-  --glass-1:rgba(255,255,255,.96);
-  --glass-2:rgba(255,255,255,.82);
-  --glass-3:rgba(255,255,255,.92);
+  --eac:0 4px 14px rgba(51,65,85,.08);
+  --glass-1:rgba(255,255,255,.985);
+  --glass-2:rgba(255,255,255,.93);
+  --glass-3:rgba(255,255,255,.965);
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -94,9 +94,7 @@ body::before{
 }
 body.light-mode{
   background:
-    radial-gradient(1200px 620px at 18% -6%, rgba(255,255,255,.98), transparent 58%),
     radial-gradient(960px 520px at 100% 0%, var(--palette-card-glow-1), transparent 54%),
-    linear-gradient(180deg, rgba(255,255,255,.2), rgba(255,255,255,0)),
     var(--bg);
 }
 .hidden{display:none !important}
@@ -246,10 +244,7 @@ body.light-mode{
   display:flex;justify-content:space-between;align-items:center;gap:12px;
   padding:12px 18px;
   border-bottom:1px solid var(--bd);
-  background:
-    radial-gradient(140% 120% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
-    radial-gradient(120% 120% at 100% 0%, var(--palette-card-glow-2), transparent 48%),
-    linear-gradient(180deg, color-mix(in srgb, var(--glass-1) 84%, transparent), color-mix(in srgb, var(--glass-2) 70%, transparent));
+  background:linear-gradient(180deg,var(--glass-1),var(--glass-2));
   backdrop-filter:blur(20px) saturate(1.08);
   -webkit-backdrop-filter:blur(20px) saturate(1.08);
   box-shadow:var(--e2), var(--eac);
@@ -291,10 +286,7 @@ body.light-mode{
 .hero{
   display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;
   padding:20px;border:1px solid var(--bd);border-radius:20px;
-  background:
-    radial-gradient(140% 100% at 0% 0%, var(--palette-card-glow-1), transparent 40%),
-    radial-gradient(120% 100% at 100% 0%, var(--palette-card-glow-2), transparent 50%),
-    linear-gradient(180deg,var(--glass-1),var(--glass-3));
+  background:linear-gradient(180deg,var(--glass-1),var(--glass-3));
   box-shadow:var(--e2), var(--eac);
 }
 .hero h2{margin:0;font-family:var(--ff-head);font-size:28px;line-height:1.05}
@@ -328,9 +320,7 @@ body.light-mode{
 .stat{
   border:1px solid var(--bd);
   border-radius:16px;
-  background:
-    radial-gradient(120% 100% at 0% 0%, var(--palette-card-glow-2), transparent 45%),
-    linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  background:linear-gradient(180deg,var(--glass-1),var(--glass-2));
   padding:11px 13px;
   box-shadow:var(--e2), var(--eac);
 }
@@ -552,10 +542,7 @@ body.light-mode{
   overflow:auto;
   border:1px solid var(--bd);
   border-radius:20px;
-  background:
-    radial-gradient(140% 100% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
-    radial-gradient(120% 100% at 100% 0%, var(--palette-card-glow-2), transparent 48%),
-    linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  background:linear-gradient(180deg,var(--glass-1),var(--glass-2));
   box-shadow:var(--e3), var(--eac);
   padding:16px;
 }
@@ -762,7 +749,7 @@ body.basic-mode *::after{
       <div>
         <div class="eyebrow">Admin controls</div>
         <h2>User Accounts and Access</h2>
-        <p>Manage platform roles, shift-log roles, access flags, and account status in one place. The legacy Platform panel stays untouched for rollback.</p>
+        <p>Manage shift-log roles, app access flags, and account state in one place.</p>
       </div>
       <span class="pill good" id="adminStatePill">Admin verified</span>
     </section>
@@ -808,13 +795,6 @@ body.basic-mode *::after{
         <div class="field">
           <label for="quickEmailUser">Email Address</label>
           <input id="quickEmailUser" class="input" type="email" placeholder="name@heidelbergmaterials.com">
-        </div>
-        <div class="field">
-          <label for="quickPlatformRole">Platform Access</label>
-          <select id="quickPlatformRole" class="select">
-            <option value="true">Allow Access</option>
-            <option value="false">No Access</option>
-          </select>
         </div>
         <div class="field">
           <label for="quickKilnRole">Logs Role</label>
@@ -964,16 +944,6 @@ body.basic-mode *::after{
         <input id="editEmail" class="input" type="email">
       </div>
       <div class="field">
-        <label for="editPlatformRole">Platform Role</label>
-        <select id="editPlatformRole" class="select">
-          <option value="viewer">Viewer</option>
-          <option value="editor">Editor</option>
-          <option value="reviewer">Reviewer</option>
-          <option value="admin">Admin</option>
-          <option value="none">No platform access</option>
-        </select>
-      </div>
-      <div class="field">
         <label for="editKilnRole">Logs Role</label>
         <select id="editKilnRole" class="select">
           <option value="none">No Logs access</option>
@@ -1002,14 +972,14 @@ body.basic-mode *::after{
     </div>
     <div class="modal-grid">
       <div class="field">
-        <label for="editApproved">Platform Approval</label>
+        <label for="editApproved">Account approval</label>
         <select id="editApproved" class="select">
           <option value="true">Approved</option>
           <option value="false">Not approved</option>
         </select>
       </div>
       <div class="field">
-        <label for="editDisabled">Platform Status</label>
+        <label for="editDisabled">Account enabled</label>
         <select id="editDisabled" class="select">
           <option value="false">Enabled</option>
           <option value="true">Disabled</option>
@@ -1037,17 +1007,10 @@ body.basic-mode *::after{
         </select>
       </div>
       <div class="field">
-        <label for="editShiftLogAccess">Logs Access</label>
-        <select id="editShiftLogAccess" class="select">
+        <label for="editLogsAccess">Logs access</label>
+        <select id="editLogsAccess" class="select">
           <option value="true">Allow Access</option>
           <option value="false">No Access</option>
-        </select>
-      </div>
-      <div class="field">
-        <label for="editLocked">Logs Lock</label>
-        <select id="editLocked" class="select">
-          <option value="false">Unlocked</option>
-          <option value="true">Locked</option>
         </select>
       </div>
       <div class="field">
@@ -1160,6 +1123,9 @@ const PALETTE_VARS = (sharedPalette && Array.isArray(sharedPalette.DEFAULT_VARS)
 const PALETTE_PRESETS = (sharedPalette && sharedPalette.getPresetVarsMap)
   ? sharedPalette.getPresetVarsMap({ includeDescriptions: true })
   : { default: { label: 'Default Green', vars: {} }, basic: { label: 'Basic', vars: {} } };
+const PALETTE_META_MAP = (sharedPalette && sharedPalette.getPresetMap)
+  ? sharedPalette.getPresetMap()
+  : {};
 const KILN_ROLE_OPTIONS = ['none','admin','shift_manager','day_manager','burner','cement_analyst','electrician','mechanical','process_operator','day_staff'];
 
 let sb = null;
@@ -1250,6 +1216,35 @@ function kilnRoleLabel(role){
     day_staff:'Day staff'
   };
   return map[role] || 'Unknown';
+}
+function logsAccessAllowed(ku){
+  return !!(ku && ku.shift_log_access !== false && ku.is_locked !== true);
+}
+function syncLogsAccessRolePair(accessId, roleId){
+  const accessEl = $(accessId);
+  const roleEl = $(roleId);
+  if (!accessEl || !roleEl) return;
+  const allowed = String(accessEl.value || 'true') !== 'false';
+  roleEl.disabled = !allowed;
+  roleEl.setAttribute('aria-disabled', allowed ? 'false' : 'true');
+  if (!allowed) {
+    roleEl.value = 'none';
+  }
+}
+function bindLogsAccessRolePair(accessId, roleId){
+  const accessEl = $(accessId);
+  const roleEl = $(roleId);
+  if (!accessEl || !roleEl) return;
+  const sync = function(){
+    syncLogsAccessRolePair(accessId, roleId);
+  };
+  accessEl.addEventListener('change', sync);
+  roleEl.addEventListener('change', function(){
+    if (String(accessEl.value || 'true') === 'false' && roleEl.value !== 'none') {
+      roleEl.value = 'none';
+    }
+  });
+  sync();
 }
 function platformRoleLabel(role){
   const v = toLower(role);
@@ -1830,7 +1825,6 @@ function openEditorByRow(row){
   $('editorSub').textContent = displayNameFor(row) + ' - ' + ((p && p.email) || (k && k.email) || '-');
   $('editFullName').value = p.full_name || '';
   $('editEmail').value = p.email || '';
-  $('editPlatformRole').value = toLower(p.role) || 'viewer';
   $('editKilnRole').value = kilnRoleValue(k);
   $('editWorkRoleType').value = inferWorkRoleType(p, k);
   $('editApproved').value = boolValue(p.approved, true) ? 'true' : 'false';
@@ -1838,8 +1832,8 @@ function openEditorByRow(row){
   $('editTrackerAccess').value = boolValue(p.shift_tracker_access, true) ? 'true' : 'false';
   $('editHolidayAccess').value = boolValue(p.holiday_requests_access, true) ? 'true' : 'false';
   $('editCreditAccess').value = boolValue(p.credit_hours_access, true) ? 'true' : 'false';
-  $('editShiftLogAccess').value = boolValue(k && k.shift_log_access, $('editKilnRole').value !== 'none') ? 'true' : 'false';
-  $('editLocked').value = boolValue(k && k.is_locked, false) ? 'true' : 'false';
+  $('editLogsAccess').value = logsAccessAllowed(k) && $('editKilnRole').value !== 'none' ? 'true' : 'false';
+  syncLogsAccessRolePair('editLogsAccess', 'editKilnRole');
   $('editMustReset').value = boolValue((k && k.must_reset_password), boolValue(p.must_reset_password, false)) ? 'true' : 'false';
 
   const managers = managerOptionsForUser(p.id);
@@ -1864,7 +1858,6 @@ function renderGroupSection(groupKey, rows){
   let html = '<details class="group" ' + (open ? 'open' : '') + ' data-group="' + esc(groupKey) + '" ontoggle="roleGroupsOpen[\'' + esc(groupKey) + '\'] = this.open">';
   html += '<summary>';
   html += '<div class="group-title"><div class="group-name" style="color:' + color + '">' + esc(title) + '</div><div class="group-sub">' + esc(String(count)) + ' user' + (count !== 1 ? 's' : '') + '</div></div>';
-  html += '<span class="pill neutral">Toggle</span>';
   html += '</summary>';
   html += '<div class="group-body">';
   if (rows.length) {
@@ -1988,6 +1981,25 @@ function clearPaletteVars(){
     PALETTE_VARS.forEach(function(k){ target.style.removeProperty(k); });
   });
 }
+function getSoftPaletteOverrides(preset){
+  if (!sharedPalette || preset === 'default' || preset === 'basic') return null;
+  const meta = PALETTE_META_MAP[preset] || null;
+  if (!meta || !sharedPalette.rgbaFromHex) return null;
+  const ac = meta.accent || '#1a7a35';
+  const ac2 = meta.accent2 || ac;
+  const ac3 = meta.accent3 || ac2 || ac;
+  return {
+    '--acd1': sharedPalette.rgbaFromHex(ac, .045),
+    '--acd2': sharedPalette.rgbaFromHex(ac, .085),
+    '--acd3': sharedPalette.rgbaFromHex(ac, .13),
+    '--palette-card-bg-1': sharedPalette.rgbaFromHex(ac2, .05),
+    '--palette-card-bg-2': sharedPalette.rgbaFromHex(ac, .025),
+    '--palette-card-border': sharedPalette.rgbaFromHex(ac3, .08),
+    '--palette-card-glow-1': sharedPalette.rgbaFromHex(ac3, .02),
+    '--palette-card-glow-2': sharedPalette.rgbaFromHex(ac3, .01),
+    '--eac': '0 4px 14px rgba(51,65,85,.08)'
+  };
+}
 function getStoredPalettePreset(){
   const key = localStorage.getItem(PALETTE_STORAGE_KEY);
   if (key === 'plain') return 'basic';
@@ -2011,7 +2023,11 @@ function updatePaletteUi(){
 function applyStoredPalette(){
   const preset = getStoredPalettePreset();
   if (preset === 'default') clearPaletteVars();
-  else setPaletteVars(PALETTE_PRESETS[preset].vars);
+  else {
+    setPaletteVars(PALETTE_PRESETS[preset].vars);
+    const softOverrides = getSoftPaletteOverrides(preset);
+    if (softOverrides) setPaletteVars(softOverrides);
+  }
   document.body.classList.toggle('basic-mode', preset === 'basic');
   document.documentElement.classList.toggle('basic-mode', preset === 'basic');
   updatePaletteUi();
@@ -2357,7 +2373,7 @@ async function saveEditorChanges(){
   }
   const fullName = $('editFullName').value.trim();
   const email = $('editEmail').value.trim().toLowerCase();
-  const platformRole = toLower($('editPlatformRole').value || 'viewer');
+  const platformRole = toLower((row.profile && row.profile.role) || 'viewer');
   const kilnRole = toLower($('editKilnRole').value || 'none');
   const workRoleType = toLower($('editWorkRoleType').value || 'shift') === 'day' ? 'day' : 'shift';
   const approved = $('editApproved').value !== 'false';
@@ -2365,8 +2381,9 @@ async function saveEditorChanges(){
   const shiftTrackerAccess = $('editTrackerAccess').value !== 'false';
   const holidayAccess = $('editHolidayAccess').value !== 'false';
   const creditAccess = $('editCreditAccess').value !== 'false';
-  const shiftLogAccess = kilnRole === 'none' ? false : $('editShiftLogAccess').value !== 'false';
-  const isLocked = $('editLocked').value === 'true';
+  const logsAccess = $('editLogsAccess').value !== 'false';
+  const shiftLogAccess = kilnRole === 'none' ? false : logsAccess;
+  const isLocked = kilnRole === 'none' ? true : !logsAccess;
   const mustReset = $('editMustReset').value === 'true';
   const managerId = $('editHolidayManager').value || null;
 
@@ -2419,7 +2436,7 @@ async function saveEditorChanges(){
 async function queueQuickUser(){
   const fullName = $('quickFullName').value.trim();
   const email = $('quickEmailUser').value.trim().toLowerCase();
-  const platformRole = toLower($('quickPlatformRole').value || 'true') !== 'false' ? 'viewer' : 'none';
+  const platformRole = 'viewer';
   const logsAccess = toLower($('quickLogsAccess').value || 'true') !== 'false';
   const kilnRole = logsAccess ? toLower($('quickKilnRole').value || 'none') : 'none';
   const workRoleType = toLower($('quickWorkRoleType').value || 'shift') === 'day' ? 'day' : 'shift';
@@ -2451,7 +2468,6 @@ async function queueQuickUser(){
     });
     $('quickFullName').value = '';
     $('quickEmailUser').value = '';
-    $('quickPlatformRole').value = 'true';
     $('quickKilnRole').value = 'none';
     $('quickWorkRoleType').value = 'shift';
     $('quickHolidayManager').value = '';
@@ -2459,6 +2475,7 @@ async function queueQuickUser(){
     $('quickHolidayAccess').value = 'true';
     $('quickCreditAccess').value = 'true';
     $('quickLogsAccess').value = 'true';
+    syncLogsAccessRolePair('quickLogsAccess', 'quickKilnRole');
     setToast('Added to the access queue.');
     await loadDirectory();
   } catch (e) {
@@ -2678,6 +2695,8 @@ async function initUserManagementApp(){
   $('loginEmail').addEventListener('keydown', function(e){ if (e.key === 'Enter') doLogin(); });
   $('searchInput').addEventListener('input', renderApp);
   $('roleFilter').addEventListener('change', renderApp);
+  bindLogsAccessRolePair('quickLogsAccess', 'quickKilnRole');
+  bindLogsAccessRolePair('editLogsAccess', 'editKilnRole');
 
   async function tryHydrateSession(retries){
     const session = await sb.auth.getSession();

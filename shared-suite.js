@@ -391,10 +391,10 @@
   function normalizeStatusDotState(state){
     var raw = String(state || '').trim().toLowerCase();
     if(!raw) return 'ok';
-    if(raw.indexOf('error') !== -1 || raw.indexOf('failed') !== -1 || raw.indexOf('warn') !== -1) return 'warn';
-    if(raw.indexOf('saving') !== -1 || raw.indexOf('loading') !== -1 || raw.indexOf('sync') !== -1) return 'syncing';
+    if(raw === 'ok' || raw === 'synced' || raw === 'connected' || raw === 'database connected') return 'ok';
+    if(raw.indexOf('error') !== -1 || raw.indexOf('failed') !== -1 || raw.indexOf('fault') !== -1 || raw.indexOf('warn') !== -1) return 'warn';
+    if(raw.indexOf('saving') !== -1 || raw.indexOf('loading') !== -1 || raw.indexOf('sync') !== -1 || raw.indexOf('offline') !== -1 || raw.indexOf('reconnect') !== -1) return 'syncing';
     if(raw.indexOf('local') !== -1 || raw.indexOf('cache') !== -1) return 'local';
-    if(raw === 'ok' || raw === 'synced' || raw === 'connected') return 'ok';
     return 'ok';
   }
 
@@ -403,10 +403,10 @@
     if(!dot) return null;
     var next = normalizeStatusDotState(state);
     var cfg = {
-      ok: { title: 'Synced', label: 'Synced', bg: 'var(--grn)', shadow: '0 0 0 4px var(--grnd)', anim: 'none' },
-      local: { title: 'Loaded from local cache', label: 'Loaded from local cache', bg: 'var(--amb)', shadow: '0 0 0 4px rgba(245,158,11,.10)', anim: 'none' },
-      warn: { title: 'Sync error', label: 'Sync error', bg: 'var(--red)', shadow: '0 0 0 4px rgba(239,68,68,.12)', anim: 'none' },
-      syncing: { title: 'Syncing…', label: 'Syncing…', bg: 'var(--amb)', shadow: '0 0 0 4px rgba(245,158,11,.12)', anim: 'none' }
+      ok: { title: 'Database connected', label: 'Database connected', bg: 'var(--grn)', shadow: '0 0 0 4px var(--grnd)', anim: 'none' },
+      local: { title: 'Database unavailable (local cache)', label: 'Database unavailable (local cache)', bg: 'var(--amb)', shadow: '0 0 0 4px rgba(245,158,11,.10)', anim: 'none' },
+      warn: { title: 'Database fault', label: 'Database fault', bg: 'var(--red)', shadow: '0 0 0 4px rgba(239,68,68,.12)', anim: 'none' },
+      syncing: { title: 'Database reconnecting', label: 'Database reconnecting', bg: 'var(--amb)', shadow: '0 0 0 4px rgba(245,158,11,.12)', anim: 'none' }
     }[next];
     dot.classList.remove('local', 'warn', 'syncing', 'ok');
     dot.classList.add(next);
