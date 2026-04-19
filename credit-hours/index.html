@@ -546,9 +546,60 @@ body.basic-mode .topbar .back-platform-btn:hover{
 #myRequestsPanel{
   position:relative;
 }
+#hrHandoverPanel{
+  position:relative;
+  margin-top:18px;
+}
+#hrHandoverPanel::before{
+  content:'';
+  position:absolute;
+  left:18px;
+  right:18px;
+  top:-10px;
+  height:2px;
+  background:linear-gradient(90deg,transparent,var(--ac3),transparent);
+  background-size:200% 100%;
+  animation:lineFlow 8s ease-in-out infinite;
+  opacity:.35;
+  pointer-events:none;
+}
 .panel-head{
+  position:relative;
   display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
   margin-bottom:14px;
+  padding-bottom:12px;
+}
+.panel-head::after{
+  content:'';
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--ac3),transparent);
+  background-size:200% 100%;
+  animation:lineFlow 8s ease-in-out infinite;
+  opacity:.35;
+  pointer-events:none;
+}
+.panel{
+  position:relative;
+}
+.panel + .panel{
+  margin-top:18px;
+}
+.panel + .panel::before{
+  content:'';
+  position:absolute;
+  left:18px;
+  right:18px;
+  top:-10px;
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--ac3),transparent);
+  background-size:200% 100%;
+  animation:lineFlow 8s ease-in-out infinite;
+  opacity:.32;
+  pointer-events:none;
 }
 .panel-title{font-family:var(--ff-head);font-size:18px;font-weight:800}
 .panel-sub{color:var(--tx2);font-size:12px}
@@ -597,9 +648,45 @@ body.basic-mode .topbar .back-platform-btn:hover{
   padding:12px 14px;
 }
 .entry-group summary::-webkit-details-marker{display:none}
-.entry-group .entry-group-left{
+.entry-group .entry-group-title::after,
+.staff-card .staff-summary-left .name::after,
+.activity-collapsible > summary > div:first-child > div:first-child::after{
+  content:'';
+  width:8px;height:8px;
+  flex-shrink:0;
+  border-right:2px solid var(--tx3);
+  border-bottom:2px solid var(--tx3);
+  transform:rotate(45deg);
+  transition:transform .2s ease;
+  opacity:.8;
+  margin-left:6px;
+  display:inline-block;
+}
+.entry-group[open] .entry-group-title::after,
+.staff-card[open] .staff-summary-left .name::after,
+.activity-collapsible[open] > summary > div:first-child > div:first-child::after{
+  transform:rotate(225deg);
+}
+.entry-group .entry-group-title{
+  display:inline-flex;
+  align-items:center;
+  gap:0;
+}
+.staff-card .staff-summary-left .name{
+  display:inline-flex;
+  align-items:center;
+  gap:0;
+}
+.activity-collapsible > summary > div:first-child > div:first-child{
+  display:inline-flex;
+  align-items:center;
+  gap:0;
+}
+.entry-group .entry-group-left,
+.staff-card .staff-summary-left{
   min-width:0;
-  display:grid;
+  display:flex;
+  flex-direction:column;
   gap:3px;
 }
 .entry-group .entry-group-title{
@@ -728,7 +815,7 @@ body.basic-mode .topbar .back-platform-btn:hover{
   padding:12px 14px;
 }
 .staff-card summary::-webkit-details-marker{display:none}
-.staff-card .staff-summary-left{min-width:0;display:grid;gap:3px}
+.staff-card .staff-summary-left{display:flex;flex-direction:column;gap:3px;min-width:0}
 .staff-card .staff-summary-right{display:grid;gap:2px;justify-items:end;text-align:right;max-width:56%}
 .staff-card .staff-summary-right .line{
   font-size:10px;
@@ -2048,13 +2135,17 @@ body:not(.basic-mode) .btn-primary:hover{
     </section>
 
     <section class="panel hidden" id="allowancePanel">
-      <div class="panel-head">
-        <div>
-          <div class="panel-title">Entitlements</div>
-          <div class="panel-sub">Shift managers can adjust annual allowances for their assigned staff.</div>
+      <details class="activity-collapsible" open>
+        <summary>
+          <div>
+            <div class="panel-title">Entitlements</div>
+            <div class="panel-sub">Shift managers can adjust annual allowances for their assigned staff.</div>
+          </div>
+        </summary>
+        <div class="content">
+          <div id="allowanceList" class="list"></div>
         </div>
-      </div>
-      <div id="allowanceList" class="list"></div>
+      </details>
     </section>
 
     <section class="panel hidden" id="bankHolidayPanel">

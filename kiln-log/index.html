@@ -1783,6 +1783,9 @@ body.app-ready #app {
   border-color:color-mix(in srgb, var(--palette-card-border) 86%, var(--bd2));
   box-shadow:var(--e2), var(--eac), 0 0 0 1px color-mix(in srgb, var(--palette-card-glow-1) 40%, transparent) inset;
 }
+.shift-panel{
+  position:relative;
+}
 
 .shift-panel-head {
   background:
@@ -1799,6 +1802,19 @@ body.app-ready #app {
   inset:0 auto 0 0;
   width:4px;
   background:linear-gradient(180deg,var(--ac),var(--ac3));
+}
+.shift-panel-head::after{
+  content:'';
+  position:absolute;
+  left:18px;
+  right:18px;
+  top:0;
+  height:2px;
+  background:linear-gradient(90deg,transparent,var(--ac3),transparent);
+  background-size:200% 100%;
+  animation:lineFlow 8s ease-in-out infinite;
+  opacity:.34;
+  pointer-events:none;
 }
 .shift-panel-label {
   font-family:var(--ff-head); font-weight:800; font-size:11px;
@@ -2791,7 +2807,24 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
   @page { margin:1.4cm }
 }
 
-.ca-section { border:1px solid var(--bd); border-radius:var(--r); overflow:hidden; margin-bottom:0; }
+.ca-section { position:relative; border:1px solid var(--bd); border-radius:var(--r); overflow:hidden; margin-bottom:0; }
+.ca-section + .ca-section{
+  margin-top:14px;
+}
+.ca-section + .ca-section::before{
+  content:'';
+  position:absolute;
+  left:14px;
+  right:14px;
+  top:0;
+  height:2px;
+  background:linear-gradient(90deg,transparent,var(--ac3),transparent);
+  background-size:200% 100%;
+  animation:lineFlow 8s ease-in-out infinite;
+  opacity:.34;
+  pointer-events:none;
+  z-index:1;
+}
 .ca-sec-head { padding:8px 14px; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; border-left:3px solid var(--ac); background:var(--sf); color:var(--tx2); }
 .ca-section > div:last-child { padding:12px 14px; }
 .ca-inp { width:100%; background:var(--inp); border:1px solid var(--bd); border-radius:var(--rxs); color:var(--tx); font-family:var(--ff-body); font-size:12px; padding:5px 8px; outline:none; resize:none; line-height:1.5; box-sizing:border-box; transition:border-color .15s; overflow:hidden; }

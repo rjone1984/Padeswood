@@ -632,8 +632,23 @@ body.basic-mode .topbar .back-platform-btn:hover{
   position:relative;
 }
 .panel-head{
+  position:relative;
   display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
   margin-bottom:14px;
+  padding-bottom:12px;
+}
+.panel-head::after{
+  content:'';
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--ac3),transparent);
+  background-size:200% 100%;
+  animation:lineFlow 8s ease-in-out infinite;
+  opacity:.35;
+  pointer-events:none;
 }
 .panel-title{font-family:var(--ff-head);font-size:18px;font-weight:800}
 .panel-sub{color:var(--tx2);font-size:12px}
@@ -781,7 +796,34 @@ body.basic-mode .topbar .back-platform-btn:hover{
   padding:12px 14px;
 }
 .staff-card summary::-webkit-details-marker{display:none}
-.staff-card .staff-summary-left{min-width:0;display:grid;gap:3px}
+.staff-card .staff-summary-left .name::after,
+.activity-collapsible > summary > div:first-child > div:first-child::after{
+  content:'';
+  width:8px;height:8px;
+  flex-shrink:0;
+  border-right:2px solid var(--tx3);
+  border-bottom:2px solid var(--tx3);
+  transform:rotate(45deg);
+  transition:transform .2s ease;
+  opacity:.8;
+  margin-left:6px;
+  display:inline-block;
+}
+.staff-card[open] .staff-summary-left .name::after,
+.activity-collapsible[open] > summary > div:first-child > div:first-child::after{
+  transform:rotate(225deg);
+}
+.staff-card .staff-summary-left{display:flex;flex-direction:column;gap:3px;min-width:0}
+.staff-card .staff-summary-left .name{
+  display:inline-flex;
+  align-items:center;
+  gap:0;
+}
+.activity-collapsible > summary > div:first-child > div:first-child{
+  display:inline-flex;
+  align-items:center;
+  gap:0;
+}
 .staff-card .staff-summary-right{
   display:grid;
   gap:5px;
@@ -3454,15 +3496,18 @@ function renderHolidayApp(){
     if (title) title.textContent = 'My requests & activity';
     if (sub) sub.textContent = 'Your request history first, followed by recent activity on those requests.';
   }
-  if (page && approvalsPanel && managerViewEnabled) {
-    page.insertBefore(approvalsPanel, summarySection || requestPanelEl || activityPanelEl || allowancePanel || null);
-  }
   if (page && activityPanel && managerViewEnabled) {
-    const anchor = allowancePanel && allowancePanel.parentElement === page ? allowancePanel : (requestPanelEl && requestPanelEl.parentElement === page ? requestPanelEl.nextSibling : null);
+    const anchor = approvalsPanel && approvalsPanel.parentElement === page
+      ? approvalsPanel
+      : (allowancePanel && allowancePanel.parentElement === page ? allowancePanel : (requestPanelEl && requestPanelEl.parentElement === page ? requestPanelEl.nextSibling : null));
     page.insertBefore(activityPanel, anchor);
   }
+  if (page && approvalsPanel && managerViewEnabled) {
+    const anchor = allowancePanel && allowancePanel.parentElement === page ? allowancePanel : (activityPanel && activityPanel.parentElement === page ? activityPanel.nextSibling : (summarySection || requestPanelEl || null));
+    page.insertBefore(approvalsPanel, anchor);
+  }
   if (page && allowancePanel && isHolidayAdmin) {
-    const anchor = activityPanel && activityPanel.parentElement === page ? activityPanel.nextSibling : null;
+    const anchor = approvalsPanel && approvalsPanel.parentElement === page ? approvalsPanel.nextSibling : (activityPanel && activityPanel.parentElement === page ? activityPanel.nextSibling : null);
     page.insertBefore(allowancePanel, anchor);
   }
   if (focusApprovalsOnRender && (isApprover || isHolidayAdmin)) {

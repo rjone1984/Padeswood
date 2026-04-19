@@ -954,6 +954,42 @@
   .hero-emoji-wrap.plane .hero-emoji {
     animation: heroPlaneGlide 5.5s ease-in-out infinite;
   }
+  .hero-emoji-wrap.plane::before,
+  .hero-emoji-wrap.plane::after {
+    content: '';
+    position: absolute;
+    top: 46px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 3;
+  }
+  .hero-emoji-wrap.plane::before {
+    left: 18px;
+    background: rgba(239,68,68,.86);
+    box-shadow: 0 0 0 2px rgba(239,68,68,.14), 0 0 10px rgba(239,68,68,.55);
+    animation: heroPlaneNavRed 1.8s ease-in-out infinite;
+  }
+  .hero-emoji-wrap.plane::after {
+    right: 18px;
+    background: rgba(34,197,94,.86);
+    box-shadow: 0 0 0 2px rgba(34,197,94,.14), 0 0 10px rgba(34,197,94,.55);
+    animation: heroPlaneNavGreen 1.8s ease-in-out infinite;
+  }
+  .hero-emoji-wrap.plane .hero-emoji::after {
+    content: '';
+    position: absolute;
+    right: -2px;
+    top: 20px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.92);
+    box-shadow: 0 0 0 2px rgba(255,255,255,.12), 0 0 12px rgba(255,255,255,.52);
+    animation: heroPlaneStrobe 2.4s ease-in-out infinite;
+    pointer-events: none;
+  }
   .hero-emoji-wrap.sun::before,
   .hero-emoji-wrap.sun::after {
     content: '';
@@ -1147,6 +1183,21 @@
     15% { opacity: .75; }
     55% { transform: translateX(-12px) translateY(-3px) scale(1.15); opacity: .42; }
     100% { transform: translateX(-24px) translateY(-6px) scale(1.35); opacity: 0; }
+  }
+  @keyframes heroPlaneNavRed {
+    0%, 8%, 30%, 100% { opacity: .16; filter: saturate(.75); }
+    12%, 24% { opacity: 1; filter: saturate(1.25); }
+    16%, 28% { opacity: .3; filter: saturate(.9); }
+  }
+  @keyframes heroPlaneNavGreen {
+    0%, 34%, 55%, 100% { opacity: .16; filter: saturate(.75); }
+    38%, 50% { opacity: 1; filter: saturate(1.2); }
+    42%, 54% { opacity: .3; filter: saturate(.9); }
+  }
+  @keyframes heroPlaneStrobe {
+    0%, 68%, 100% { opacity: .08; transform: scale(.85); }
+    72%, 74% { opacity: 1; transform: scale(1.15); }
+    73%, 75% { opacity: .12; transform: scale(.9); }
   }
   #splash-login > div:hover {
     animation-duration: 4.6s;
@@ -1557,6 +1608,15 @@
     opacity: .85;
     animation: lineFlow 8s ease-in-out infinite;
   }
+  .page > .card + .card {
+    margin-top: 18px;
+  }
+  .page > .card + .card::before {
+    top: 0;
+    height: 2px;
+    opacity: .38;
+    z-index: 1;
+  }
   .badge { display: inline-flex; align-items: center; gap: 3px; padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: 600; letter-spacing: 0.05em; }
   .today-btn { background: var(--glass-6); border: 1px solid var(--border2); border-radius: 7px; padding: 5px 12px; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--text2); font-family: var(--ff-body); transition: all 0.28s var(--ease-smooth); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
   .dark .today-btn { background: var(--glass-6); }
@@ -1815,6 +1875,20 @@
   body:not(.basic-mode) .card {
     border-radius: 14px !important;
   }
+  body:not(.basic-mode) .page > .card + .card::before {
+    content: '' !important;
+    position: absolute !important;
+    left: 16px !important;
+    right: 16px !important;
+    top: 0 !important;
+    height: 2px !important;
+    background: linear-gradient(90deg, transparent, var(--accent2), transparent) !important;
+    background-size: 200% 100% !important;
+    animation: lineFlow 8s ease-in-out infinite !important;
+    opacity: .38 !important;
+    pointer-events: none !important;
+    z-index: 1 !important;
+  }
   body:not(.basic-mode) .nav-btn,
   body:not(.basic-mode) .tab,
   body:not(.basic-mode) .today-btn,
@@ -1873,6 +1947,22 @@
   body:not(.basic-mode) .hero-emoji-wrap *,
   body:not(.basic-mode) .plane-smoke {
     animation: none !important;
+  }
+  /* Re-enable airplane motion for the long-break card icon. */
+  body:not(.basic-mode) .hero-emoji-wrap.plane .hero-emoji{
+    animation: heroPlaneGlide 5.5s ease-in-out infinite !important;
+  }
+  body:not(.basic-mode) .hero-emoji-wrap.plane .plane-smoke{
+    animation: heroPlaneSmoke 2.1s ease-in-out infinite !important;
+  }
+  body:not(.basic-mode) .hero-emoji-wrap.plane .plane-smoke:nth-child(2){
+    animation-delay: .42s !important;
+  }
+  body:not(.basic-mode) .hero-emoji-wrap.plane .plane-smoke:nth-child(3){
+    animation-delay: .84s !important;
+  }
+  body:not(.basic-mode) .hero-emoji-wrap.plane .plane-smoke:nth-child(4){
+    animation-delay: 1.26s !important;
   }
 </style>
 </head>
