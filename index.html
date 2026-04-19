@@ -842,6 +842,40 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
 .app-card:hover .card-icon{
   transform:translateY(-2px) scale(1.03);
 }
+@keyframes userMgmtCardAlertPulse{
+  0%,100%{
+    filter:drop-shadow(0 0 0 rgba(239,68,68,.2)) drop-shadow(0 0 0 rgba(239,68,68,.12));
+  }
+  50%{
+    filter:drop-shadow(0 0 12px rgba(239,68,68,.55)) drop-shadow(0 0 24px rgba(239,68,68,.35));
+  }
+}
+.app-card.needs-attention{
+  border-color:rgba(239,68,68,.86);
+  box-shadow:0 0 0 2px rgba(239,68,68,.72), 0 0 22px rgba(239,68,68,.3), 0 14px 32px rgba(0,0,0,.11), inset 0 1px 0 rgba(255,255,255,.12);
+  animation:userMgmtCardAlertPulse 1.45s ease-in-out infinite;
+}
+.app-card.needs-attention:hover{
+  border-color:rgba(252,165,165,.98);
+  box-shadow:0 0 0 2px rgba(248,113,113,.88), 0 0 28px rgba(248,113,113,.4), 0 14px 32px rgba(0,0,0,.11), inset 0 1px 0 rgba(255,255,255,.12);
+}
+@keyframes messageBoardCardAlertPulse{
+  0%,100%{
+    filter:drop-shadow(0 0 0 rgba(34,197,94,.18)) drop-shadow(0 0 0 rgba(34,197,94,.1));
+  }
+  50%{
+    filter:drop-shadow(0 0 10px rgba(34,197,94,.45)) drop-shadow(0 0 20px rgba(34,197,94,.26));
+  }
+}
+.app-card.has-new-message{
+  border-color:rgba(34,197,94,.9);
+  box-shadow:0 0 0 2px rgba(34,197,94,.7), 0 0 20px rgba(34,197,94,.3), 0 14px 32px rgba(0,0,0,.11), inset 0 1px 0 rgba(255,255,255,.12);
+  animation:messageBoardCardAlertPulse 1.7s ease-in-out infinite;
+}
+.app-card.has-new-message:hover{
+  border-color:rgba(74,222,128,.98);
+  box-shadow:0 0 0 2px rgba(74,222,128,.86), 0 0 26px rgba(74,222,128,.38), 0 14px 32px rgba(0,0,0,.11), inset 0 1px 0 rgba(255,255,255,.12);
+}
 .card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px;}
 .card-chip{
   display:inline-flex;
@@ -1114,13 +1148,9 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
         <span id="headerEmail">—</span>
       </div>
       <span class="db-dot" title="Database connected" aria-label="Database connected" style="flex:0 0 auto"></span>
-      <button class="icon-btn" id="adminPanelBtn" onclick="openAdminPanel()" title="User Management" style="display:none;position:relative">
+      <button class="icon-btn" id="adminPanelBtn" onclick="openAdminPanel()" title="User Management" style="display:none !important;position:relative">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         <span id="pendingBadge" style="display:none;position:absolute;top:2px;right:2px;background:var(--amb);color:#000;font-size:9px;font-weight:700;border-radius:10px;padding:1px 5px;min-width:16px;text-align:center;line-height:16px"></span>
-      </button>
-      <button class="icon-btn" id="resetReqBtn" onclick="openResetReqModal()" title="Password Reset Requests" style="display:none;position:relative">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
-        <span id="resetReqBadge" style="display:none;position:absolute;top:2px;right:2px;background:var(--red);color:#fff;font-size:9px;font-weight:700;border-radius:10px;padding:1px 5px;min-width:16px;text-align:center;line-height:16px"></span>
       </button>
       <button class="icon-btn" id="feedbackBtn" onclick="openFeedbackRequestModal()" title="Report Bug / Request Feature" style="display:none;position:relative">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 15a3 3 0 0 1-3 3H8l-5 4V6a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3z"/><path d="M8 10h8"/><path d="M8 14h5"/></svg>
@@ -1270,6 +1300,31 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
         </div>
       </a>
 
+      <a href="message-board/index.html" id="messageBoardAppCard" class="app-card" onclick="return openMessageBoardApp(event)">
+        <div class="card-top">
+          <div class="card-icon tracker-icon">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <defs>
+                <linearGradient id="cardMessageGrad" x1="4" y1="3" x2="20" y2="21" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#14b8a6"/>
+                  <stop offset="100%" stop-color="#0ea5a0"/>
+                </linearGradient>
+              </defs>
+              <rect x="3.5" y="4.5" width="17" height="13.5" rx="3.5" fill="url(#cardMessageGrad)"/>
+              <path d="M8 18.5v2.2l3.4-2.2" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M8.2 10.2h7.6M8.2 13.1h5.4" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+              <circle class="dial-mark" cx="17.5" cy="15.2" r="1.1" fill="#fff"/>
+            </svg>
+          </div>
+        </div>
+        <div class="card-title">Message Board</div>
+        <div class="card-desc">Post anonymous messages to a shared whiteboard. Every note stays live for 24 hours and then expires automatically.</div>
+        <div class="card-footer">
+          <div class="card-foot-label">Open app</div>
+          <div class="card-arrow">→</div>
+        </div>
+      </a>
+
       <a href="user-management/index.html" id="userManagementAppCard" class="app-card" style="display:none" onclick="return openUserManagementApp(event)">
         <div class="card-top">
           <div class="card-icon tracker-icon">
@@ -1396,7 +1451,7 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
             <input type="hidden" id="inviteEmail" value="">
           </div>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;align-items:stretch">
+        <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px;align-items:stretch">
           <div style="display:grid;grid-template-rows:16px 38px;gap:4px;height:58px;align-content:start"><label style="display:block;height:16px;line-height:16px;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Platform Access</label>
             <select id="inviteRole" style="width:100%;height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
               <option value="true">Allow Access</option>
@@ -1411,6 +1466,12 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
           </div>
           <div style="display:grid;grid-template-rows:16px 38px;gap:4px;height:58px;align-content:start"><label style="display:block;height:16px;line-height:16px;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Holiday Requests</label>
             <select id="inviteHolidayAccess" style="width:100%;height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
+              <option value="true">Allow Access</option>
+              <option value="false">No Access</option>
+            </select>
+          </div>
+          <div style="display:grid;grid-template-rows:16px 38px;gap:4px;height:58px;align-content:start"><label style="display:block;height:16px;line-height:16px;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Message Board</label>
+            <select id="inviteMessageBoardAccess" style="width:100%;height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
               <option value="true">Allow Access</option>
               <option value="false">No Access</option>
             </select>
@@ -1508,7 +1569,7 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
         <div style="font-size:10px;color:var(--tx3);line-height:1.45;font-family:var(--ff-mono)">This updates the suite profile email and kiln record. It does not change the Supabase login email.</div>
       </label>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;align-items:stretch">
+    <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:12px;align-items:stretch">
       <label style="display:grid;grid-template-rows:16px 38px;gap:4px;height:58px;align-content:start">
         <div style="font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;height:16px;line-height:16px">Platform Access</div>
         <select id="roleEditDocs" style="height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
@@ -1533,6 +1594,13 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
       <label style="display:grid;grid-template-rows:16px 38px;gap:4px;height:58px;align-content:start">
         <div style="font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;height:16px;line-height:16px">Holiday Requests</div>
         <select id="roleEditHoliday" style="height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
+          <option value="true">Allow Access</option>
+          <option value="false">No Access</option>
+        </select>
+      </label>
+      <label style="display:grid;grid-template-rows:16px 38px;gap:4px;height:58px;align-content:start">
+        <div style="font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;height:16px;line-height:16px">Message Board</div>
+        <select id="roleEditMessageBoard" style="height:38px;padding:0 10px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);font-family:var(--ff-body);font-size:13px;outline:none">
           <option value="true">Allow Access</option>
           <option value="false">No Access</option>
         </select>
@@ -1961,6 +2029,24 @@ body:not(.basic-mode) .app-card:hover{
   box-shadow:var(--e2) !important;
   transform:translateY(-2px) !important;
 }
+body:not(.basic-mode) .app-card.needs-attention{
+  border-color:rgba(239,68,68,.86) !important;
+  box-shadow:0 0 0 2px rgba(239,68,68,.72), 0 0 22px rgba(239,68,68,.3), var(--e2) !important;
+  animation:userMgmtCardAlertPulse 1.45s ease-in-out infinite !important;
+}
+body:not(.basic-mode) .app-card.needs-attention:hover{
+  border-color:rgba(252,165,165,.98) !important;
+  box-shadow:0 0 0 2px rgba(248,113,113,.88), 0 0 28px rgba(248,113,113,.4), var(--e2) !important;
+}
+body:not(.basic-mode) .app-card.has-new-message{
+  border-color:rgba(34,197,94,.9) !important;
+  box-shadow:0 0 0 2px rgba(34,197,94,.7), 0 0 20px rgba(34,197,94,.3), var(--e2) !important;
+  animation:messageBoardCardAlertPulse 1.7s ease-in-out infinite !important;
+}
+body:not(.basic-mode) .app-card.has-new-message:hover{
+  border-color:rgba(74,222,128,.98) !important;
+  box-shadow:0 0 0 2px rgba(74,222,128,.86), 0 0 26px rgba(74,222,128,.38), var(--e2) !important;
+}
 body:not(.basic-mode) .app-card .card-arrow{
   background:var(--sf2) !important;
   border-color:var(--bd2) !important;
@@ -2089,6 +2175,16 @@ body:not(.basic-mode) .palette-option.active{
 /* Quiet decorative motion (keep functional transitions). */
 body:not(.basic-mode) .db-dot,
 body:not(.basic-mode) .card-icon{animation:none !important;}
+body.basic-mode .app-card.needs-attention{
+  animation:none !important;
+  border-color:rgba(239,68,68,.7) !important;
+  box-shadow:none !important;
+}
+body.basic-mode .app-card.has-new-message{
+  animation:none !important;
+  border-color:rgba(34,197,94,.72) !important;
+  box-shadow:none !important;
+}
 </style>
 <script>
 // ---------------------------------------------------------------------------
@@ -2102,6 +2198,8 @@ const SB_LIC_URL  = 'https://dviicnomxeibbuafbozp.supabase.co';
 const SB_LIC_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2aWljbm9teGVpYmJ1YWZib3pwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4ODM0MzcsImV4cCI6MjA4ODQ1OTQzN30.c1T3WXC225tdBbq_1R__9bhGFIZdSxim9dgxfvmkRjU';
 
 let sb;
+let _messageBoardAlertTimer = null;
+const MESSAGE_BOARD_SEEN_AT_KEY_PREFIX = 'pw_message_board_seen_at:';
 
 async function checkLicence() {
   try {
@@ -2361,11 +2459,10 @@ async function showAppSelector(user, opts) {
   const isMobileViewport = !!(window.matchMedia && window.matchMedia('(max-width: 640px)').matches);
   _platformSharedRoleAccount = isSharedOperatorAccount(null, null, user || null);
   const adminPanelBtn = document.getElementById('adminPanelBtn');
-  const resetReqBtn = document.getElementById('resetReqBtn');
   const userMgmtCard = document.getElementById('userManagementAppCard');
   if (adminPanelBtn) adminPanelBtn.style.display = 'none';
-  if (resetReqBtn) resetReqBtn.style.display = 'none';
   if (userMgmtCard) userMgmtCard.style.display = 'none';
+  clearMessageBoardCardAlert();
   document.getElementById('headerUser').style.display = 'flex';
   document.getElementById('logoutBtn').style.display = 'flex';
   document.getElementById('changePwBtn').style.display = _platformSharedRoleAccount ? 'none' : 'flex';
@@ -2418,10 +2515,7 @@ async function showAppSelector(user, opts) {
       : getSuiteDisplayName(data || null, null, (user && user.email) ? user.email : '—');
     document.getElementById('headerEmail').textContent = displayName;
     if (data && data.role === 'admin') {
-      if (adminPanelBtn) adminPanelBtn.style.display = 'flex';
-      if (resetReqBtn) resetReqBtn.style.display = 'flex';
       if (userMgmtCard) userMgmtCard.style.display = '';
-      loadResetReqBadge();
       loadPendingBadge();
     }
     try {
@@ -2435,8 +2529,6 @@ async function showAppSelector(user, opts) {
         holidayBtn.style.display = (ku && isManagerApproverKilnUser(ku) && (data && (data.holiday_requests_access !== false || data.credit_hours_access !== false))) ? 'flex' : 'none';
       }
       if (ku && ku.is_admin) {
-        if (adminPanelBtn) adminPanelBtn.style.display = 'flex';
-        if (resetReqBtn) resetReqBtn.style.display = 'flex';
         if (userMgmtCard) userMgmtCard.style.display = '';
       }
       if (ku) {
@@ -2493,6 +2585,8 @@ async function showAppSelector(user, opts) {
   const feedbackBtn = document.getElementById('feedbackBtn');
   if (feedbackBtn) feedbackBtn.style.display = 'flex';
   document.getElementById('mainWrapper').style.display = 'block';
+  await refreshMessageBoardCardAlert().catch(function(){});
+  ensureMessageBoardCardAlertPolling();
   checkAppStatus();
   return true;
 }
@@ -2507,6 +2601,10 @@ async function doLogout() {
   _pwPostResetSkipUid = null;
   _platformKilnUser = null;
   _platformSharedRoleAccount = false;
+  if (_messageBoardAlertTimer) {
+    clearInterval(_messageBoardAlertTimer);
+    _messageBoardAlertTimer = null;
+  }
   window.location.reload();
 }
 
@@ -2570,6 +2668,81 @@ function showRegMsg(type, text) {
   msg.style.color      = type === 'ok' ? 'var(--grn)'  : 'var(--red)';
   msg.style.border     = '1px solid ' + (type === 'ok' ? 'var(--grnb)' : 'var(--redb)');
 }
+function messageBoardSeenAtKey(){
+  const profile = _platformProfile || null;
+  const id = profile && profile.id ? String(profile.id) : '';
+  return id ? (MESSAGE_BOARD_SEEN_AT_KEY_PREFIX + id) : '';
+}
+function markMessageBoardSeen(ts){
+  const key = messageBoardSeenAtKey();
+  if (!key) return;
+  const val = String(ts || new Date().toISOString());
+  try { localStorage.setItem(key, val); } catch(e) {}
+  const card = document.getElementById('messageBoardAppCard');
+  if (card) card.classList.remove('has-new-message');
+}
+function clearMessageBoardCardAlert(){
+  const card = document.getElementById('messageBoardAppCard');
+  if (card) card.classList.remove('has-new-message');
+}
+async function refreshMessageBoardCardAlert(){
+  const profile = _platformProfile || null;
+  const hasAccess = !!(profile && profile.approved !== false && profile.disabled !== true && profile.role !== 'none' && profile.message_board_access !== false);
+  if (!hasAccess || !sb) {
+    clearMessageBoardCardAlert();
+    return;
+  }
+  const nowIso = new Date().toISOString();
+  const latestRes = await sb
+    .from('pw_message_board_posts')
+    .select('created_at')
+    .gt('expires_at', nowIso)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (latestRes.error) {
+    clearMessageBoardCardAlert();
+    return;
+  }
+  const latestCreatedAt = latestRes.data && latestRes.data.created_at ? String(latestRes.data.created_at) : '';
+  if (!latestCreatedAt) {
+    clearMessageBoardCardAlert();
+    return;
+  }
+  const key = messageBoardSeenAtKey();
+  const seenAt = key ? String(localStorage.getItem(key) || '') : '';
+  const hasNew = !seenAt || (new Date(latestCreatedAt).getTime() > new Date(seenAt).getTime());
+  const card = document.getElementById('messageBoardAppCard');
+  if (card) card.classList.toggle('has-new-message', hasNew);
+}
+function ensureMessageBoardCardAlertPolling(){
+  if (_messageBoardAlertTimer) {
+    clearInterval(_messageBoardAlertTimer);
+    _messageBoardAlertTimer = null;
+  }
+  _messageBoardAlertTimer = setInterval(function(){
+    refreshMessageBoardCardAlert().catch(function(){});
+  }, 60000);
+}
+function isFeedbackRequestRow(req){
+  return String(req && req.role ? req.role : '').toLowerCase().indexOf('feedback_') === 0;
+}
+function updateUserManagementCardAttention(counts){
+  const card = document.getElementById('userManagementAppCard');
+  if (!card) return;
+  const total = Number(counts && counts.total ? counts.total : 0);
+  card.classList.toggle('needs-attention', total > 0);
+  if (total > 0) {
+    const parts = [];
+    if (counts && counts.resetPending > 0) parts.push(counts.resetPending + ' password reset' + (counts.resetPending !== 1 ? 's' : ''));
+    if (counts && counts.feedbackPending > 0) parts.push(counts.feedbackPending + ' feature/bug request' + (counts.feedbackPending !== 1 ? 's' : ''));
+    if (counts && counts.accessPending > 0) parts.push(counts.accessPending + ' access request' + (counts.accessPending !== 1 ? 's' : ''));
+    if (counts && counts.profilePending > 0) parts.push(counts.profilePending + ' profile approval' + (counts.profilePending !== 1 ? 's' : ''));
+    card.title = 'User Management - Attention needed: ' + (parts.length ? parts.join(', ') : (String(total) + ' item' + (total !== 1 ? 's' : '') + ' pending'));
+  } else {
+    card.removeAttribute('title');
+  }
+}
 
 async function loadPendingBadge() {
   try {
@@ -2578,10 +2751,21 @@ async function loadPendingBadge() {
       loadRequestRows('access', { status: 'pending', ascending: false }),
       loadRequestRows('reset', { status: 'pending', ascending: false })
     ]);
-    const reqCount = (accessReqs ? accessReqs.length : 0) + (resetReqs ? resetReqs.length : 0);
-    const total = (profRes.count || 0) + reqCount;
+    const accessRows = accessReqs || [];
+    const resetPending = resetReqs ? resetReqs.length : 0;
+    const feedbackPending = accessRows.filter(isFeedbackRequestRow).length;
+    const accessPending = Math.max(0, accessRows.length - feedbackPending);
+    const profilePending = profRes.count || 0;
+    const total = profilePending + accessPending + resetPending + feedbackPending;
     const badge = document.getElementById('pendingBadge');
     if (badge) { badge.textContent = total; badge.style.display = total > 0 ? 'block' : 'none'; }
+    updateUserManagementCardAttention({
+      total: total,
+      profilePending: profilePending,
+      accessPending: accessPending,
+      resetPending: resetPending,
+      feedbackPending: feedbackPending
+    });
   } catch(e) { console.warn('pendingBadge:', e); }
 }
 
@@ -4209,6 +4393,7 @@ async function createAccessRequestAccount(target, passwordValue) {
   const trackerAllowed = accessReq ? accessReq.shift_tracker_access !== false : true;
   const creditHoursAllowed = accessReq ? accessReq.credit_hours_access !== false : true;
   const holidayAllowed = accessReq ? accessReq.holiday_requests_access !== false : true;
+  const messageBoardAllowed = accessReq ? accessReq.message_board_access !== false : true;
   const workRoleType = normalizeWorkRoleType(accessReq && accessReq[WORK_ROLE_TYPE_FIELD]) || inferWorkRoleType(null, null, target.kilnRole);
   const holidayManagerAuthUserId = accessReq ? (accessReq.holiday_manager_auth_user_id || null) : null;
   const holidayManagerValue = holidayManagerAuthUserId && getActiveHolidayManagerProfiles(null).some(function(m) { return String(m.id) === String(holidayManagerAuthUserId); }) ? holidayManagerAuthUserId : null;
@@ -4227,6 +4412,7 @@ async function createAccessRequestAccount(target, passwordValue) {
     credit_hours_access: creditHoursAllowed,
     shift_tracker_access: trackerAllowed,
     holiday_requests_access: holidayAllowed,
+    message_board_access: messageBoardAllowed,
     holiday_manager_auth_user_id: (target.kilnRole === 'admin') ? null : holidayManagerValue,
     work_role_type: kilnRoleIsDayManager ? 'day' : workRoleType,
     approved: true
@@ -4663,6 +4849,7 @@ function renderUserCard(m, DS, LS, RS, rc) {
       +'<span style="font-size:9px;font-family:var(--ff-mono);letter-spacing:1px;text-transform:uppercase;border:1px solid var(--bd2);border-radius:999px;padding:3px 7px;color:var(--tx3);background:var(--sf3)">Credit Hours: '+(p.credit_hours_access === false ? 'No Access' : 'Allow')+'</span>'
       +'<span style="font-size:9px;font-family:var(--ff-mono);letter-spacing:1px;text-transform:uppercase;border:1px solid var(--bd2);border-radius:999px;padding:3px 7px;color:var(--tx3);background:var(--sf3)">Tracker: '+(p.shift_tracker_access === false ? 'No Access' : 'Allow')+'</span>'
       +'<span style="font-size:9px;font-family:var(--ff-mono);letter-spacing:1px;text-transform:uppercase;border:1px solid var(--bd2);border-radius:999px;padding:3px 7px;color:var(--tx3);background:var(--sf3)">Holiday: '+(p.holiday_requests_access === false ? 'No Access' : 'Allow')+'</span>'
+      +'<span style="font-size:9px;font-family:var(--ff-mono);letter-spacing:1px;text-transform:uppercase;border:1px solid var(--bd2);border-radius:999px;padding:3px 7px;color:var(--tx3);background:var(--sf3)">Message Board: '+(p.message_board_access === false ? 'No Access' : 'Allow')+'</span>'
       +'<span style="font-size:9px;font-family:var(--ff-mono);letter-spacing:1px;text-transform:uppercase;border:1px solid var(--bd2);border-radius:999px;padding:3px 7px;color:var(--tx3);background:var(--sf3)">Role Type: '+esc(workRoleTypeLabel(workRoleType))+'</span>'
       +'<span style="font-size:9px;font-family:var(--ff-mono);letter-spacing:1px;text-transform:uppercase;border:1px solid var(--bd2);border-radius:999px;padding:3px 7px;color:var(--tx3);background:var(--sf3);max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Holiday Manager: '+esc(holidayManagerLabel(holidayManagerId) || 'None')+'</span>'
       +'</div>';
@@ -4815,6 +5002,7 @@ function openRoleEditor(profileId) {
   document.getElementById('roleEditCreditHours').value = p.credit_hours_access === false ? 'false' : 'true';
   document.getElementById('roleEditTracker').value = p.shift_tracker_access === false ? 'false' : 'true';
   document.getElementById('roleEditHoliday').value = p.holiday_requests_access === false ? 'false' : 'true';
+  document.getElementById('roleEditMessageBoard').value = p.message_board_access === false ? 'false' : 'true';
   document.getElementById('roleEditWorkRoleType').value = inferWorkRoleType(p, ku);
   const access = !ku ? false : (ku.is_admin || ku.shift_log_access !== false);
   document.getElementById('roleEditKilnAccess').value = access ? 'true' : 'false';
@@ -4868,6 +5056,7 @@ async function saveRoleEditor() {
   const creditHoursAccess = document.getElementById('roleEditCreditHours').value !== 'false';
   const trackerAccess = document.getElementById('roleEditTracker').value !== 'false';
   const holidayAccess = document.getElementById('roleEditHoliday').value !== 'false';
+  const messageBoardAccess = document.getElementById('roleEditMessageBoard').value !== 'false';
   const kilnAccess = document.getElementById('roleEditKilnAccess').value !== 'false';
   if (!fullNameInput) {
     roleEditorShowMsg('err', 'Please enter a full name.');
@@ -4917,6 +5106,7 @@ async function saveRoleEditor() {
       credit_hours_access: creditHoursAccess,
       shift_tracker_access: trackerAccess,
       holiday_requests_access: holidayAccess,
+      message_board_access: messageBoardAccess,
       holiday_manager_auth_user_id: holidayManagerAuthUserId,
       work_role_type: workRoleType
     });
@@ -4957,6 +5147,7 @@ async function saveRoleEditor() {
     p.credit_hours_access = creditHoursAccess;
     p.shift_tracker_access = trackerAccess;
     p.holiday_requests_access = holidayAccess;
+    p.message_board_access = messageBoardAccess;
     p.holiday_manager_auth_user_id = holidayManagerAuthUserId;
     p[WORK_ROLE_TYPE_FIELD] = savedWorkRoleType ? workRoleType : inferWorkRoleType(p, ku);
     if (ku) Object.assign(ku, kilnFlags, { locked_name: fullNameInput, email: emailInput });
@@ -5047,6 +5238,7 @@ async function inviteUser() {
   const platformAccess = document.getElementById('inviteRole').value !== 'false';
   const creditHoursAccessVal = document.getElementById('inviteCreditHoursAccess').value !== 'false';
   const holidayAccessVal = document.getElementById('inviteHolidayAccess').value !== 'false';
+  const messageBoardAccessVal = document.getElementById('inviteMessageBoardAccess').value !== 'false';
   const kilnRoleVal = document.getElementById('inviteKilnRole').value;
   const workRoleTypeVal = normalizeWorkRoleType(document.getElementById('inviteWorkRoleType').value) || inferWorkRoleType(null, null, kilnRoleVal);
   const trackerAccessVal = document.getElementById('inviteTrackerAccess').value === 'true';
@@ -5084,6 +5276,7 @@ async function inviteUser() {
       role: platformAccess ? 'viewer' : 'none',
       credit_hours_access: creditHoursAccessVal,
       holiday_requests_access: holidayAccessVal,
+      message_board_access: messageBoardAccessVal,
       holiday_manager_auth_user_id: (kilnRoleVal === 'admin') ? null : holidayManagerValue,
       kiln_role: kilnRoleVal,
       work_role_type: workRoleTypeVal,
@@ -5107,6 +5300,7 @@ async function inviteUser() {
     document.getElementById('inviteRole').value='true';
     document.getElementById('inviteCreditHoursAccess').value='true';
     document.getElementById('inviteHolidayAccess').value='true';
+    document.getElementById('inviteMessageBoardAccess').value='true';
     document.getElementById('inviteHolidayManager').value='';
     document.getElementById('inviteKilnRole').value='none';
     document.getElementById('inviteWorkRoleType').value='shift';
@@ -5193,6 +5387,19 @@ function openUserManagementApp(event) {
     window.location.href = 'user-management/index.html?access=denied';
     return false;
   }
+  return true;
+}
+
+function openMessageBoardApp(event) {
+  const profile = _platformProfile || null;
+  const hasPlatformSession = !!profile;
+  const hasAccess = !!(profile && profile.approved !== false && profile.disabled !== true && profile.role !== 'none' && profile.message_board_access !== false);
+  if (hasPlatformSession && !hasAccess) {
+    if (event) event.preventDefault();
+    window.location.href = 'message-board/index.html?access=denied';
+    return false;
+  }
+  markMessageBoardSeen();
   return true;
 }
 

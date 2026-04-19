@@ -359,6 +359,32 @@ body.light-mode{
   transform:rotate(225deg);
   margin-top:2px;
 }
+.queue-count-badge{display:none}
+.queue-count-badge.show{display:inline-flex}
+@keyframes queueAlertPulseAttention{
+  0%,100%{
+    filter:drop-shadow(0 0 0 rgba(239,68,68,.2)) drop-shadow(0 0 0 rgba(239,68,68,.12));
+  }
+  50%{
+    filter:drop-shadow(0 0 12px rgba(239,68,68,.55)) drop-shadow(0 0 24px rgba(239,68,68,.35));
+  }
+}
+.panel.queue-alert-attention{
+  border-color:rgba(239,68,68,.86);
+  box-shadow:
+    0 0 0 2px rgba(239,68,68,.72),
+    0 0 22px rgba(239,68,68,.3),
+    var(--e2), var(--eac);
+  animation:queueAlertPulseAttention 1.45s ease-in-out infinite;
+}
+.panel.queue-alert-attention > summary.panel-head{
+  background:linear-gradient(180deg, color-mix(in srgb, var(--redd) 60%, var(--glass-1)), color-mix(in srgb, var(--redd) 30%, var(--glass-2)));
+}
+.panel.queue-alert-attention .queue-count-badge{
+  color:var(--red);
+  border-color:color-mix(in srgb, var(--redb) 72%, var(--bd));
+  background:color-mix(in srgb, var(--redd) 58%, var(--sf2));
+}
 .panel-head{
   position:relative;
   display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
@@ -440,6 +466,14 @@ body.light-mode{
 .group-summary-action:disabled{
   opacity:.45;
   cursor:not-allowed;
+}
+.bulk-access-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+@media (max-width:720px){
+  .bulk-access-grid{grid-template-columns:1fr}
 }
 .group .group-name::after{
   content:'';
@@ -930,6 +964,13 @@ body.basic-mode *::after{
           </select>
         </div>
         <div class="field">
+          <label for="quickMessageBoardAccess">Message Board</label>
+          <select id="quickMessageBoardAccess" class="select">
+            <option value="true">Allow Access</option>
+            <option value="false">No Access</option>
+          </select>
+        </div>
+        <div class="field">
           <label for="quickLogsAccess">Logs Access</label>
           <select id="quickLogsAccess" class="select">
             <option value="true">Allow Access</option>
@@ -955,24 +996,26 @@ body.basic-mode *::after{
       </div>
     </details>
 
-    <details class="panel collapsible">
+    <details class="panel collapsible" id="resetQueuePanel">
       <summary class="panel-head">
         <div>
           <div class="panel-title">Password Resets</div>
           <div class="panel-sub">Handle password reset requests directly from User Management.</div>
         </div>
+        <span id="resetQueueBadge" class="pill warn queue-count-badge hidden" aria-live="polite">0 pending</span>
       </summary>
       <div id="resetRequestList" class="list">
         <div class="empty">Loading requests...</div>
       </div>
     </details>
 
-    <details class="panel collapsible">
+    <details class="panel collapsible" id="feedbackQueuePanel">
       <summary class="panel-head">
         <div>
           <div class="panel-title">Feedback Queue</div>
           <div class="panel-sub">Feature requests and bug reports from the suite.</div>
         </div>
+        <span id="feedbackQueueBadge" class="pill queue-count-badge feedback hidden" aria-live="polite">0 pending</span>
       </summary>
       <div id="feedbackRequestList" class="stack">
         <div class="empty">Loading requests...</div>
@@ -1106,7 +1149,14 @@ body.basic-mode *::after{
               <option value="false">No Access</option>
             </select>
           </div>
-          <div class="field wide">
+          <div class="field">
+            <label for="editMessageBoardAccess">Message Board</label>
+            <select id="editMessageBoardAccess" class="select">
+              <option value="true">Allow Access</option>
+              <option value="false">No Access</option>
+            </select>
+          </div>
+          <div class="field">
             <label for="editLogsAccess">Logs access</label>
             <select id="editLogsAccess" class="select">
               <option value="true">Allow Access</option>
@@ -1153,6 +1203,75 @@ body.basic-mode *::after{
       <button class="btn btn-ghost" type="button" id="editorPwBtn" onclick="openEditorPasswordModal()">Set Password</button>
       <button class="btn btn-ghost" type="button" onclick="closeEditor()">Cancel</button>
       <button class="btn btn-primary" type="button" id="editorSaveBtn" onclick="saveEditorChanges()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<div id="bulkAccessOverlay" class="modal-overlay" onclick="if(event.target===this)closeBulkAccessEditor()">
+  <div class="modal" style="max-width:780px">
+    <div class="panel-head">
+      <div>
+        <div class="panel-title">Bulk App Access</div>
+        <div class="panel-sub" id="bulkAccessSub">Choose access changes to apply to this role group.</div>
+      </div>
+      <button class="btn btn-ghost" type="button" onclick="closeBulkAccessEditor()">Close</button>
+    </div>
+    <div class="modal-body">
+      <section class="editor-section">
+        <div class="editor-section-head">
+          <div>
+            <div class="editor-section-title">Suite Apps</div>
+            <div class="editor-section-sub">Set each app to No change, Allow access, or No access.</div>
+          </div>
+        </div>
+        <div class="bulk-access-grid">
+          <div class="field">
+            <label for="bulkAccessTracker">Shift Tracker</label>
+            <select id="bulkAccessTracker" class="select">
+              <option value="no_change">No change</option>
+              <option value="true">Allow Access</option>
+              <option value="false">No Access</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="bulkAccessHoliday">Holiday Requests</label>
+            <select id="bulkAccessHoliday" class="select">
+              <option value="no_change">No change</option>
+              <option value="true">Allow Access</option>
+              <option value="false">No Access</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="bulkAccessCredit">Credit Hours</label>
+            <select id="bulkAccessCredit" class="select">
+              <option value="no_change">No change</option>
+              <option value="true">Allow Access</option>
+              <option value="false">No Access</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="bulkAccessMessageBoard">Message Board</label>
+            <select id="bulkAccessMessageBoard" class="select">
+              <option value="no_change">No change</option>
+              <option value="true">Allow Access</option>
+              <option value="false">No Access</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="bulkAccessLogs">Logs Access</label>
+            <select id="bulkAccessLogs" class="select">
+              <option value="no_change">No change</option>
+              <option value="true">Allow Access</option>
+              <option value="false">No Access</option>
+            </select>
+          </div>
+        </div>
+      </section>
+    </div>
+    <div class="small" id="bulkAccessMsg">Select any apps to update, then apply once.</div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" type="button" onclick="closeBulkAccessEditor()">Cancel</button>
+      <button class="btn btn-primary" type="button" id="bulkAccessApplyBtn" onclick="applyBulkAccessChanges()">Apply Changes</button>
     </div>
   </div>
 </div>
@@ -1275,6 +1394,7 @@ let pendingResetReqId = null;
 let pendingResetReqTable = null;
 let forcePwUsername = null;
 let editingUserKey = null;
+let bulkAccessGroupKey = null;
 let startupLoginTimer = null;
 let suiteLogoSrc = null;
 let suiteLogoPromise = null;
@@ -1457,6 +1577,106 @@ async function bulkSetGroupDisabled(groupKey, shouldDisable){
     await loadDirectory();
   } catch (e) {
     setToast('Could not update ' + label.toLowerCase() + ': ' + (e && e.message ? e.message : String(e)));
+  }
+}
+function parseBulkAccessValue(v){
+  const raw = toLower(v);
+  if (raw === 'true') return true;
+  if (raw === 'false') return false;
+  return null;
+}
+function openBulkAccessEditor(groupKey){
+  if (!groupKey || groupKey === 'admin' || groupKey === 'pending') {
+    setToast('This group cannot be bulk edited for app access.');
+    return;
+  }
+  const targets = getManagedUsersForGroup(groupKey);
+  if (!targets.length) {
+    setToast('No users available in this group.');
+    return;
+  }
+  bulkAccessGroupKey = groupKey;
+  $('bulkAccessTracker').value = 'no_change';
+  $('bulkAccessHoliday').value = 'no_change';
+  $('bulkAccessCredit').value = 'no_change';
+  $('bulkAccessMessageBoard').value = 'no_change';
+  $('bulkAccessLogs').value = 'no_change';
+  $('bulkAccessSub').textContent = 'Choose access changes for ' + groupMetaLabel(groupKey) + '.';
+  $('bulkAccessMsg').textContent = 'Applying to ' + targets.length + ' user' + (targets.length !== 1 ? 's' : '') + ' in ' + groupMetaLabel(groupKey) + '.';
+  $('bulkAccessApplyBtn').disabled = false;
+  $('bulkAccessOverlay').classList.add('open');
+}
+function closeBulkAccessEditor(){
+  bulkAccessGroupKey = null;
+  $('bulkAccessOverlay').classList.remove('open');
+}
+async function setManagedUsersAppAccess(targets, accessPatch){
+  const profileIds = Array.from(new Set((targets || []).map(function(t){
+    return t && t.profile && t.profile.id ? String(t.profile.id) : '';
+  }).filter(Boolean)));
+  const authIds = Array.from(new Set((targets || []).map(function(t){
+    return t && t.kiln && t.kiln.auth_user_id ? String(t.kiln.auth_user_id) : '';
+  }).filter(Boolean)));
+  const usernames = Array.from(new Set((targets || []).map(function(t){
+    return t && t.kiln && t.kiln.username ? String(t.kiln.username) : '';
+  }).filter(Boolean)));
+  const profilePatch = {};
+  if (typeof accessPatch.shift_tracker_access === 'boolean') profilePatch.shift_tracker_access = accessPatch.shift_tracker_access;
+  if (typeof accessPatch.holiday_requests_access === 'boolean') profilePatch.holiday_requests_access = accessPatch.holiday_requests_access;
+  if (typeof accessPatch.credit_hours_access === 'boolean') profilePatch.credit_hours_access = accessPatch.credit_hours_access;
+  if (typeof accessPatch.message_board_access === 'boolean') profilePatch.message_board_access = accessPatch.message_board_access;
+
+  if (profileIds.length && Object.keys(profilePatch).length) {
+    const { error } = await sb.from('pw_profiles').update(profilePatch).in('id', profileIds);
+    if (error) throw error;
+  }
+  if (typeof accessPatch.shift_log_access === 'boolean') {
+    if (authIds.length) {
+      const { error } = await sb.from('kiln_users').update({ shift_log_access: accessPatch.shift_log_access }).in('auth_user_id', authIds);
+      if (error) throw error;
+    }
+    if (usernames.length) {
+      const { error } = await sb.from('kiln_users').update({ shift_log_access: accessPatch.shift_log_access }).in('username', usernames);
+      if (error) throw error;
+    }
+  }
+}
+async function applyBulkAccessChanges(){
+  if (!bulkAccessGroupKey) {
+    setToast('Select a role group first.');
+    return;
+  }
+  const accessPatch = {
+    shift_tracker_access: parseBulkAccessValue($('bulkAccessTracker').value),
+    holiday_requests_access: parseBulkAccessValue($('bulkAccessHoliday').value),
+    credit_hours_access: parseBulkAccessValue($('bulkAccessCredit').value),
+    message_board_access: parseBulkAccessValue($('bulkAccessMessageBoard').value),
+    shift_log_access: parseBulkAccessValue($('bulkAccessLogs').value)
+  };
+  const hasChanges = Object.keys(accessPatch).some(function(key){
+    return typeof accessPatch[key] === 'boolean';
+  });
+  if (!hasChanges) {
+    $('bulkAccessMsg').textContent = 'Pick at least one app access change before applying.';
+    return;
+  }
+  const targets = getManagedUsersForGroup(bulkAccessGroupKey);
+  if (!targets.length) {
+    setToast('No users available in this group.');
+    closeBulkAccessEditor();
+    return;
+  }
+  const applyBtn = $('bulkAccessApplyBtn');
+  applyBtn.disabled = true;
+  $('bulkAccessMsg').textContent = 'Applying updates...';
+  try {
+    await setManagedUsersAppAccess(targets, accessPatch);
+    setToast('Updated app access for ' + groupMetaLabel(bulkAccessGroupKey) + ' ✓');
+    closeBulkAccessEditor();
+    await loadDirectory();
+  } catch (e) {
+    applyBtn.disabled = false;
+    $('bulkAccessMsg').textContent = 'Could not apply changes: ' + (e && e.message ? e.message : String(e));
   }
 }
 function hasMissingFunctionError(err, fnName){
@@ -1783,6 +2003,7 @@ async function createAccessRequestAccount(target, passwordValue){
   const trackerAllowed = accessReq ? accessReq.shift_tracker_access !== false : true;
   const creditHoursAllowed = accessReq ? accessReq.credit_hours_access !== false : true;
   const holidayAllowed = accessReq ? accessReq.holiday_requests_access !== false : true;
+  const messageBoardAllowed = accessReq ? accessReq.message_board_access !== false : true;
   const logsAllowed = accessReq ? accessReq.logs_access !== false : true;
   const effectiveKilnRole = target.kilnRole || 'none';
   const workRoleType = target && target.kilnRole && (target.kilnRole === 'day_manager' || target.kilnRole === 'day_staff') ? 'day' : (target.workRoleType || 'shift');
@@ -1805,6 +2026,7 @@ async function createAccessRequestAccount(target, passwordValue){
     shift_tracker_access: trackerAllowed,
     holiday_requests_access: holidayAllowed,
     credit_hours_access: creditHoursAllowed,
+    message_board_access: messageBoardAllowed,
     holiday_manager_auth_user_id: target.kilnRole === 'admin' ? null : holidayManagerAuthUserId,
     work_role_type: workRoleType
   });
@@ -1996,6 +2218,7 @@ function openEditorByRow(row){
   $('editTrackerAccess').value = boolValue(p.shift_tracker_access, true) ? 'true' : 'false';
   $('editHolidayAccess').value = boolValue(p.holiday_requests_access, true) ? 'true' : 'false';
   $('editCreditAccess').value = boolValue(p.credit_hours_access, true) ? 'true' : 'false';
+  $('editMessageBoardAccess').value = boolValue(p.message_board_access, true) ? 'true' : 'false';
   $('editLogsAccess').value = logsAccessAllowed(k) && $('editKilnRole').value !== 'none' ? 'true' : 'false';
   syncLogsAccessRolePair('editLogsAccess', 'editKilnRole');
   $('editMustReset').value = boolValue((k && k.must_reset_password), boolValue(p.must_reset_password, false)) ? 'true' : 'false';
@@ -2025,6 +2248,7 @@ function renderGroupSection(groupKey, rows){
   const canBulkUpdate = groupKey !== 'admin' && groupKey !== 'pending';
   const bulkButtons = canBulkUpdate
     ? '<div class="group-summary-right" onclick="event.stopPropagation()">'
+      + '<button type="button" class="btn btn-ghost group-summary-action" onclick="openBulkAccessEditor(\'' + esc(groupKey) + '\')">App Access</button>'
       + '<button type="button" class="btn btn-danger group-summary-action" onclick="bulkSetGroupDisabled(\'' + esc(groupKey) + '\', true)"' + (activeCount ? '' : ' disabled') + '>Disable All</button>'
       + '<button type="button" class="btn btn-primary group-summary-action" onclick="bulkSetGroupDisabled(\'' + esc(groupKey) + '\', false)"' + (disabledCount ? '' : ' disabled') + '>Enable All</button>'
       + '</div>'
@@ -2076,7 +2300,37 @@ function renderUserCard(row){
   return html;
 }
 
+function applyQueueHighlightState(opts){
+  const panel = $(opts.panelId);
+  const badge = $(opts.badgeId);
+  const count = Math.max(0, Number(opts.count || 0));
+  if (panel){
+    panel.classList.toggle(opts.alertClass, count > 0);
+  }
+  if (badge){
+    badge.textContent = String(count) + ' pending';
+    badge.classList.toggle('show', count > 0);
+    badge.classList.toggle('hidden', count <= 0);
+  }
+}
+
+function syncQueuePanelHighlights(){
+  applyQueueHighlightState({
+    panelId: 'resetQueuePanel',
+    badgeId: 'resetQueueBadge',
+    count: (resetRequestsCache || []).length,
+    alertClass: 'queue-alert-attention'
+  });
+  applyQueueHighlightState({
+    panelId: 'feedbackQueuePanel',
+    badgeId: 'feedbackQueueBadge',
+    count: (feedbackRequestsCache || []).length,
+    alertClass: 'queue-alert-attention'
+  });
+}
+
 function renderApp(){
+  syncQueuePanelHighlights();
   const accessList = $('accessRequestList');
   if (accessList) accessList.innerHTML = renderAccessQueueSection();
   const resetList = $('resetRequestList');
@@ -2569,6 +2823,7 @@ async function saveEditorChanges(){
   const shiftTrackerAccess = $('editTrackerAccess').value !== 'false';
   const holidayAccess = $('editHolidayAccess').value !== 'false';
   const creditAccess = $('editCreditAccess').value !== 'false';
+  const messageBoardAccess = $('editMessageBoardAccess').value !== 'false';
   const logsAccess = $('editLogsAccess').value !== 'false';
   const shiftLogAccess = kilnRole === 'none' ? false : logsAccess;
   const isLocked = row.kiln && typeof row.kiln.is_locked === 'boolean' ? row.kiln.is_locked : false;
@@ -2601,6 +2856,7 @@ async function saveEditorChanges(){
     p_shift_tracker_access: shiftTrackerAccess,
     p_holiday_requests_access: holidayAccess,
     p_credit_hours_access: creditAccess,
+    p_message_board_access: messageBoardAccess,
     p_holiday_manager_auth_user_id: kilnRole === 'admin' ? null : managerId,
     p_work_role_type: (kilnRole === 'day_manager' || kilnRole === 'day_staff') ? 'day' : workRoleType,
     p_kiln_role: kilnRole,
@@ -2651,6 +2907,7 @@ async function queueQuickUser(){
       shift_tracker_access: toLower($('quickTrackerAccess').value || 'true') !== 'false',
       holiday_requests_access: toLower($('quickHolidayAccess').value || 'true') !== 'false',
       credit_hours_access: toLower($('quickCreditAccess').value || 'true') !== 'false',
+      message_board_access: toLower($('quickMessageBoardAccess').value || 'true') !== 'false',
       logs_access: logsAccess,
       requested_at: new Date().toISOString(),
       status: 'pending'
@@ -2663,6 +2920,7 @@ async function queueQuickUser(){
     $('quickTrackerAccess').value = 'true';
     $('quickHolidayAccess').value = 'true';
     $('quickCreditAccess').value = 'true';
+    $('quickMessageBoardAccess').value = 'true';
     $('quickLogsAccess').value = 'true';
     $('quickEmailUser').value = '';
     $('quickEmailDomain').value = '@heidelbergmaterials.com';

@@ -23,7 +23,7 @@
   --ff-mono: 'Fira Code', monospace;
   --ease-smooth:cubic-bezier(.22,1,.36,1);
 
-  --bg:   #080b10;
+  --bg:   #000000;
   --sf:   #0d1117;
   --sf2:  #11161d;
   --sf3:  #161c24;
@@ -71,7 +71,7 @@
   --e1: 0 1px 3px rgba(0,0,0,.65), 0 1px 2px rgba(0,0,0,.48);
   --e2: 0 4px 18px rgba(0,0,0,.72);
   --e3: 0 20px 56px rgba(0,0,0,.82);
-  --eac: 0 4px 22px rgba(51,65,85,.22);
+  --eac: 0 4px 22px rgba(51,65,85,.30);
   --green-wash-1: rgba(71,85,105,.05);
   --green-wash-2: rgba(100,116,139,.04);
   --green-wash-3: rgba(51,65,85,.09);
@@ -98,15 +98,15 @@
   --ac:   #1a7a35;
   --ac2:  #2ecc5c;
   --ac3:  #5ee27b;
-  --acd1: rgba(26,122,53,.07);
-  --acd2: rgba(26,122,53,.14);
-  --acd3: rgba(26,122,53,.24);
-  --acgl: rgba(94,226,123,.32);
-  --palette-card-bg-1: rgba(46,204,92,.18);
-  --palette-card-bg-2: rgba(26,122,53,.10);
-  --palette-card-border: rgba(94,226,123,.22);
-  --palette-card-glow-1: rgba(94,226,123,.14);
-  --palette-card-glow-2: rgba(94,226,123,.08);
+  --acd1: rgba(26,122,53,.045);
+  --acd2: rgba(26,122,53,.09);
+  --acd3: rgba(26,122,53,.16);
+  --acgl: rgba(94,226,123,.22);
+  --palette-card-bg-1: rgba(46,204,92,.05);
+  --palette-card-bg-2: rgba(26,122,53,.03);
+  --palette-card-border: rgba(94,226,123,.08);
+  --palette-card-glow-1: rgba(94,226,123,.03);
+  --palette-card-glow-2: rgba(94,226,123,.015);
 
   --tx:   #0d1526;
   --tx2:  #405063;
@@ -129,7 +129,7 @@
   --e1: 0 1px 3px rgba(0,0,0,.05), 0 1px 2px rgba(0,0,0,.03);
   --e2: 0 4px 18px rgba(0,0,0,.07);
   --e3: 0 20px 56px rgba(0,0,0,.10);
-  --eac: 0 4px 22px rgba(51,65,85,.16);
+  --eac: 0 4px 14px rgba(51,65,85,.08);
   --green-wash-1: rgba(71,85,105,.04);
   --green-wash-2: rgba(100,116,139,.03);
   --green-wash-3: rgba(51,65,85,.08);
@@ -167,9 +167,9 @@ body.light-mode .ai-scope-btn,
 body.light-mode .search-wrap input,
 body.light-mode textarea,
 body.light-mode select {
-  backdrop-filter: blur(22px);
-  -webkit-backdrop-filter: blur(22px);
-  box-shadow: 0 16px 40px rgba(15,23,42,.07), inset 0 1px 0 rgba(255,255,255,.65);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 8px 24px rgba(15,23,42,.06), inset 0 1px 0 rgba(255,255,255,.60);
 }
 
 *,*::before,*::after { box-sizing:border-box; margin:0; padding:0 }
@@ -3820,15 +3820,12 @@ function resolveCurrentUserDisplayName(match, sessionUser, profileDisplayName){
   const loginLabel = String(match.locked_name || '').trim();
   const usernameLabel = String(match.username || '').trim();
   const emailLabel = String((sessionUser && sessionUser.email) || match.email || '').trim();
-  const emailLocal = emailLabel && emailLabel.includes('@') ? emailLabel.split('@')[0].trim() : '';
   if (fullNameLabel) return fullNameLabel;
   if (sessionNameLabel) return sessionNameLabel;
-  if (loginLabel && !((!/\s/.test(loginLabel) && /^[a-z0-9._-]{3,}$/i.test(loginLabel)) || (emailLabel && loginLabel.toLowerCase() === emailLabel.split('@')[0].trim().toLowerCase()) || (usernameLabel && loginLabel.toLowerCase() === usernameLabel.toLowerCase()))) {
-    return loginLabel;
-  }
+  if (loginLabel) return loginLabel;
+  if (emailLabel) return emailLabel;
   if (usernameLabel) return usernameLabel;
-  if (emailLocal) return emailLocal;
-  return loginLabel || '—';
+  return '—';
 }
 
 function syncStickyHeaderOffset(){
@@ -4178,12 +4175,20 @@ function getPaletteVars(key){
   const ac2 = preset.accent2 || preset.accent;
   const ac3 = preset.accent3 || preset.accent2 || preset.accent;
   return Object.assign({}, sharedVars, {
-    '--acgl': rgbaFromHex(ac3, .18),
+    '--acd1': rgbaFromHex(ac, .045),
+    '--acd2': rgbaFromHex(ac, .085),
+    '--acd3': rgbaFromHex(ac, .13),
+    '--palette-card-bg-1': rgbaFromHex(ac2, .05),
+    '--palette-card-bg-2': rgbaFromHex(ac, .025),
+    '--palette-card-border': rgbaFromHex(ac3, .08),
+    '--palette-card-glow-1': rgbaFromHex(ac3, .02),
+    '--palette-card-glow-2': rgbaFromHex(ac3, .01),
+    '--acgl': rgbaFromHex(ac3, .14),
     '--eac': '0 4px 14px rgba(51,65,85,.08)',
-    '--green-wash-1': rgbaFromHex(ac, .02),
-    '--green-wash-2': rgbaFromHex(ac3, .015),
-    '--green-wash-3': rgbaFromHex(ac, .03),
-    '--green-edge': rgbaFromHex(ac3, .06)
+    '--green-wash-1': 'rgba(71,85,105,.04)',
+    '--green-wash-2': 'rgba(100,116,139,.03)',
+    '--green-wash-3': 'rgba(51,65,85,.08)',
+    '--green-edge': 'rgba(100,116,139,.12)'
   });
 }
 
