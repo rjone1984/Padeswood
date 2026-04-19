@@ -3004,17 +3004,13 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
           <span class="btn-label">Overview</span>
         </button>
-        <button class="btn btn-ghost" onclick="switchDay('AI Reporting')" id="btn-ai-reporting" title="AI Reporting" style="display:none">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="9" y1="14" x2="13" y2="14"/></svg>
-          <span class="btn-label">AI Reporting</span>
+        <button class="btn btn-ghost" onclick="switchDay('Feedback')" id="btn-feedback" title="Feedback" style="display:none">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+          <span class="btn-label">Feedback</span>
         </button>
         <button class="btn btn-ghost" onclick="switchDay('Whiteboard')" id="btn-whiteboard" title="Whiteboard" style="display:none">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
           <span class="btn-label">Whiteboard</span>
-        </button>
-        <button class="btn btn-ghost" onclick="switchDay('Feedback')" id="btn-feedback" title="Feedback" style="display:none">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-          <span class="btn-label">Feedback</span>
         </button>
 
         <button class="btn btn-ghost" id="manageListsBtn" onclick="openManageModal()" style="display:none">
@@ -3054,6 +3050,10 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
         Print / PDF
       </button>
+      <button class="btn btn-ghost" onclick="switchDay('AI Reporting')" id="btn-ai-reporting" title="AI Reporting" style="display:none">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="9" y1="14" x2="13" y2="14"/></svg>
+        <span class="btn-label">AI Reporting</span>
+      </button>
       <input type="file" id="jsonFileInput" accept=".json" style="display:none" onchange="importJSON(event)">
       <button class="btn btn-primary write-only" id="saveAllBtn" onclick="saveAll()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
@@ -3071,8 +3071,7 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         <span id="userLabel">operator</span>
       </div>
-      <span class="db-dot" title="Database connected" aria-label="Database connected" style="flex:0 0 auto"></span>
-      <div id="syncDot" title="Synced" style="display:none;align-items:center;justify-content:center;width:24px;height:24px;border-radius:6px;border:1px solid var(--bd);background:var(--sf2)"></div>
+      <span id="syncDot" class="status-dot" title="Database connected" aria-label="Database connected" style="flex:0 0 auto"></span>
       <button class="btn-icon" onclick="toggleTheme()" id="themeBtn" title="Switch to light mode" aria-label="Switch to light mode">
         <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="12" cy="12" r="4"/>
@@ -10134,23 +10133,12 @@ async function sbSaveLists(){
 function showSyncDot(state){
   const dot = document.getElementById('syncDot');
   if(!dot) return;
-  dot.style.display = 'flex';
-  if(state === 'ok'){
-    dot.title = 'Cloud connected';
-    dot.style.color = 'var(--grn)';
-    dot.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:11px;height:11px"><polyline points="20 6 9 17 4 12"/></svg>';
-  } else if(state === 'local'){
-    dot.title = 'Loaded from local cache';
-    dot.style.color = 'var(--pur)';
-    dot.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:11px;height:11px"><path d="M12 5v14"/><path d="M5 12h14"/></svg>';
-  } else if(state === 'warn'){
-    dot.title = 'Cloud sync failed — saved locally only';
-    dot.style.color = 'var(--amb)';
-    dot.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:11px;height:11px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
-  } else {
-    dot.title = 'Syncing…';
-    dot.style.color = 'var(--tx3)';
-    dot.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:11px;height:11px"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.67"/></svg>';
+  if (window.PadeswoodSuite && PadeswoodSuite.ui) {
+    PadeswoodSuite.ui.applyStatusDot(dot, state);
+    if(state === 'ok') dot.title = 'Cloud connected';
+    else if(state === 'local') dot.title = 'Loaded from local cache';
+    else if(state === 'warn') dot.title = 'Cloud sync failed — saved locally only';
+    else dot.title = 'Syncing…';
   }
 }
 

@@ -1307,7 +1307,21 @@ function hasMissingFunctionError(err, fnName){
 function setSyncLabel(text){
   const el = $('syncLabel');
   if (el) el.textContent = text || 'Synced';
+  if (window.PadeswoodSuite && PadeswoodSuite.ui) {
+    PadeswoodSuite.ui.applyStatusDot(document.querySelector('.status-dot'), text || 'Synced');
+  }
 }
+const userManagementSyncLabelObserver = (function(){
+  const el = $('syncLabel');
+  if (!el || !window.MutationObserver) return null;
+  const observer = new MutationObserver(function(){
+    if (window.PadeswoodSuite && PadeswoodSuite.ui) {
+      PadeswoodSuite.ui.applyStatusDot(document.querySelector('.status-dot'), el.textContent || 'Synced');
+    }
+  });
+  observer.observe(el, { characterData: true, childList: true, subtree: true });
+  return observer;
+})();
 function setToast(msg, ms){
   const t = $('toast');
   if (!t) return;

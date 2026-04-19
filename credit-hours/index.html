@@ -2985,6 +2985,19 @@ function syncThemeButton(){
   btn.title = isLight ? 'Switch to dark mode' : 'Switch to light mode';
   btn.setAttribute('aria-label', btn.title);
 }
+function syncStatusDotFromLabel(){
+  if (!(window.PadeswoodSuite && PadeswoodSuite.ui)) return;
+  const label = document.getElementById('syncLabel');
+  PadeswoodSuite.ui.applyStatusDot(document.querySelector('.status-dot'), label ? label.textContent : 'Synced');
+}
+const creditSyncLabelObserver = (function(){
+  const label = document.getElementById('syncLabel');
+  if (!label || !window.MutationObserver) return null;
+  const observer = new MutationObserver(function(){ syncStatusDotFromLabel(); });
+  observer.observe(label, { characterData: true, childList: true, subtree: true });
+  syncStatusDotFromLabel();
+  return observer;
+})();
 function setPaletteVars(vars){
   const targets = [document.documentElement, document.body].filter(Boolean);
   targets.forEach(function(target){

@@ -380,6 +380,51 @@
     }
   };
 
+  function getStatusDotTarget(target){
+    if(!target) return null;
+    if(typeof target === 'string'){
+      return global.document ? global.document.querySelector(target) || global.document.getElementById(target.replace(/^#/, '')) : null;
+    }
+    return target;
+  }
+
+  function normalizeStatusDotState(state){
+    var raw = String(state || '').trim().toLowerCase();
+    if(!raw) return 'ok';
+    if(raw.indexOf('error') !== -1 || raw.indexOf('failed') !== -1 || raw.indexOf('warn') !== -1) return 'warn';
+    if(raw.indexOf('saving') !== -1 || raw.indexOf('loading') !== -1 || raw.indexOf('sync') !== -1) return 'syncing';
+    if(raw.indexOf('local') !== -1 || raw.indexOf('cache') !== -1) return 'local';
+    if(raw === 'ok' || raw === 'synced' || raw === 'connected') return 'ok';
+    return 'ok';
+  }
+
+  function applyStatusDot(target, state){
+    var dot = getStatusDotTarget(target);
+    if(!dot) return null;
+    var next = normalizeStatusDotState(state);
+    var cfg = {
+      ok: { title: 'Synced', label: 'Synced', bg: 'var(--grn)', shadow: '0 0 0 4px var(--grnd)', anim: 'none' },
+      local: { title: 'Loaded from local cache', label: 'Loaded from local cache', bg: 'var(--amb)', shadow: '0 0 0 4px rgba(245,158,11,.10)', anim: 'none' },
+      warn: { title: 'Sync error', label: 'Sync error', bg: 'var(--red)', shadow: '0 0 0 4px rgba(239,68,68,.12)', anim: 'none' },
+      syncing: { title: 'Syncing…', label: 'Syncing…', bg: 'var(--amb)', shadow: '0 0 0 4px rgba(245,158,11,.12)', anim: 'none' }
+    }[next];
+    dot.classList.remove('local', 'warn', 'syncing', 'ok');
+    dot.classList.add(next);
+    dot.textContent = '';
+    dot.style.display = 'inline-block';
+    dot.style.width = '10px';
+    dot.style.height = '10px';
+    dot.style.borderRadius = '999px';
+    dot.style.flexShrink = '0';
+    dot.style.background = cfg.bg;
+    dot.style.boxShadow = cfg.shadow;
+    dot.style.animation = cfg.anim;
+    dot.setAttribute('aria-hidden', 'true');
+    dot.title = cfg.title;
+    dot.setAttribute('aria-label', cfg.label);
+    return dot;
+  }
+
   global.PadeswoodSuite = {
     storage: storage,
     supabase: supabaseApi,
@@ -387,6 +432,10 @@
     preferences: preferences,
     palette: palette,
     access: access,
-    licence: licence
+    licence: licence,
+    ui: {
+      normalizeStatusDotState: normalizeStatusDotState,
+      applyStatusDot: applyStatusDot
+    }
   };
 })(window);

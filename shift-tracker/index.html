@@ -40,6 +40,7 @@
     --palette-card-glow-2: rgba(94,226,123,.10);
     --tracker-back-accent: #1a7a35;
     --tracker-back-accent2: #2ecc5c;
+    --divider-accent: #2ecc5c;
     --tracker-back-soft: rgba(26,122,53,.10);
     --tracker-back-soft-2: rgba(26,122,53,.18);
     --tracker-back-border: rgba(26,122,53,.28);
@@ -77,6 +78,7 @@
     --palette-card-glow-2: rgba(148,163,184,.06);
     --tracker-back-accent: #64748b;
     --tracker-back-accent2: #94a3b8;
+    --divider-accent: #94a3b8;
     --tracker-back-soft: rgba(100,116,139,.08);
     --tracker-back-soft-2: rgba(100,116,139,.14);
     --tracker-back-border: rgba(100,116,139,.22);
@@ -485,8 +487,8 @@
     left: 0;
     right: 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(46,204,92,0) 10%, rgba(46,204,92,.55) 50%, rgba(46,204,92,0) 90%, transparent 100%);
-    filter: drop-shadow(0 0 6px rgba(46,204,92,.22));
+    background: linear-gradient(90deg, transparent, var(--st-line-accent, var(--divider-accent, var(--accent2))) 10%, color-mix(in srgb, var(--st-line-accent, var(--divider-accent, var(--accent2))) 55%, transparent) 50%, var(--st-line-accent, var(--divider-accent, var(--accent2))) 90%, transparent 100%);
+    filter: drop-shadow(0 0 6px color-mix(in srgb, var(--st-line-accent, var(--divider-accent, var(--accent2))) 22%, transparent));
     animation: licenceLineFlow 7.6s ease-in-out infinite;
     pointer-events: none;
   }
@@ -563,7 +565,7 @@
     left: 0;
     right: 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent, var(--accent2), transparent);
+    background: linear-gradient(90deg, transparent, var(--st-line-accent, var(--divider-accent, var(--accent2))), transparent);
   }
   .splash-panel-label {
     display:block;
@@ -1822,8 +1824,8 @@
     left: 0;
     right: 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent, var(--accent2), transparent);
-    background-size: 200% 100%;
+    background: linear-gradient(90deg, transparent 0%, transparent 38%, var(--st-line-accent, var(--divider-accent, var(--accent2))) 49%, transparent 61%, transparent 100%);
+    background-size: 240% 100%;
     opacity: .85;
     animation: lineFlow 8s ease-in-out infinite;
   }
@@ -2066,8 +2068,7 @@
   body:not(.basic-mode) .boot-shield::before,
   body:not(.basic-mode) #licenceOverlay > div::before,
   body:not(.basic-mode) #licenceOverlay > div::after,
-  body:not(.basic-mode) #splash-login > div::before,
-  body:not(.basic-mode) .card::before {
+  body:not(.basic-mode) #splash-login > div::before {
     background: none !important;
     opacity: 0 !important;
     animation: none !important;
@@ -2094,6 +2095,42 @@
   body:not(.basic-mode) .card {
     border-radius: 14px !important;
   }
+  .suite-divider{
+    position:relative;
+    height:1px;
+    margin:18px 2px 2px;
+    overflow:hidden;
+    pointer-events:none;
+  }
+  .suite-divider::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:linear-gradient(90deg,transparent,var(--st-line-accent,var(--divider-accent,var(--accent2))),transparent);
+    background-size:200% 100%;
+    opacity:.35;
+    will-change:background-position;
+  }
+  body:not(.basic-mode) .suite-divider::before{
+    animation:lineFlow 8s ease-in-out infinite;
+    opacity:.35;
+  }
+  body.basic-mode .suite-divider{
+    display:none !important;
+  }
+  body:not(.basic-mode) .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--st-line-accent, var(--divider-accent, var(--accent2))), transparent);
+    background-size: 200% 100%;
+    opacity: .34;
+    animation: lineFlow 8s ease-in-out infinite;
+    pointer-events: none;
+  }
   body:not(.basic-mode) .page > .card + .card::before {
     content: '' !important;
     position: absolute !important;
@@ -2101,7 +2138,7 @@
     right: 16px !important;
     top: 0 !important;
     height: 2px !important;
-    background: linear-gradient(90deg, transparent, var(--accent2), transparent) !important;
+    background: linear-gradient(90deg, transparent, var(--st-line-accent, var(--divider-accent, var(--accent2))), transparent) !important;
     background-size: 200% 100% !important;
     animation: lineFlow 8s ease-in-out infinite !important;
     opacity: .38 !important;
@@ -2198,7 +2235,7 @@
 
 <div id="licenceOverlay" style="position:fixed;inset:0;background:var(--bg);z-index:10000;display:none;align-items:center;justify-content:center;opacity:0;transition:opacity .3s ease">
   <div style="width:min(420px,92vw);background:var(--bg2);border:1px solid var(--border2);border-radius:14px;padding:24px;box-shadow:var(--e3);position:relative;overflow:hidden">
-    <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent2),transparent)"></div>
+    <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--st-line-accent,var(--divider-accent,var(--accent2))),transparent)"></div>
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
       <div class="splash-brand-mark" style="width:48px;height:48px;border-radius:14px"><img data-suite-logo alt="Padeswood Works"></div>
       <div style="min-width:0">
@@ -2639,18 +2676,16 @@ function trackerGetStoredPalettePreset(){
 }
 function trackerApplyBackButtonPalette(){
   const preset = trackerGetStoredPalettePreset();
-  const effectivePreset = preset === 'default' && isDarkThemeEnabled() ? 'slate' : preset;
-  const pal = TRACKER_PALETTE_PRESETS[effectivePreset] || TRACKER_PALETTE_PRESETS.default;
-  const button = document.querySelector('.tracker-shell-back');
-  if(!button) return;
+  const pal = TRACKER_PALETTE_PRESETS[preset] || TRACKER_PALETTE_PRESETS.default;
   document.body.classList.toggle('basic-mode', preset === 'basic');
-  button.classList.toggle('tracker-shell-back-basic', preset === 'basic');
   // Apply palette tokens to the tracker shell while keeping core navigation controls on the suite baseline.
   const rootStyle = document.documentElement.style;
   const bodyStyle = document.body.style;
   const vars = {
     '--accent': pal.accent,
     '--accent2': pal.accent2,
+    '--divider-accent': pal.accent2,
+    '--st-line-accent': pal.accent2,
     '--accent-soft': trackerRgbaFromHex(pal.accent, .06),
     '--accent-soft-2': trackerRgbaFromHex(pal.accent, .12),
     '--accent-border': trackerRgbaFromHex(pal.accent, .18),
@@ -2665,6 +2700,10 @@ function trackerApplyBackButtonPalette(){
       rootStyle.setProperty(k, v);
       bodyStyle.setProperty(k, v);
     }
+  }
+  const button = document.querySelector('.tracker-shell-back');
+  if(button){
+    button.classList.toggle('tracker-shell-back-basic', preset === 'basic');
   }
 }
 async function trackerLoadSharedPalette(user){
@@ -2813,6 +2852,7 @@ function renderTodayView(active){
     )
   ));
   wrap.appendChild(hero);
+  wrap.appendChild(h("div",{class:"suite-divider","aria-hidden":"true"}));
 
   if(isToday){
     const bc=h("div",{class:"card",style:{display:"flex",alignItems:"center",gap:"14px"}});
@@ -2825,6 +2865,7 @@ function renderTodayView(active){
           h("div",{class:"mono",style:{fontSize:"11px",color:"var(--text3)",marginTop:"2px"}},`Starts ${formatLongDate(addDays(TODAY,nb))}`)]
     ));
     wrap.appendChild(bc);
+    wrap.appendChild(h("div",{class:"suite-divider","aria-hidden":"true"}));
   }
 
   const allCard=h("div",{class:"card"});
@@ -3022,6 +3063,8 @@ function renderTrackerApp(){
   const{focus,tab,banner,dark}=S;
   const active=SHIFTS.find(s=>s.id===focus);
   const selectedDate=addDays(TODAY,S.viewOffset||0);
+  const trackerPalette = TRACKER_PALETTE_PRESETS[trackerGetStoredPalettePreset()] || TRACKER_PALETTE_PRESETS.default;
+  const trackerLineColor = trackerPalette.accent2;
   document.body.classList.toggle("dark",dark);
   document.getElementById("app-wrap").classList.toggle("dark",dark);
   document.getElementById("theme-meta").content=dark?"#0f172a":"#f0f4f8";
@@ -3058,6 +3101,7 @@ function renderTrackerApp(){
     ));
   }
   app.appendChild(pills);
+  app.appendChild(h("div",{class:"suite-divider","aria-hidden":"true",style:{"--st-line-accent":trackerLineColor}}));
 
   if(tab!=="Today") app.appendChild(renderShiftSummaryCard(active,selectedDate));
 
@@ -3070,6 +3114,7 @@ function renderTrackerApp(){
   if(tab==="Calendar") app.appendChild(renderCalendarView());
   if(tab==="Summary")  app.appendChild(renderSummaryView());
   if(tab==="Search")   app.appendChild(renderSearchView());
+  app.appendChild(h("div",{class:"suite-divider","aria-hidden":"true",style:{"--st-line-accent":trackerLineColor}}));
 
   const key=h("div",{style:{display:"flex",gap:"10px",marginTop:"14px",justifyContent:"center",flexWrap:"wrap"}});
   for(const sh of SHIFTS){
@@ -3093,6 +3138,13 @@ function syncTrackerThemeButton(){
   themeBtn.innerHTML=stThemeIconMarkup(S.dark);
   themeBtn.title=S.dark?'Switch to light mode':'Switch to dark mode';
   themeBtn.setAttribute('aria-label',themeBtn.title);
+}
+function syncTrackerStatusDots(){
+  if (!(window.PadeswoodSuite && PadeswoodSuite.ui)) return;
+  document.querySelectorAll('.db-dot, .status-dot').forEach(function(dot){
+    PadeswoodSuite.ui.applyStatusDot(dot, 'ok');
+    dot.title = 'Synced';
+  });
 }
 
 let stCurrentUser = null;
@@ -3163,6 +3215,7 @@ function initShiftTrackerUi(){
   document.body.classList.toggle('dark', dark);
   document.getElementById('app-wrap').classList.toggle('dark', dark);
   document.getElementById('theme-meta').content = dark ? "#111418" : "#f0f4f8";
+  syncTrackerStatusDots();
   renderTrackerApp();
 }
 
