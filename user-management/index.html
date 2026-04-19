@@ -797,9 +797,9 @@ body.basic-mode *::after{
           <input id="quickEmailUser" class="input" type="email" placeholder="name@heidelbergmaterials.com">
         </div>
         <div class="field">
-          <label for="quickKilnRole">Logs Role</label>
+          <label for="quickKilnRole">Job role</label>
           <select id="quickKilnRole" class="select">
-            <option value="none">No Logs access</option>
+            <option value="none">No job role</option>
             <option value="burner">Burner</option>
             <option value="electrician">Electrician</option>
             <option value="mechanical">Mechanical</option>
@@ -944,9 +944,9 @@ body.basic-mode *::after{
         <input id="editEmail" class="input" type="email">
       </div>
       <div class="field">
-        <label for="editKilnRole">Logs Role</label>
+        <label for="editKilnRole">Job role</label>
         <select id="editKilnRole" class="select">
-          <option value="none">No Logs access</option>
+          <option value="none">No job role</option>
           <option value="admin">Admin</option>
           <option value="shift_manager">Shift manager</option>
           <option value="day_manager">Day manager</option>
@@ -1190,7 +1190,6 @@ function inferWorkRoleType(p, k){
 }
 function kilnRoleValue(ku){
   if (!ku) return 'none';
-  if (ku.shift_log_access === false && !ku.is_admin) return 'none';
   if (ku.is_admin) return 'admin';
   if (ku.is_shift_manager) return 'shift_manager';
   if (ku.is_day_manager) return 'day_manager';
@@ -1204,7 +1203,7 @@ function kilnRoleValue(ku){
 }
 function kilnRoleLabel(role){
   const map = {
-    none:'No Logs access',
+    none:'No job role',
     admin:'Admin',
     shift_manager:'Shift manager',
     day_manager:'Day manager',
@@ -1224,12 +1223,8 @@ function syncLogsAccessRolePair(accessId, roleId){
   const accessEl = $(accessId);
   const roleEl = $(roleId);
   if (!accessEl || !roleEl) return;
-  const allowed = String(accessEl.value || 'true') !== 'false';
-  roleEl.disabled = !allowed;
-  roleEl.setAttribute('aria-disabled', allowed ? 'false' : 'true');
-  if (!allowed) {
-    roleEl.value = 'none';
-  }
+  roleEl.disabled = false;
+  roleEl.removeAttribute('aria-disabled');
 }
 function bindLogsAccessRolePair(accessId, roleId){
   const accessEl = $(accessId);
@@ -1239,11 +1234,7 @@ function bindLogsAccessRolePair(accessId, roleId){
     syncLogsAccessRolePair(accessId, roleId);
   };
   accessEl.addEventListener('change', sync);
-  roleEl.addEventListener('change', function(){
-    if (String(accessEl.value || 'true') === 'false' && roleEl.value !== 'none') {
-      roleEl.value = 'none';
-    }
-  });
+  roleEl.addEventListener('change', sync);
   sync();
 }
 function platformRoleLabel(role){
@@ -1620,7 +1611,7 @@ async function createAccessRequestAccount(target, passwordValue){
   const creditHoursAllowed = accessReq ? accessReq.credit_hours_access !== false : true;
   const holidayAllowed = accessReq ? accessReq.holiday_requests_access !== false : true;
   const logsAllowed = accessReq ? accessReq.logs_access !== false : true;
-  const effectiveKilnRole = logsAllowed ? (target.kilnRole || 'none') : 'none';
+  const effectiveKilnRole = target.kilnRole || 'none';
   const workRoleType = target && target.kilnRole && (target.kilnRole === 'day_manager' || target.kilnRole === 'day_staff') ? 'day' : (target.workRoleType || 'shift');
   const holidayManagerAuthUserId = accessReq ? (accessReq.holiday_manager_auth_user_id || null) : null;
   const createRes = await callAdminPwFunction({
@@ -1663,7 +1654,7 @@ async function createAccessRequestAccount(target, passwordValue){
       username: username,
       locked_name: target.fullName,
       email: target.email,
-      shift_log_access: true,
+      shift_log_access: logsAllowed,
       is_locked: false,
       must_reset_password: true
     });
@@ -1705,7 +1696,7 @@ function renderAccessQueueSection(){
     html += '<label class="check" style="padding:7px 10px"><input type="checkbox" ' + (selected ? 'checked' : '') + ' onchange="setAccessRequestSelection(\'' + esc(req.id) + '\', this.checked)"> Select</label>';
     html += '</div>';
     html += '<div class="request-body">';
-    html += '<div class="request-text"><strong>Platform:</strong> ' + esc(platformRoleLabel(req.role || 'viewer')) + ' · <strong>Logs:</strong> ' + esc(kilnRoleLabel(toLower(req.kiln_role || 'none'))) + '</div>';
+    html += '<div class="request-text"><strong>Job role:</strong> ' + esc(kilnRoleLabel(toLower(req.kiln_role || 'none'))) + '</div>';
     if (workType) html += '<div class="request-text"><strong>Role type:</strong> ' + esc(workType === 'day' ? 'Day role' : 'Shift role') + '</div>';
     if (req.holiday_manager_auth_user_id) html += '<div class="request-text"><strong>Holiday manager:</strong> ' + esc(displayNameFor(managerOptionsForUser(null).find(function(m){ return String(m.profile.id) === String(req.holiday_manager_auth_user_id); }) || null) || 'Assigned') + '</div>';
     html += '<div class="request-text"><strong>Requested:</strong> ' + esc(req.requested_at ? new Date(req.requested_at).toLocaleString('en-GB') : '—') + '</div>';
@@ -1878,25 +1869,23 @@ function renderUserCard(row){
   const email = (p && p.email) || (k && k.email) || '-';
   const canEdit = !!(p && p.id);
   const tags = [];
-  tags.push('<span class="pill neutral">' + esc(platformRoleLabel(p && p.role)) + '</span>');
   tags.push('<span class="pill neutral">' + esc(kilnRoleLabel(kilnRoleValue(k))) + '</span>');
   tags.push('<span class="pill neutral">' + esc(inferWorkRoleType(p, k) === 'day' ? 'Day role' : 'Shift role') + '</span>');
   if (userIsAdmin(row)) tags.push('<span class="pill good">Admin</span>');
   if (userIsPending(row)) tags.push('<span class="pill warn">Pending approval</span>');
   if (userIsDisabled(row)) tags.push('<span class="pill bad">Disabled or locked</span>');
-  const subtitle = [];
-  if (k && k.username) subtitle.push('Logs user: ' + k.username);
-  if (k && k.auth_user_id && p && p.id && String(k.auth_user_id) !== String(p.id)) subtitle.push('Auth mismatch');
-  const meta = subtitle.length ? subtitle.join(' - ') : 'Platform user';
   let html = '<article class="user-card">';
   html += '<div class="user-card-head">';
   html += '<div>';
   html += '<div class="user-name">' + esc(displayName) + '</div>';
-  html += '<div class="user-meta">' + esc(email) + ' - ' + esc(meta) + '</div>';
+  html += '<div class="user-meta">' + esc(email) + '</div>';
   html += '</div>';
   html += '<div class="user-actions">';
   html += '<button class="btn btn-ghost" type="button"' + (canEdit ? ' onclick="openEditorByRow(usersMerged.find(function(r){ return r.key === \'' + esc(row.key) + '\'; }))"' : ' disabled style="opacity:.55;cursor:not-allowed"') + '>' + (canEdit ? 'Edit' : 'Profile missing') + '</button>';
   if (canEdit) {
+    const authUserId = p && p.id ? String(p.id) : '';
+    const kilnUsername = k && k.username ? String(k.username) : '';
+    html += '<button class="btn btn-ghost" type="button"' + (authUserId ? ' onclick="openAdminSetPwModal(\'' + esc(authUserId) + '\', \'' + esc(kilnUsername) + '\', \'' + esc(displayName) + '\')"' : ' disabled style="opacity:.55;cursor:not-allowed"') + '>Set Password</button>';
     html += '<button class="btn ' + (userIsDisabled(row) ? 'btn-primary' : 'btn-danger') + '" type="button" onclick="toggleUserAccessByKey(\'' + esc(row.key) + '\')">' + (userIsDisabled(row) ? 'Enable Account' : 'Disable Account') + '</button>';
   }
   html += '</div>';
@@ -2383,7 +2372,7 @@ async function saveEditorChanges(){
   const creditAccess = $('editCreditAccess').value !== 'false';
   const logsAccess = $('editLogsAccess').value !== 'false';
   const shiftLogAccess = kilnRole === 'none' ? false : logsAccess;
-  const isLocked = kilnRole === 'none' ? true : !logsAccess;
+  const isLocked = row.kiln && typeof row.kiln.is_locked === 'boolean' ? row.kiln.is_locked : false;
   const mustReset = $('editMustReset').value === 'true';
   const managerId = $('editHolidayManager').value || null;
 
@@ -2396,7 +2385,7 @@ async function saveEditorChanges(){
     return;
   }
   if (!KILN_ROLE_OPTIONS.includes(kilnRole)) {
-    showEditorMsg('err', 'Invalid Logs role selected.');
+    showEditorMsg('err', 'Invalid job role selected.');
     return;
   }
 
@@ -2438,7 +2427,7 @@ async function queueQuickUser(){
   const email = $('quickEmailUser').value.trim().toLowerCase();
   const platformRole = 'viewer';
   const logsAccess = toLower($('quickLogsAccess').value || 'true') !== 'false';
-  const kilnRole = logsAccess ? toLower($('quickKilnRole').value || 'none') : 'none';
+  const kilnRole = toLower($('quickKilnRole').value || 'none');
   const workRoleType = toLower($('quickWorkRoleType').value || 'shift') === 'day' ? 'day' : 'shift';
   const holidayManagerId = $('quickHolidayManager').value || null;
   if (!fullName) { setToast('Full name is required.'); return; }
