@@ -2654,6 +2654,21 @@ const TRACKER_PALETTE_PRESETS = (sharedPalette && sharedPalette.getPresetMap)
       default: { accent: '#1a7a35', accent2: '#2ecc5c', accent3: '#5ee27b' },
       basic: { accent: '#4b5563', accent2: '#6b7280', accent3: '#9ca3af' }
     };
+function trackerSoftPaletteVars(pal){
+  const ac = pal && pal.accent ? pal.accent : '#1a7a35';
+  const ac2 = pal && pal.accent2 ? pal.accent2 : ac;
+  const ac3 = pal && pal.accent3 ? pal.accent3 : ac2 || ac;
+  return {
+    '--accent-soft': trackerRgbaFromHex(ac, .045),
+    '--accent-soft-2': trackerRgbaFromHex(ac, .085),
+    '--accent-border': trackerRgbaFromHex(ac, .14),
+    '--palette-card-bg-1': trackerRgbaFromHex(ac2, .05),
+    '--palette-card-bg-2': trackerRgbaFromHex(ac, .025),
+    '--palette-card-border': trackerRgbaFromHex(ac3, .08),
+    '--palette-card-glow-1': trackerRgbaFromHex(ac3, .02),
+    '--palette-card-glow-2': trackerRgbaFromHex(ac3, .01)
+  };
+}
 function trackerHexToRgb(hex){
   const raw = String(hex || '').trim().replace(/^#/, '');
   if(raw.length === 3){
@@ -2686,14 +2701,7 @@ function trackerApplyBackButtonPalette(){
     '--accent2': pal.accent2,
     '--divider-accent': pal.accent2,
     '--st-line-accent': pal.accent2,
-    '--accent-soft': trackerRgbaFromHex(pal.accent, .06),
-    '--accent-soft-2': trackerRgbaFromHex(pal.accent, .12),
-    '--accent-border': trackerRgbaFromHex(pal.accent, .18),
-    '--palette-card-bg-1': trackerRgbaFromHex(pal.accent2, .12),
-    '--palette-card-bg-2': trackerRgbaFromHex(pal.accent, .06),
-    '--palette-card-border': trackerRgbaFromHex(pal.accent3, .18),
-    '--palette-card-glow-1': trackerRgbaFromHex(pal.accent3, .08),
-    '--palette-card-glow-2': trackerRgbaFromHex(pal.accent3, .04)
+    ...trackerSoftPaletteVars(pal)
   };
   for (const [k, v] of Object.entries(vars)) {
     if (v) {

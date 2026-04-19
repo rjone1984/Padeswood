@@ -1765,7 +1765,7 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
       linear-gradient(180deg,var(--glass-1),var(--glass-2));
   }
   .header-titles{min-width:0;flex:1 1 auto;}
-  .header-name{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .header-name{font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .header-sub{display:none;}
   .header-actions,.header-right{
     flex:1 1 100%;width:100%;
@@ -1773,8 +1773,8 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
     gap:4px;justify-content:flex-start;padding-bottom:2px;
   }
   .header-user{display:inline-flex;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .icon-btn{width:30px;height:30px;flex-shrink:0;}
-  #mainContent{padding:24px 12px 44px;}
+  .icon-btn{width:34px;height:34px;flex-shrink:0;}
+  #mainContent{padding:20px 10px 40px;}
   .platform-hero{margin-bottom:24px;}
   .platform-hero h1{font-size:24px;}
   .platform-hero p{font-size:12px;line-height:1.55;}
@@ -2747,6 +2747,9 @@ const PALETTE_STORAGE_KEY = (sharedPalette && sharedPalette.STORAGE_KEY) || 'pw_
 const PALETTE_PRESETS = (sharedPalette && sharedPalette.getPresetMap)
   ? sharedPalette.getPresetMap()
   : { default: null, basic: { label: 'Basic', accent: '#4b5563', accent2: '#6b7280', accent3: '#9ca3af' } };
+const PALETTE_META_MAP = (sharedPalette && sharedPalette.getPresetMap)
+  ? sharedPalette.getPresetMap()
+  : {};
 const PALETTE_VARS = [
   '--ac','--ac2','--ac3','--acd1','--acd2','--acd3','--acgl','--eac',
   '--palette-card-bg-1','--palette-card-bg-2','--palette-card-border','--palette-card-glow-1','--palette-card-glow-2'
@@ -2811,6 +2814,27 @@ function clearPaletteVars(){
   }
 }
 
+function getSoftPaletteOverrides(preset){
+  if (!sharedPalette || preset === 'basic') return null;
+  const meta = PALETTE_META_MAP[preset] || null;
+  const ac = (meta && meta.accent) || '#1a7a35';
+  const ac2 = (meta && meta.accent2) || ac;
+  const ac3 = (meta && meta.accent3) || ac2 || ac;
+  if (!sharedPalette.rgbaFromHex) return null;
+  return {
+    '--acd1': sharedPalette.rgbaFromHex(ac, .045),
+    '--acd2': sharedPalette.rgbaFromHex(ac, .085),
+    '--acd3': sharedPalette.rgbaFromHex(ac, .13),
+    '--acgl': sharedPalette.rgbaFromHex(ac3, .18),
+    '--palette-card-bg-1': sharedPalette.rgbaFromHex(ac2, .05),
+    '--palette-card-bg-2': sharedPalette.rgbaFromHex(ac, .025),
+    '--palette-card-border': sharedPalette.rgbaFromHex(ac3, .08),
+    '--palette-card-glow-1': sharedPalette.rgbaFromHex(ac3, .02),
+    '--palette-card-glow-2': sharedPalette.rgbaFromHex(ac3, .01),
+    '--eac': '0 4px 14px rgba(51,65,85,.08)'
+  };
+}
+
 function setBasicModeEnabled(enabled){
   document.body.classList.toggle('basic-mode', !!enabled);
   if(document.documentElement) document.documentElement.classList.toggle('basic-mode', !!enabled);
@@ -2873,13 +2897,15 @@ function updatePaletteUi(){
 function applyStoredPalette(){
   const preset = getStoredPalettePreset();
   setBasicModeEnabled(preset === 'basic');
-  if(preset === 'default'){
-    clearPaletteVars();
-  } else {
-    const vars = getPaletteVars(preset);
-    if(vars) setPaletteVarMap(vars);
-    else clearPaletteVars();
-  }
+  const vars = preset === 'default'
+    ? ((sharedPalette && sharedPalette.getPresetVarsMap && sharedPalette.getPresetVarsMap({ includeDescriptions: true }).default)
+      ? sharedPalette.getPresetVarsMap({ includeDescriptions: true }).default.vars
+      : null)
+    : getPaletteVars(preset);
+  if(vars) setPaletteVarMap(vars);
+  else clearPaletteVars();
+  const softOverrides = getSoftPaletteOverrides(preset);
+  if(softOverrides) setPaletteVarMap(softOverrides);
   updatePaletteUi();
 }
 async function persistSharedPalettePreference(key){

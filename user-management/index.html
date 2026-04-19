@@ -696,6 +696,23 @@ body.basic-mode *::after{
   .summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media (max-width:760px){
+  .auth-screen{padding:16px 12px}
+  .auth-shell{gap:12px}
+  .splash-hero{gap:12px;padding:0 4px}
+  .splash-hero-mark{width:54px;height:54px;border-radius:16px}
+  .splash-hero-title{font-size:22px}
+  .splash-hero-sub{font-size:8px;letter-spacing:2px}
+  .login-card{padding:18px}
+  .brand-row{gap:12px;margin-bottom:14px;align-items:flex-start}
+  .brand-title{font-size:22px}
+  .brand-sub{font-size:12px}
+  #accessDenied .brand-title{font-size:22px}
+  #accessDenied .brand-sub{font-size:12px}
+  .page{padding:12px 10px 20px;gap:12px}
+  .hero{padding:14px}
+  .hero h2{font-size:20px;line-height:1.08}
+  .hero p{font-size:12px;line-height:1.5}
+  .panel{padding:14px;border-radius:18px}
   .control-grid{grid-template-columns:1fr}
   .topbar{
     padding:10px 12px;
@@ -2135,12 +2152,12 @@ function clearPaletteVars(){
   });
 }
 function getSoftPaletteOverrides(preset){
-  if (!sharedPalette || preset === 'default' || preset === 'basic') return null;
+  if (!sharedPalette || preset === 'basic') return null;
   const meta = PALETTE_META_MAP[preset] || null;
-  if (!meta || !sharedPalette.rgbaFromHex) return null;
-  const ac = meta.accent || '#1a7a35';
-  const ac2 = meta.accent2 || ac;
-  const ac3 = meta.accent3 || ac2 || ac;
+  if (!sharedPalette.rgbaFromHex) return null;
+  const ac = (meta && meta.accent) || '#1a7a35';
+  const ac2 = (meta && meta.accent2) || ac;
+  const ac3 = (meta && meta.accent3) || ac2 || ac;
   return {
     '--acd1': sharedPalette.rgbaFromHex(ac, .045),
     '--acd2': sharedPalette.rgbaFromHex(ac, .085),
@@ -2175,12 +2192,15 @@ function updatePaletteUi(){
 }
 function applyStoredPalette(){
   const preset = getStoredPalettePreset();
-  if (preset === 'default') clearPaletteVars();
-  else {
-    setPaletteVars(PALETTE_PRESETS[preset].vars);
-    const softOverrides = getSoftPaletteOverrides(preset);
-    if (softOverrides) setPaletteVars(softOverrides);
-  }
+  const vars = preset === 'default'
+    ? ((sharedPalette && sharedPalette.getPresetVarsMap && sharedPalette.getPresetVarsMap({ includeDescriptions: true }).default)
+      ? sharedPalette.getPresetVarsMap({ includeDescriptions: true }).default.vars
+      : null)
+    : PALETTE_PRESETS[preset].vars;
+  if (vars) setPaletteVars(vars);
+  else clearPaletteVars();
+  const softOverrides = getSoftPaletteOverrides(preset);
+  if (softOverrides) setPaletteVars(softOverrides);
   document.body.classList.toggle('basic-mode', preset === 'basic');
   document.documentElement.classList.toggle('basic-mode', preset === 'basic');
   updatePaletteUi();

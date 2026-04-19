@@ -2518,11 +2518,11 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
 
   .topbar {
     height:auto;
-    min-height:62px;
+    min-height:56px;
     flex-direction:column;
     align-items:stretch;
-    padding:8px 8px 10px;
-    gap:6px;
+    padding:10px 12px;
+    gap:8px;
     overflow:visible;
   }
   .topbar-left {
@@ -2535,28 +2535,28 @@ table.log td textarea { min-height:34px; max-height:120px; resize:vertical }
   .topbar-right {
     display:flex;
     flex-wrap:nowrap;
-    gap:4px;
+    gap:6px;
     align-items:center;
     justify-content:flex-start;
     width:100%;
     min-width:0;
     flex:1 1 100%;
     margin-left:0;
-    padding-top:2px;
+    padding-top:0;
     overflow-x:auto;
     -webkit-overflow-scrolling:touch;
     scrollbar-width:none;
-    padding-bottom:6px;
+    padding-bottom:2px;
     touch-action:pan-x;
   }
   .topbar-right::-webkit-scrollbar { display:none }
   .topbar-title {
-    font-size:13px;
+    font-size:16px;
     line-height:1.05;
     white-space:nowrap;
     overflow:hidden;
     text-overflow:ellipsis;
-    max-width:110px;
+    max-width:180px;
   }
   .topbar a[title="Back to platform"] {
     width:38px !important;
@@ -4195,12 +4195,11 @@ function getPaletteVars(key){
 }
 
 function getSoftPaletteOverrides(key){
-  if(key === 'default' || key === 'basic') return null;
   const preset = PALETTE_PRESETS[key];
-  if(!preset) return null;
-  const ac = preset.accent;
-  const ac2 = preset.accent2 || preset.accent;
-  const ac3 = preset.accent3 || preset.accent2 || preset.accent;
+  if(key === 'basic') return null;
+  const ac = (preset && preset.accent) || '#1a7a35';
+  const ac2 = (preset && preset.accent2) || ac;
+  const ac3 = (preset && preset.accent3) || ac2 || ac;
   return {
     '--acd1': rgbaFromHex(ac, .045),
     '--acd2': rgbaFromHex(ac, .075),
@@ -4237,15 +4236,15 @@ function applyStoredPalette(){
   const preset = getStoredPalettePreset();
   document.body.classList.toggle('basic-mode', preset === 'basic');
   document.documentElement.classList.toggle('basic-mode', preset === 'basic');
-  if(preset === 'default'){
-    clearPaletteVars();
-  } else {
-    const vars = getPaletteVars(preset);
-    if(vars) setPaletteVarMap(vars);
-    else clearPaletteVars();
-    const softVars = getSoftPaletteOverrides(preset);
-    if(softVars) setPaletteVarMap(softVars);
-  }
+  const vars = preset === 'default'
+    ? ((sharedPalette && sharedPalette.getPresetVarsMap && sharedPalette.getPresetVarsMap({ includeDescriptions: true }).default)
+      ? sharedPalette.getPresetVarsMap({ includeDescriptions: true }).default.vars
+      : null)
+    : getPaletteVars(preset);
+  if(vars) setPaletteVarMap(vars);
+  else clearPaletteVars();
+  const softVars = getSoftPaletteOverrides(preset);
+  if(softVars) setPaletteVarMap(softVars);
   updatePaletteUi();
 }
 

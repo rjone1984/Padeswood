@@ -2273,6 +2273,9 @@ const PALETTE_VARS = (sharedPalette && Array.isArray(sharedPalette.DEFAULT_VARS)
 const PALETTE_PRESETS = (sharedPalette && sharedPalette.getPresetVarsMap)
   ? sharedPalette.getPresetVarsMap({ includeDescriptions: true })
   : { default: { label: 'Default Green', vars: {} }, basic: { label: 'Basic', vars: {} } };
+const PALETTE_META_MAP = (sharedPalette && sharedPalette.getPresetMap)
+  ? sharedPalette.getPresetMap()
+  : {};
 
 let sb = null;
 let currentUser = null;
@@ -3010,6 +3013,26 @@ function clearPaletteVars(){
     PALETTE_VARS.forEach(k => target.style.removeProperty(k));
   });
 }
+
+function getSoftPaletteOverrides(preset){
+  if (!sharedPalette || preset === 'basic') return null;
+  const meta = PALETTE_META_MAP[preset] || null;
+  if (!sharedPalette.rgbaFromHex) return null;
+  const ac = (meta && meta.accent) || '#1a7a35';
+  const ac2 = (meta && meta.accent2) || ac;
+  const ac3 = (meta && meta.accent3) || ac2 || ac;
+  return {
+    '--acd1': sharedPalette.rgbaFromHex(ac, .045),
+    '--acd2': sharedPalette.rgbaFromHex(ac, .085),
+    '--acd3': sharedPalette.rgbaFromHex(ac, .13),
+    '--palette-card-bg-1': sharedPalette.rgbaFromHex(ac2, .05),
+    '--palette-card-bg-2': sharedPalette.rgbaFromHex(ac, .025),
+    '--palette-card-border': sharedPalette.rgbaFromHex(ac3, .08),
+    '--palette-card-glow-1': sharedPalette.rgbaFromHex(ac3, .02),
+    '--palette-card-glow-2': sharedPalette.rgbaFromHex(ac3, .01),
+    '--eac': '0 4px 14px rgba(51,65,85,.08)'
+  };
+}
 function getStoredPalettePreset(){
   const key = localStorage.getItem(PALETTE_STORAGE_KEY);
   if (key === 'plain') return 'basic';
@@ -3043,8 +3066,15 @@ function updatePaletteUi(){
 }
 function applyStoredPalette(){
   const preset = getStoredPalettePreset();
-  if (preset === 'default') clearPaletteVars();
-  else setPaletteVars(PALETTE_PRESETS[preset].vars);
+  const vars = preset === 'default'
+    ? ((sharedPalette && sharedPalette.getPresetVarsMap && sharedPalette.getPresetVarsMap({ includeDescriptions: true }).default)
+      ? sharedPalette.getPresetVarsMap({ includeDescriptions: true }).default.vars
+      : null)
+    : PALETTE_PRESETS[preset].vars;
+  if (vars) setPaletteVars(vars);
+  else clearPaletteVars();
+  const softOverrides = getSoftPaletteOverrides(preset);
+  if (softOverrides) setPaletteVars(softOverrides);
   document.body.classList.toggle('basic-mode', preset === 'basic');
   document.documentElement.classList.toggle('basic-mode', preset === 'basic');
   updatePaletteUi();
