@@ -850,14 +850,48 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
     filter:drop-shadow(0 0 12px rgba(239,68,68,.55)) drop-shadow(0 0 24px rgba(239,68,68,.35));
   }
 }
-.app-card.needs-attention{
+.app-card.needs-attention-password{
   border-color:rgba(239,68,68,.86);
   box-shadow:0 0 0 2px rgba(239,68,68,.72), 0 0 22px rgba(239,68,68,.3), 0 14px 32px rgba(0,0,0,.11), inset 0 1px 0 rgba(255,255,255,.12);
   animation:userMgmtCardAlertPulse 1.45s ease-in-out infinite;
 }
-.app-card.needs-attention:hover{
+.app-card.needs-attention-password:hover{
   border-color:rgba(252,165,165,.98);
   box-shadow:0 0 0 2px rgba(248,113,113,.88), 0 0 28px rgba(248,113,113,.4), 0 14px 32px rgba(0,0,0,.11), inset 0 1px 0 rgba(255,255,255,.12);
+}
+@keyframes userMgmtCardWarnPulse{
+  0%,100%{
+    filter:drop-shadow(0 0 0 rgba(245,158,11,.16)) drop-shadow(0 0 0 rgba(245,158,11,.08));
+  }
+  50%{
+    filter:drop-shadow(0 0 10px rgba(245,158,11,.45)) drop-shadow(0 0 20px rgba(245,158,11,.25));
+  }
+}
+.app-card.needs-attention-feedback{
+  border-color:rgba(245,158,11,.84);
+  box-shadow:0 0 0 2px rgba(245,158,11,.68), 0 0 20px rgba(245,158,11,.28), 0 14px 32px rgba(0,0,0,.11), inset 0 1px 0 rgba(255,255,255,.12);
+  animation:userMgmtCardWarnPulse 1.7s ease-in-out infinite;
+}
+.app-card.needs-attention-feedback:hover{
+  border-color:rgba(253,230,138,.98);
+  box-shadow:0 0 0 2px rgba(250,204,21,.84), 0 0 26px rgba(250,204,21,.34), 0 14px 32px rgba(0,0,0,.11), inset 0 1px 0 rgba(255,255,255,.12);
+}
+@keyframes userMgmtCardAccessPulse{
+  0%,100%{
+    filter:drop-shadow(0 0 0 rgba(59,130,246,.18)) drop-shadow(0 0 0 rgba(59,130,246,.1));
+  }
+  50%{
+    filter:drop-shadow(0 0 12px rgba(59,130,246,.5)) drop-shadow(0 0 24px rgba(59,130,246,.3));
+  }
+}
+.app-card.needs-attention-access{
+  border-color:rgba(59,130,246,.84);
+  box-shadow:0 0 0 2px rgba(59,130,246,.7), 0 0 22px rgba(59,130,246,.3), 0 14px 32px rgba(0,0,0,.11), inset 0 1px 0 rgba(255,255,255,.12);
+  animation:userMgmtCardAccessPulse 1.6s ease-in-out infinite;
+}
+.app-card.needs-attention-access:hover{
+  border-color:rgba(96,165,250,.98);
+  box-shadow:0 0 0 2px rgba(96,165,250,.86), 0 0 28px rgba(96,165,250,.38), 0 14px 32px rgba(0,0,0,.11), inset 0 1px 0 rgba(255,255,255,.12);
 }
 @keyframes messageBoardCardAlertPulse{
   0%,100%{
@@ -2029,14 +2063,32 @@ body:not(.basic-mode) .app-card:hover{
   box-shadow:var(--e2) !important;
   transform:translateY(-2px) !important;
 }
-body:not(.basic-mode) .app-card.needs-attention{
+body:not(.basic-mode) .app-card.needs-attention-password{
   border-color:rgba(239,68,68,.86) !important;
   box-shadow:0 0 0 2px rgba(239,68,68,.72), 0 0 22px rgba(239,68,68,.3), var(--e2) !important;
   animation:userMgmtCardAlertPulse 1.45s ease-in-out infinite !important;
 }
-body:not(.basic-mode) .app-card.needs-attention:hover{
+body:not(.basic-mode) .app-card.needs-attention-password:hover{
   border-color:rgba(252,165,165,.98) !important;
   box-shadow:0 0 0 2px rgba(248,113,113,.88), 0 0 28px rgba(248,113,113,.4), var(--e2) !important;
+}
+body:not(.basic-mode) .app-card.needs-attention-feedback{
+  border-color:rgba(245,158,11,.84) !important;
+  box-shadow:0 0 0 2px rgba(245,158,11,.68), 0 0 20px rgba(245,158,11,.28), var(--e2) !important;
+  animation:userMgmtCardWarnPulse 1.7s ease-in-out infinite !important;
+}
+body:not(.basic-mode) .app-card.needs-attention-feedback:hover{
+  border-color:rgba(253,230,138,.98) !important;
+  box-shadow:0 0 0 2px rgba(250,204,21,.84), 0 0 26px rgba(250,204,21,.34), var(--e2) !important;
+}
+body:not(.basic-mode) .app-card.needs-attention-access{
+  border-color:rgba(59,130,246,.84) !important;
+  box-shadow:0 0 0 2px rgba(59,130,246,.7), 0 0 22px rgba(59,130,246,.3), var(--e2) !important;
+  animation:userMgmtCardAccessPulse 1.6s ease-in-out infinite !important;
+}
+body:not(.basic-mode) .app-card.needs-attention-access:hover{
+  border-color:rgba(96,165,250,.98) !important;
+  box-shadow:0 0 0 2px rgba(96,165,250,.86), 0 0 28px rgba(96,165,250,.38), var(--e2) !important;
 }
 body:not(.basic-mode) .app-card.has-new-message{
   border-color:rgba(34,197,94,.9) !important;
@@ -2175,9 +2227,19 @@ body:not(.basic-mode) .palette-option.active{
 /* Quiet decorative motion (keep functional transitions). */
 body:not(.basic-mode) .db-dot,
 body:not(.basic-mode) .card-icon{animation:none !important;}
-body.basic-mode .app-card.needs-attention{
+body.basic-mode .app-card.needs-attention-password{
   animation:none !important;
   border-color:rgba(239,68,68,.7) !important;
+  box-shadow:none !important;
+}
+body.basic-mode .app-card.needs-attention-feedback{
+  animation:none !important;
+  border-color:rgba(245,158,11,.75) !important;
+  box-shadow:none !important;
+}
+body.basic-mode .app-card.needs-attention-access{
+  animation:none !important;
+  border-color:rgba(59,130,246,.75) !important;
   box-shadow:none !important;
 }
 body.basic-mode .app-card.has-new-message{
@@ -2731,12 +2793,18 @@ function updateUserManagementCardAttention(counts){
   const card = document.getElementById('userManagementAppCard');
   if (!card) return;
   const total = Number(counts && counts.total ? counts.total : 0);
-  card.classList.toggle('needs-attention', total > 0);
+  const hasReset = !!(counts && counts.resetPending > 0);
+  const hasAccess = !!(counts && counts.accessPending > 0);
+  const hasFeedback = !!(counts && counts.feedbackPending > 0);
+  card.classList.toggle('needs-attention-password', hasReset);
+  card.classList.toggle('needs-attention-access', !hasReset && hasAccess);
+  card.classList.toggle('needs-attention-feedback', !hasReset && !hasAccess && hasFeedback);
+  card.classList.remove('needs-attention');
   if (total > 0) {
     const parts = [];
-    if (counts && counts.resetPending > 0) parts.push(counts.resetPending + ' password reset' + (counts.resetPending !== 1 ? 's' : ''));
-    if (counts && counts.feedbackPending > 0) parts.push(counts.feedbackPending + ' feature/bug request' + (counts.feedbackPending !== 1 ? 's' : ''));
-    if (counts && counts.accessPending > 0) parts.push(counts.accessPending + ' access request' + (counts.accessPending !== 1 ? 's' : ''));
+    if (hasReset) parts.push(counts.resetPending + ' password reset' + (counts.resetPending !== 1 ? 's' : ''));
+    if (hasAccess) parts.push(counts.accessPending + ' access request' + (counts.accessPending !== 1 ? 's' : ''));
+    if (hasFeedback) parts.push(counts.feedbackPending + ' feature/bug request' + (counts.feedbackPending !== 1 ? 's' : ''));
     if (counts && counts.profilePending > 0) parts.push(counts.profilePending + ' profile approval' + (counts.profilePending !== 1 ? 's' : ''));
     card.title = 'User Management - Attention needed: ' + (parts.length ? parts.join(', ') : (String(total) + ' item' + (total !== 1 ? 's' : '') + ' pending'));
   } else {

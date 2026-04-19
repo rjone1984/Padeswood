@@ -385,6 +385,54 @@ body.light-mode{
   border-color:color-mix(in srgb, var(--redb) 72%, var(--bd));
   background:color-mix(in srgb, var(--redd) 58%, var(--sf2));
 }
+@keyframes queueAlertPulseWarning{
+  0%,100%{
+    filter:drop-shadow(0 0 0 rgba(245,158,11,.16)) drop-shadow(0 0 0 rgba(245,158,11,.08));
+  }
+  50%{
+    filter:drop-shadow(0 0 12px rgba(245,158,11,.46)) drop-shadow(0 0 24px rgba(245,158,11,.26));
+  }
+}
+.panel.queue-alert-warning{
+  border-color:rgba(245,158,11,.84);
+  box-shadow:
+    0 0 0 2px rgba(245,158,11,.68),
+    0 0 22px rgba(245,158,11,.28),
+    var(--e2), var(--eac);
+  animation:queueAlertPulseWarning 1.7s ease-in-out infinite;
+}
+.panel.queue-alert-warning > summary.panel-head{
+  background:linear-gradient(180deg, color-mix(in srgb, var(--ambd) 60%, var(--glass-1)), color-mix(in srgb, var(--ambd) 30%, var(--glass-2)));
+}
+.panel.queue-alert-warning .queue-count-badge{
+  color:var(--amb);
+  border-color:color-mix(in srgb, var(--ambb) 72%, var(--bd));
+  background:color-mix(in srgb, var(--ambd) 58%, var(--sf2));
+}
+@keyframes queueAlertPulseAccess{
+  0%,100%{
+    filter:drop-shadow(0 0 0 rgba(59,130,246,.18)) drop-shadow(0 0 0 rgba(59,130,246,.1));
+  }
+  50%{
+    filter:drop-shadow(0 0 12px rgba(59,130,246,.5)) drop-shadow(0 0 24px rgba(59,130,246,.3));
+  }
+}
+.panel.queue-alert-access{
+  border-color:rgba(59,130,246,.84);
+  box-shadow:
+    0 0 0 2px rgba(59,130,246,.7),
+    0 0 22px rgba(59,130,246,.3),
+    var(--e2), var(--eac);
+  animation:queueAlertPulseAccess 1.6s ease-in-out infinite;
+}
+.panel.queue-alert-access > summary.panel-head{
+  background:linear-gradient(180deg, color-mix(in srgb, rgba(59,130,246,.16) 60%, var(--glass-1)), color-mix(in srgb, rgba(59,130,246,.10) 30%, var(--glass-2)));
+}
+.panel.queue-alert-access .queue-count-badge{
+  color:#3b82f6;
+  border-color:color-mix(in srgb, rgba(59,130,246,.34) 72%, var(--bd));
+  background:color-mix(in srgb, rgba(59,130,246,.14) 58%, var(--sf2));
+}
 .panel-head{
   position:relative;
   display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
@@ -984,12 +1032,13 @@ body.basic-mode *::after{
       </div>
     </details>
 
-    <details class="panel collapsible">
+    <details class="panel collapsible" id="accessQueuePanel">
       <summary class="panel-head">
         <div>
           <div class="panel-title">Access Queue</div>
           <div class="panel-sub">Activate new users or deny requests without leaving this app.</div>
         </div>
+        <span id="accessQueueBadge" class="pill queue-count-badge hidden" aria-live="polite">0 pending</span>
       </summary>
       <div id="accessRequestList" class="list">
         <div class="empty">Loading requests...</div>
@@ -2319,6 +2368,12 @@ function applyQueueHighlightState(opts){
 
 function syncQueuePanelHighlights(){
   applyQueueHighlightState({
+    panelId: 'accessQueuePanel',
+    badgeId: 'accessQueueBadge',
+    count: (accessRequestsCache || []).length,
+    alertClass: 'queue-alert-access'
+  });
+  applyQueueHighlightState({
     panelId: 'resetQueuePanel',
     badgeId: 'resetQueueBadge',
     count: (resetRequestsCache || []).length,
@@ -2328,7 +2383,7 @@ function syncQueuePanelHighlights(){
     panelId: 'feedbackQueuePanel',
     badgeId: 'feedbackQueueBadge',
     count: (feedbackRequestsCache || []).length,
-    alertClass: 'queue-alert-attention'
+    alertClass: 'queue-alert-warning'
   });
 }
 
