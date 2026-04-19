@@ -4106,6 +4106,9 @@ const PALETTE_STORAGE_KEY = (sharedPalette && sharedPalette.STORAGE_KEY) || 'pw_
 const PALETTE_PRESETS = (sharedPalette && sharedPalette.getPresetMap)
   ? sharedPalette.getPresetMap()
   : { default: null, basic: { label: 'Basic', accent: '#4b5563', accent2: '#6b7280', accent3: '#9ca3af' } };
+const PALETTE_PRESET_VARS = (sharedPalette && sharedPalette.getPresetVarsMap)
+  ? sharedPalette.getPresetVarsMap({ includeDescriptions: true })
+  : { default: { vars: {} }, basic: { vars: {} } };
 const PALETTE_VARS = ['--ac','--ac2','--ac3','--acd1','--acd2','--acd3','--acgl','--eac','--green-wash-1','--green-wash-2','--green-wash-3','--green-edge','--palette-card-bg-1','--palette-card-bg-2','--palette-card-border','--palette-card-glow-1','--palette-card-glow-2'];
 
 function hexToRgb(hex){
@@ -4170,52 +4173,18 @@ function clearPaletteVars(){
 function getPaletteVars(key){
   const preset = PALETTE_PRESETS[key];
   if(!preset) return null;
+  const sharedVars = (PALETTE_PRESET_VARS[key] && PALETTE_PRESET_VARS[key].vars) ? PALETTE_PRESET_VARS[key].vars : {};
   const ac = preset.accent;
   const ac2 = preset.accent2 || preset.accent;
   const ac3 = preset.accent3 || preset.accent2 || preset.accent;
-  return {
-    '--ac': ac,
-    '--ac2': ac2,
-    '--ac3': ac3,
-    '--acd1': rgbaFromHex(ac, .045),
-    '--acd2': rgbaFromHex(ac, .075),
-    '--acd3': rgbaFromHex(ac, .12),
-    '--acgl': rgbaFromHex(ac3, .12),
-    '--eac': `0 2px 10px ${rgbaFromHex(ac, .10)}`,
-    '--green-wash-1': rgbaFromHex(ac, .03),
-    '--green-wash-2': rgbaFromHex(ac3, .02),
-    '--green-wash-3': rgbaFromHex(ac, .045),
-    '--green-edge': rgbaFromHex(ac3, .08),
-    '--palette-card-bg-1': rgbaFromHex(ac2, .07),
-    '--palette-card-bg-2': rgbaFromHex(ac, .04),
-    '--palette-card-border': rgbaFromHex(ac3, .09),
-    '--palette-card-glow-1': rgbaFromHex(ac3, .04),
-    '--palette-card-glow-2': rgbaFromHex(ac3, .02)
-  };
-}
-
-function getSoftPaletteOverrides(key){
-  const preset = PALETTE_PRESETS[key];
-  if(key === 'basic') return null;
-  const ac = (preset && preset.accent) || '#1a7a35';
-  const ac2 = (preset && preset.accent2) || ac;
-  const ac3 = (preset && preset.accent3) || ac2 || ac;
-  return {
-    '--acd1': rgbaFromHex(ac, .045),
-    '--acd2': rgbaFromHex(ac, .075),
-    '--acd3': rgbaFromHex(ac, .11),
-    '--acgl': rgbaFromHex(ac3, .08),
-    '--eac': `0 2px 10px ${rgbaFromHex(ac, .08)}`,
+  return Object.assign({}, sharedVars, {
+    '--acgl': rgbaFromHex(ac3, .18),
+    '--eac': '0 4px 14px rgba(51,65,85,.08)',
     '--green-wash-1': rgbaFromHex(ac, .02),
     '--green-wash-2': rgbaFromHex(ac3, .015),
     '--green-wash-3': rgbaFromHex(ac, .03),
-    '--green-edge': rgbaFromHex(ac3, .06),
-    '--palette-card-bg-1': rgbaFromHex(ac2, .05),
-    '--palette-card-bg-2': rgbaFromHex(ac, .025),
-    '--palette-card-border': rgbaFromHex(ac3, .08),
-    '--palette-card-glow-1': rgbaFromHex(ac3, .02),
-    '--palette-card-glow-2': rgbaFromHex(ac3, .01)
-  };
+    '--green-edge': rgbaFromHex(ac3, .06)
+  });
 }
 
 function updatePaletteUi(){
@@ -4236,15 +4205,9 @@ function applyStoredPalette(){
   const preset = getStoredPalettePreset();
   document.body.classList.toggle('basic-mode', preset === 'basic');
   document.documentElement.classList.toggle('basic-mode', preset === 'basic');
-  const vars = preset === 'default'
-    ? ((sharedPalette && sharedPalette.getPresetVarsMap && sharedPalette.getPresetVarsMap({ includeDescriptions: true }).default)
-      ? sharedPalette.getPresetVarsMap({ includeDescriptions: true }).default.vars
-      : null)
-    : getPaletteVars(preset);
+  const vars = getPaletteVars(preset);
   if(vars) setPaletteVarMap(vars);
   else clearPaletteVars();
-  const softVars = getSoftPaletteOverrides(preset);
-  if(softVars) setPaletteVarMap(softVars);
   updatePaletteUi();
 }
 
