@@ -18,15 +18,15 @@
   --ff-body:'Helvetica Neue','Arial Nova',Arial,sans-serif;
   --ff-mono:'Fira Code',monospace;
   --ease-smooth:cubic-bezier(.22,1,.36,1);
-  --bg:#111418; --sf:#16191f; --sf2:#1c2028; --sf3:#222830; --sf4:#282f3a;
-  --bd:#252c38; --bd2:#2f3a4a; --bd3:#3d4e62;
+  --bg:#080b10; --sf:#0d1117; --sf2:#11161d; --sf3:#161c24; --sf4:#1b2230;
+  --bd:#1d2530; --bd2:#273143; --bd3:#344157;
   --ac:#1a7a35; --ac2:#2ecc5c; --ac3:#5ee27b;
-  --acd1:rgba(26,122,53,.10); --acd2:rgba(26,122,53,.18); --acd3:rgba(26,122,53,.28);
-  --palette-card-bg-1: rgba(46,204,92,.22);
-  --palette-card-bg-2: rgba(26,122,53,.12);
-  --palette-card-border: rgba(94,226,123,.26);
-  --palette-card-glow-1: rgba(94,226,123,.18);
-  --palette-card-glow-2: rgba(94,226,123,.10);
+  --acd1:rgba(26,122,53,.08); --acd2:rgba(26,122,53,.14); --acd3:rgba(26,122,53,.22);
+  --palette-card-bg-1: rgba(46,204,92,.14);
+  --palette-card-bg-2: rgba(26,122,53,.08);
+  --palette-card-border: rgba(94,226,123,.18);
+  --palette-card-glow-1: rgba(94,226,123,.10);
+  --palette-card-glow-2: rgba(94,226,123,.06);
   --tx:#dde4ee; --tx2:#9aa9be; --tx3:#6f8097;
   --red:#f0524f; --redd:rgba(240,82,79,.10); --redb:rgba(240,82,79,.28);
   --grn:#21c27a; --grnd:rgba(33,194,122,.10); --grnb:rgba(33,194,122,.28);
@@ -36,10 +36,10 @@
   --e1:0 1px 3px rgba(0,0,0,.55),0 1px 2px rgba(0,0,0,.4);
   --e2:0 4px 18px rgba(0,0,0,.6); --e3:0 20px 56px rgba(0,0,0,.72);
   --eac:0 4px 22px rgba(51,65,85,.30);
-  --glass-1: rgba(22,25,31,.82);
-  --glass-2: rgba(22,25,31,.72);
-  --glass-3: rgba(22,25,31,.68);
-  --glass-4: rgba(22,25,31,.56);
+  --glass-1: rgba(8,11,16,.78);
+  --glass-2: rgba(8,11,16,.68);
+  --glass-3: rgba(8,11,16,.62);
+  --glass-4: rgba(8,11,16,.50);
   /* Alias tokens used by older/shared snippets. */
   --text: var(--tx);
   --text2: var(--tx2);
@@ -495,8 +495,9 @@ body.basic-mode .topbar .back-platform-btn:hover{
   background:
     radial-gradient(140% 120% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
     radial-gradient(120% 120% at 100% 0%, var(--palette-card-glow-2), transparent 48%),
-    linear-gradient(180deg,var(--glass-1),var(--glass-2));
-  backdrop-filter:blur(20px);
+    linear-gradient(180deg, color-mix(in srgb, var(--glass-1) 84%, transparent), color-mix(in srgb, var(--glass-2) 70%, transparent));
+  backdrop-filter:blur(20px) saturate(1.08);
+  -webkit-backdrop-filter:blur(20px) saturate(1.08);
   box-shadow:var(--e2), var(--eac);
 }
 .topbar-left,.topbar-right{display:flex;align-items:center;gap:10px;min-width:0;flex-wrap:wrap}
@@ -1529,9 +1530,9 @@ body:not(.basic-mode) .topbar{
   background:
     radial-gradient(140% 120% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
     radial-gradient(120% 120% at 100% 0%, var(--palette-card-glow-2), transparent 48%),
-    linear-gradient(180deg,var(--glass-1),var(--glass-2)) !important;
-  backdrop-filter:blur(20px) !important;
-  -webkit-backdrop-filter:blur(20px) !important;
+    linear-gradient(180deg, color-mix(in srgb, var(--glass-1) 84%, transparent), color-mix(in srgb, var(--glass-2) 70%, transparent)) !important;
+  backdrop-filter:blur(20px) saturate(1.08) !important;
+  -webkit-backdrop-filter:blur(20px) saturate(1.08) !important;
 }
 body:not(.basic-mode) :is(.palette-panel,.modal,.toast){
   backdrop-filter:blur(14px) !important;
