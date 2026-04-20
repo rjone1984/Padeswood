@@ -745,7 +745,7 @@ body.basic-mode::after{
               <select id="pmRecipientSelect" class="select">
                 <option value="">Select person...</option>
               </select>
-              <button class="btn btn-primary" type="button" onclick="openPrivateThreadFromSelection()">Open chat</button>
+              <button id="pmOpenChatBtn" class="btn btn-primary" type="button" onclick="openPrivateThreadFromSelection()">Open chat</button>
             </div>
             <div id="pmThreadList" class="pm-thread-list">
               <div class="empty">No private conversations yet.</div>
@@ -915,6 +915,7 @@ let privateMessagingReady = true;
 let privateMessagingWarned = false;
 let privateCountdownTimer = null;
 let privateCountdownRefreshBusy = false;
+let privateExpiryCleanupAtMs = 0;
 const MESSAGE_BOARD_SEEN_AT_KEY_PREFIX = 'pw_message_board_seen_at:';
 
 function $(id){ return document.getElementById(id); }
@@ -980,7 +981,7 @@ function markMessageBoardSeen(ts){
 
 function privateMessageSchemaError(err){
   const msg = String(err && (err.message || err.details || err.hint || err.code || err) || '').toLowerCase();
-  return /pw_message_board_private|private_thread|private_message|private_read|schema cache|does not exist|permission denied|rls/i.test(msg);
+  return /schema cache|does not exist|relation .* does not exist|function .* does not exist|column .* does not exist/i.test(msg);
 }
 
 function normalizePmTimerSeconds(value){
@@ -1041,7 +1042,10 @@ function updatePrivateCountdownUi(){
   });
   if (hasExpired && !privateCountdownRefreshBusy) {
     privateCountdownRefreshBusy = true;
-    Promise.resolve(loadPrivateMessaging({ forcePanelLoad: true, markRead: false }))
+    Promise.resolve((async function(){
+      await runPrivateExpiryCleanup(true);
+      await loadPrivateMessaging({ forcePanelLoad: true, markRead: false });
+    })())
       .catch(function(){})
       .finally(function(){ privateCountdownRefreshBusy = false; });
   }
@@ -1058,6 +1062,18 @@ function stopPrivateCountdownTicker(){
   if (!privateCountdownTimer) return;
   clearInterval(privateCountdownTimer);
   privateCountdownTimer = null;
+}
+
+async function runPrivateExpiryCleanup(force){
+  if (!sb) return;
+  const nowMs = Date.now();
+  if (!force && (nowMs - privateExpiryCleanupAtMs) < 15000) return;
+  privateExpiryCleanupAtMs = nowMs;
+  try {
+    await sb.rpc('pw_message_board_private_cleanup_expired');
+  } catch (e) {
+    console.warn('Private expiry cleanup failed (non-fatal):', e);
+  }
 }
 
 function privateTimeLabel(ts){
@@ -1116,19 +1132,16 @@ function setPrivateMessagingAvailability(enabled, reason){
   const badge = $('privateUnreadBadge');
   const panel = $('privatePanel');
   if (btn) {
-    btn.disabled = !enabled;
+    btn.disabled = false;
     btn.title = enabled ? 'Open private messages' : (reason || 'Private messaging unavailable');
     btn.classList.remove('unread');
-    btn.classList.remove('active');
+    if (!enabled) btn.classList.remove('active');
   }
   if (badge) {
     badge.textContent = '0';
-    badge.classList.add('hidden');
+    if (!enabled) badge.classList.add('hidden');
   }
-  if (panel) {
-    panel.classList.toggle('hidden', !enabled);
-    if (!enabled) panel.open = false;
-  }
+  if (panel && !enabled) panel.open = false;
 }
 
 function updatePrivateToggleState(){
@@ -1206,6 +1219,7 @@ function updatePrivateConversationUi(){
 
 function populatePrivateRecipients(){
   const select = $('pmRecipientSelect');
+  const openBtn = $('pmOpenChatBtn');
   if (!select) return;
   const current = String(select.value || '');
   const options = privateProfiles
@@ -1220,6 +1234,11 @@ function populatePrivateRecipients(){
       return '<option value="' + esc(String(profile.id)) + '">' + esc(label) + '</option>';
     }).join('');
   select.innerHTML = '<option value="">Select person...</option>' + options;
+  if (openBtn) {
+    const hasChoices = options.length > 0;
+    openBtn.disabled = !hasChoices;
+    openBtn.title = hasChoices ? 'Open chat' : 'No eligible users available for private chat';
+  }
   if (current) {
     const hasCurrent = Array.from(select.options || []).some(function(opt){ return String(opt.value) === current; });
     if (hasCurrent) select.value = current;
@@ -1296,7 +1315,6 @@ function buildPrivateThreadSummaries(rawThreads, rawMessages){
   return (rawThreads || []).map(function(thread){
     const id = String(thread.id || '');
     const messages = (byThread[id] || []).sort(function(a, b){ return rowTimeMs(b) - rowTimeMs(a); });
-    if (!messages.length) return null;
     const latest = messages[0] || null;
     const partnerId = privatePartnerId(thread);
     const readMs = new Date(privateReadByThread[id] || '1970-01-01T00:00:00.000Z').getTime();
@@ -1304,7 +1322,11 @@ function buildPrivateThreadSummaries(rawThreads, rawMessages){
       const sender = String(msg.sender_user_id || '');
       return sender && sender !== String(currentUser && currentUser.id) && rowTimeMs(msg) > readMs;
     }).length;
-    const updatedMs = Math.max(rowTimeMs(latest), rowTimeMs({ created_at: thread.updated_at }));
+    const updatedMs = Math.max(
+      rowTimeMs(latest),
+      rowTimeMs({ created_at: thread.updated_at }),
+      rowTimeMs({ created_at: thread.created_at })
+    );
     const timerSeconds = thread.auto_delete_enabled ? normalizePmTimerSeconds(thread.auto_delete_seconds) : null;
     return {
       id: id,
@@ -1314,7 +1336,9 @@ function buildPrivateThreadSummaries(rawThreads, rawMessages){
       unreadCount: unreadCount,
       preview: latest ? privatePreviewText(latest.message_text) : 'No messages yet',
       updatedMs: updatedMs,
-      updatedLabel: latest ? formatAge(latest.created_at) : formatAge(thread.created_at),
+      updatedLabel: latest
+        ? formatAge(latest.created_at)
+        : (thread.updated_at ? formatAge(thread.updated_at) : formatAge(thread.created_at)),
       timerSeconds: timerSeconds
     };
   }).filter(Boolean).sort(function(a, b){ return b.updatedMs - a.updatedMs; });
@@ -1328,9 +1352,7 @@ async function loadPrivateThreads(){
     updatePrivateToggleState();
     return;
   }
-  try {
-    await sb.rpc('pw_message_board_private_cleanup_expired');
-  } catch (e) {}
+  await runPrivateExpiryCleanup(false);
   const threadRes = await sb
     .from(PM_THREAD_TABLE)
     .select('*')
@@ -1339,13 +1361,7 @@ async function loadPrivateThreads(){
     .limit(300);
   if (threadRes.error) throw threadRes.error;
   const rawThreads = threadRes.data || [];
-  const filteredThreads = rawThreads.filter(function(thread){
-    if (!thread) return false;
-    const a = String(thread.participant_a_user_id || '');
-    const b = String(thread.participant_b_user_id || '');
-    return !(isPrivateAdminUserId(a) || isPrivateAdminUserId(b));
-  });
-  const threadIds = filteredThreads.map(function(thread){ return thread.id; }).filter(Boolean);
+  const threadIds = rawThreads.map(function(thread){ return thread.id; }).filter(Boolean);
   privateReadByThread = {};
   if (threadIds.length) {
     const readRes = await sb.from(PM_READ_TABLE).select('thread_id,last_read_at').eq('user_id', uid).in('thread_id', threadIds);
@@ -1378,9 +1394,51 @@ async function loadPrivateThreads(){
     if (msgRes.error) throw msgRes.error;
     rawMessages = msgRes.data || [];
   }
-  privateThreads = buildPrivateThreadSummaries(filteredThreads, rawMessages);
+  privateThreads = buildPrivateThreadSummaries(rawThreads, rawMessages);
   renderPrivateThreadList();
   updatePrivateToggleState();
+}
+
+async function ensurePrivateThreadForPair(myUserId, partnerUserId){
+  const sorted = [String(myUserId || ''), String(partnerUserId || '')].sort();
+  if (!sorted[0] || !sorted[1] || sorted[0] === sorted[1]) throw new Error('Invalid private chat pair.');
+  const existingRes = await sb
+    .from(PM_THREAD_TABLE)
+    .select('*')
+    .eq('participant_a_user_id', sorted[0])
+    .eq('participant_b_user_id', sorted[1])
+    .order('updated_at', { ascending: false })
+    .limit(1);
+  if (existingRes.error) throw existingRes.error;
+  let thread = existingRes.data && existingRes.data[0] ? existingRes.data[0] : null;
+  if (thread && thread.id) return thread;
+  const createRes = await sb
+    .from(PM_THREAD_TABLE)
+    .insert({
+      participant_a_user_id: sorted[0],
+      participant_b_user_id: sorted[1],
+      auto_delete_enabled: false,
+      auto_delete_seconds: null
+    })
+    .select('*')
+    .single();
+  if (createRes.error) {
+    const createMsg = String(createRes.error.message || createRes.error.details || '').toLowerCase();
+    if (createMsg.includes('duplicate') || createMsg.includes('unique')) {
+      const retryRes = await sb
+        .from(PM_THREAD_TABLE)
+        .select('*')
+        .eq('participant_a_user_id', sorted[0])
+        .eq('participant_b_user_id', sorted[1])
+        .order('updated_at', { ascending: false })
+        .limit(1);
+      if (retryRes.error) throw retryRes.error;
+      thread = retryRes.data && retryRes.data[0] ? retryRes.data[0] : null;
+      if (thread && thread.id) return thread;
+    }
+    throw createRes.error;
+  }
+  return createRes.data || null;
 }
 
 async function loadPrivateMessagesForCurrentThread(markRead){
@@ -1412,13 +1470,18 @@ async function loadPrivateMessagesForCurrentThread(markRead){
   if (res.error) throw res.error;
   privateMessages = res.data || [];
   renderPrivateMessages();
-  if (markRead !== false) await markPrivateThreadRead(threadId);
+  if (markRead !== false) {
+    try {
+      await markPrivateThreadRead(threadId);
+    } catch (readErr) {
+      console.warn('Private read sync failed (non-fatal):', readErr);
+    }
+  }
 }
 
 async function loadPrivateMessaging(options){
   const opts = options || {};
   if (!currentUser || !currentUser.id) return;
-  if (!privateMessagingReady) return;
   try {
     await loadPrivateProfiles();
     await loadPrivateThreads();
@@ -1475,6 +1538,10 @@ async function openPrivateThreadFromSelection(){
   const select = $('pmRecipientSelect');
   const partnerId = String(select && select.value ? select.value : '');
   if (!partnerId) {
+    if (!privateProfiles.length) {
+      setToast('No eligible users available for private chat right now.');
+      return;
+    }
     setToast('Select a person first.');
     return;
   }
@@ -1492,7 +1559,8 @@ async function openPrivateThreadFromSelection(){
     const existingRes = await sb
       .from(PM_THREAD_TABLE)
       .select('*')
-      .or('and(participant_a_user_id.eq.' + sorted[0] + ',participant_b_user_id.eq.' + sorted[1] + '),and(participant_a_user_id.eq.' + sorted[1] + ',participant_b_user_id.eq.' + sorted[0] + ')')
+      .eq('participant_a_user_id', sorted[0])
+      .eq('participant_b_user_id', sorted[1])
       .order('updated_at', { ascending: false })
       .limit(1);
     if (existingRes.error) throw existingRes.error;
@@ -1508,19 +1576,59 @@ async function openPrivateThreadFromSelection(){
         })
         .select('*')
         .single();
-      if (createRes.error) throw createRes.error;
-      thread = createRes.data || null;
+      if (createRes.error) {
+        const createMsg = String(createRes.error.message || createRes.error.details || '').toLowerCase();
+        if (createMsg.includes('duplicate') || createMsg.includes('unique')) {
+          const retryRes = await sb
+            .from(PM_THREAD_TABLE)
+            .select('*')
+            .eq('participant_a_user_id', sorted[0])
+            .eq('participant_b_user_id', sorted[1])
+            .order('updated_at', { ascending: false })
+            .limit(1);
+          if (retryRes.error) throw retryRes.error;
+          thread = retryRes.data && retryRes.data[0] ? retryRes.data[0] : null;
+        } else {
+          throw createRes.error;
+        }
+      } else {
+        thread = createRes.data || null;
+      }
     }
     if (!thread || !thread.id) throw new Error('Could not start conversation.');
     privateCurrentThreadId = String(thread.id);
-    await ensurePrivateReadRow(privateCurrentThreadId);
+    try {
+      await ensurePrivateReadRow(privateCurrentThreadId);
+    } catch (readErr) {
+      console.warn('Private read bootstrap failed (non-fatal):', readErr);
+    }
     const panel = $('privatePanel');
     if (panel) {
       panel.classList.remove('hidden');
       panel.open = true;
     }
-    await loadPrivateMessaging({ forcePanelLoad: true, markRead: true });
+    await loadPrivateThreads();
+    if (!privateThreads.some(function(item){ return String(item.id) === String(privateCurrentThreadId); })) {
+      const partnerName = privateDisplayName(partnerId);
+      privateThreads.push({
+        id: privateCurrentThreadId,
+        raw: thread,
+        partnerId: String(partnerId),
+        partnerName: partnerName,
+        unreadCount: 0,
+        preview: 'No messages yet',
+        updatedMs: Date.now(),
+        updatedLabel: 'just now',
+        timerSeconds: null
+      });
+      privateThreads.sort(function(a, b){ return (b.updatedMs || 0) - (a.updatedMs || 0); });
+    }
+    updatePrivateConversationUi();
+    renderPrivateThreadList();
+    await loadPrivateMessagesForCurrentThread(true);
+    setToast('Chat opened.');
   } catch (err) {
+    console.error('Open private chat failed:', err);
     if (privateMessageSchemaError(err)) {
       setPrivateMessagingAvailability(false, 'Run the private messaging SQL update first.');
       if (!privateMessagingWarned) {
@@ -1529,7 +1637,7 @@ async function openPrivateThreadFromSelection(){
       }
       return;
     }
-    setToast('Could not open private chat.');
+    setToast('Could not open private chat: ' + (err && err.message ? err.message : 'Unknown error'));
   }
 }
 
@@ -1638,21 +1746,44 @@ async function sendPrivateMessage(){
   }
   try {
     updateStatusDot('Database reconnecting');
-    const summary = currentThreadSummary;
-    const seconds = summary ? normalizePmTimerSeconds(summary.timerSeconds) : null;
-    const payload = {
-      thread_id: privateCurrentThreadId,
-      sender_user_id: currentUser.id,
-      message_text: text
-    };
-    if (seconds) payload.expires_at = new Date(Date.now() + (seconds * 1000)).toISOString();
-    const ins = await sb.from(PM_MESSAGE_TABLE).insert(payload);
-    if (ins.error) throw ins.error;
-    const touch = await sb.from(PM_THREAD_TABLE).update({ updated_at: new Date().toISOString() }).eq('id', privateCurrentThreadId);
-    if (touch.error) throw touch.error;
+    let sendThreadId = String(privateCurrentThreadId || '');
+    let rpcRes = await sb.rpc('pw_message_board_private_send_message', {
+      p_thread_id: sendThreadId,
+      p_message_text: text
+    });
+    if (rpcRes.error) {
+      const firstErrMsg = String(rpcRes.error.message || rpcRes.error.details || '').toLowerCase();
+      if (firstErrMsg.includes('thread not found') && partnerId && currentUser && currentUser.id) {
+        const repairedThread = await ensurePrivateThreadForPair(currentUser.id, partnerId);
+        if (repairedThread && repairedThread.id) {
+          sendThreadId = String(repairedThread.id);
+          privateCurrentThreadId = sendThreadId;
+          rpcRes = await sb.rpc('pw_message_board_private_send_message', {
+            p_thread_id: sendThreadId,
+            p_message_text: text
+          });
+        }
+      }
+      if (rpcRes.error) {
+        if (privateMessageSchemaError(rpcRes.error)) {
+          throw rpcRes.error;
+        }
+        const rpcErr = new Error(rpcRes.error.message || 'Send failed');
+        rpcErr.stage = 'rpc';
+        rpcErr.details = rpcRes.error.details || '';
+        rpcErr.hint = rpcRes.error.hint || '';
+        rpcErr.code = rpcRes.error.code || '';
+        throw rpcErr;
+      }
+    }
     input.value = '';
-    await loadPrivateMessagesForCurrentThread(true);
-    await loadPrivateThreads();
+    try {
+      await loadPrivateMessagesForCurrentThread(true);
+      await loadPrivateThreads();
+    } catch (refreshErr) {
+      console.warn('Private message refresh failed (non-fatal):', refreshErr);
+      setToast('Message sent. Refresh issue detected, reopen chat if needed.');
+    }
     updateStatusDot('Database connected');
   } catch (err) {
     if (privateMessageSchemaError(err)) {
@@ -1663,7 +1794,12 @@ async function sendPrivateMessage(){
       }
       return;
     }
-    setToast('Could not send private message.');
+    const errMsg = String(err && (err.message || err.details || err.hint || err.code || '') || '').trim();
+    if (/permission denied|row-level security|rls/i.test(errMsg)) {
+      setToast('Could not send private message: permission denied by database policy.');
+    } else {
+      setToast('Could not send private message' + (errMsg ? (': ' + errMsg) : '.'));
+    }
     updateStatusDot('Database fault');
   }
 }
@@ -1697,10 +1833,6 @@ function togglePrivatePanel(forceOpen){
   const panel = $('privatePanel');
   const btn = $('privateToggleBtn');
   if (!panel || !btn) return;
-  if (!privateMessagingReady) {
-    setToast('Run the private messaging SQL update first.');
-    return;
-  }
   const currentlyOpen = panel.open && !panel.classList.contains('hidden');
   const open = typeof forceOpen === 'boolean' ? forceOpen : !currentlyOpen;
   if (open) {
