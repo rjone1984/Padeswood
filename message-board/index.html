@@ -726,7 +726,7 @@ body.basic-mode::after{
   </header>
 
   <main class="page">
-    <details id="privatePanel" class="suite-section hidden" open>
+    <details id="privatePanel" class="suite-section hidden">
       <summary>
         <div class="suite-section-head">
           <div class="brand-mark logo-mark" aria-hidden="true"><img data-suite-logo alt=""></div>
@@ -910,6 +910,7 @@ let privateThreads = [];
 let privateMessages = [];
 let privateReadByThread = {};
 let privateCurrentThreadId = '';
+let privateAdminUserIds = new Set();
 let privateMessagingReady = true;
 let privateMessagingWarned = false;
 let privateCountdownTimer = null;
@@ -1103,6 +1104,11 @@ function privateDisplayName(userId){
   if (!profile) return 'User';
   return String(profile.full_name || profile.email || 'User').trim() || 'User';
 }
+function isPrivateAdminUserId(userId){
+  const key = String(userId || '');
+  if (!key) return false;
+  return privateAdminUserIds.has(key);
+}
 
 function setPrivateMessagingAvailability(enabled, reason){
   privateMessagingReady = !!enabled;
@@ -1243,16 +1249,39 @@ async function markPrivateThreadRead(threadId){
 
 async function loadPrivateProfiles(){
   const uid = currentUser && currentUser.id ? String(currentUser.id) : '';
-  if (!uid) { privateProfiles = []; populatePrivateRecipients(); return; }
-  let res = await sb.from('pw_profiles').select('id,full_name,email,approved,disabled,message_board_access').eq('approved', true).eq('disabled', false).neq('id', uid);
+  if (!uid) {
+    privateProfiles = [];
+    privateAdminUserIds = new Set();
+    populatePrivateRecipients();
+    return;
+  }
+  let res = await sb.from('pw_profiles').select('id,full_name,email,approved,disabled,message_board_access,role').eq('approved', true).eq('disabled', false).neq('id', uid);
   if (res.error) {
     const msg = String(res.error && (res.error.message || res.error.details || '')).toLowerCase();
-    if (msg.indexOf('message_board_access') >= 0 || msg.indexOf('schema cache') >= 0) {
+    if (msg.indexOf('message_board_access') >= 0 || msg.indexOf('role') >= 0 || msg.indexOf('schema cache') >= 0) {
       res = await sb.from('pw_profiles').select('id,full_name,email,approved,disabled').eq('approved', true).eq('disabled', false).neq('id', uid);
     }
   }
   if (res.error) throw res.error;
-  privateProfiles = (res.data || []).filter(function(profile){ return profile && profile.message_board_access !== false; });
+  const profiles = (res.data || []).filter(function(profile){ return !!profile; });
+  const roleAdminIds = profiles
+    .filter(function(profile){ return String(profile.role || '').toLowerCase() === 'admin'; })
+    .map(function(profile){ return String(profile.id || ''); })
+    .filter(Boolean);
+  let kilnAdminIds = [];
+  try {
+    const kilnRes = await sb.from('kiln_users').select('auth_user_id').eq('is_admin', true);
+    if (!kilnRes.error) {
+      kilnAdminIds = (kilnRes.data || []).map(function(row){
+        return String(row && row.auth_user_id ? row.auth_user_id : '');
+      }).filter(Boolean);
+    }
+  } catch (e) {}
+  privateAdminUserIds = new Set(roleAdminIds.concat(kilnAdminIds));
+  privateProfiles = profiles.filter(function(profile){
+    const profileId = String(profile.id || '');
+    return profile.message_board_access !== false && !privateAdminUserIds.has(profileId);
+  });
   populatePrivateRecipients();
 }
 
@@ -1310,7 +1339,13 @@ async function loadPrivateThreads(){
     .limit(300);
   if (threadRes.error) throw threadRes.error;
   const rawThreads = threadRes.data || [];
-  const threadIds = rawThreads.map(function(thread){ return thread.id; }).filter(Boolean);
+  const filteredThreads = rawThreads.filter(function(thread){
+    if (!thread) return false;
+    const a = String(thread.participant_a_user_id || '');
+    const b = String(thread.participant_b_user_id || '');
+    return !(isPrivateAdminUserId(a) || isPrivateAdminUserId(b));
+  });
+  const threadIds = filteredThreads.map(function(thread){ return thread.id; }).filter(Boolean);
   privateReadByThread = {};
   if (threadIds.length) {
     const readRes = await sb.from(PM_READ_TABLE).select('thread_id,last_read_at').eq('user_id', uid).in('thread_id', threadIds);
@@ -1343,7 +1378,7 @@ async function loadPrivateThreads(){
     if (msgRes.error) throw msgRes.error;
     rawMessages = msgRes.data || [];
   }
-  privateThreads = buildPrivateThreadSummaries(rawThreads, rawMessages);
+  privateThreads = buildPrivateThreadSummaries(filteredThreads, rawMessages);
   renderPrivateThreadList();
   updatePrivateToggleState();
 }
@@ -1388,12 +1423,8 @@ async function loadPrivateMessaging(options){
     await loadPrivateProfiles();
     await loadPrivateThreads();
     const panel = $('privatePanel');
-    const panelOpen = !!(panel && panel.open);
-    if (!panelOpen && opts.forcePanelLoad !== true) return;
-    if (panel && opts.forcePanelLoad === true) {
-      panel.classList.remove('hidden');
-      panel.open = true;
-    }
+    const panelOpen = !!(panel && panel.open && !panel.classList.contains('hidden'));
+    if (!panelOpen) return;
     if (!privateCurrentThreadId && privateThreads.length) privateCurrentThreadId = String(privateThreads[0].id);
     if (privateCurrentThreadId && !privateThreads.some(function(thread){ return String(thread.id) === String(privateCurrentThreadId); })) {
       privateCurrentThreadId = '';
@@ -1449,6 +1480,10 @@ async function openPrivateThreadFromSelection(){
   }
   if (!currentUser || !currentUser.id || String(currentUser.id) === partnerId) {
     setToast('Choose another user.');
+    return;
+  }
+  if (isPrivateAdminUserId(partnerId)) {
+    setToast('Private messages to admin accounts are not allowed.');
     return;
   }
   try {
@@ -1595,9 +1630,15 @@ async function sendPrivateMessage(){
     setToast('Private message is too long.');
     return;
   }
+  const currentThreadSummary = privateThreads.find(function(thread){ return String(thread.id) === String(privateCurrentThreadId); }) || null;
+  const partnerId = currentThreadSummary ? String(currentThreadSummary.partnerId || '') : '';
+  if (partnerId && isPrivateAdminUserId(partnerId)) {
+    setToast('Private messages to admin accounts are not allowed.');
+    return;
+  }
   try {
     updateStatusDot('Database reconnecting');
-    const summary = privateThreads.find(function(thread){ return String(thread.id) === String(privateCurrentThreadId); }) || null;
+    const summary = currentThreadSummary;
     const seconds = summary ? normalizePmTimerSeconds(summary.timerSeconds) : null;
     const payload = {
       thread_id: privateCurrentThreadId,
@@ -1660,10 +1701,17 @@ function togglePrivatePanel(forceOpen){
     setToast('Run the private messaging SQL update first.');
     return;
   }
-  const open = typeof forceOpen === 'boolean' ? forceOpen : !panel.open;
-  panel.classList.remove('hidden');
-  panel.open = open;
-  btn.classList.toggle('active', open);
+  const currentlyOpen = panel.open && !panel.classList.contains('hidden');
+  const open = typeof forceOpen === 'boolean' ? forceOpen : !currentlyOpen;
+  if (open) {
+    panel.classList.remove('hidden');
+    panel.open = true;
+    btn.classList.add('active');
+  } else {
+    panel.open = false;
+    panel.classList.add('hidden');
+    btn.classList.remove('active');
+  }
   if (open) {
     loadPrivateMessaging({ forcePanelLoad: true, markRead: true });
     if (panel.scrollIntoView) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -2361,13 +2409,25 @@ async function bootstrap(){
 window.addEventListener('storage', function(e){
   if (e.key === PALETTE_STORAGE_KEY) applyStoredPalette();
 });
-document.addEventListener('DOMContentLoaded', async function(){
+  document.addEventListener('DOMContentLoaded', async function(){
   sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   await applySuiteLogos();
   const input = $('messageInput');
   if (input) input.addEventListener('input', updateCharCount);
   onPostKindChange();
   setComposeMode('type');
+  const privatePanel = $('privatePanel');
+  const privateBtn = $('privateToggleBtn');
+  if (privatePanel && privateBtn) {
+    privatePanel.addEventListener('toggle', function(){
+      if (!privatePanel.open) {
+        privatePanel.classList.add('hidden');
+        privateBtn.classList.remove('active');
+      } else if (!privatePanel.classList.contains('hidden')) {
+        privateBtn.classList.add('active');
+      }
+    });
+  }
   await bootstrap();
 });
 </script>
