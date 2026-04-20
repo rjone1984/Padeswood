@@ -2382,6 +2382,30 @@ async function saveRequestRow(requestType, payload){
   return PW_REQUESTS_TABLE;
 }
 
+async function saveAccessRequestRowCompat(payload){
+  const requestPayload = Object.assign({}, payload || {});
+  const optionalCols = [
+    'shift_team',
+    'logs_access',
+    'kiln_roles',
+    'work_role_type',
+    'holiday_manager_auth_user_id',
+    'message_board_access'
+  ];
+  for (;;) {
+    try {
+      await saveRequestRow('access', requestPayload);
+      return;
+    } catch (err) {
+      const missingCol = optionalCols.find(function(col){
+        return Object.prototype.hasOwnProperty.call(requestPayload, col) && hasMissingColumnError(err, col);
+      });
+      if (!missingCol) throw err;
+      delete requestPayload[missingCol];
+    }
+  }
+}
+
 async function updateRequestRow(row, updates){
   if (!row || !row.id) throw new Error('Missing request row');
   const requestType = row.requestType || row.request_type || 'access';
@@ -3960,13 +3984,7 @@ async function queueQuickUser(){
       requested_at: new Date().toISOString(),
       status: 'pending'
     };
-    try {
-      await saveRequestRow('access', requestPayload);
-    } catch (requestErr) {
-      if (!hasMissingColumnError(requestErr, 'shift_team')) throw requestErr;
-      delete requestPayload.shift_team;
-      await saveRequestRow('access', requestPayload);
-    }
+    await saveAccessRequestRowCompat(requestPayload);
     $('quickFullName').value = '';
     $('quickEmailUser').value = '';
     $('quickKilnRole').value = 'none';
