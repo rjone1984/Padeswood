@@ -4018,8 +4018,9 @@ function openAccessRequestPwModal(reqId, email, fullName, role, kilnRole) {
   document.getElementById('forcePwNotice').textContent = 'Enter a new password twice to create this account immediately.';
   document.getElementById('forcePwBtn').textContent = 'Create Account';
   document.getElementById('forcePwCancelBtn').textContent = 'Cancel';
-  document.getElementById('forcePwNew').value = '';
-  document.getElementById('forcePwConfirm').value = '';
+  document.getElementById('forcePwNew').value = 'Control';
+  document.getElementById('forcePwConfirm').value = 'Control';
+  document.getElementById('forcePwNotice').textContent = 'Temporary password is "Control". They will choose their own password on first logon.';
   document.getElementById('forcePwMsg').style.display = 'none';
   document.getElementById('forcePwOverlay').style.display = 'flex';
   setTimeout(function() { document.getElementById('forcePwNew').focus(); }, 80);
@@ -4432,8 +4433,9 @@ function openBulkAccessRequestPwModal() {
   );
   document.getElementById('forcePwBtn').textContent = 'Activate Selected';
   document.getElementById('forcePwCancelBtn').textContent = 'Cancel';
-  document.getElementById('forcePwNew').value = '';
-  document.getElementById('forcePwConfirm').value = '';
+  document.getElementById('forcePwNew').value = 'Control';
+  document.getElementById('forcePwConfirm').value = 'Control';
+  document.getElementById('forcePwNotice').textContent = 'Temporary password is "Control". Each selected user will choose their own password on first logon.';
   document.getElementById('forcePwMsg').style.display = 'none';
   document.getElementById('forcePwOverlay').style.display = 'flex';
   setTimeout(function() { document.getElementById('forcePwNew').focus(); }, 80);
@@ -4472,7 +4474,7 @@ async function createAccessRequestAccount(target, passwordValue) {
   const createRes = await callAdminPwFunction({
     action: 'createAccount',
     email: target.email,
-    password: passwordValue,
+    password: passwordValue || 'Control',
     fullName: target.fullName
   });
   const userId = createRes && createRes.userId ? createRes.userId : null;

@@ -165,6 +165,51 @@ body::before{
   backdrop-filter:blur(24px);
   -webkit-backdrop-filter:blur(24px);
 }
+.suite-section{
+  border:1px solid var(--bd);
+  border-radius:18px;
+  background:linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  box-shadow:var(--e2),var(--eac);
+  overflow:hidden;
+}
+.suite-section > summary{
+  list-style:none;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:16px;
+}
+.suite-section > summary::-webkit-details-marker{display:none}
+.suite-section-head{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  min-width:0;
+}
+.suite-section-copy{
+  min-width:0;
+  display:grid;
+  gap:3px;
+}
+.suite-section-body{
+  padding:0 16px 16px;
+}
+.suite-section-arrow{
+  width:10px;
+  height:10px;
+  flex:0 0 10px;
+  border-right:2px solid var(--tx3);
+  border-bottom:2px solid var(--tx3);
+  transform:rotate(45deg);
+  transition:transform .2s ease,border-color .2s ease;
+  margin-left:auto;
+}
+.suite-section[open] .suite-section-arrow{
+  transform:rotate(225deg);
+  border-color:var(--ac3);
+}
 .panel-head{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap}
 .panel-title{font-family:var(--ff-head);font-size:18px;font-weight:800}
 .panel-sub{font-size:12px;color:var(--tx2)}
@@ -179,7 +224,7 @@ body::before{
   background:var(--sf2);
   color:var(--tx);
   border-radius:11px;
-  font:600 12px/1 var(--ff-head);
+  font:500 12px/1 var(--ff-head);
 }
 .textarea{width:100%;min-height:110px;padding:12px;font:500 14px/1.5 var(--ff-body);resize:vertical;outline:none}
 .textarea:focus,.input:focus{border-color:var(--ac3);box-shadow:0 0 0 3px var(--acd1)}
@@ -297,6 +342,251 @@ body::before{
   font:700 10px/1 var(--ff-head);
   cursor:pointer;
 }
+.private-toggle-btn{
+  position:relative;
+  min-width:136px;
+}
+.private-toggle-btn.unread{
+  border-color:color-mix(in srgb, var(--ac3) 70%, var(--bd2));
+  box-shadow:0 0 0 1px var(--acd2),0 0 14px color-mix(in srgb, var(--ac3) 38%, transparent);
+  animation:privateToggleGlow 1.5s ease-in-out infinite;
+}
+.private-toggle-btn.active{
+  border-color:var(--ac3);
+  color:var(--ac3);
+  box-shadow:0 0 0 3px var(--acd1);
+}
+.pm-unread-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:18px;
+  height:18px;
+  padding:0 6px;
+  border-radius:999px;
+  border:1px solid color-mix(in srgb, var(--ac3) 70%, var(--bd2));
+  background:color-mix(in srgb, var(--acd2) 70%, var(--sf2));
+  color:var(--ac3);
+  font:700 10px/1 var(--ff-mono);
+}
+@keyframes privateToggleGlow{
+  0%,100%{
+    box-shadow:0 0 0 1px var(--acd2),0 0 14px color-mix(in srgb, var(--ac3) 34%, transparent);
+  }
+  50%{
+    box-shadow:0 0 0 1px var(--acd3),0 0 22px color-mix(in srgb, var(--ac3) 48%, transparent);
+  }
+}
+.pm-shell{
+  display:grid;
+  grid-template-columns:minmax(240px,280px) minmax(0,1fr);
+  gap:12px;
+}
+.pm-side{
+  display:grid;
+  gap:10px;
+}
+.pm-start{
+  border:1px solid var(--bd);
+  border-radius:12px;
+  padding:10px;
+  background:linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  display:grid;
+  gap:8px;
+}
+.pm-start .select{
+  width:100%;
+  min-width:0;
+  height:38px;
+  padding:0 10px;
+  border:1px solid var(--bd2);
+  background:var(--sf2);
+  color:var(--tx);
+  border-radius:11px;
+  font:500 12px/1 var(--ff-head);
+  box-shadow:none;
+}
+.pm-thread-list{
+  display:grid;
+  gap:8px;
+}
+.pm-thread-item{
+  border:1px solid var(--bd);
+  border-radius:12px;
+  background:linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  padding:10px;
+  display:grid;
+  gap:5px;
+  cursor:pointer;
+  text-align:left;
+}
+.pm-thread-item:hover{
+  border-color:var(--bd3);
+  background:var(--sf2);
+}
+.pm-thread-item.active{
+  border-color:var(--ac3);
+  box-shadow:0 0 0 3px var(--acd1);
+}
+.pm-thread-item.unread{
+  border-color:color-mix(in srgb, var(--ac3) 68%, var(--bd2));
+}
+.pm-thread-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+.pm-thread-name{
+  font:800 13px/1.2 var(--ff-head);
+  color:var(--tx);
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.pm-thread-preview{
+  font-size:12px;
+  color:var(--tx2);
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.pm-thread-meta{
+  font-size:10px;
+  color:var(--tx3);
+  font-family:var(--ff-mono);
+}
+.pm-main{
+  border:1px solid var(--bd);
+  border-radius:14px;
+  background:linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  padding:12px;
+  display:grid;
+  gap:10px;
+}
+.pm-main-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.pm-main-title{
+  font:800 16px/1.2 var(--ff-head);
+  margin:0;
+}
+.pm-main-sub{
+  margin:3px 0 0;
+  font-size:11px;
+  color:var(--tx2);
+}
+.pm-timer-controls{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.pm-timer-controls .select{
+  min-width:160px;
+  height:34px;
+  padding:0 10px;
+}
+.pm-timer-controls .btn{
+  height:34px;
+  padding:0 10px;
+}
+.pm-thread-delete{
+  height:34px;
+  padding:0 10px;
+  border-radius:10px;
+  border:1px solid var(--redb);
+  background:var(--redd);
+  color:var(--red);
+  font:700 12px/1 var(--ff-head);
+  cursor:pointer;
+}
+.pm-thread-delete:hover{
+  border-color:color-mix(in srgb, var(--red) 55%, var(--redb));
+  box-shadow:0 0 0 3px color-mix(in srgb, var(--red) 16%, transparent);
+}
+.pm-message-list{
+  border:1px solid var(--bd);
+  border-radius:12px;
+  background:var(--sf2);
+  padding:10px;
+  display:grid;
+  gap:8px;
+  min-height:160px;
+  max-height:380px;
+  overflow:auto;
+}
+.pm-message{
+  max-width:min(82%, 560px);
+  border:1px solid var(--bd2);
+  border-radius:12px;
+  padding:9px 10px 8px;
+  background:linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  box-shadow:var(--e1);
+  display:grid;
+  gap:5px;
+}
+.pm-message.outgoing{
+  margin-left:auto;
+  border-color:color-mix(in srgb, var(--ac3) 58%, var(--bd2));
+  background:linear-gradient(180deg,color-mix(in srgb, var(--acd2) 48%, var(--glass-1)),color-mix(in srgb, var(--acd1) 38%, var(--glass-2)));
+}
+.pm-message-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+.pm-message-author{
+  font:700 11px/1 var(--ff-mono);
+  color:var(--tx2);
+}
+.pm-message-time{
+  font:600 10px/1 var(--ff-mono);
+  color:var(--tx3);
+}
+.pm-message-text{
+  white-space:pre-wrap;
+  word-break:break-word;
+  font-size:13px;
+  color:var(--tx);
+}
+.pm-message-expiry{
+  font-size:10px;
+  font-family:var(--ff-mono);
+  color:var(--tx3);
+}
+.pm-message-actions{
+  display:flex;
+  justify-content:flex-end;
+}
+.pm-message-delete{
+  height:22px;
+  padding:0 8px;
+  border-radius:7px;
+  border:1px solid var(--redb);
+  background:var(--redd);
+  color:var(--red);
+  font:700 10px/1 var(--ff-head);
+  cursor:pointer;
+}
+.pm-compose{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:8px;
+}
+.pm-compose .input{
+  height:38px;
+  padding:0 12px;
+}
+.pm-compose .btn{
+  height:38px;
+  padding:0 14px;
+}
 .empty{padding:20px;border:1px dashed var(--bd2);border-radius:14px;color:var(--tx3);text-align:center}
 .toast{
   position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
@@ -354,8 +644,13 @@ body.basic-mode::after{
   .topbar-title h1{font-size:16px}
   .topbar-title .kicker{font-size:9px}
   .thread-controls{grid-template-columns:1fr}
+  .pm-shell{grid-template-columns:1fr}
+  .pm-message{max-width:100%}
+  .pm-compose{grid-template-columns:1fr}
   .page{padding:12px 10px 20px;gap:12px}
   .panel{padding:14px}
+  .suite-section > summary{padding:14px}
+  .suite-section-body{padding:0 14px 14px}
   .panel-title{font-size:16px}
   .panel-sub{font-size:11px}
   .thread-group summary{padding:10px 12px}
@@ -414,6 +709,10 @@ body.basic-mode::after{
       <span class="status-dot" aria-hidden="true" title="Database connected"></span>
       <span id="syncLabel" class="small visually-hidden" aria-live="polite">Database connected</span>
       <span class="user-chip" id="userChip">—</span>
+      <button class="btn btn-ghost private-toggle-btn" id="privateToggleBtn" type="button" onclick="togglePrivatePanel()">
+        Private messages
+        <span id="privateUnreadBadge" class="pm-unread-badge hidden">0</span>
+      </button>
       <button class="icon-btn" title="Theme" aria-label="Theme" onclick="toggleTheme()">
         <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"></svg>
       </button>
@@ -427,58 +726,129 @@ body.basic-mode::after{
   </header>
 
   <main class="page">
-    <section class="panel">
-      <div class="panel-head">
-        <div>
-          <div class="panel-title">Anonymous Whiteboard</div>
-          <div class="panel-sub">Anything posted here is anonymous and automatically removed 24 hours after posting.</div>
-        </div>
-      </div>
-      <div class="composer-grid">
-        <div class="compose-mode-toggle">
-          <button id="modeTypeBtn" class="mode-btn active" type="button" onclick="setComposeMode('type')">Type</button>
-          <button id="modeHandBtn" class="mode-btn" type="button" onclick="setComposeMode('hand')">Draw</button>
-        </div>
-        <div class="thread-controls">
-          <select id="postKind" class="select" onchange="onPostKindChange()">
-            <option value="topic">New topic</option>
-            <option value="reply">Reply to topic</option>
-          </select>
-          <input id="topicTitleInput" class="input" type="text" maxlength="120" placeholder="Topic title (required for new topic)">
-          <select id="replyTopicSelect" class="select hidden">
-            <option value="">Select topic...</option>
-          </select>
-        </div>
-        <textarea id="messageInput" class="textarea" maxlength="2000" placeholder="Write an anonymous message..."></textarea>
-        <div class="composer-actions composer-actions-inline">
-          <button id="postBtnInline" class="btn btn-primary" onclick="submitMessage()">Post anonymously</button>
-        </div>
-        <div id="handwriteWrap" class="handwrite-wrap hidden">
-          <canvas id="handwritePad" class="handwrite-pad" aria-label="Handwriting pad"></canvas>
-          <div class="handwrite-actions">
-            <button class="btn btn-ghost" type="button" onclick="clearHandwritePad()">Clear</button>
+    <details id="privatePanel" class="suite-section hidden" open>
+      <summary>
+        <div class="suite-section-head">
+          <div class="brand-mark logo-mark" aria-hidden="true"><img data-suite-logo alt=""></div>
+          <div class="suite-section-copy">
+            <div class="panel-title">Private Messages</div>
+            <div class="panel-sub">Direct 1-to-1 conversations. Not anonymous.</div>
           </div>
-          <div class="small">Draw with your finger or stylus. You can also add optional typed text above as a caption.</div>
         </div>
-        <div class="composer-actions">
-          <div id="composerMeta" class="small">
-            <span id="typeMeta"><span id="charCount">0</span>/2000 characters</span>
-            <span id="handMeta" class="hidden">Add optional caption above, then post your handwritten note.</span>
+        <span class="suite-section-arrow" aria-hidden="true"></span>
+      </summary>
+      <div class="suite-section-body">
+        <div class="pm-shell">
+          <aside class="pm-side">
+            <div class="pm-start">
+              <div class="small">Start or open a chat</div>
+              <select id="pmRecipientSelect" class="select">
+                <option value="">Select person...</option>
+              </select>
+              <button class="btn btn-primary" type="button" onclick="openPrivateThreadFromSelection()">Open chat</button>
+            </div>
+            <div id="pmThreadList" class="pm-thread-list">
+              <div class="empty">No private conversations yet.</div>
+            </div>
+          </aside>
+          <div class="pm-main">
+            <div id="pmConversationEmpty" class="empty">Choose a person or open a conversation to start private messaging.</div>
+            <div id="pmConversationWrap" class="hidden">
+              <div class="pm-main-head">
+                <div>
+                  <h3 id="pmConversationTitle" class="pm-main-title">Private chat</h3>
+                  <p id="pmConversationSub" class="pm-main-sub">Direct message thread.</p>
+                </div>
+                <div class="pm-timer-controls">
+                  <select id="pmAutoDeleteSelect" class="select">
+                    <option value="off">Auto-remove off</option>
+                    <option value="60">1 minute</option>
+                    <option value="300">5 minutes</option>
+                    <option value="900">15 minutes</option>
+                    <option value="3600">1 hour</option>
+                    <option value="21600">6 hours</option>
+                    <option value="43200">12 hours</option>
+                    <option value="86400">1 day</option>
+                    <option value="259200">3 days</option>
+                    <option value="604800">1 week</option>
+                  </select>
+                  <button class="btn btn-ghost" type="button" onclick="savePmTimer()">Apply timer</button>
+                  <button class="pm-thread-delete" type="button" onclick="deletePrivateConversation()">Delete convo</button>
+                </div>
+              </div>
+              <div id="pmMessageList" class="pm-message-list"></div>
+              <div class="pm-compose">
+                <input id="pmMessageInput" class="input" type="text" maxlength="2000" placeholder="Write a private message..." onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault();sendPrivateMessage();}">
+                <button class="btn btn-primary" type="button" onclick="sendPrivateMessage()">Send</button>
+              </div>
+            </div>
           </div>
-          <button id="postBtn" class="btn btn-primary" onclick="submitMessage()">Post anonymously</button>
         </div>
       </div>
-    </section>
+    </details>
 
-    <div class="suite-divider" aria-hidden="true"></div>
-
-    <section class="panel">
-      <div class="panel-head">
-        <div class="panel-title">Live Board</div>
-        <div class="panel-sub">Showing messages from the last 24 hours.</div>
+    <details class="suite-section" open>
+      <summary>
+        <div class="suite-section-head">
+          <div class="suite-section-copy">
+            <div class="panel-title">Anonymous Whiteboard</div>
+            <div class="panel-sub">Anything posted here is anonymous and automatically removed 24 hours after posting.</div>
+          </div>
+        </div>
+        <span class="suite-section-arrow" aria-hidden="true"></span>
+      </summary>
+      <div class="suite-section-body">
+        <div class="composer-grid">
+          <div class="compose-mode-toggle">
+            <button id="modeTypeBtn" class="mode-btn active" type="button" onclick="setComposeMode('type')">Type</button>
+            <button id="modeHandBtn" class="mode-btn" type="button" onclick="setComposeMode('hand')">Draw</button>
+          </div>
+          <div class="thread-controls">
+            <select id="postKind" class="select" onchange="onPostKindChange()">
+              <option value="topic">New topic</option>
+              <option value="reply">Reply to topic</option>
+            </select>
+            <input id="topicTitleInput" class="input" type="text" maxlength="120" placeholder="Topic title (required for new topic)">
+            <select id="replyTopicSelect" class="select hidden">
+              <option value="">Select topic...</option>
+            </select>
+          </div>
+          <textarea id="messageInput" class="textarea" maxlength="2000" placeholder="Write an anonymous message..."></textarea>
+          <div class="composer-actions composer-actions-inline">
+            <button id="postBtnInline" class="btn btn-primary" onclick="submitMessage()">Post anonymously</button>
+          </div>
+          <div id="handwriteWrap" class="handwrite-wrap hidden">
+            <canvas id="handwritePad" class="handwrite-pad" aria-label="Handwriting pad"></canvas>
+            <div class="handwrite-actions">
+              <button class="btn btn-ghost" type="button" onclick="clearHandwritePad()">Clear</button>
+            </div>
+            <div class="small">Draw with your finger or stylus. You can also add optional typed text above as a caption.</div>
+          </div>
+          <div class="composer-actions">
+            <div id="composerMeta" class="small">
+              <span id="typeMeta"><span id="charCount">0</span>/2000 characters</span>
+              <span id="handMeta" class="hidden">Add optional caption above, then post your handwritten note.</span>
+            </div>
+            <button id="postBtn" class="btn btn-primary" onclick="submitMessage()">Post anonymously</button>
+          </div>
+        </div>
       </div>
-      <div id="boardList" class="thread-list"></div>
-    </section>
+    </details>
+
+    <details class="suite-section" open>
+      <summary>
+        <div class="suite-section-head">
+          <div class="suite-section-copy">
+            <div class="panel-title">Live Board</div>
+            <div class="panel-sub">Showing messages from the last 24 hours.</div>
+          </div>
+        </div>
+        <span class="suite-section-arrow" aria-hidden="true"></span>
+      </summary>
+      <div class="suite-section-body">
+        <div id="boardList" class="thread-list"></div>
+      </div>
+    </details>
   </main>
 </div>
 
@@ -508,6 +878,9 @@ body.basic-mode::after{
 const SUPABASE_URL = 'https://xnkwrkoxvgptobnmekgv.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhua3dya294dmdwdG9ibm1la2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NjAxNTQsImV4cCI6MjA4ODIzNjE1NH0.PrmnJ4eGepac41bQuNPG7TcBaunrfTWdjLtkGLr_2LY';
 const MESSAGE_TABLE = 'pw_message_board_posts';
+const PM_THREAD_TABLE = 'pw_message_board_private_threads';
+const PM_MESSAGE_TABLE = 'pw_message_board_private_messages';
+const PM_READ_TABLE = 'pw_message_board_private_reads';
 const ACCESS_DENIED_LAUNCH = new URLSearchParams(window.location.search).get('access') === 'denied';
 const SUITE_LOGO_FALLBACK_SRC = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><rect x="8" y="8" width="80" height="80" rx="22" fill="#1a7a35"/><rect x="16" y="16" width="64" height="64" rx="16" fill="rgba(255,255,255,.14)"/></svg>');
 
@@ -532,6 +905,15 @@ let handCtx = null;
 let handDrawing = false;
 let handDirty = false;
 let latestBoardRows = [];
+let privateProfiles = [];
+let privateThreads = [];
+let privateMessages = [];
+let privateReadByThread = {};
+let privateCurrentThreadId = '';
+let privateMessagingReady = true;
+let privateMessagingWarned = false;
+let privateCountdownTimer = null;
+let privateCountdownRefreshBusy = false;
 const MESSAGE_BOARD_SEEN_AT_KEY_PREFIX = 'pw_message_board_seen_at:';
 
 function $(id){ return document.getElementById(id); }
@@ -566,6 +948,20 @@ function formatExpiry(expiresAt){
   return hrs + 'h ' + rem + 'm left';
 }
 
+function formatLiveCountdown(ms){
+  if (!Number.isFinite(ms)) return '';
+  if (ms <= 0) return 'expired';
+  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
+  const mins = Math.floor((totalSeconds % 3600) / 60);
+  const secs = totalSeconds % 60;
+  if (days > 0) return days + 'd ' + hours + 'h left';
+  if (hours > 0) return hours + 'h ' + mins + 'm left';
+  if (mins > 0) return mins + 'm ' + secs + 's left';
+  return secs + 's left';
+}
+
 function getBoardTheme(){
   return document.body.classList.contains('light-mode') ? 'light' : 'dark';
 }
@@ -579,6 +975,699 @@ function markMessageBoardSeen(ts){
   const key = messageBoardSeenAtKey();
   if (!key) return;
   try { localStorage.setItem(key, String(ts || new Date().toISOString())); } catch (e) {}
+}
+
+function privateMessageSchemaError(err){
+  const msg = String(err && (err.message || err.details || err.hint || err.code || err) || '').toLowerCase();
+  return /pw_message_board_private|private_thread|private_message|private_read|schema cache|does not exist|permission denied|rls/i.test(msg);
+}
+
+function normalizePmTimerSeconds(value){
+  if (value == null || value === '' || value === 'off') return null;
+  const n = Number(value);
+  if (!Number.isFinite(n)) return null;
+  const int = Math.floor(n);
+  if (int < 60) return 60;
+  if (int > 604800) return 604800;
+  return int;
+}
+
+function privateTimerLabel(seconds){
+  if (!seconds || !Number.isFinite(Number(seconds))) return 'Auto-remove off';
+  const v = Number(seconds);
+  if (v === 60) return 'Auto-remove: 1 minute';
+  if (v < 3600) return 'Auto-remove: ' + Math.floor(v / 60) + ' minutes';
+  if (v < 86400) return 'Auto-remove: ' + Math.floor(v / 3600) + ' hour' + (Math.floor(v / 3600) === 1 ? '' : 's');
+  if (v < 604800) return 'Auto-remove: ' + Math.floor(v / 86400) + ' day' + (Math.floor(v / 86400) === 1 ? '' : 's');
+  return 'Auto-remove: 1 week';
+}
+
+function privateNextExpiryMsForThread(threadId){
+  const tid = String(threadId || '');
+  if (!tid) return 0;
+  const now = Date.now();
+  return privateMessages
+    .filter(function(row){
+      return row && String(row.thread_id || '') === tid && row.expires_at;
+    })
+    .map(function(row){ return new Date(row.expires_at).getTime(); })
+    .filter(function(ms){ return Number.isFinite(ms) && ms > now; })
+    .sort(function(a, b){ return a - b; })[0] || 0;
+}
+
+function updatePrivateCountdownUi(){
+  const thread = privateThreads.find(function(item){ return String(item.id) === String(privateCurrentThreadId); }) || null;
+  const sub = $('pmConversationSub');
+  const timer = $('pmAutoDeleteSelect');
+  if (!thread || !sub || !timer) return;
+  if (timer.value !== (thread.timerSeconds ? String(thread.timerSeconds) : 'off')) {
+    timer.value = thread.timerSeconds ? String(thread.timerSeconds) : 'off';
+  }
+  const base = privateTimerLabel(thread.timerSeconds);
+  const nextExpiryMs = privateNextExpiryMsForThread(thread.id);
+  sub.textContent = nextExpiryMs ? (base + ' · Next delete in ' + formatLiveCountdown(nextExpiryMs - Date.now())) : base;
+
+  const expiryNodes = Array.from(document.querySelectorAll('.pm-message-expiry[data-expires-at]'));
+  expiryNodes.forEach(function(node){
+    const expiresAt = String(node.dataset.expiresAt || '');
+    if (!expiresAt) return;
+    const ms = new Date(expiresAt).getTime();
+    node.textContent = ms ? ('Expires in ' + formatLiveCountdown(ms - Date.now())) : 'No auto-remove';
+  });
+
+  const hasExpired = privateMessages.some(function(row){
+    return row && row.expires_at && new Date(row.expires_at).getTime() <= Date.now();
+  });
+  if (hasExpired && !privateCountdownRefreshBusy) {
+    privateCountdownRefreshBusy = true;
+    Promise.resolve(loadPrivateMessaging({ forcePanelLoad: true, markRead: false }))
+      .catch(function(){})
+      .finally(function(){ privateCountdownRefreshBusy = false; });
+  }
+}
+
+function startPrivateCountdownTicker(){
+  if (privateCountdownTimer) return;
+  privateCountdownTimer = setInterval(function(){
+    try { updatePrivateCountdownUi(); } catch (e) {}
+  }, 1000);
+}
+
+function stopPrivateCountdownTicker(){
+  if (!privateCountdownTimer) return;
+  clearInterval(privateCountdownTimer);
+  privateCountdownTimer = null;
+}
+
+function privateTimeLabel(ts){
+  if (!ts) return '';
+  try {
+    return new Date(ts).toLocaleString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  } catch (e) {
+    return '';
+  }
+}
+
+function privatePreviewText(text){
+  const raw = String(text || '').trim();
+  if (!raw) return 'No messages yet';
+  return raw.length > 64 ? (raw.slice(0, 64) + '...') : raw;
+}
+
+function privatePartnerId(thread){
+  if (!thread || !currentUser || !currentUser.id) return '';
+  const me = String(currentUser.id);
+  const a = String(thread.participant_a_user_id || '');
+  const b = String(thread.participant_b_user_id || '');
+  return a === me ? b : a;
+}
+
+function privateProfileLookupMap(){
+  const map = new Map();
+  if (currentProfile && currentProfile.id) map.set(String(currentProfile.id), currentProfile);
+  privateProfiles.forEach(function(profile){
+    if (profile && profile.id) map.set(String(profile.id), profile);
+  });
+  return map;
+}
+
+function privateDisplayName(userId){
+  const key = String(userId || '');
+  if (!key) return 'Unknown user';
+  const profile = privateProfileLookupMap().get(key);
+  if (!profile) return 'User';
+  return String(profile.full_name || profile.email || 'User').trim() || 'User';
+}
+
+function setPrivateMessagingAvailability(enabled, reason){
+  privateMessagingReady = !!enabled;
+  const btn = $('privateToggleBtn');
+  const badge = $('privateUnreadBadge');
+  const panel = $('privatePanel');
+  if (btn) {
+    btn.disabled = !enabled;
+    btn.title = enabled ? 'Open private messages' : (reason || 'Private messaging unavailable');
+    btn.classList.remove('unread');
+    btn.classList.remove('active');
+  }
+  if (badge) {
+    badge.textContent = '0';
+    badge.classList.add('hidden');
+  }
+  if (panel) {
+    panel.classList.toggle('hidden', !enabled);
+    if (!enabled) panel.open = false;
+  }
+}
+
+function updatePrivateToggleState(){
+  const btn = $('privateToggleBtn');
+  const badge = $('privateUnreadBadge');
+  if (!btn || !badge) return;
+  const total = privateThreads.reduce(function(sum, thread){ return sum + (thread.unreadCount || 0); }, 0);
+  badge.textContent = String(total);
+  badge.classList.toggle('hidden', total <= 0);
+  btn.classList.toggle('unread', total > 0);
+}
+
+function renderPrivateThreadList(){
+  const host = $('pmThreadList');
+  if (!host) return;
+  if (!privateThreads.length) {
+    host.innerHTML = '<div class="empty">No private conversations yet.</div>';
+    return;
+  }
+  host.innerHTML = privateThreads.map(function(thread){
+    const unread = thread.unreadCount || 0;
+    const active = String(thread.id) === String(privateCurrentThreadId);
+    return '<button type="button" class="pm-thread-item' + (active ? ' active' : '') + (unread ? ' unread' : '') + '" onclick="selectPrivateThread(\'' + esc(thread.id) + '\')">'
+      + '<div class="pm-thread-top"><div class="pm-thread-name">' + esc(thread.partnerName) + '</div>' + (unread ? ('<span class="pm-unread-badge">' + esc(String(unread)) + '</span>') : '') + '</div>'
+      + '<div class="pm-thread-preview">' + esc(thread.preview) + '</div>'
+      + '<div class="pm-thread-meta">' + esc(privateTimerLabel(thread.timerSeconds)) + ' · ' + esc(thread.updatedLabel || 'Active') + '</div>'
+      + '</button>';
+  }).join('');
+}
+
+function renderPrivateMessages(){
+  const host = $('pmMessageList');
+  if (!host) return;
+  if (!privateCurrentThreadId) {
+    host.innerHTML = '';
+    return;
+  }
+  if (!privateMessages.length) {
+    host.innerHTML = '<div class="empty">No direct messages yet.</div>';
+    return;
+  }
+  host.innerHTML = privateMessages.map(function(row){
+    const mine = !!(currentUser && row && row.sender_user_id && String(row.sender_user_id) === String(currentUser.id));
+    const expiresText = row && row.expires_at ? ('Expires in ' + formatLiveCountdown(new Date(row.expires_at).getTime() - Date.now())) : 'No auto-remove';
+    return '<article class="pm-message' + (mine ? ' outgoing' : '') + '">'
+      + '<div class="pm-message-head"><span class="pm-message-author">' + esc(mine ? 'You' : privateDisplayName(row.sender_user_id)) + '</span><span class="pm-message-time">' + esc(privateTimeLabel(row.created_at)) + '</span></div>'
+      + '<div class="pm-message-text">' + esc(String(row.message_text || '')) + '</div>'
+      + '<div class="pm-message-expiry" data-expires-at="' + esc(String(row.expires_at || '')) + '">' + esc(expiresText) + '</div>'
+      + (mine ? ('<div class="pm-message-actions"><button class="pm-message-delete" type="button" onclick="deletePrivateMessage(\'' + esc(row.id) + '\')">Delete my message</button></div>') : '')
+      + '</article>';
+  }).join('');
+  host.scrollTop = host.scrollHeight;
+}
+
+function updatePrivateConversationUi(){
+  const empty = $('pmConversationEmpty');
+  const wrap = $('pmConversationWrap');
+  const title = $('pmConversationTitle');
+  const sub = $('pmConversationSub');
+  const timer = $('pmAutoDeleteSelect');
+  if (!empty || !wrap || !title || !sub || !timer) return;
+  const thread = privateThreads.find(function(item){ return String(item.id) === String(privateCurrentThreadId); }) || null;
+  if (!thread) {
+    empty.classList.remove('hidden');
+    wrap.classList.add('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+  wrap.classList.remove('hidden');
+  title.textContent = thread.partnerName;
+  sub.textContent = privateTimerLabel(thread.timerSeconds);
+  timer.value = thread.timerSeconds ? String(thread.timerSeconds) : 'off';
+  updatePrivateCountdownUi();
+}
+
+function populatePrivateRecipients(){
+  const select = $('pmRecipientSelect');
+  if (!select) return;
+  const current = String(select.value || '');
+  const options = privateProfiles
+    .filter(function(profile){ return profile && profile.id && String(profile.id) !== String(currentUser && currentUser.id); })
+    .sort(function(a, b){
+      const aa = String(a.full_name || a.email || '').toLowerCase();
+      const bb = String(b.full_name || b.email || '').toLowerCase();
+      return aa.localeCompare(bb);
+    })
+    .map(function(profile){
+      const label = String(profile.full_name || profile.email || 'User');
+      return '<option value="' + esc(String(profile.id)) + '">' + esc(label) + '</option>';
+    }).join('');
+  select.innerHTML = '<option value="">Select person...</option>' + options;
+  if (current) {
+    const hasCurrent = Array.from(select.options || []).some(function(opt){ return String(opt.value) === current; });
+    if (hasCurrent) select.value = current;
+  }
+}
+
+async function ensurePrivateReadRow(threadId){
+  if (!threadId || !currentUser || !currentUser.id) return;
+  const nowIso = new Date().toISOString();
+  const payload = { thread_id: threadId, user_id: currentUser.id, last_read_at: nowIso, updated_at: nowIso };
+  const res = await sb.from(PM_READ_TABLE).upsert(payload, { onConflict: 'thread_id,user_id' });
+  if (res && res.error) throw res.error;
+}
+
+async function markPrivateThreadRead(threadId){
+  if (!threadId || !currentUser || !currentUser.id) return;
+  const nowIso = new Date().toISOString();
+  await ensurePrivateReadRow(threadId);
+  privateReadByThread[String(threadId)] = nowIso;
+  privateThreads = privateThreads.map(function(thread){
+    if (String(thread.id) === String(threadId)) return Object.assign({}, thread, { unreadCount: 0 });
+    return thread;
+  });
+  renderPrivateThreadList();
+  updatePrivateToggleState();
+}
+
+async function loadPrivateProfiles(){
+  const uid = currentUser && currentUser.id ? String(currentUser.id) : '';
+  if (!uid) { privateProfiles = []; populatePrivateRecipients(); return; }
+  let res = await sb.from('pw_profiles').select('id,full_name,email,approved,disabled,message_board_access').eq('approved', true).eq('disabled', false).neq('id', uid);
+  if (res.error) {
+    const msg = String(res.error && (res.error.message || res.error.details || '')).toLowerCase();
+    if (msg.indexOf('message_board_access') >= 0 || msg.indexOf('schema cache') >= 0) {
+      res = await sb.from('pw_profiles').select('id,full_name,email,approved,disabled').eq('approved', true).eq('disabled', false).neq('id', uid);
+    }
+  }
+  if (res.error) throw res.error;
+  privateProfiles = (res.data || []).filter(function(profile){ return profile && profile.message_board_access !== false; });
+  populatePrivateRecipients();
+}
+
+function buildPrivateThreadSummaries(rawThreads, rawMessages){
+  const byThread = {};
+  (rawMessages || []).forEach(function(row){
+    const key = String(row.thread_id || '');
+    if (!key) return;
+    if (!byThread[key]) byThread[key] = [];
+    byThread[key].push(row);
+  });
+  return (rawThreads || []).map(function(thread){
+    const id = String(thread.id || '');
+    const messages = (byThread[id] || []).sort(function(a, b){ return rowTimeMs(b) - rowTimeMs(a); });
+    if (!messages.length) return null;
+    const latest = messages[0] || null;
+    const partnerId = privatePartnerId(thread);
+    const readMs = new Date(privateReadByThread[id] || '1970-01-01T00:00:00.000Z').getTime();
+    const unreadCount = messages.filter(function(msg){
+      const sender = String(msg.sender_user_id || '');
+      return sender && sender !== String(currentUser && currentUser.id) && rowTimeMs(msg) > readMs;
+    }).length;
+    const updatedMs = Math.max(rowTimeMs(latest), rowTimeMs({ created_at: thread.updated_at }));
+    const timerSeconds = thread.auto_delete_enabled ? normalizePmTimerSeconds(thread.auto_delete_seconds) : null;
+    return {
+      id: id,
+      raw: thread,
+      partnerId: partnerId,
+      partnerName: privateDisplayName(partnerId),
+      unreadCount: unreadCount,
+      preview: latest ? privatePreviewText(latest.message_text) : 'No messages yet',
+      updatedMs: updatedMs,
+      updatedLabel: latest ? formatAge(latest.created_at) : formatAge(thread.created_at),
+      timerSeconds: timerSeconds
+    };
+  }).filter(Boolean).sort(function(a, b){ return b.updatedMs - a.updatedMs; });
+}
+
+async function loadPrivateThreads(){
+  const uid = currentUser && currentUser.id ? String(currentUser.id) : '';
+  if (!uid) {
+    privateThreads = [];
+    renderPrivateThreadList();
+    updatePrivateToggleState();
+    return;
+  }
+  try {
+    await sb.rpc('pw_message_board_private_cleanup_expired');
+  } catch (e) {}
+  const threadRes = await sb
+    .from(PM_THREAD_TABLE)
+    .select('*')
+    .or('participant_a_user_id.eq.' + uid + ',participant_b_user_id.eq.' + uid)
+    .order('updated_at', { ascending: false })
+    .limit(300);
+  if (threadRes.error) throw threadRes.error;
+  const rawThreads = threadRes.data || [];
+  const threadIds = rawThreads.map(function(thread){ return thread.id; }).filter(Boolean);
+  privateReadByThread = {};
+  if (threadIds.length) {
+    const readRes = await sb.from(PM_READ_TABLE).select('thread_id,last_read_at').eq('user_id', uid).in('thread_id', threadIds);
+    if (readRes.error) throw readRes.error;
+    (readRes.data || []).forEach(function(row){
+      privateReadByThread[String(row.thread_id)] = String(row.last_read_at || '');
+    });
+  }
+  let rawMessages = [];
+  if (threadIds.length) {
+    const nowIso = new Date().toISOString();
+    let msgRes = await sb
+      .from(PM_MESSAGE_TABLE)
+      .select('id,thread_id,sender_user_id,message_text,created_at,expires_at')
+      .in('thread_id', threadIds)
+      .or('expires_at.is.null,expires_at.gt.' + nowIso)
+      .order('created_at', { ascending: false })
+      .limit(2000);
+    if (msgRes.error) {
+      const msgText = String(msgRes.error && (msgRes.error.message || msgRes.error.details || '')).toLowerCase();
+      if (msgText.indexOf('expires_at') >= 0 || msgText.indexOf('schema cache') >= 0) {
+        msgRes = await sb
+          .from(PM_MESSAGE_TABLE)
+          .select('id,thread_id,sender_user_id,message_text,created_at')
+          .in('thread_id', threadIds)
+          .order('created_at', { ascending: false })
+          .limit(2000);
+      }
+    }
+    if (msgRes.error) throw msgRes.error;
+    rawMessages = msgRes.data || [];
+  }
+  privateThreads = buildPrivateThreadSummaries(rawThreads, rawMessages);
+  renderPrivateThreadList();
+  updatePrivateToggleState();
+}
+
+async function loadPrivateMessagesForCurrentThread(markRead){
+  const threadId = String(privateCurrentThreadId || '');
+  if (!threadId) {
+    privateMessages = [];
+    renderPrivateMessages();
+    return;
+  }
+  const nowIso = new Date().toISOString();
+  let res = await sb
+    .from(PM_MESSAGE_TABLE)
+    .select('id,thread_id,sender_user_id,message_text,created_at,expires_at')
+    .eq('thread_id', threadId)
+    .or('expires_at.is.null,expires_at.gt.' + nowIso)
+    .order('created_at', { ascending: true })
+    .limit(1000);
+  if (res.error) {
+    const msgText = String(res.error && (res.error.message || res.error.details || '')).toLowerCase();
+    if (msgText.indexOf('expires_at') >= 0 || msgText.indexOf('schema cache') >= 0) {
+      res = await sb
+        .from(PM_MESSAGE_TABLE)
+        .select('id,thread_id,sender_user_id,message_text,created_at')
+        .eq('thread_id', threadId)
+        .order('created_at', { ascending: true })
+        .limit(1000);
+    }
+  }
+  if (res.error) throw res.error;
+  privateMessages = res.data || [];
+  renderPrivateMessages();
+  if (markRead !== false) await markPrivateThreadRead(threadId);
+}
+
+async function loadPrivateMessaging(options){
+  const opts = options || {};
+  if (!currentUser || !currentUser.id) return;
+  if (!privateMessagingReady) return;
+  try {
+    await loadPrivateProfiles();
+    await loadPrivateThreads();
+    const panel = $('privatePanel');
+    const panelOpen = !!(panel && panel.open);
+    if (!panelOpen && opts.forcePanelLoad !== true) return;
+    if (panel && opts.forcePanelLoad === true) {
+      panel.classList.remove('hidden');
+      panel.open = true;
+    }
+    if (!privateCurrentThreadId && privateThreads.length) privateCurrentThreadId = String(privateThreads[0].id);
+    if (privateCurrentThreadId && !privateThreads.some(function(thread){ return String(thread.id) === String(privateCurrentThreadId); })) {
+      privateCurrentThreadId = '';
+      privateMessages = [];
+    }
+    updatePrivateConversationUi();
+    renderPrivateThreadList();
+    if (privateCurrentThreadId) await loadPrivateMessagesForCurrentThread(opts.markRead);
+    setPrivateMessagingAvailability(true);
+  } catch (err) {
+    if (privateMessageSchemaError(err)) {
+      setPrivateMessagingAvailability(false, 'Run the private messaging SQL update first.');
+      if (!privateMessagingWarned) {
+        privateMessagingWarned = true;
+        setToast('Run the private messaging SQL update to enable direct chats.');
+      }
+      return;
+    }
+    setToast('Could not load private messages.');
+  }
+}
+
+async function selectPrivateThread(threadId){
+  privateCurrentThreadId = String(threadId || '');
+  updatePrivateConversationUi();
+  renderPrivateThreadList();
+  if (!privateCurrentThreadId) return;
+  try {
+    await loadPrivateMessagesForCurrentThread(true);
+  } catch (err) {
+    if (privateMessageSchemaError(err)) {
+      setPrivateMessagingAvailability(false, 'Run the private messaging SQL update first.');
+      if (!privateMessagingWarned) {
+        privateMessagingWarned = true;
+        setToast('Run the private messaging SQL update to enable direct chats.');
+      }
+      return;
+    }
+    setToast('Could not open this conversation.');
+  }
+}
+
+async function openPrivateThreadFromSelection(){
+  if (!privateMessagingReady) {
+    setToast('Private messaging is not available yet.');
+    return;
+  }
+  const select = $('pmRecipientSelect');
+  const partnerId = String(select && select.value ? select.value : '');
+  if (!partnerId) {
+    setToast('Select a person first.');
+    return;
+  }
+  if (!currentUser || !currentUser.id || String(currentUser.id) === partnerId) {
+    setToast('Choose another user.');
+    return;
+  }
+  try {
+    const uid = String(currentUser.id);
+    const sorted = [uid, partnerId].sort();
+    const existingRes = await sb
+      .from(PM_THREAD_TABLE)
+      .select('*')
+      .or('and(participant_a_user_id.eq.' + sorted[0] + ',participant_b_user_id.eq.' + sorted[1] + '),and(participant_a_user_id.eq.' + sorted[1] + ',participant_b_user_id.eq.' + sorted[0] + ')')
+      .order('updated_at', { ascending: false })
+      .limit(1);
+    if (existingRes.error) throw existingRes.error;
+    let thread = existingRes.data && existingRes.data[0] ? existingRes.data[0] : null;
+    if (!thread) {
+      const createRes = await sb
+        .from(PM_THREAD_TABLE)
+        .insert({
+          participant_a_user_id: sorted[0],
+          participant_b_user_id: sorted[1],
+          auto_delete_enabled: false,
+          auto_delete_seconds: null
+        })
+        .select('*')
+        .single();
+      if (createRes.error) throw createRes.error;
+      thread = createRes.data || null;
+    }
+    if (!thread || !thread.id) throw new Error('Could not start conversation.');
+    privateCurrentThreadId = String(thread.id);
+    await ensurePrivateReadRow(privateCurrentThreadId);
+    const panel = $('privatePanel');
+    if (panel) {
+      panel.classList.remove('hidden');
+      panel.open = true;
+    }
+    await loadPrivateMessaging({ forcePanelLoad: true, markRead: true });
+  } catch (err) {
+    if (privateMessageSchemaError(err)) {
+      setPrivateMessagingAvailability(false, 'Run the private messaging SQL update first.');
+      if (!privateMessagingWarned) {
+        privateMessagingWarned = true;
+        setToast('Run the private messaging SQL update to enable direct chats.');
+      }
+      return;
+    }
+    setToast('Could not open private chat.');
+  }
+}
+
+async function applyPmTimerToThreadMessages(threadId, seconds){
+  const res = await sb.from(PM_MESSAGE_TABLE).select('id,created_at').eq('thread_id', threadId).limit(1000);
+  if (res.error) throw res.error;
+  const rows = res.data || [];
+  for (const row of rows) {
+    const nextExpires = seconds ? new Date(new Date(row.created_at).getTime() + (seconds * 1000)).toISOString() : null;
+    const upd = await sb.from(PM_MESSAGE_TABLE).update({ expires_at: nextExpires }).eq('id', row.id);
+    if (upd.error) throw upd.error;
+  }
+}
+
+async function savePmTimer(){
+  if (!privateCurrentThreadId) {
+    setToast('Open a conversation first.');
+    return;
+  }
+  const timerSelect = $('pmAutoDeleteSelect');
+  const seconds = normalizePmTimerSeconds(timerSelect ? timerSelect.value : 'off');
+  try {
+    const updateRes = await sb
+      .from(PM_THREAD_TABLE)
+      .update({
+        auto_delete_enabled: !!seconds,
+        auto_delete_seconds: seconds,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', privateCurrentThreadId);
+    if (updateRes.error) throw updateRes.error;
+    await applyPmTimerToThreadMessages(privateCurrentThreadId, seconds);
+    await loadPrivateMessaging({ forcePanelLoad: true, markRead: false });
+    await loadPrivateMessagesForCurrentThread(false);
+    setToast('Auto-remove timer updated.');
+  } catch (err) {
+    if (privateMessageSchemaError(err)) {
+      setPrivateMessagingAvailability(false, 'Run the private messaging SQL update first.');
+      if (!privateMessagingWarned) {
+        privateMessagingWarned = true;
+        setToast('Run the private messaging SQL update to enable direct chats.');
+      }
+      return;
+    }
+    setToast('Could not update auto-remove timer.');
+  }
+}
+
+async function deletePrivateConversation(){
+  if (!privateCurrentThreadId) {
+    setToast('Open a private conversation first.');
+    return;
+  }
+  const thread = privateThreads.find(function(item){ return String(item.id) === String(privateCurrentThreadId); }) || null;
+  const name = thread ? thread.partnerName : 'this conversation';
+  if (!confirm('Delete the conversation with ' + name + '?\n\nThis will remove the thread and all messages for both people.')) return;
+  try {
+    updateStatusDot('Database reconnecting');
+    const del = await sb.from(PM_THREAD_TABLE).delete().eq('id', privateCurrentThreadId);
+    if (del.error) throw del.error;
+    privateCurrentThreadId = '';
+    privateMessages = [];
+    updatePrivateConversationUi();
+    renderPrivateMessages();
+    await loadPrivateThreads();
+    updateStatusDot('Database connected');
+    setToast('Conversation deleted.');
+  } catch (err) {
+    if (privateMessageSchemaError(err)) {
+      setPrivateMessagingAvailability(false, 'Run the private messaging SQL update first.');
+      if (!privateMessagingWarned) {
+        privateMessagingWarned = true;
+        setToast('Run the private messaging SQL update to enable direct chats.');
+      }
+      return;
+    }
+    setToast('Could not delete conversation.');
+    updateStatusDot('Database fault');
+  }
+}
+
+async function sendPrivateMessage(){
+  const input = $('pmMessageInput');
+  const text = String(input && input.value ? input.value : '').trim();
+  if (!privateCurrentThreadId) {
+    setToast('Open a private conversation first.');
+    return;
+  }
+  if (!text) {
+    setToast('Write a private message first.');
+    return;
+  }
+  if (!currentUser || !currentUser.id) {
+    setToast('Please sign in again.');
+    return;
+  }
+  if (text.length > 2000) {
+    setToast('Private message is too long.');
+    return;
+  }
+  try {
+    updateStatusDot('Database reconnecting');
+    const summary = privateThreads.find(function(thread){ return String(thread.id) === String(privateCurrentThreadId); }) || null;
+    const seconds = summary ? normalizePmTimerSeconds(summary.timerSeconds) : null;
+    const payload = {
+      thread_id: privateCurrentThreadId,
+      sender_user_id: currentUser.id,
+      message_text: text
+    };
+    if (seconds) payload.expires_at = new Date(Date.now() + (seconds * 1000)).toISOString();
+    const ins = await sb.from(PM_MESSAGE_TABLE).insert(payload);
+    if (ins.error) throw ins.error;
+    const touch = await sb.from(PM_THREAD_TABLE).update({ updated_at: new Date().toISOString() }).eq('id', privateCurrentThreadId);
+    if (touch.error) throw touch.error;
+    input.value = '';
+    await loadPrivateMessagesForCurrentThread(true);
+    await loadPrivateThreads();
+    updateStatusDot('Database connected');
+  } catch (err) {
+    if (privateMessageSchemaError(err)) {
+      setPrivateMessagingAvailability(false, 'Run the private messaging SQL update first.');
+      if (!privateMessagingWarned) {
+        privateMessagingWarned = true;
+        setToast('Run the private messaging SQL update to enable direct chats.');
+      }
+      return;
+    }
+    setToast('Could not send private message.');
+    updateStatusDot('Database fault');
+  }
+}
+
+async function deletePrivateMessage(id){
+  if (!id || !currentUser || !currentUser.id) return;
+  if (!confirm('Delete this private message?')) return;
+  try {
+    updateStatusDot('Database reconnecting');
+    const del = await sb.from(PM_MESSAGE_TABLE).delete().eq('id', id).eq('sender_user_id', currentUser.id);
+    if (del.error) throw del.error;
+    setToast('Message deleted.');
+    await loadPrivateMessagesForCurrentThread(false);
+    await loadPrivateThreads();
+    updateStatusDot('Database connected');
+  } catch (err) {
+    if (privateMessageSchemaError(err)) {
+      setPrivateMessagingAvailability(false, 'Run the private messaging SQL update first.');
+      if (!privateMessagingWarned) {
+        privateMessagingWarned = true;
+        setToast('Run the private messaging SQL update to enable direct chats.');
+      }
+      return;
+    }
+    setToast('Could not delete message.');
+    updateStatusDot('Database fault');
+  }
+}
+
+function togglePrivatePanel(forceOpen){
+  const panel = $('privatePanel');
+  const btn = $('privateToggleBtn');
+  if (!panel || !btn) return;
+  if (!privateMessagingReady) {
+    setToast('Run the private messaging SQL update first.');
+    return;
+  }
+  const open = typeof forceOpen === 'boolean' ? forceOpen : !panel.open;
+  panel.classList.remove('hidden');
+  panel.open = open;
+  btn.classList.toggle('active', open);
+  if (open) {
+    loadPrivateMessaging({ forcePanelLoad: true, markRead: true });
+    if (panel.scrollIntoView) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 }
 
 function onPostKindChange(){
@@ -1199,9 +2288,17 @@ async function doLogin(){
 
 async function doLogout(){
   if (refreshTimer) clearInterval(refreshTimer);
+  stopPrivateCountdownTicker();
   await sb.auth.signOut();
   currentUser = null;
   currentProfile = null;
+  privateProfiles = [];
+  privateThreads = [];
+  privateMessages = [];
+  privateReadByThread = {};
+  privateCurrentThreadId = '';
+  privateMessagingWarned = false;
+  privateMessagingReady = true;
   if ($('userChip')) $('userChip').textContent = '—';
   window.location.href = '../index.html';
 }
@@ -1251,9 +2348,14 @@ async function bootstrap(){
   $('appShell').classList.remove('hidden');
   updateCharCount();
   await loadMessages();
+  await loadPrivateMessaging({ forcePanelLoad: false, markRead: false });
+  startPrivateCountdownTicker();
   markMessageBoardSeen();
   if (refreshTimer) clearInterval(refreshTimer);
-  refreshTimer = setInterval(loadMessages, 60000);
+  refreshTimer = setInterval(async function(){
+    await loadMessages();
+    await loadPrivateMessaging({ forcePanelLoad: !$('privatePanel').classList.contains('hidden'), markRead: false });
+  }, 20000);
 }
 
 window.addEventListener('storage', function(e){

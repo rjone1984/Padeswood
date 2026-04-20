@@ -2657,11 +2657,14 @@ function populateManagerSelect(selectId, selectedId, excludeProfileId){
   el.value = selected;
 }
 
-function openPwModal(title, sub){
+const NEW_ACCOUNT_DEFAULT_PASSWORD = 'Control';
+
+function openPwModal(title, sub, defaultPassword){
   $('pwTitle').textContent = title || 'Set Password';
   $('pwSub').textContent = sub || 'Enter a new password';
-  $('pwNew').value = '';
-  $('pwConfirm').value = '';
+  const preset = typeof defaultPassword === 'string' ? defaultPassword : '';
+  $('pwNew').value = preset;
+  $('pwConfirm').value = preset;
   showPwMsg('', '');
   $('pwOverlay').classList.add('open');
   setTimeout(function(){ $('pwNew').focus(); }, 60);
@@ -2701,7 +2704,8 @@ function openAccessRequestPwModal(reqId, email, fullName, role, kilnRole){
   adminSetPwTarget = null;
   bulkAccessRequestTargets = [];
   forcePwUsername = null;
-  openPwModal('Create Account', 'Create a password for ' + (fullName || email || 'this user'));
+  openPwModal('Create Account', 'Create a password for ' + (fullName || email || 'this user'), NEW_ACCOUNT_DEFAULT_PASSWORD);
+  $('pwSub').textContent = 'Temporary password is "Control" and they will choose their own on first logon.';
 }
 
 function openBulkAccessRequestPwModal(){
@@ -2713,7 +2717,8 @@ function openBulkAccessRequestPwModal(){
   accessRequestTarget = null;
   adminSetPwTarget = null;
   forcePwUsername = null;
-  openPwModal('Activate Selected', 'Create passwords for ' + targets.length + ' selected user' + (targets.length !== 1 ? 's' : ''));
+  openPwModal('Activate Selected', 'Create passwords for ' + targets.length + ' selected user' + (targets.length !== 1 ? 's' : ''), NEW_ACCOUNT_DEFAULT_PASSWORD);
+  $('pwSub').textContent = 'Temporary password is "Control" and each user will choose their own on first logon.';
 }
 
 async function ensureAccessRequestTargetsAreFree(targets){
@@ -2759,6 +2764,7 @@ function roleSelectionHasAnyRole(roles){
 }
 
 async function createAccessRequestAccount(target, passwordValue){
+  const defaultPassword = NEW_ACCOUNT_DEFAULT_PASSWORD;
   const accessReq = accessRequestsCache.find(function(x){ return String(x.id) === String(target.reqId); }) || null;
   const trackerAllowed = accessReq ? accessReq.shift_tracker_access !== false : true;
   const creditHoursAllowed = accessReq ? accessReq.credit_hours_access !== false : true;
@@ -2773,7 +2779,7 @@ async function createAccessRequestAccount(target, passwordValue){
   const createRes = await callAdminPwFunction({
     action: 'createAccount',
     email: target.email,
-    password: passwordValue,
+    password: passwordValue || defaultPassword,
     fullName: target.fullName
   });
   const userId = createRes && createRes.userId ? createRes.userId : null;
