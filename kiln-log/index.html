@@ -1812,6 +1812,35 @@ body.app-ready #app {
   display:flex; align-items:center; justify-content:space-between;
   position:relative;
 }
+.shift-collapsible > summary.shift-panel-head{
+  list-style:none;
+  cursor:pointer;
+}
+.shift-collapsible > summary.shift-panel-head::-webkit-details-marker{display:none}
+.shift-panel-head-right{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.shift-collapse-arrow{
+  width:10px;
+  height:10px;
+  border-right:2px solid var(--tx3);
+  border-bottom:2px solid var(--tx3);
+  transform:rotate(45deg);
+  margin-top:-2px;
+  transition:transform .2s ease, border-color .2s ease;
+  opacity:.9;
+}
+.shift-collapsible[open] > summary .shift-collapse-arrow{
+  transform:rotate(225deg);
+  margin-top:2px;
+  border-color:var(--ac3);
+}
+.shift-collapsible-body{
+  display:flex;
+  flex-direction:column;
+}
 .shift-panel-head::before {
   content:'';
   position:absolute;
@@ -5447,13 +5476,14 @@ function renderSmDay(day){
   ['shift1','shift2'].forEach(function(sk, si){
     const sd = d[sk];
     const label = si===0 ? 'Day Shift' : 'Night Shift';
-    const panel = document.createElement('div');
-    panel.className = 'shift-panel';
+    const panel = document.createElement('details');
+    panel.className = 'shift-panel shift-collapsible';
     const section = document.createElement('div');
     section.className = 'notes-section';
-    const head = document.createElement('div');
-    head.className = 'log-head';
-    head.innerHTML = '<div class="log-section-title">' + label + '</div>';
+    const head = document.createElement('summary');
+    head.className = 'shift-panel-head';
+    head.innerHTML = '<div class="shift-panel-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' + label + '</div>'
+      + '<div class="shift-panel-head-right"><span class="shift-collapse-arrow" aria-hidden="true"></span></div>';
     const body = document.createElement('div');
     body.className = 'notes-body';
 
@@ -5519,8 +5549,8 @@ function renderSmDay(day){
       ta.addEventListener('input', (function(day,sk){ return function(){ setSmShift(day, sk, 'notes', this.value); updateDots(); }; })(day,sk));
     }
     body.appendChild(ta);
-    section.appendChild(head);
     section.appendChild(body);
+    panel.appendChild(head);
     panel.appendChild(section);
     document.getElementById('smShiftsGrid').appendChild(panel);
   });
@@ -5729,13 +5759,14 @@ function renderElectricianDay(day){
   ['shift1','shift2'].forEach(function(sk, si){
     const row = d[sk];
     const canEditShift = canEditElectricianShift(day, sk);
-    const panel = document.createElement('div');
-    panel.className = 'shift-panel';
+    const panel = document.createElement('details');
+    panel.className = 'shift-panel shift-collapsible';
     const section = document.createElement('div');
     section.className = 'notes-section';
-    const head = document.createElement('div');
-    head.className = 'log-head';
-    head.innerHTML = '<div class="log-section-title">' + (si===0 ? 'Day Shift' : 'Night Shift') + '</div>';
+    const head = document.createElement('summary');
+    head.className = 'shift-panel-head';
+    head.innerHTML = '<div class="shift-panel-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' + (si===0 ? 'Day Shift' : 'Night Shift') + '</div>'
+      + '<div class="shift-panel-head-right"><span class="shift-collapse-arrow" aria-hidden="true"></span></div>';
     const body = document.createElement('div');
     body.className = 'notes-body';
 
@@ -5949,8 +5980,8 @@ function renderElectricianDay(day){
     photoWrap.appendChild(photoActions);
     body.appendChild(photoWrap);
 
-    section.appendChild(head);
     section.appendChild(body);
+    panel.appendChild(head);
     panel.appendChild(section);
     document.getElementById('electricianShiftsGrid').appendChild(panel);
   });
@@ -6025,13 +6056,14 @@ function renderMechanicalDay(day){
   ['shift1','shift2'].forEach(function(sk, si){
     const row = d[sk];
     const canEditShift = canEditMechanicalShift(day, sk);
-    const panel = document.createElement('div');
-    panel.className = 'shift-panel';
+    const panel = document.createElement('details');
+    panel.className = 'shift-panel shift-collapsible';
     const section = document.createElement('div');
     section.className = 'notes-section';
-    const head = document.createElement('div');
-    head.className = 'log-head';
-    head.innerHTML = '<div class="log-section-title">' + (si===0 ? 'Day Shift' : 'Night Shift') + '</div>';
+    const head = document.createElement('summary');
+    head.className = 'shift-panel-head';
+    head.innerHTML = '<div class="shift-panel-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' + (si===0 ? 'Day Shift' : 'Night Shift') + '</div>'
+      + '<div class="shift-panel-head-right"><span class="shift-collapse-arrow" aria-hidden="true"></span></div>';
     const body = document.createElement('div');
     body.className = 'notes-body';
 
@@ -6102,8 +6134,8 @@ function renderMechanicalDay(day){
     }
     body.appendChild(ta);
 
-    section.appendChild(head);
     section.appendChild(body);
+    panel.appendChild(head);
     panel.appendChild(section);
     document.getElementById('mechanicalShiftsGrid').appendChild(panel);
   });
@@ -6200,16 +6232,18 @@ function renderCaDay(day){
     const isNight = si===1;
     const shiftLabel = isNight ? 'Night Shift' : 'Day Shift';
     const opsChecks = isNight ? CA_OPS_CHECKS_NIGHT : CA_OPS_CHECKS_DAY;
-    const panel = document.createElement('div');
-    panel.className='shift-panel';
+    const panel = document.createElement('details');
+    panel.className='shift-panel shift-collapsible';
     panel.style.cssText='display:flex;flex-direction:column;gap:0;';
 
-    const hd = document.createElement('div');
+    const hd = document.createElement('summary');
     hd.className='shift-panel-head';
-    hd.innerHTML='<div class="shift-panel-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'+shiftLabel+'</div>';
+    hd.innerHTML='<div class="shift-panel-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>'+shiftLabel+'</div>'
+      + '<div class="shift-panel-head-right"><span class="shift-collapse-arrow" aria-hidden="true"></span></div>';
     panel.appendChild(hd);
 
     const body = document.createElement('div');
+    body.className='shift-collapsible-body';
     body.style.cssText='display:flex;flex-direction:column;gap:12px;padding:16px;';
     panel.appendChild(body);
 
@@ -6609,11 +6643,15 @@ function shiftHTML(sk,sd,label,day){
     : `<select onchange="setShift('${sk}','burner',this.value)"><option value="">&#8212; Select name &#8212;</option>${adminBurnerOpts.join('')}</select>`;
   const lockAttr = (!isMyShift||readOnly) ? 'disabled style="opacity:0.75;cursor:not-allowed"' : '';
   const addBtnStyle = (!isMyShift||readOnly) ? 'display:none' : '';
-  return `<div class="shift-panel">
-    <div class="shift-panel-head">
+  return `<details class="shift-panel shift-collapsible">
+    <summary class="shift-panel-head">
       <div class="shift-panel-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${label}</div>
-      <span class="shift-badge${sd.shift?'':' empty'}" id="${sk}-badge">${sd.shift||'&mdash;'}</span>
-    </div>
+      <div class="shift-panel-head-right">
+        <span class="shift-badge${sd.shift?'':' empty'}" id="${sk}-badge">${sd.shift||'&mdash;'}</span>
+        <span class="shift-collapse-arrow" aria-hidden="true"></span>
+      </div>
+    </summary>
+    <div class="shift-collapsible-body">
     <div class="shift-fields">
       <div class="field-cell"><div class="field-label">Burner / Trainee</div>
         ${burnerSel}
@@ -6662,7 +6700,8 @@ function shiftHTML(sk,sd,label,day){
         }
       </div>
     </div>
-  </div>`;
+    </div>
+  </details>`;
 }
 
 function renderRows(sk,entries){
@@ -8318,6 +8357,11 @@ async function renderFeedback(){
     return;
   }
 
+  _feedbackRange = 'week';
+  _resolvedRange = 'week';
+  _feedbackOffset = 0;
+  _resolvedOffset = 0;
+
   function rangeBtns(activeRange, callbackName, prefix){
     return ['week','month','year','all'].map(function(r){
       const label = r==='week'?'Week':r==='month'?'Month':r==='year'?'Year':'All time';
@@ -8338,7 +8382,8 @@ async function renderFeedback(){
 
   mc.innerHTML = ''
     +'<div style="margin-bottom:20px"><div class="page-title">Feedback</div>'
-    +'<div class="page-date">Equipment issues flagged across all shifts</div></div>'
+    +'<div class="page-date">Kiln burner issues flagged across all shifts</div>'
+    +'<div style="margin-top:4px;font-size:11px;line-height:1.5;color:var(--tx3)">Use this tab for kiln burner issues only.</div></div>'
 
     +'<div style="display:flex;border-bottom:1px solid var(--bd);margin-bottom:24px;gap:0">'
     +tabBtn('fb-tab-ongoing',  '🔴 Ongoing <span id="fbOngoingCount" style="font-size:11px;font-family:var(--ff-mono);font-weight:400;color:var(--tx3)"></span>',  _fbTab==='ongoing')

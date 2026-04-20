@@ -22,6 +22,12 @@
   --sf:#0d1117; --sf2:#11161d; --sf3:#161c24; --sf4:#1b2230;
   --bd:#1d2530; --bd2:#273143; --bd3:#344157;
   --ac:#1a7a35; --ac2:#2ecc5c; --ac3:#5ee27b;
+  --role-burner:#1a7a35;
+  --role-manager:#7c3aed;
+  --role-electrician:#38bdf8;
+  --role-mechanical:#2563eb;
+  --role-operator:#e11d48;
+  --role-analyst:#b45309;
   --acd1:rgba(26,122,53,.08); --acd2:rgba(26,122,53,.14); --acd3:rgba(26,122,53,.22);
   --palette-card-bg-1:rgba(46,204,92,.14);
   --palette-card-bg-2:rgba(26,122,53,.08);
@@ -47,6 +53,12 @@
   --sf:#ffffff; --sf2:#f8fbff; --sf3:#f2f7fd; --sf4:#edf3fa;
   --bd:#dce5f0; --bd2:#cdd8e6; --bd3:#a9bbd3;
   --ac:#1a7a35; --ac2:#2ecc5c; --ac3:#5ee27b;
+  --role-burner:#1a7a35;
+  --role-manager:#7c3aed;
+  --role-electrician:#38bdf8;
+  --role-mechanical:#2563eb;
+  --role-operator:#e11d48;
+  --role-analyst:#b45309;
   --acd1:rgba(26,122,53,.045); --acd2:rgba(26,122,53,.09); --acd3:rgba(26,122,53,.16);
   --palette-card-bg-1:rgba(46,204,92,.05);
   --palette-card-bg-2:rgba(26,122,53,.03);
@@ -473,7 +485,23 @@ body.light-mode{
 .user-card-head{
   display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;
 }
-.user-name{font-family:var(--ff-head);font-weight:800;font-size:16px;line-height:1.15}
+.user-name-row{display:flex;align-items:center;gap:8px;min-width:0}
+.user-state-dot{
+  width:8px;
+  height:8px;
+  border-radius:999px;
+  flex:0 0 8px;
+  box-shadow:0 0 0 3px rgba(51,65,85,.12);
+}
+.user-state-dot.active{
+  background:var(--grn);
+  box-shadow:0 0 0 3px var(--grnd);
+}
+.user-state-dot.disabled{
+  background:var(--red);
+  box-shadow:0 0 0 3px var(--redd);
+}
+.user-name{font-family:var(--ff-head);font-weight:800;font-size:16px;line-height:1.15;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .user-meta{font-size:12px;color:var(--tx2);margin-top:2px}
 .chips{display:flex;gap:6px;flex-wrap:wrap}
 .user-actions{display:flex;gap:8px;flex-wrap:wrap}
@@ -523,7 +551,7 @@ body.light-mode{
 @media (max-width:720px){
   .bulk-access-grid{grid-template-columns:1fr}
 }
-.group .group-name::after{
+.group > summary .group-name::after{
   content:'';
   width:8px;height:8px;
   flex-shrink:0;
@@ -535,7 +563,7 @@ body.light-mode{
   margin-left:6px;
   display:inline-block;
 }
-.group[open] .group-name::after{
+.group[open] > summary .group-name::after{
   transform:rotate(225deg);
 }
 .group-title{
@@ -551,6 +579,23 @@ body.light-mode{
   padding:12px 14px 14px;
   display:grid;
   gap:10px;
+}
+.group.subgroup{
+  margin-top:6px;
+  border-color:color-mix(in srgb, var(--bd2) 72%, var(--bd));
+  background:linear-gradient(180deg,color-mix(in srgb, var(--glass-1) 92%, var(--sf2)), color-mix(in srgb, var(--glass-2) 92%, var(--sf3)));
+}
+.group.subgroup summary{
+  padding:10px 12px;
+}
+.group.subgroup .group-body{
+  padding:10px 12px 12px;
+}
+.group.subgroup .group-name{
+  font-size:13px;
+}
+.group.subgroup .group-sub{
+  font-size:10px;
 }
 .request-card{
   border:1px solid var(--bd);
@@ -633,28 +678,205 @@ body.light-mode{
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
   gap:12px;
+  align-items:start;
 }
 .editor-grid.cols-3{
   grid-template-columns:repeat(3,minmax(0,1fr));
 }
 .editor-grid .field{margin-bottom:0}
+.editor-grid .field{align-content:start}
+.editor-grid .field{align-self:start}
+.editor-grid .field{display:flex;flex-direction:column;gap:8px}
 .editor-grid .field.wide{grid-column:1 / -1}
+.job-details-grid > .field > :is(.select,.role-picker-trigger){
+  height:44px;
+  min-height:44px;
+  max-height:44px;
+  padding-top:0;
+  padding-bottom:0;
+  align-items:center;
+}
+.job-details-grid > .field{
+  display:grid;
+  align-content:start;
+  gap:6px;
+}
+.job-details-grid > .field > label{
+  margin:0;
+  min-height:16px;
+  line-height:16px;
+}
+.job-details-grid > .field > .role-summary{
+  margin-top:0;
+}
 .check-grid{
   margin-top:12px;
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
   gap:10px;
 }
-.check{
+.role-grid{grid-template-columns:1fr}
+.role-picker{
+  display:grid;
+  gap:12px;
+  padding:14px;
+  border:1px solid var(--bd);
+  border-radius:18px;
+  background:
+    linear-gradient(180deg,color-mix(in srgb, var(--glass-1) 90%, var(--sf2)), color-mix(in srgb, var(--glass-2) 92%, var(--sf3)));
+  box-shadow:var(--e1);
+}
+.role-picker-group{
+  display:grid;
+  gap:12px;
+  padding:14px;
+  border:1px solid var(--bd2);
+  border-radius:16px;
+  background:linear-gradient(180deg,var(--sf2),var(--sf3));
+}
+.role-picker-head{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:10px;
+}
+.role-picker-title{
+  font-family:var(--ff-head);
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.02em;
+  text-transform:uppercase;
+}
+.role-picker-sub{
+  margin-top:2px;
+  color:var(--tx3);
+  font-size:10px;
+  line-height:1.4;
+}
+.role-option-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+}
+.role-option{
+  position:relative;
   display:flex;
   align-items:center;
-  gap:8px;
+  gap:10px;
   border:1px solid var(--bd);
-  border-radius:12px;
-  background:var(--sf2);
-  padding:9px 10px;
+  border-radius:14px;
+  background:linear-gradient(180deg,var(--sf2),var(--sf3));
+  padding:11px 12px;
+  min-height:48px;
+  cursor:pointer;
+  transition:transform .22s var(--ease-smooth), border-color .22s var(--ease-smooth), box-shadow .22s var(--ease-smooth), background .22s var(--ease-smooth);
+}
+.role-option:hover{
+  transform:translateY(-1px);
+  border-color:var(--bd3);
+  box-shadow:0 10px 22px rgba(0,0,0,.08);
+}
+.role-option input{
+  position:absolute;
+  inset:0;
+  opacity:0;
+  pointer-events:none;
+}
+.role-option::before{
+  content:'';
+  width:10px;
+  height:10px;
+  flex-shrink:0;
+  border-radius:999px;
+  background:var(--role-accent, var(--ac3));
+  box-shadow:0 0 0 4px color-mix(in srgb, var(--role-accent, var(--ac3)) 14%, transparent);
+}
+.role-option .role-copy{
+  min-width:0;
+  display:grid;
+  gap:2px;
+}
+.role-option .role-label{
+  font-family:var(--ff-head);
+  font-size:13px;
+  line-height:1.15;
+  font-weight:800;
+  color:var(--tx);
+}
+.role-option .role-note{
+  font-size:10px;
+  line-height:1.35;
+  color:var(--tx3);
+}
+.role-option:has(input:checked){
+  border-color:color-mix(in srgb, var(--role-accent, var(--ac3)) 44%, var(--bd3));
+  background:linear-gradient(180deg,color-mix(in srgb, var(--role-accent, var(--ac3)) 12%, var(--sf2)), color-mix(in srgb, var(--role-accent, var(--ac3)) 8%, var(--sf3)));
+  box-shadow:0 0 0 1px color-mix(in srgb, var(--role-accent, var(--ac3)) 20%, var(--bd)), 0 10px 24px rgba(0,0,0,.08);
+}
+.role-option:has(input:checked)::before{
+  box-shadow:0 0 0 5px color-mix(in srgb, var(--role-accent, var(--ac3)) 18%, transparent), 0 0 18px color-mix(in srgb, var(--role-accent, var(--ac3)) 18%, transparent);
+}
+.role-option .role-check{
+  margin-left:auto;
+  width:16px;
+  height:16px;
+  border-radius:5px;
+  border:1px solid var(--bd3);
+  background:var(--sf);
+  display:grid;
+  place-items:center;
+  flex-shrink:0;
+  transition:all .22s var(--ease-smooth);
+}
+.role-option .role-check::after{
+  content:'';
+  width:8px;
+  height:4px;
+  border-left:2px solid transparent;
+  border-bottom:2px solid transparent;
+  transform:rotate(-45deg) translateY(-1px);
+  transition:all .22s var(--ease-smooth);
+}
+.role-option:has(input:checked) .role-check{
+  border-color:var(--role-accent, var(--ac3));
+  background:var(--role-accent, var(--ac3));
+}
+.role-option:has(input:checked) .role-check::after{
+  border-left-color:#fff;
+  border-bottom-color:#fff;
+}
+.role-picker-trigger{
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:10px;
+  box-sizing:border-box;
+  width:100%;
+  -webkit-appearance:none;
+  appearance:none;
+  text-align:left;
+  font:inherit;
+  cursor:pointer;
+}
+.role-picker-trigger-label{
+  font:inherit;
+  color:inherit;
+}
+.role-summary{
+  margin-top:8px;
+  font-size:10px;
+  color:var(--tx2);
+  line-height:1.45;
+}
+.role-picker-pane{
+  display:none;
+}
+.role-picker-pane.active{
+  display:grid;
+  gap:12px;
 }
 .check input{accent-color:var(--ac2)}
+.check strong{font-weight:700}
 .small{font-size:11px;color:var(--tx2);line-height:1.45}
 .modal-actions{
   margin-top:14px;
@@ -668,6 +890,7 @@ body.light-mode{
   .editor-grid.cols-3{
     grid-template-columns:1fr;
   }
+  .role-option-grid{grid-template-columns:1fr}
 }
 .palette-overlay{
   position:fixed;
@@ -965,25 +1188,29 @@ body.basic-mode *::after{
           <input id="quickEmail" type="hidden" value="">
         </div>
         <div class="field">
-          <label for="quickKilnRole">Job role</label>
-          <select id="quickKilnRole" class="select">
-            <option value="none">No job role</option>
-            <option value="burner">Burner</option>
-            <option value="electrician">Electrician</option>
-            <option value="mechanical">Mechanical</option>
-            <option value="process_operator">Process Operator</option>
-            <option value="shift_manager">Shift Manager</option>
-            <option value="day_manager">Day Manager</option>
-            <option value="cement_analyst">Cement Analyst</option>
-            <option value="day_staff">Day Staff</option>
-            <option value="admin">Admin</option>
-          </select>
+          <label>Job roles</label>
+          <input type="hidden" id="quickKilnRole" value="none">
+          <button class="select role-picker-trigger" type="button" onclick="openKilnRolePicker('quick')">
+            <span class="role-picker-trigger-label">Choose roles</span>
+          </button>
+          <div id="quickKilnRoleSummary" class="role-summary">No job role selected.</div>
         </div>
         <div class="field">
           <label for="quickWorkRoleType">Role Type</label>
           <select id="quickWorkRoleType" class="select">
             <option value="shift">Shift role</option>
             <option value="day">Day role</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="quickShiftTeam">Shift Team</label>
+          <select id="quickShiftTeam" class="select">
+            <option value="">Not set</option>
+            <option value="A">Shift A</option>
+            <option value="B">Shift B</option>
+            <option value="C">Shift C</option>
+            <option value="D">Shift D</option>
+            <option value="E">Shift E</option>
           </select>
         </div>
         <div class="field">
@@ -1139,27 +1366,31 @@ body.basic-mode *::after{
             <div class="editor-section-sub">The user’s job role and how they work.</div>
           </div>
         </div>
-        <div class="editor-grid cols-3">
+        <div class="editor-grid cols-3 job-details-grid">
           <div class="field">
-            <label for="editKilnRole">Job role</label>
-            <select id="editKilnRole" class="select">
-              <option value="none">No job role</option>
-              <option value="admin">Admin</option>
-              <option value="shift_manager">Shift manager</option>
-              <option value="day_manager">Day manager</option>
-              <option value="burner">Burner</option>
-              <option value="cement_analyst">Cement analyst</option>
-              <option value="electrician">Electrician</option>
-              <option value="mechanical">Mechanical</option>
-              <option value="process_operator">Process operator</option>
-              <option value="day_staff">Day staff</option>
-            </select>
+            <label>Job roles</label>
+            <input type="hidden" id="editKilnRole" value="none">
+            <button class="select role-picker-trigger" type="button" onclick="openKilnRolePicker('edit')">
+              <span class="role-picker-trigger-label">Choose roles</span>
+            </button>
+            <div id="editKilnRoleSummary" class="role-summary">No job role selected.</div>
           </div>
           <div class="field">
             <label for="editWorkRoleType">Work Role Type</label>
             <select id="editWorkRoleType" class="select">
               <option value="shift">Shift role</option>
               <option value="day">Day role</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="editShiftTeam">Shift Team</label>
+            <select id="editShiftTeam" class="select">
+              <option value="">Not set</option>
+              <option value="A">Shift A</option>
+              <option value="B">Shift B</option>
+              <option value="C">Shift C</option>
+              <option value="D">Shift D</option>
+              <option value="E">Shift E</option>
             </select>
           </div>
           <div class="field">
@@ -1252,6 +1483,28 @@ body.basic-mode *::after{
       <button class="btn btn-ghost" type="button" id="editorPwBtn" onclick="openEditorPasswordModal()">Set Password</button>
       <button class="btn btn-ghost" type="button" onclick="closeEditor()">Cancel</button>
       <button class="btn btn-primary" type="button" id="editorSaveBtn" onclick="saveEditorChanges()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<div id="kilnRoleOverlay" class="modal-overlay" onclick="if(event.target===this)cancelKilnRolePicker()">
+  <div class="modal" style="max-width:880px">
+    <div class="panel-head">
+      <div>
+        <div class="panel-title" id="kilnRolePickerTitle">Choose roles</div>
+        <div class="panel-sub" id="kilnRolePickerSub">Select one or more roles for this user.</div>
+      </div>
+      <button class="btn btn-ghost" type="button" onclick="cancelKilnRolePicker()">Close</button>
+    </div>
+    <div class="modal-body">
+      <div id="kilnRolePickerPaneQuick" class="role-picker-pane"></div>
+      <div id="kilnRolePickerPaneEdit" class="role-picker-pane"></div>
+    </div>
+    <div class="small">Multiple roles are allowed. Choose everything that applies, then press Done.</div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" type="button" onclick="clearKilnRolePicker()">Clear</button>
+      <button class="btn btn-ghost" type="button" onclick="cancelKilnRolePicker()">Cancel</button>
+      <button class="btn btn-primary" type="button" onclick="commitKilnRolePicker()">Done</button>
     </div>
   </div>
 </div>
@@ -1422,7 +1675,31 @@ const PALETTE_PRESETS = (sharedPalette && sharedPalette.getPresetVarsMap)
 const PALETTE_META_MAP = (sharedPalette && sharedPalette.getPresetMap)
   ? sharedPalette.getPresetMap()
   : {};
-const KILN_ROLE_OPTIONS = ['none','admin','shift_manager','day_manager','burner','cement_analyst','electrician','mechanical','process_operator','day_staff'];
+const KILN_ROLE_CONFIG = [
+  { value: 'admin', label: 'Admin', type: 'neutral', accent: 'var(--ac3)' },
+  { value: 'shift_manager', label: 'Shift manager', type: 'shift', accent: 'var(--role-manager)' },
+  { value: 'day_manager', label: 'Day manager', type: 'day', accent: 'var(--role-manager)' },
+  { value: 'burner', label: 'Burner', type: 'shift', accent: 'var(--role-burner)' },
+  { value: 'cement_analyst', label: 'Cement analyst', type: 'shift', accent: 'var(--role-analyst)' },
+  { value: 'electrician', label: 'Electrician', type: 'shift', accent: 'var(--role-electrician)' },
+  { value: 'mechanical', label: 'Mechanical', type: 'shift', accent: 'var(--role-mechanical)' },
+  { value: 'process_operator', label: 'Process operator', type: 'shift', accent: 'var(--role-operator)' },
+  { value: 'day_staff', label: 'Day staff', type: 'day', accent: 'var(--amb)' }
+];
+const KILN_ROLE_OPTIONS = ['none'].concat(KILN_ROLE_CONFIG.map(function(role){ return role.value; }));
+const KILN_ROLE_META = KILN_ROLE_CONFIG.reduce(function(map, role){
+  map[role.value] = role;
+  return map;
+}, {});
+const KILN_ROLE_PRIORITY = ['admin','shift_manager','day_manager','burner','cement_analyst','electrician','mechanical','process_operator','day_staff'];
+const SHIFT_TEAM_OPTIONS = ['A','B','C','D','E'];
+const SHIFT_TEAM_COLOR_MAP = {
+  A: '#2563eb',
+  B: '#059669',
+  C: '#9333ea',
+  D: '#d97706',
+  E: '#dc2626'
+};
 
 let sb = null;
 let currentUser = null;
@@ -1438,12 +1715,15 @@ let feedbackDoneRequestsCache = [];
 let accessRequestSelection = {};
 let accessRequestTarget = null;
 let bulkAccessRequestTargets = [];
+let bulkAccessEditorTargets = [];
 let adminSetPwTarget = null;
 let pendingResetReqId = null;
 let pendingResetReqTable = null;
 let forcePwUsername = null;
 let editingUserKey = null;
 let bulkAccessGroupKey = null;
+let currentKilnRolePickerPrefix = null;
+let kilnRolePickerSnapshot = null;
 let startupLoginTimer = null;
 let suiteLogoSrc = null;
 let suiteLogoPromise = null;
@@ -1462,6 +1742,27 @@ function looksLikeShortLoginName(value, email, username){
   if (emailLocal && normalized === emailLocal) return true;
   if (loginName && normalized === loginName) return true;
   return !/\s/.test(raw) && /^[a-z0-9._-]{3,}$/i.test(raw);
+}
+function kilnRoleMeta(role){
+  return KILN_ROLE_META[toLower(role)] || null;
+}
+function kilnRoleValuesFromFlags(ku){
+  if (!ku) return [];
+  return KILN_ROLE_PRIORITY.filter(function(role){
+    const meta = kilnRoleMeta(role);
+    if (!meta) return false;
+    return !!ku['is_' + role];
+  });
+}
+function kilnRoleValue(ku){
+  if (!ku) return 'none';
+  const roles = kilnRoleValuesFromFlags(ku);
+  return roles.length ? roles[0] : 'none';
+}
+function kilnRoleLabelsForUser(ku){
+  return kilnRoleValuesFromFlags(ku).map(function(role){
+    return kilnRoleLabel(role);
+  });
 }
 function displayNameFor(user){
   if (!user) return 'User';
@@ -1485,33 +1786,175 @@ function inferWorkRoleType(p, k){
   if (k && (k.is_day_manager || k.is_day_staff)) return 'day';
   return 'shift';
 }
-function kilnRoleValue(ku){
-  if (!ku) return 'none';
-  if (ku.is_admin) return 'admin';
-  if (ku.is_shift_manager) return 'shift_manager';
-  if (ku.is_day_manager) return 'day_manager';
-  if (ku.is_burner) return 'burner';
-  if (ku.is_cement_analyst) return 'cement_analyst';
-  if (ku.is_electrician) return 'electrician';
-  if (ku.is_mechanical) return 'mechanical';
-  if (ku.is_process_operator) return 'process_operator';
-  if (ku.is_day_staff) return 'day_staff';
-  return 'none';
+function normalizeShiftTeam(v){
+  const raw = String(v == null ? '' : v).trim().toUpperCase();
+  return SHIFT_TEAM_OPTIONS.includes(raw) ? raw : '';
+}
+function inferShiftTeam(p){
+  return normalizeShiftTeam(p && p.shift_team);
+}
+function shiftTeamLabel(v){
+  const team = normalizeShiftTeam(v);
+  return team ? ('Shift ' + team) : 'Not set';
+}
+function shiftTeamColor(team){
+  const key = normalizeShiftTeam(team);
+  return SHIFT_TEAM_COLOR_MAP[key] || 'var(--tx2)';
+}
+function isShiftTeamApplicable(kilnRole, workRoleType){
+  const role = toLower(kilnRole || 'none');
+  const type = toLower(workRoleType || 'shift');
+  if (type !== 'shift') return false;
+  if (role === 'none' || role === 'admin') return false;
+  return true;
 }
 function kilnRoleLabel(role){
-  const map = {
-    none:'No job role',
-    admin:'Admin',
-    shift_manager:'Shift manager',
-    day_manager:'Day manager',
-    burner:'Burner',
-    cement_analyst:'Cement analyst',
-    electrician:'Electrician',
-    mechanical:'Mechanical',
-    process_operator:'Process operator',
-    day_staff:'Day staff'
-  };
-  return map[role] || 'Unknown';
+  const meta = kilnRoleMeta(role);
+  if (meta) return meta.label;
+  if (toLower(role) === 'none') return 'No job role';
+  return 'Unknown';
+}
+function kilnRoleKind(role){
+  const meta = kilnRoleMeta(role);
+  return meta ? meta.type : 'neutral';
+}
+function kilnRoleAccent(role){
+  const meta = kilnRoleMeta(role);
+  return meta ? meta.accent : 'var(--tx2)';
+}
+function kilnRolePrimaryValue(roles){
+  const normalized = Array.isArray(roles) ? roles.map(toLower) : [];
+  for (const role of KILN_ROLE_PRIORITY) {
+    if (normalized.includes(role)) return role;
+  }
+  return 'none';
+}
+function kilnRoleLabelsFromValues(roles){
+  return (Array.isArray(roles) ? roles : []).map(function(role){ return kilnRoleLabel(role); }).filter(Boolean);
+}
+function selectedKilnRoles(prefix){
+  const out = [];
+  KILN_ROLE_CONFIG.forEach(function(role){
+    const el = $(prefix + 'KilnRole_' + role.value);
+    if (el && el.checked) out.push(role.value);
+  });
+  return out;
+}
+function setSelectedKilnRoles(prefix, roles){
+  const selected = new Set((Array.isArray(roles) ? roles : []).map(toLower));
+  KILN_ROLE_CONFIG.forEach(function(role){
+    const el = $(prefix + 'KilnRole_' + role.value);
+    if (el) el.checked = selected.has(role.value);
+  });
+  syncSelectedKilnRoles(prefix);
+}
+function inferWorkRoleTypeFromRoles(roles, fallback){
+  const normalized = Array.isArray(roles) ? roles.map(toLower) : [];
+  const hasShift = normalized.some(function(role){ return kilnRoleKind(role) === 'shift'; });
+  const hasDay = normalized.some(function(role){ return kilnRoleKind(role) === 'day'; });
+  if (hasShift) return 'shift';
+  if (hasDay) return 'day';
+  const current = toLower(fallback || '');
+  if (current === 'day' || current === 'shift') return current;
+  return 'shift';
+}
+function isShiftTeamApplicableByRoles(roles, workRoleType){
+  const normalized = Array.isArray(roles) ? roles.map(toLower) : [];
+  const type = toLower(workRoleType || 'shift');
+  if (type !== 'shift') return false;
+  return normalized.some(function(role){ return kilnRoleKind(role) === 'shift'; });
+}
+function syncSelectedKilnRoles(prefix){
+  const roleEl = $(prefix + 'KilnRole');
+  const workRoleTypeEl = $(prefix + 'WorkRoleType');
+  const shiftTeamEl = $(prefix + 'ShiftTeam');
+  const roles = selectedKilnRoles(prefix);
+  const primary = kilnRolePrimaryValue(roles);
+  if (roleEl) roleEl.value = primary;
+  if (workRoleTypeEl) {
+    const inferred = inferWorkRoleTypeFromRoles(roles, workRoleTypeEl.value);
+    if (inferred) workRoleTypeEl.value = inferred;
+  }
+  if (shiftTeamEl) {
+    const enabled = isShiftTeamApplicableByRoles(roles, workRoleTypeEl ? workRoleTypeEl.value : inferWorkRoleTypeFromRoles(roles, 'shift'));
+    shiftTeamEl.disabled = !enabled;
+    shiftTeamEl.setAttribute('aria-disabled', enabled ? 'false' : 'true');
+    if (!enabled) shiftTeamEl.value = '';
+  }
+  updateKilnRoleSummary(prefix);
+}
+function renderKilnRoleChoices(prefix){
+  const groups = [
+    {
+      title: 'Management',
+      sub: 'People who can supervise or approve.',
+      roles: ['admin', 'shift_manager', 'day_manager']
+    },
+    {
+      title: 'Job roles',
+      sub: 'Select any operational roles this person covers.',
+      roles: ['burner', 'cement_analyst', 'electrician', 'mechanical', 'process_operator', 'day_staff']
+    }
+  ];
+  return '<div class="role-picker">'
+    + groups.map(function(group){
+      return '<div class="role-picker-group">'
+        + '<div class="role-picker-head">'
+        + '<div><div class="role-picker-title">' + esc(group.title) + '</div><div class="role-picker-sub">' + esc(group.sub) + '</div></div>'
+        + '</div>'
+        + '<div class="role-option-grid">'
+        + group.roles.map(function(roleValue){
+          const role = kilnRoleMeta(roleValue);
+          if (!role) return '';
+          return '<label class="role-option" style="--role-accent:' + esc(role.accent) + '">'
+            + '<input type="checkbox" id="' + esc(prefix + 'KilnRole_' + role.value) + '" data-role="' + esc(role.value) + '">'
+            + '<span class="role-copy">'
+            + '<span class="role-label">' + esc(role.label) + '</span>'
+            + '<span class="role-note">' + esc(role.type === 'day' ? 'Day-based role' : 'Shift-based role') + '</span>'
+            + '</span>'
+            + '<span class="role-check" aria-hidden="true"></span>'
+            + '</label>';
+        }).join('')
+        + '</div>'
+      + '</div>';
+    }).join('')
+    + '</div>';
+}
+function updateKilnRoleSummary(prefix){
+  const el = $(prefix + 'KilnRoleSummary');
+  if (!el) return;
+  const labels = kilnRoleLabelsFromValues(selectedKilnRoles(prefix));
+  if (!labels.length) {
+    el.textContent = 'No job role selected.';
+    return;
+  }
+  const preview = labels.slice(0, 3).join(', ');
+  el.textContent = labels.length > 3
+    ? preview + ' and ' + (labels.length - 3) + ' more selected.'
+    : preview + '.';
+}
+function normalizeKilnRoleList(value){
+  if (Array.isArray(value)) {
+    return Array.from(new Set(value.map(toLower).filter(function(role){ return !!kilnRoleMeta(role); })));
+  }
+  if (value == null) return [];
+  const raw = String(value).trim();
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) return normalizeKilnRoleList(parsed);
+  } catch (e) {}
+  return raw.split(',').map(toLower).filter(function(role){ return !!kilnRoleMeta(role); });
+}
+function extractKilnRolesFromRequest(req){
+  const roles = normalizeKilnRoleList(req && req.kiln_roles);
+  if (roles.length) return roles;
+  const single = toLower(req && req.kiln_role);
+  return single && single !== 'none' && kilnRoleMeta(single) ? [single] : [];
+}
+function renderKilnRoleListText(roles){
+  const labels = kilnRoleLabelsFromValues(normalizeKilnRoleList(roles));
+  return labels.length ? labels.join(', ') : 'No job role';
 }
 function logsAccessAllowed(ku){
   return !!(ku && ku.shift_log_access !== false && ku.is_locked !== true);
@@ -1523,6 +1966,18 @@ function syncLogsAccessRolePair(accessId, roleId){
   roleEl.disabled = false;
   roleEl.removeAttribute('aria-disabled');
 }
+function syncShiftTeamRolePair(teamId, roleId, workRoleTypeId){
+  const teamEl = $(teamId);
+  const roleEl = $(roleId);
+  const workRoleTypeEl = $(workRoleTypeId);
+  if (!teamEl || !roleEl || !workRoleTypeEl) return;
+  const prefix = String(roleId || '').replace(/KilnRole$/, '').replace(/Role$/, '');
+  const roles = selectedKilnRoles(prefix);
+  const enabled = isShiftTeamApplicableByRoles(roles, workRoleTypeEl.value);
+  teamEl.disabled = !enabled;
+  teamEl.setAttribute('aria-disabled', enabled ? 'false' : 'true');
+  if (!enabled) teamEl.value = '';
+}
 function bindLogsAccessRolePair(accessId, roleId){
   const accessEl = $(accessId);
   const roleEl = $(roleId);
@@ -1533,6 +1988,82 @@ function bindLogsAccessRolePair(accessId, roleId){
   accessEl.addEventListener('change', sync);
   roleEl.addEventListener('change', sync);
   sync();
+}
+function bindShiftTeamRolePair(teamId, roleId, workRoleTypeId){
+  const teamEl = $(teamId);
+  const roleEl = $(roleId);
+  const workRoleTypeEl = $(workRoleTypeId);
+  if (!teamEl || !roleEl || !workRoleTypeEl) return;
+  const sync = function(){ syncShiftTeamRolePair(teamId, roleId, workRoleTypeId); };
+  roleEl.addEventListener('change', sync);
+  workRoleTypeEl.addEventListener('change', sync);
+  sync();
+}
+function bindKilnRolePicker(prefix){
+  KILN_ROLE_CONFIG.forEach(function(role){
+    const el = $(prefix + 'KilnRole_' + role.value);
+    if (!el) return;
+    el.addEventListener('change', function(){
+      syncSelectedKilnRoles(prefix);
+    });
+  });
+  const workRoleTypeEl = $(prefix + 'WorkRoleType');
+  if (workRoleTypeEl) {
+    workRoleTypeEl.addEventListener('change', function(){ syncSelectedKilnRoles(prefix); });
+  }
+  syncSelectedKilnRoles(prefix);
+}
+function initKilnRolePickers(){
+  const quickPane = $('kilnRolePickerPaneQuick');
+  const editPane = $('kilnRolePickerPaneEdit');
+  if (quickPane && !quickPane.dataset.rendered) {
+    quickPane.innerHTML = renderKilnRoleChoices('quick');
+    quickPane.dataset.rendered = '1';
+  }
+  if (editPane && !editPane.dataset.rendered) {
+    editPane.innerHTML = renderKilnRoleChoices('edit');
+    editPane.dataset.rendered = '1';
+  }
+  bindKilnRolePicker('quick');
+  bindKilnRolePicker('edit');
+  updateKilnRoleSummary('quick');
+  updateKilnRoleSummary('edit');
+}
+function openKilnRolePicker(prefix){
+  const safePrefix = prefix === 'edit' ? 'edit' : 'quick';
+  currentKilnRolePickerPrefix = safePrefix;
+  kilnRolePickerSnapshot = selectedKilnRoles(safePrefix);
+  const titleEl = $('kilnRolePickerTitle');
+  const subEl = $('kilnRolePickerSub');
+  const quickPane = $('kilnRolePickerPaneQuick');
+  const editPane = $('kilnRolePickerPaneEdit');
+  if (titleEl) titleEl.textContent = safePrefix === 'edit' ? 'Edit user roles' : 'Quick add roles';
+  if (subEl) subEl.textContent = safePrefix === 'edit'
+    ? 'Choose every role that applies to this user.'
+    : 'Choose every role to include before adding them to the queue.';
+  if (quickPane) quickPane.classList.toggle('active', safePrefix === 'quick');
+  if (editPane) editPane.classList.toggle('active', safePrefix === 'edit');
+  if (quickPane) quickPane.setAttribute('aria-hidden', safePrefix === 'quick' ? 'false' : 'true');
+  if (editPane) editPane.setAttribute('aria-hidden', safePrefix === 'edit' ? 'false' : 'true');
+  updateKilnRoleSummary(safePrefix);
+  $('kilnRoleOverlay').classList.add('open');
+}
+function cancelKilnRolePicker(){
+  if (currentKilnRolePickerPrefix && Array.isArray(kilnRolePickerSnapshot)) {
+    setSelectedKilnRoles(currentKilnRolePickerPrefix, kilnRolePickerSnapshot);
+  }
+  currentKilnRolePickerPrefix = null;
+  kilnRolePickerSnapshot = null;
+  $('kilnRoleOverlay').classList.remove('open');
+}
+function commitKilnRolePicker(){
+  currentKilnRolePickerPrefix = null;
+  kilnRolePickerSnapshot = null;
+  $('kilnRoleOverlay').classList.remove('open');
+}
+function clearKilnRolePicker(){
+  if (!currentKilnRolePickerPrefix) return;
+  setSelectedKilnRoles(currentKilnRolePickerPrefix, []);
 }
 function syncQuickEmail(){
   const userEl = $('quickEmailUser');
@@ -1554,6 +2085,9 @@ function userIsAdmin(user){
   const k = user && user.kiln;
   return !!((p && p.role === 'admin') || (k && k.is_admin));
 }
+function userIsImmutableAdmin(user){
+  return userIsAdmin(user);
+}
 function userIsDisabled(user){
   const p = user && user.profile;
   const k = user && user.kiln;
@@ -1574,7 +2108,7 @@ function userRoleGroup(user){
 function groupMetaLabel(key){
   const map = {
     admin: 'Admins',
-    managers: 'Shift and day managers',
+    managers: 'Managers',
     shift_role: 'Shift role users',
     day_role: 'Day role users',
     disabled: 'Disabled users',
@@ -1645,6 +2179,7 @@ function openBulkAccessEditor(groupKey){
     return;
   }
   bulkAccessGroupKey = groupKey;
+  bulkAccessEditorTargets = [];
   $('bulkAccessTracker').value = 'no_change';
   $('bulkAccessHoliday').value = 'no_change';
   $('bulkAccessCredit').value = 'no_change';
@@ -1657,6 +2192,7 @@ function openBulkAccessEditor(groupKey){
 }
 function closeBulkAccessEditor(){
   bulkAccessGroupKey = null;
+  bulkAccessEditorTargets = [];
   $('bulkAccessOverlay').classList.remove('open');
 }
 async function setManagedUsersAppAccess(targets, accessPatch){
@@ -1691,8 +2227,9 @@ async function setManagedUsersAppAccess(targets, accessPatch){
   }
 }
 async function applyBulkAccessChanges(){
-  if (!bulkAccessGroupKey) {
-    setToast('Select a role group first.');
+  const targetRows = bulkAccessGroupKey ? getManagedUsersForGroup(bulkAccessGroupKey) : (bulkAccessEditorTargets || []);
+  if (!bulkAccessGroupKey && !targetRows.length) {
+    setToast('Select a group first.');
     return;
   }
   const accessPatch = {
@@ -1709,8 +2246,7 @@ async function applyBulkAccessChanges(){
     $('bulkAccessMsg').textContent = 'Pick at least one app access change before applying.';
     return;
   }
-  const targets = getManagedUsersForGroup(bulkAccessGroupKey);
-  if (!targets.length) {
+  if (!targetRows.length) {
     setToast('No users available in this group.');
     closeBulkAccessEditor();
     return;
@@ -1719,8 +2255,8 @@ async function applyBulkAccessChanges(){
   applyBtn.disabled = true;
   $('bulkAccessMsg').textContent = 'Applying updates...';
   try {
-    await setManagedUsersAppAccess(targets, accessPatch);
-    setToast('Updated app access for ' + groupMetaLabel(bulkAccessGroupKey) + ' ✓');
+    await setManagedUsersAppAccess(targetRows, accessPatch);
+    setToast('Updated app access ✓');
     closeBulkAccessEditor();
     await loadDirectory();
   } catch (e) {
@@ -1731,6 +2267,18 @@ async function applyBulkAccessChanges(){
 function hasMissingFunctionError(err, fnName){
   const msg = toLower(err && (err.message || err.details || err.hint || err.code || ''));
   return msg.includes('function') && msg.includes(toLower(fnName || '')) && (msg.includes('does not exist') || msg.includes('not found'));
+}
+function hasMissingColumnError(err, columnName){
+  const msg = toLower(err && (err.message || err.details || err.hint || err.code || ''));
+  const col = toLower(columnName || '');
+  return !!(col && msg.includes(col) && (msg.includes('column') || msg.includes('schema cache') || msg.includes('does not exist')));
+}
+async function updateProfileShiftTeam(profileId, shiftTeam){
+  if (!profileId) return false;
+  const res = await sb.from('pw_profiles').update({ shift_team: normalizeShiftTeam(shiftTeam) || null }).eq('id', profileId);
+  if (!res.error) return true;
+  if (hasMissingColumnError(res.error, 'shift_team')) return false;
+  throw res.error;
 }
 function setSyncLabel(text){
   const el = $('syncLabel');
@@ -1946,6 +2494,124 @@ function groupUsers(rows){
   });
   return groups;
 }
+const ROLE_GROUP_SUBGROUPS = {
+  managers: [
+    { key: 'shift_managers', label: 'Shift managers', color: 'var(--role-manager)', match: function(row){ return !!(row && row.kiln && row.kiln.is_shift_manager); } },
+    { key: 'day_managers', label: 'Day managers', color: 'var(--role-manager)', match: function(row){ return !!(row && row.kiln && row.kiln.is_day_manager); } }
+  ],
+  shift_role: [
+    { key: 'burners', label: 'Burners', color: 'var(--role-burner)', match: function(row){ return !!(row && row.kiln && row.kiln.is_burner); } },
+    { key: 'cement_analysts', label: 'Cement analysts', color: 'var(--role-analyst)', match: function(row){ return !!(row && row.kiln && row.kiln.is_cement_analyst); } },
+    { key: 'electricians', label: 'Electricians', color: 'var(--role-electrician)', match: function(row){ return !!(row && row.kiln && row.kiln.is_electrician); } },
+    { key: 'process_operators', label: 'Process operators', color: 'var(--role-operator)', match: function(row){ return !!(row && row.kiln && row.kiln.is_process_operator); } }
+  ],
+  day_role: [
+    { key: 'day_staff', label: 'Day staff', color: 'var(--amb)', match: function(row){ return !!(row && row.kiln && row.kiln.is_day_staff); } },
+    { key: 'mechanical', label: 'Mechanical', color: 'var(--role-mechanical)', match: function(row){ return !!(row && row.kiln && row.kiln.is_mechanical); } }
+  ]
+};
+function getRoleGroupSubgroups(groupKey, rows){
+  const configs = ROLE_GROUP_SUBGROUPS[groupKey] || [];
+  const used = new Set();
+  return configs.map(function(cfg){
+    const subgroupRows = [];
+    (rows || []).forEach(function(row){
+      const key = row && row.key ? String(row.key) : '';
+      if (!key || used.has(key) || !cfg.match(row)) return;
+      used.add(key);
+      subgroupRows.push(row);
+    });
+    return {
+      key: cfg.key,
+      label: cfg.label,
+      color: cfg.color,
+      rows: subgroupRows
+    };
+  });
+}
+function groupShiftTeams(rows){
+  const teams = { A: [], B: [], C: [], D: [], E: [] };
+  (rows || []).forEach(function(row){
+    const p = row && row.profile ? row.profile : null;
+    const k = row && row.kiln ? row.kiln : null;
+    const roles = kilnRoleValuesFromFlags(k);
+    const workType = inferWorkRoleType(p, k);
+    if (!isShiftTeamApplicableByRoles(roles, workType)) return;
+    const team = inferShiftTeam(p);
+    if (!team || !teams[team]) return;
+    teams[team].push(row);
+  });
+  return teams;
+}
+
+function renderShiftTeamCard(row, team){
+  const teamColor = shiftTeamColor(team);
+  const p = row && row.profile ? row.profile : null;
+  const k = row && row.kiln ? row.kiln : null;
+  const displayName = displayNameFor(row);
+  const email = (p && p.email) || (k && k.email) || '-';
+  const canEdit = !!(p && p.id);
+  const isDisabled = userIsDisabled(row);
+  const tags = [];
+  const workType = inferWorkRoleType(p, k);
+  const roleLabels = kilnRoleLabelsForUser(k);
+  if (roleLabels.length) {
+    roleLabels.forEach(function(label){
+      tags.push('<span class="pill neutral">' + esc(label) + '</span>');
+    });
+  } else {
+    tags.push('<span class="pill neutral">No job role</span>');
+  }
+  tags.push('<span class="pill neutral" style="color:' + esc(teamColor) + ';border-color:color-mix(in srgb, ' + esc(teamColor) + ' 28%, var(--border2));background:color-mix(in srgb, ' + esc(teamColor) + ' 10%, var(--bg3))">' + esc('Shift ' + team) + '</span>');
+  tags.push('<span class="pill neutral">' + esc(workType === 'day' ? 'Day role' : 'Shift role') + '</span>');
+  if (userIsAdmin(row)) tags.push('<span class="pill good">Admin</span>');
+  if (userIsPending(row)) tags.push('<span class="pill warn">Pending approval</span>');
+  if (userIsDisabled(row)) tags.push('<span class="pill bad">Disabled or locked</span>');
+  let html = '<article class="user-card" style="border-color:color-mix(in srgb, ' + esc(teamColor) + ' 24%, var(--bd));box-shadow:0 0 0 1px color-mix(in srgb, ' + esc(teamColor) + ' 14%, var(--bd2)), var(--e2)">';
+  html += '<div class="user-card-head">';
+  html += '<div>';
+  html += '<div class="user-name-row"><span class="user-state-dot ' + (isDisabled ? 'disabled' : 'active') + '" aria-hidden="true"></span><div class="user-name">' + esc(displayName) + '</div></div>';
+  html += '<div class="user-meta">' + esc(email) + '</div>';
+  html += '</div>';
+  html += '<div class="user-actions">';
+  html += '<button class="btn btn-ghost" type="button"' + (canEdit ? ' onclick="openEditorByRow(usersMerged.find(function(r){ return r.key === \'' + esc(row.key) + '\'; }))"' : ' disabled style="opacity:.55;cursor:not-allowed"') + '>' + (canEdit ? 'Edit' : 'Profile missing') + '</button>';
+  if (canEdit) {
+    html += '<button class="btn ' + (userIsDisabled(row) ? 'btn-primary' : 'btn-danger') + '" type="button" onclick="toggleUserAccessByKey(\'' + esc(row.key) + '\')">' + (userIsDisabled(row) ? 'Enable Account' : 'Disable Account') + '</button>';
+  }
+  html += '</div>';
+  html += '</div>';
+  html += '<div class="chips">' + tags.join('') + '</div>';
+  html += '</article>';
+  return html;
+}
+
+function resolveRowsByKeys(keys){
+  const wanted = new Set((Array.isArray(keys) ? keys : []).map(function(k){ return String(k); }));
+  if (!wanted.size) return [];
+  return usersMerged.filter(function(row){ return row && wanted.has(String(row.key)); });
+}
+
+function openBulkAccessForKeys(keys, label){
+  openBulkAccessEditorForTargets(resolveRowsByKeys(keys), label);
+}
+
+function bulkSetUsersDisabledForKeys(keys, shouldDisable, label){
+  return bulkSetUsersDisabled(resolveRowsByKeys(keys), shouldDisable, label);
+}
+
+function renderBulkActionButtonsForKeys(keys, label){
+  const rows = resolveRowsByKeys(keys);
+  const activeCount = rows.filter(function(row){ return !userIsDisabled(row); }).length;
+  const disabledCount = rows.length - activeCount;
+  const safeLabel = label || 'these users';
+  const payload = esc(JSON.stringify((Array.isArray(keys) ? keys : []).map(function(k){ return String(k); })));
+  let html = '<div class="group-summary-right" onclick="event.stopPropagation()">';
+  html += '<button type="button" class="btn btn-ghost group-summary-action" onclick="openBulkAccessForKeys(JSON.parse(\'' + payload + '\'), \'' + esc(safeLabel) + '\')"' + (rows.length ? '' : ' disabled') + '>App Access</button>';
+  html += '<button type="button" class="btn btn-danger group-summary-action" onclick="bulkSetUsersDisabledForKeys(JSON.parse(\'' + payload + '\'), true, \'' + esc(safeLabel) + '\')"' + (activeCount ? '' : ' disabled') + '>Disable All</button>';
+  html += '<button type="button" class="btn btn-primary group-summary-action" onclick="bulkSetUsersDisabledForKeys(JSON.parse(\'' + payload + '\'), false, \'' + esc(safeLabel) + '\')"' + (disabledCount ? '' : ' disabled') + '>Enable All</button>';
+  html += '</div>';
+  return html;
+}
 
 function populateManagerSelect(selectId, selectedId, excludeProfileId){
   const el = $(selectId);
@@ -2007,7 +2673,7 @@ function openAccessRequestPwModal(reqId, email, fullName, role, kilnRole){
     setToast('Admin only');
     return;
   }
-  accessRequestTarget = { reqId: reqId, email: email, fullName: fullName, role: role, kilnRole: kilnRole };
+  accessRequestTarget = { reqId: reqId, email: email, fullName: fullName, role: role, kilnRole: kilnRole, kilnRoles: normalizeKilnRoleList(kilnRole) };
   adminSetPwTarget = null;
   bulkAccessRequestTargets = [];
   forcePwUsername = null;
@@ -2018,7 +2684,7 @@ function openBulkAccessRequestPwModal(){
   const targets = getSelectedAccessRequestTargets();
   if (!targets.length) return;
   bulkAccessRequestTargets = targets.map(function(req){
-    return { reqId: req.id, email: req.email, fullName: req.full_name, role: req.role, kilnRole: req.kiln_role };
+    return { reqId: req.id, email: req.email, fullName: req.full_name, role: req.role, kilnRole: req.kiln_role, kilnRoles: extractKilnRolesFromRequest(req), shiftTeam: req.shift_team };
   });
   accessRequestTarget = null;
   adminSetPwTarget = null;
@@ -2047,6 +2713,27 @@ async function ensureAccessRequestTargetsAreFree(targets){
   }
 }
 
+function kilnFlagsFromRoles(roles){
+  const selected = new Set(normalizeKilnRoleList(roles));
+  return {
+    is_admin: selected.has('admin'),
+    is_shift_manager: selected.has('shift_manager'),
+    is_day_manager: selected.has('day_manager'),
+    is_electrician: selected.has('electrician'),
+    is_mechanical: selected.has('mechanical'),
+    is_process_operator: selected.has('process_operator'),
+    is_cement_analyst: selected.has('cement_analyst'),
+    is_day_staff: selected.has('day_staff'),
+    is_burner: selected.has('burner')
+  };
+}
+function roleSelectionHasShiftRole(roles){
+  return normalizeKilnRoleList(roles).some(function(role){ return kilnRoleKind(role) === 'shift'; });
+}
+function roleSelectionHasAnyRole(roles){
+  return normalizeKilnRoleList(roles).length > 0;
+}
+
 async function createAccessRequestAccount(target, passwordValue){
   const accessReq = accessRequestsCache.find(function(x){ return String(x.id) === String(target.reqId); }) || null;
   const trackerAllowed = accessReq ? accessReq.shift_tracker_access !== false : true;
@@ -2054,8 +2741,10 @@ async function createAccessRequestAccount(target, passwordValue){
   const holidayAllowed = accessReq ? accessReq.holiday_requests_access !== false : true;
   const messageBoardAllowed = accessReq ? accessReq.message_board_access !== false : true;
   const logsAllowed = accessReq ? accessReq.logs_access !== false : true;
-  const effectiveKilnRole = target.kilnRole || 'none';
-  const workRoleType = target && target.kilnRole && (target.kilnRole === 'day_manager' || target.kilnRole === 'day_staff') ? 'day' : (target.workRoleType || 'shift');
+  const effectiveKilnRoles = normalizeKilnRoleList((target && target.kilnRoles) || (accessReq && accessReq.kiln_roles) || target.kilnRole || (accessReq && accessReq.kiln_role));
+  const effectiveKilnRole = kilnRolePrimaryValue(effectiveKilnRoles);
+  const workRoleType = inferWorkRoleTypeFromRoles(effectiveKilnRoles, target && target.workRoleType ? target.workRoleType : (accessReq && accessReq.work_role_type) || 'shift');
+  const shiftTeam = normalizeShiftTeam((target && target.shiftTeam) || (accessReq && accessReq.shift_team));
   const holidayManagerAuthUserId = accessReq ? (accessReq.holiday_manager_auth_user_id || null) : null;
   const createRes = await callAdminPwFunction({
     action: 'createAccount',
@@ -2065,7 +2754,7 @@ async function createAccessRequestAccount(target, passwordValue){
   });
   const userId = createRes && createRes.userId ? createRes.userId : null;
   if (!userId) throw new Error('Failed to create auth user');
-  await sb.from('pw_profiles').upsert({
+  const profilePayload = {
     id: userId,
     email: target.email,
     full_name: target.fullName,
@@ -2076,21 +2765,19 @@ async function createAccessRequestAccount(target, passwordValue){
     holiday_requests_access: holidayAllowed,
     credit_hours_access: creditHoursAllowed,
     message_board_access: messageBoardAllowed,
-    holiday_manager_auth_user_id: target.kilnRole === 'admin' ? null : holidayManagerAuthUserId,
-    work_role_type: workRoleType
-  });
-  if (effectiveKilnRole && effectiveKilnRole !== 'none') {
-    const flags = {
-      is_admin: effectiveKilnRole === 'admin',
-      is_shift_manager: effectiveKilnRole === 'shift_manager',
-      is_day_manager: effectiveKilnRole === 'day_manager',
-      is_electrician: effectiveKilnRole === 'electrician',
-      is_mechanical: effectiveKilnRole === 'mechanical',
-      is_process_operator: effectiveKilnRole === 'process_operator',
-      is_cement_analyst: effectiveKilnRole === 'cement_analyst',
-      is_day_staff: effectiveKilnRole === 'day_staff',
-      is_burner: effectiveKilnRole === 'burner'
-    };
+    holiday_manager_auth_user_id: effectiveKilnRole === 'admin' ? null : holidayManagerAuthUserId,
+    work_role_type: workRoleType,
+    shift_team: isShiftTeamApplicableByRoles(effectiveKilnRoles, workRoleType) ? (shiftTeam || null) : null
+  };
+  const profileUpsert = await sb.from('pw_profiles').upsert(profilePayload);
+  if (profileUpsert.error) {
+    if (!hasMissingColumnError(profileUpsert.error, 'shift_team')) throw profileUpsert.error;
+    delete profilePayload.shift_team;
+    const retry = await sb.from('pw_profiles').upsert(profilePayload);
+    if (retry.error) throw retry.error;
+  }
+  if (roleSelectionHasAnyRole(effectiveKilnRoles) || logsAllowed) {
+    const flags = kilnFlagsFromRoles(effectiveKilnRoles);
     const username = (target.email || '').split('@')[0].replace(/[^a-z0-9_]/gi,'').toLowerCase() || ('user_' + String(userId).slice(0, 8));
     const { error } = await sb.from('kiln_users').upsert({
       ...flags,
@@ -2134,14 +2821,17 @@ function renderAccessQueueSection(){
   rows.forEach(function(req){
     const selected = isAccessRequestSelected(req.id);
     const workType = toLower(req.work_role_type || req.workRoleType || '');
+    const shiftTeam = normalizeShiftTeam(req.shift_team);
+    const roleListText = renderKilnRoleListText(extractKilnRolesFromRequest(req));
     html += '<article class="request-card" style="border-color:' + (selected ? 'var(--ac3)' : 'var(--bd)') + ';background:' + (selected ? 'var(--acd1)' : 'linear-gradient(180deg,var(--glass-1),var(--glass-2))') + '">';
     html += '<div class="request-card-head">';
     html += '<div><div class="request-title">' + esc(req.full_name || 'Unnamed user') + '</div><div class="request-meta">' + esc(req.email || '—') + '</div></div>';
     html += '<label class="check" style="padding:7px 10px"><input type="checkbox" ' + (selected ? 'checked' : '') + ' onchange="setAccessRequestSelection(\'' + esc(req.id) + '\', this.checked)"> Select</label>';
     html += '</div>';
     html += '<div class="request-body">';
-    html += '<div class="request-text"><strong>Job role:</strong> ' + esc(kilnRoleLabel(toLower(req.kiln_role || 'none'))) + '</div>';
+    html += '<div class="request-text"><strong>Job roles:</strong> ' + esc(roleListText) + '</div>';
     if (workType) html += '<div class="request-text"><strong>Role type:</strong> ' + esc(workType === 'day' ? 'Day role' : 'Shift role') + '</div>';
+    if (workType === 'shift') html += '<div class="request-text"><strong>Shift team:</strong> ' + esc(shiftTeam ? ('Shift ' + shiftTeam) : 'Not set') + '</div>';
     if (req.holiday_manager_auth_user_id) html += '<div class="request-text"><strong>Holiday manager:</strong> ' + esc(displayNameFor(managerOptionsForUser(null).find(function(m){ return String(m.profile.id) === String(req.holiday_manager_auth_user_id); }) || null) || 'Assigned') + '</div>';
     html += '<div class="request-text"><strong>Requested:</strong> ' + esc(req.requested_at ? new Date(req.requested_at).toLocaleString('en-GB') : '—') + '</div>';
     html += '</div>';
@@ -2263,17 +2953,56 @@ async function openEditorByRow(row){
   $('editorSub').textContent = displayNameFor(row) + ' - ' + ((p && p.email) || (k && k.email) || '-');
   $('editFullName').value = p.full_name || '';
   $('editEmail').value = p.email || '';
-  $('editKilnRole').value = kilnRoleValue(k);
   $('editWorkRoleType').value = inferWorkRoleType(p, k);
+  $('editShiftTeam').value = inferShiftTeam(p);
+  setSelectedKilnRoles('edit', kilnRoleValuesFromFlags(k));
   $('editApproved').value = boolValue(p.approved, true) ? 'true' : 'false';
   $('editDisabled').value = boolValue(p.disabled, false) ? 'true' : 'false';
   $('editTrackerAccess').value = boolValue(p.shift_tracker_access, true) ? 'true' : 'false';
   $('editHolidayAccess').value = boolValue(p.holiday_requests_access, true) ? 'true' : 'false';
   $('editCreditAccess').value = boolValue(p.credit_hours_access, true) ? 'true' : 'false';
   $('editMessageBoardAccess').value = boolValue(p.message_board_access, true) ? 'true' : 'false';
-  $('editLogsAccess').value = logsAccessAllowed(k) && $('editKilnRole').value !== 'none' ? 'true' : 'false';
+  $('editLogsAccess').value = logsAccessAllowed(k) ? 'true' : 'false';
   syncLogsAccessRolePair('editLogsAccess', 'editKilnRole');
+  syncShiftTeamRolePair('editShiftTeam', 'editKilnRole', 'editWorkRoleType');
   $('editMustReset').value = boolValue((k && k.must_reset_password), boolValue(p.must_reset_password, false)) ? 'true' : 'false';
+  const immutableAdmin = userIsImmutableAdmin(row);
+  const rolePickerBtn = $('editorOverlay').querySelector('.job-details-grid .role-picker-trigger');
+  const editorAccessFields = [
+    $('editKilnRole'),
+    rolePickerBtn,
+    $('editWorkRoleType'),
+    $('editShiftTeam'),
+    $('editHolidayManager'),
+    $('editTrackerAccess'),
+    $('editHolidayAccess'),
+    $('editCreditAccess'),
+    $('editMessageBoardAccess'),
+    $('editLogsAccess'),
+    $('editApproved'),
+    $('editDisabled')
+  ];
+  editorAccessFields.forEach(function(el){
+    if (!el) return;
+    el.disabled = immutableAdmin;
+  });
+  if (rolePickerBtn) {
+    rolePickerBtn.title = immutableAdmin ? 'Admin accounts keep all access and cannot be changed here.' : '';
+  }
+  if (immutableAdmin) {
+    setSelectedKilnRoles('edit', ['admin']);
+    $('editWorkRoleType').value = 'shift';
+    $('editShiftTeam').value = '';
+    $('editApproved').value = 'true';
+    $('editDisabled').value = 'false';
+    $('editTrackerAccess').value = 'true';
+    $('editHolidayAccess').value = 'true';
+    $('editCreditAccess').value = 'true';
+    $('editMessageBoardAccess').value = 'true';
+    $('editLogsAccess').value = 'true';
+    syncLogsAccessRolePair('editLogsAccess', 'editKilnRole');
+    syncShiftTeamRolePair('editShiftTeam', 'editKilnRole', 'editWorkRoleType');
+  }
 
   const managers = managerOptionsForUser(p.id);
   const managerSelect = $('editHolidayManager');
@@ -2282,7 +3011,7 @@ async function openEditorByRow(row){
     return '<option value="' + esc(m.profile.id) + '">' + esc(displayNameFor(m)) + '</option>';
   }).join('');
   managerSelect.value = managers.some(function(m){ return String(m.profile.id) === String(currentManager); }) ? String(currentManager) : '';
-  if ($('editKilnRole').value === 'admin') managerSelect.value = '';
+  if ($('editKilnRole').value === 'admin' || immutableAdmin) managerSelect.value = '';
   showEditorMsg('', 'Review and save when ready.');
   $('editorSaveBtn').disabled = false;
   $('editorOverlay').classList.add('open');
@@ -2311,7 +3040,34 @@ function renderGroupSection(groupKey, rows){
   html += bulkButtons;
   html += '</summary>';
   html += '<div class="group-body">';
-  if (rows.length) {
+  const subgroups = getRoleGroupSubgroups(groupKey, rows);
+  const useSubgroups = !!ROLE_GROUP_SUBGROUPS[groupKey];
+  if (useSubgroups) {
+    subgroups.forEach(function(subgroup){
+      const subgroupRows = subgroup.rows || [];
+      const subgroupKey = groupKey + ':' + subgroup.key;
+      if (!roleGroupsOpen[subgroupKey] && typeof roleGroupsOpen[subgroupKey] === 'undefined') roleGroupsOpen[subgroupKey] = false;
+      const subgroupOpen = !!roleGroupsOpen[subgroupKey];
+      const subgroupEligibleRows = subgroupRows.filter(function(row){ return !userIsAdmin(row); });
+      const subgroupDisabledCount = subgroupEligibleRows.filter(userIsDisabled).length;
+      const subgroupActiveCount = subgroupEligibleRows.length - subgroupDisabledCount;
+      const subgroupKeys = subgroupRows.map(function(row){ return row && row.key ? row.key : ''; }).filter(Boolean);
+      html += '<details class="group subgroup" ' + (subgroupOpen ? 'open' : '') + ' data-group="' + esc(subgroupKey) + '" ontoggle="roleGroupsOpen[\'' + esc(subgroupKey) + '\'] = this.open">';
+      html += '<summary>';
+      html += '<div class="group-title"><div class="group-name" style="color:' + esc(subgroup.color) + '">' + esc(subgroup.label) + '</div><div class="group-sub">' + esc(String(subgroupRows.length)) + ' user' + (subgroupRows.length !== 1 ? 's' : '') + (subgroupEligibleRows.length ? ' · ' + esc(String(subgroupActiveCount)) + ' active, ' + esc(String(subgroupDisabledCount)) + ' disabled' : '') + '</div></div>';
+      html += renderBulkActionButtonsForKeys(subgroupKeys, subgroup.label);
+      html += '</summary>';
+      html += '<div class="group-body">';
+      if (subgroupRows.length) {
+        subgroupRows.forEach(function(row){
+          html += renderUserCard(row);
+        });
+      } else {
+        html += '<div class="empty">No users in this subgroup.</div>';
+      }
+      html += '</div></details>';
+    });
+  } else if (rows.length) {
     rows.forEach(function(row){
       html += renderUserCard(row);
     });
@@ -2328,16 +3084,26 @@ function renderUserCard(row){
   const displayName = displayNameFor(row);
   const email = (p && p.email) || (k && k.email) || '-';
   const canEdit = !!(p && p.id);
+  const isDisabled = userIsDisabled(row);
   const tags = [];
-  tags.push('<span class="pill neutral">' + esc(kilnRoleLabel(kilnRoleValue(k))) + '</span>');
-  tags.push('<span class="pill neutral">' + esc(inferWorkRoleType(p, k) === 'day' ? 'Day role' : 'Shift role') + '</span>');
+  const workType = inferWorkRoleType(p, k);
+  const roleLabels = kilnRoleLabelsForUser(k);
+  if (roleLabels.length) {
+    roleLabels.forEach(function(label){
+      tags.push('<span class="pill neutral">' + esc(label) + '</span>');
+    });
+  } else {
+    tags.push('<span class="pill neutral">No job role</span>');
+  }
+  tags.push('<span class="pill neutral">' + esc(workType === 'day' ? 'Day role' : 'Shift role') + '</span>');
+  if (workType === 'shift') tags.push('<span class="pill neutral">' + esc(shiftTeamLabel(inferShiftTeam(p))) + '</span>');
   if (userIsAdmin(row)) tags.push('<span class="pill good">Admin</span>');
   if (userIsPending(row)) tags.push('<span class="pill warn">Pending approval</span>');
   if (userIsDisabled(row)) tags.push('<span class="pill bad">Disabled or locked</span>');
   let html = '<article class="user-card">';
   html += '<div class="user-card-head">';
   html += '<div>';
-  html += '<div class="user-name">' + esc(displayName) + '</div>';
+  html += '<div class="user-name-row"><span class="user-state-dot ' + (isDisabled ? 'disabled' : 'active') + '" aria-hidden="true"></span><div class="user-name">' + esc(displayName) + '</div></div>';
   html += '<div class="user-meta">' + esc(email) + '</div>';
   html += '</div>';
   html += '<div class="user-actions">';
@@ -2401,12 +3167,37 @@ function renderApp(){
   const roleFilter = $('roleFilter').value || 'all';
   filteredUsers = usersMerged.filter(function(row){ return rowMatchesFilter(row, search, roleFilter); });
   const groups = groupUsers(filteredUsers);
-  const order = ['admin', 'managers', 'shift_role', 'day_role', 'disabled', 'pending'];
+  const order = ['admin', 'managers', 'shift_role', 'day_role', 'disabled'];
   let html = '';
   html += '<div class="stack">';
   order.forEach(function(key){
     html += renderGroupSection(key, groups[key] || []);
   });
+  const shiftTeams = groupShiftTeams(filteredUsers);
+  const shiftTeamsTotal = SHIFT_TEAM_OPTIONS.reduce(function(sum, team){ return sum + (shiftTeams[team] || []).length; }, 0);
+  const shiftTeamKeys = SHIFT_TEAM_OPTIONS.reduce(function(acc, team){
+    (shiftTeams[team] || []).forEach(function(row){ if (row && row.key) acc.push(row.key); });
+    return acc;
+  }, []);
+  if (!roleGroupsOpen.shift_teams && typeof roleGroupsOpen.shift_teams === 'undefined') roleGroupsOpen.shift_teams = false;
+  html += '<details class="group" ' + (roleGroupsOpen.shift_teams ? 'open' : '') + ' data-group="shift_teams" ontoggle="roleGroupsOpen.shift_teams = this.open">';
+  html += '<summary><div class="group-title"><div class="group-name" style="color:var(--ac3)">Shift Teams</div><div class="group-sub">' + esc(String(shiftTeamsTotal)) + ' assigned user' + (shiftTeamsTotal !== 1 ? 's' : '') + '</div></div>' + renderBulkActionButtonsForKeys(shiftTeamKeys, 'Shift Teams') + '</summary>';
+  html += '<div class="group-body">';
+  SHIFT_TEAM_OPTIONS.forEach(function(team){
+    const key = 'shift_team_' + team;
+    const teamRows = shiftTeams[team] || [];
+    const teamKeys = teamRows.map(function(row){ return row && row.key ? row.key : ''; }).filter(Boolean);
+    const teamColor = shiftTeamColor(team);
+    if (!roleGroupsOpen[key] && typeof roleGroupsOpen[key] === 'undefined') roleGroupsOpen[key] = false;
+    html += '<details class="group" ' + (roleGroupsOpen[key] ? 'open' : '') + ' data-group="' + esc(key) + '" ontoggle="roleGroupsOpen[\'' + esc(key) + '\'] = this.open">';
+    html += '<summary><div class="group-title"><div class="group-name" style="color:' + esc(teamColor) + '">Shift ' + esc(team) + '</div><div class="group-sub">' + esc(String(teamRows.length)) + ' user' + (teamRows.length !== 1 ? 's' : '') + '</div></div>' + renderBulkActionButtonsForKeys(teamKeys, 'Shift ' + team) + '</summary>';
+    html += '<div class="group-body">';
+    if (teamRows.length) teamRows.forEach(function(row){ html += renderShiftTeamCard(row, team); });
+    else html += '<div class="empty">No users assigned.</div>';
+    html += '</div></details>';
+  });
+  html += '</div></details>';
+  html += renderGroupSection('pending', groups.pending || []);
   html += '</div>';
   list.innerHTML = html;
   populateManagerSelect('quickHolidayManager', $('quickHolidayManager') ? $('quickHolidayManager').value : '', null);
@@ -2709,6 +3500,12 @@ function getBulkEligibleUsers(){
   });
 }
 
+function getBulkActionTargetsFromRows(rows){
+  return (rows || []).filter(function(row){
+    return !!(row && !userIsAdmin(row) && (row.profile || row.kiln));
+  });
+}
+
 async function setManagedUsersDisabled(targets, shouldDisable){
   const profileIds = Array.from(new Set((targets || []).map(function(t){
     return t && t.profile && t.profile.id ? String(t.profile.id) : '';
@@ -2748,6 +3545,55 @@ async function bulkToggleAllUsers(shouldDisable){
   }
 }
 
+function openBulkAccessEditorForTargets(targets, label){
+  const rows = getBulkActionTargetsFromRows(targets);
+  if (!rows.length) {
+    setToast('No users available in this group.');
+    return;
+  }
+  bulkAccessGroupKey = null;
+  $('bulkAccessTracker').value = 'no_change';
+  $('bulkAccessHoliday').value = 'no_change';
+  $('bulkAccessCredit').value = 'no_change';
+  $('bulkAccessMessageBoard').value = 'no_change';
+  $('bulkAccessLogs').value = 'no_change';
+  $('bulkAccessSub').textContent = 'Choose access changes for ' + (label || 'these users') + '.';
+  $('bulkAccessMsg').textContent = 'Applying to ' + rows.length + ' user' + (rows.length !== 1 ? 's' : '') + '.';
+  $('bulkAccessApplyBtn').disabled = false;
+  $('bulkAccessOverlay').classList.add('open');
+  bulkAccessRequestTargets = [];
+  bulkAccessEditorTargets = rows;
+}
+
+async function bulkSetUsersDisabled(targets, shouldDisable, label){
+  const rows = getBulkActionTargetsFromRows(targets);
+  if (!rows.length) {
+    setToast('No users available in this group.');
+    return;
+  }
+  const activeCount = rows.filter(function(row){ return !userIsDisabled(row); }).length;
+  const disabledCount = rows.length - activeCount;
+  if (shouldDisable && !activeCount) {
+    setToast('No active users to disable.');
+    return;
+  }
+  if (!shouldDisable && !disabledCount) {
+    setToast('No disabled users to enable.');
+    return;
+  }
+  const confirmText = shouldDisable
+    ? 'Disable ' + activeCount + ' user' + (activeCount !== 1 ? 's' : '') + ' in ' + (label || 'this group') + '?\n\nThis will block them from the suite.'
+    : 'Enable ' + disabledCount + ' user' + (disabledCount !== 1 ? 's' : '') + ' in ' + (label || 'this group') + '?\n\nThey will be able to sign in again.';
+  if (!window.confirm(confirmText)) return;
+  try {
+    await setManagedUsersDisabled(rows, shouldDisable);
+    setToast((label || 'Group') + ' ' + (shouldDisable ? 'disabled' : 'enabled') + ' ✓');
+    await loadDirectory();
+  } catch (e) {
+    setToast('Could not update ' + (label || 'group').toLowerCase() + ': ' + (e && e.message ? e.message : String(e)));
+  }
+}
+
 async function toggleUserAccessByKey(rowKey){
   const row = usersMerged.find(function(x){ return x && x.key === rowKey; }) || null;
   if (!row) {
@@ -2774,7 +3620,9 @@ function rowMatchesFilter(row, searchText, roleFilter){
     k && k.email,
     k && k.username,
     p && p.role,
-    kilnRoleValue(k)
+    kilnRoleValue(k),
+    kilnRoleLabelsForUser(k).join(' '),
+    inferShiftTeam(p)
   ].map(function(v){ return toLower(v); }).join(' ');
   if (search && !haystack.includes(search)) return false;
   const group = userRoleGroup(row);
@@ -2890,22 +3738,25 @@ async function saveEditorChanges(){
     showEditorMsg('err', 'Profile not found for this account.');
     return;
   }
+  const immutableAdmin = userIsImmutableAdmin(row);
   const fullName = $('editFullName').value.trim();
   const email = $('editEmail').value.trim().toLowerCase();
   const platformRole = toLower((row.profile && row.profile.role) || 'viewer');
-  const kilnRole = toLower($('editKilnRole').value || 'none');
-  const workRoleType = toLower($('editWorkRoleType').value || 'shift') === 'day' ? 'day' : 'shift';
+  const kilnRoles = immutableAdmin ? ['admin'] : selectedKilnRoles('edit');
+  const kilnRole = immutableAdmin ? 'admin' : kilnRolePrimaryValue(kilnRoles);
+  const workRoleType = immutableAdmin ? 'shift' : inferWorkRoleTypeFromRoles(kilnRoles, $('editWorkRoleType').value || 'shift');
+  const shiftTeam = immutableAdmin ? '' : normalizeShiftTeam($('editShiftTeam').value);
   const approved = $('editApproved').value !== 'false';
   const disabled = $('editDisabled').value === 'true';
-  const shiftTrackerAccess = $('editTrackerAccess').value !== 'false';
-  const holidayAccess = $('editHolidayAccess').value !== 'false';
-  const creditAccess = $('editCreditAccess').value !== 'false';
-  const messageBoardAccess = $('editMessageBoardAccess').value !== 'false';
-  const logsAccess = $('editLogsAccess').value !== 'false';
-  const shiftLogAccess = kilnRole === 'none' ? false : logsAccess;
+  const shiftTrackerAccess = immutableAdmin ? true : $('editTrackerAccess').value !== 'false';
+  const holidayAccess = immutableAdmin ? true : $('editHolidayAccess').value !== 'false';
+  const creditAccess = immutableAdmin ? true : $('editCreditAccess').value !== 'false';
+  const messageBoardAccess = immutableAdmin ? true : $('editMessageBoardAccess').value !== 'false';
+  const logsAccess = immutableAdmin ? true : $('editLogsAccess').value !== 'false';
+  const shiftLogAccess = immutableAdmin ? true : logsAccess;
   const isLocked = row.kiln && typeof row.kiln.is_locked === 'boolean' ? row.kiln.is_locked : false;
   const mustReset = $('editMustReset').value === 'true';
-  const managerId = $('editHolidayManager').value || null;
+  const managerId = immutableAdmin ? null : ($('editHolidayManager').value || null);
 
   if (!fullName) {
     showEditorMsg('err', 'Full name is required.');
@@ -2915,8 +3766,12 @@ async function saveEditorChanges(){
     showEditorMsg('err', 'A valid email address is required.');
     return;
   }
-  if (!KILN_ROLE_OPTIONS.includes(kilnRole)) {
+  if (kilnRoles.some(function(role){ return !KILN_ROLE_OPTIONS.includes(role); })) {
     showEditorMsg('err', 'Invalid job role selected.');
+    return;
+  }
+  if (!immutableAdmin && isShiftTeamApplicableByRoles(kilnRoles, workRoleType) && !shiftTeam) {
+    showEditorMsg('err', 'Select a shift team for shift roles.');
     return;
   }
 
@@ -2927,23 +3782,33 @@ async function saveEditorChanges(){
     p_user_id: row.profile.id,
     p_full_name: fullName,
     p_email: email,
-    p_platform_role: platformRole,
+    p_platform_role: immutableAdmin ? 'admin' : platformRole,
     p_approved: approved,
-    p_disabled: disabled,
+    p_disabled: immutableAdmin ? false : disabled,
     p_shift_tracker_access: shiftTrackerAccess,
     p_holiday_requests_access: holidayAccess,
     p_credit_hours_access: creditAccess,
     p_message_board_access: messageBoardAccess,
-    p_holiday_manager_auth_user_id: kilnRole === 'admin' ? null : managerId,
-    p_work_role_type: (kilnRole === 'day_manager' || kilnRole === 'day_staff') ? 'day' : workRoleType,
+    p_holiday_manager_auth_user_id: immutableAdmin || kilnRole === 'admin' ? null : managerId,
+    p_work_role_type: workRoleType,
+    p_shift_team: immutableAdmin ? null : (isShiftTeamApplicableByRoles(kilnRoles, workRoleType) ? shiftTeam : null),
     p_kiln_role: kilnRole,
+    p_kiln_roles: kilnRoles,
     p_shift_log_access: shiftLogAccess,
-    p_is_locked: isLocked,
+    p_is_locked: immutableAdmin ? false : isLocked,
     p_must_reset_password: mustReset
   };
   try {
     const result = await sb.rpc('pw_admin_user_management_update_user', payload);
     if (result.error) throw result.error;
+    try {
+      await updateProfileShiftTeam(row.profile.id, isShiftTeamApplicableByRoles(kilnRoles, workRoleType) ? shiftTeam : '');
+    } catch (shiftErr) {
+      $('editorSaveBtn').disabled = false;
+      showEditorMsg('err', shiftErr && shiftErr.message ? shiftErr.message : 'Could not save shift team.');
+      setSyncLabel('Sync error');
+      return;
+    }
   } catch (e) {
     if (!hasMissingFunctionError(e, 'pw_admin_user_management_update_user') && !String(e && e.message ? e.message : e).toLowerCase().includes('schema cache')) {
       $('editorSaveBtn').disabled = false;
@@ -2956,18 +3821,20 @@ async function saveEditorChanges(){
         row: row,
         fullName: fullName,
         email: email,
-        platformRole: platformRole,
+        platformRole: immutableAdmin ? 'admin' : platformRole,
         approved: approved,
-        disabled: disabled,
+        disabled: immutableAdmin ? false : disabled,
         shiftTrackerAccess: shiftTrackerAccess,
         holidayAccess: holidayAccess,
         creditAccess: creditAccess,
         messageBoardAccess: messageBoardAccess,
-        managerId: managerId,
-        workRoleType: (kilnRole === 'day_manager' || kilnRole === 'day_staff') ? 'day' : workRoleType,
+        managerId: immutableAdmin ? null : managerId,
+        workRoleType: workRoleType,
+        shiftTeam: immutableAdmin ? '' : (isShiftTeamApplicableByRoles(kilnRoles, workRoleType) ? shiftTeam : ''),
         kilnRole: kilnRole,
+        kilnRoles: kilnRoles,
         shiftLogAccess: shiftLogAccess,
-        isLocked: isLocked,
+        isLocked: immutableAdmin ? false : isLocked,
         mustReset: mustReset
       });
     } catch (fallbackErr) {
@@ -2989,64 +3856,66 @@ async function saveEditorChangesFallback(opts){
   if (!row || !row.profile || !row.profile.id) {
     throw new Error('Profile not found for this account.');
   }
+  const immutableAdmin = userIsImmutableAdmin(row);
+  const kilnRoles = normalizeKilnRoleList(opts.kilnRoles || opts.kilnRole);
+  const kilnRole = immutableAdmin ? 'admin' : kilnRolePrimaryValue(kilnRoles);
   const profilePatch = {
     full_name: opts.fullName,
     email: opts.email,
-    role: opts.platformRole,
+    role: immutableAdmin ? 'admin' : opts.platformRole,
     approved: opts.approved,
-    disabled: opts.disabled,
+    disabled: immutableAdmin ? false : opts.disabled,
     shift_tracker_access: opts.shiftTrackerAccess,
     holiday_requests_access: opts.holidayAccess,
     credit_hours_access: opts.creditAccess,
     message_board_access: opts.messageBoardAccess,
-    holiday_manager_auth_user_id: opts.kilnRole === 'admin' ? null : opts.managerId,
-    work_role_type: opts.workRoleType
+    holiday_manager_auth_user_id: immutableAdmin || kilnRole === 'admin' ? null : opts.managerId,
+    work_role_type: immutableAdmin ? 'shift' : opts.workRoleType
   };
   const { error: profileError } = await sb.from('pw_profiles').update(profilePatch).eq('id', row.profile.id);
   if (profileError) throw profileError;
+  await updateProfileShiftTeam(row.profile.id, immutableAdmin ? '' : (isShiftTeamApplicableByRoles(kilnRoles, opts.workRoleType) ? opts.shiftTeam : ''));
 
-  const kilnRole = toLower(opts.kilnRole || 'none');
-  const kilnFlags = {
-    is_admin: kilnRole === 'admin',
-    is_shift_manager: kilnRole === 'shift_manager',
-    is_day_manager: kilnRole === 'day_manager',
-    is_electrician: kilnRole === 'electrician',
-    is_mechanical: kilnRole === 'mechanical',
-    is_process_operator: kilnRole === 'process_operator',
-    is_cement_analyst: kilnRole === 'cement_analyst',
-    is_day_staff: kilnRole === 'day_staff',
-    is_burner: kilnRole === 'burner',
-    shift_log_access: kilnRole === 'none' ? false : !!opts.shiftLogAccess,
-    is_locked: !!opts.isLocked,
-    must_reset_password: !!opts.mustReset,
-    locked_name: opts.fullName,
-    email: opts.email
-  };
-  const existingKiln = row.kiln || null;
-  const hasExistingKiln = !!(existingKiln && (existingKiln.auth_user_id || existingKiln.username));
-  if (hasExistingKiln) {
-    const query = existingKiln.auth_user_id
-      ? sb.from('kiln_users').update(kilnFlags).eq('auth_user_id', existingKiln.auth_user_id)
-      : sb.from('kiln_users').update(kilnFlags).eq('username', existingKiln.username);
-    const { error: kilnUpdateError } = await query;
-    if (kilnUpdateError) throw kilnUpdateError;
-  } else if (kilnRole !== 'none' || opts.shiftLogAccess) {
-    const baseUsername = (opts.email || '')
-      .split('@')[0]
-      .replace(/[^a-z0-9_]/gi, '')
-      .toLowerCase() || ('user_' + String(row.profile.id).slice(0, 8).toLowerCase());
-    let username = baseUsername;
-    let suffix = 2;
-    while (_kilnUsersCache.some(function(x){ return x && x.username === username; })) {
-      username = baseUsername + '_' + suffix;
-      suffix += 1;
+  const kilnFlags = kilnFlagsFromRoles(kilnRoles);
+  kilnFlags.shift_log_access = immutableAdmin ? true : !!opts.shiftLogAccess;
+  kilnFlags.is_locked = immutableAdmin ? false : !!opts.isLocked;
+  kilnFlags.must_reset_password = !!opts.mustReset;
+  kilnFlags.locked_name = opts.fullName;
+  kilnFlags.email = opts.email;
+  const shouldPersistKiln = immutableAdmin || roleSelectionHasAnyRole(kilnRoles) || !!opts.shiftLogAccess || !!opts.isLocked || !!opts.mustReset;
+  if (shouldPersistKiln) {
+    const existingKiln = row.kiln || null;
+    const hasExistingKiln = !!(existingKiln && (existingKiln.auth_user_id || existingKiln.username));
+    if (hasExistingKiln) {
+      const query = existingKiln.auth_user_id
+        ? sb.from('kiln_users').update(kilnFlags).eq('auth_user_id', existingKiln.auth_user_id)
+        : sb.from('kiln_users').update(kilnFlags).eq('username', existingKiln.username);
+      const { error: kilnUpdateError } = await query;
+      if (kilnUpdateError) throw kilnUpdateError;
+    } else {
+      const baseUsername = (opts.email || '')
+        .split('@')[0]
+        .replace(/[^a-z0-9_]/gi, '')
+        .toLowerCase() || ('user_' + String(row.profile.id).slice(0, 8).toLowerCase());
+      let username = baseUsername;
+      let suffix = 2;
+      while (_kilnUsersCache.some(function(x){ return x && x.username === username; })) {
+        username = baseUsername + '_' + suffix;
+        suffix += 1;
+      }
+      const { error: kilnInsertError } = await sb.from('kiln_users').upsert({
+        auth_user_id: row.profile.id,
+        username: username,
+        ...kilnFlags
+      });
+      if (kilnInsertError) throw kilnInsertError;
     }
-    const { error: kilnInsertError } = await sb.from('kiln_users').upsert({
-      auth_user_id: row.profile.id,
-      username: username,
-      ...kilnFlags
-    });
-    if (kilnInsertError) throw kilnInsertError;
+  } else {
+    const existingKiln = row.kiln || null;
+    if (existingKiln && existingKiln.auth_user_id) {
+      const { error: kilnUpdateError } = await sb.from('kiln_users').update(kilnFlags).eq('auth_user_id', existingKiln.auth_user_id);
+      if (kilnUpdateError) throw kilnUpdateError;
+    }
   }
 }
 
@@ -3056,11 +3925,15 @@ async function queueQuickUser(){
   const email = $('quickEmail').value.trim().toLowerCase();
   const platformRole = 'viewer';
   const logsAccess = toLower($('quickLogsAccess').value || 'true') !== 'false';
-  const kilnRole = toLower($('quickKilnRole').value || 'none');
-  const workRoleType = toLower($('quickWorkRoleType').value || 'shift') === 'day' ? 'day' : 'shift';
+  const kilnRoles = selectedKilnRoles('quick');
+  const kilnRole = kilnRolePrimaryValue(kilnRoles);
+  const workRoleType = inferWorkRoleTypeFromRoles(kilnRoles, $('quickWorkRoleType').value || 'shift');
+  const shiftTeam = normalizeShiftTeam($('quickShiftTeam').value);
   const holidayManagerId = $('quickHolidayManager').value || null;
   if (!fullName) { setToast('Full name is required.'); return; }
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setToast('A valid email is required.'); return; }
+  if (kilnRoles.some(function(role){ return !KILN_ROLE_OPTIONS.includes(role); })) { setToast('Invalid job role selected.'); return; }
+  if (isShiftTeamApplicableByRoles(kilnRoles, workRoleType) && !shiftTeam) { setToast('Select a shift team for shift roles.'); return; }
   try {
     const [profileRes, kilnRes] = await Promise.all([
       sb.from('pw_profiles').select('id').eq('email', email).maybeSingle(),
@@ -3070,12 +3943,14 @@ async function queueQuickUser(){
       setToast('That email already has a logon.');
       return;
     }
-    await saveRequestRow('access', {
+    const requestPayload = {
       full_name: fullName,
       email: email,
       role: platformRole,
       kiln_role: kilnRole,
+      kiln_roles: kilnRoles,
       work_role_type: workRoleType,
+      shift_team: isShiftTeamApplicableByRoles(kilnRoles, workRoleType) ? shiftTeam : null,
       holiday_manager_auth_user_id: kilnRole === 'admin' ? null : holidayManagerId,
       shift_tracker_access: toLower($('quickTrackerAccess').value || 'true') !== 'false',
       holiday_requests_access: toLower($('quickHolidayAccess').value || 'true') !== 'false',
@@ -3084,11 +3959,19 @@ async function queueQuickUser(){
       logs_access: logsAccess,
       requested_at: new Date().toISOString(),
       status: 'pending'
-    });
+    };
+    try {
+      await saveRequestRow('access', requestPayload);
+    } catch (requestErr) {
+      if (!hasMissingColumnError(requestErr, 'shift_team')) throw requestErr;
+      delete requestPayload.shift_team;
+      await saveRequestRow('access', requestPayload);
+    }
     $('quickFullName').value = '';
     $('quickEmailUser').value = '';
     $('quickKilnRole').value = 'none';
     $('quickWorkRoleType').value = 'shift';
+    $('quickShiftTeam').value = '';
     $('quickHolidayManager').value = '';
     $('quickTrackerAccess').value = 'true';
     $('quickHolidayAccess').value = 'true';
@@ -3097,6 +3980,7 @@ async function queueQuickUser(){
     $('quickLogsAccess').value = 'true';
     $('quickEmailUser').value = '';
     $('quickEmailDomain').value = '@heidelbergmaterials.com';
+    setSelectedKilnRoles('quick', []);
     syncLogsAccessRolePair('quickLogsAccess', 'quickKilnRole');
     syncQuickEmail();
     setToast('Added to the access queue.');
@@ -3110,7 +3994,7 @@ async function activateRequestFromBtn(btn){
   const reqId = btn && btn.dataset ? btn.dataset.reqId : null;
   const req = accessRequestsCache.find(function(x){ return String(x.id) === String(reqId); });
   if (!req) return;
-  const targets = [{ reqId: req.id, email: req.email, fullName: req.full_name, role: req.role, kilnRole: req.kiln_role, workRoleType: req.work_role_type }];
+  const targets = [{ reqId: req.id, email: req.email, fullName: req.full_name, role: req.role, kilnRole: req.kiln_role, kilnRoles: extractKilnRolesFromRequest(req), workRoleType: req.work_role_type, shiftTeam: req.shift_team }];
   try {
     await ensureAccessRequestTargetsAreFree(targets);
     accessRequestTarget = targets[0];
@@ -3318,8 +4202,11 @@ async function initUserManagementApp(){
   $('loginEmail').addEventListener('keydown', function(e){ if (e.key === 'Enter') doLogin(); });
   $('searchInput').addEventListener('input', renderApp);
   $('roleFilter').addEventListener('change', renderApp);
+  initKilnRolePickers();
   bindLogsAccessRolePair('quickLogsAccess', 'quickKilnRole');
   bindLogsAccessRolePair('editLogsAccess', 'editKilnRole');
+  bindShiftTeamRolePair('quickShiftTeam', 'quickKilnRole', 'quickWorkRoleType');
+  bindShiftTeamRolePair('editShiftTeam', 'editKilnRole', 'editWorkRoleType');
   if ($('quickEmailDomain')) $('quickEmailDomain').value = '@heidelbergmaterials.com';
   syncQuickEmail();
 

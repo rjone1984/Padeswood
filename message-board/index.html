@@ -172,12 +172,22 @@ body::before{
 .compose-mode-toggle{display:flex;gap:8px;flex-wrap:wrap}
 .mode-btn{height:34px;padding:0 12px;border-radius:10px;border:1px solid var(--bd2);background:var(--sf2);color:var(--tx2);font:700 12px/1 var(--ff-head);cursor:pointer}
 .mode-btn.active{border-color:var(--ac3);color:var(--ac3);box-shadow:0 0 0 3px var(--acd1)}
+.thread-controls{display:grid;grid-template-columns:180px 1fr;gap:8px}
+.thread-controls .input,.thread-controls .select{height:38px;padding:0 10px}
+.thread-controls .select{
+  border:1px solid var(--bd2);
+  background:var(--sf2);
+  color:var(--tx);
+  border-radius:11px;
+  font:600 12px/1 var(--ff-head);
+}
 .textarea{width:100%;min-height:110px;padding:12px;font:500 14px/1.5 var(--ff-body);resize:vertical;outline:none}
 .textarea:focus,.input:focus{border-color:var(--ac3);box-shadow:0 0 0 3px var(--acd1)}
 .handwrite-wrap{display:grid;gap:8px}
 .handwrite-pad{
   width:100%;
-  min-height:180px;
+  min-height:360px;
+  height:360px;
   border-radius:12px;
   border:1px solid var(--bd2);
   background:var(--sf2);
@@ -186,6 +196,7 @@ body::before{
 }
 .handwrite-actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}
 .composer-actions{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.composer-actions-inline{justify-content:flex-end}
 .small{font-size:11px;color:var(--tx3)}
 .board-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
 .note{
@@ -215,6 +226,77 @@ body::before{
   display:block;
   transition:filter .28s var(--ease-smooth), opacity .28s var(--ease-smooth);
 }
+.thread-list{display:grid;gap:10px}
+.thread-group{
+  border:1px solid var(--bd);
+  border-radius:14px;
+  background:linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  box-shadow:var(--e1),var(--eac);
+  overflow:hidden;
+}
+.thread-group summary{
+  list-style:none;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:12px 14px;
+  border-bottom:1px solid var(--bd);
+}
+.thread-group summary::-webkit-details-marker{display:none}
+.thread-group-title{display:grid;gap:3px;min-width:0}
+.thread-group-header{display:flex;align-items:center;gap:10px;min-width:0}
+.thread-group-name{
+  font-family:var(--ff-head);
+  font-size:14px;
+  font-weight:800;
+  line-height:1.2;
+  color:var(--tx);
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.thread-group-sub{font-size:11px;color:var(--tx3)}
+.thread-group-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.thread-reply-btn{
+  height:28px;
+  padding:0 10px;
+  border-radius:9px;
+  border:1px solid var(--bd2);
+  background:var(--sf2);
+  color:var(--tx);
+  font:700 11px/1 var(--ff-head);
+  cursor:pointer;
+}
+.thread-reply-btn:hover{
+  border-color:var(--ac3);
+  color:var(--ac3);
+  box-shadow:0 0 0 3px var(--acd1);
+}
+.thread-group-arrow{
+  width:9px;height:9px;flex:0 0 9px;
+  border-right:2px solid var(--tx3);
+  border-bottom:2px solid var(--tx3);
+  transform:rotate(45deg);
+  transition:transform .2s ease,border-color .2s ease;
+}
+.thread-group[open] .thread-group-arrow{
+  transform:rotate(225deg);
+  border-color:var(--ac3);
+}
+.thread-group-body{display:grid;gap:8px;padding:10px}
+.note-own-actions{display:flex;justify-content:flex-end}
+.note-delete{
+  height:24px;
+  padding:0 8px;
+  border-radius:8px;
+  border:1px solid var(--redb);
+  background:var(--redd);
+  color:var(--red);
+  font:700 10px/1 var(--ff-head);
+  cursor:pointer;
+}
 .empty{padding:20px;border:1px dashed var(--bd2);border-radius:14px;color:var(--tx3);text-align:center}
 .toast{
   position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
@@ -226,6 +308,15 @@ body::before{
 .auth-title{font:800 26px/1.1 var(--ff-head);margin:0 0 8px}
 .auth-sub{margin:0 0 14px;color:var(--tx2)}
 .row{display:grid;gap:8px}
+#accessDenied .row{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:flex-start;
+  align-items:center;
+}
+#accessDenied .btn{
+  width:auto;
+}
 .palette-overlay{position:fixed;inset:0;background:rgba(7,12,18,.56);display:none;align-items:center;justify-content:center;padding:16px;z-index:80}
 .palette-overlay.open{display:flex}
 .palette-panel{width:min(560px,96vw);max-height:min(86vh,720px);overflow:auto;padding:16px}
@@ -257,16 +348,24 @@ body.basic-mode::after{
 }
 @media (max-width:760px){
   .topbar{padding:10px 12px;gap:8px}
-  .topbar-right{margin-left:auto;justify-content:flex-end}
-  .user-chip{max-width:170px}
+  .topbar-left{flex:1 1 auto;min-width:0}
+  .topbar-right{flex:1 1 100%;margin-left:auto;justify-content:flex-end}
+  .user-chip{max-width:180px}
   .topbar-title h1{font-size:16px}
   .topbar-title .kicker{font-size:9px}
+  .thread-controls{grid-template-columns:1fr}
   .page{padding:12px 10px 20px;gap:12px}
   .panel{padding:14px}
   .panel-title{font-size:16px}
   .panel-sub{font-size:11px}
-  .board-grid{grid-template-columns:1fr}
+  .thread-group summary{padding:10px 12px}
+  .handwrite-pad{min-height:180px;height:180px}
   .palette-grid{grid-template-columns:1fr}
+}
+@media (max-width:560px){
+  .topbar-title .kicker{display:none}
+  .topbar-title h1{font-size:15px}
+  .user-chip{max-width:140px}
 }
 </style>
 </head>
@@ -340,7 +439,20 @@ body.basic-mode::after{
           <button id="modeTypeBtn" class="mode-btn active" type="button" onclick="setComposeMode('type')">Type</button>
           <button id="modeHandBtn" class="mode-btn" type="button" onclick="setComposeMode('hand')">Draw</button>
         </div>
+        <div class="thread-controls">
+          <select id="postKind" class="select" onchange="onPostKindChange()">
+            <option value="topic">New topic</option>
+            <option value="reply">Reply to topic</option>
+          </select>
+          <input id="topicTitleInput" class="input" type="text" maxlength="120" placeholder="Topic title (required for new topic)">
+          <select id="replyTopicSelect" class="select hidden">
+            <option value="">Select topic...</option>
+          </select>
+        </div>
         <textarea id="messageInput" class="textarea" maxlength="2000" placeholder="Write an anonymous message..."></textarea>
+        <div class="composer-actions composer-actions-inline">
+          <button id="postBtnInline" class="btn btn-primary" onclick="submitMessage()">Post anonymously</button>
+        </div>
         <div id="handwriteWrap" class="handwrite-wrap hidden">
           <canvas id="handwritePad" class="handwrite-pad" aria-label="Handwriting pad"></canvas>
           <div class="handwrite-actions">
@@ -365,7 +477,7 @@ body.basic-mode::after{
         <div class="panel-title">Live Board</div>
         <div class="panel-sub">Showing messages from the last 24 hours.</div>
       </div>
-      <div id="boardList" class="board-grid"></div>
+      <div id="boardList" class="thread-list"></div>
     </section>
   </main>
 </div>
@@ -419,6 +531,7 @@ let handCanvas = null;
 let handCtx = null;
 let handDrawing = false;
 let handDirty = false;
+let latestBoardRows = [];
 const MESSAGE_BOARD_SEEN_AT_KEY_PREFIX = 'pw_message_board_seen_at:';
 
 function $(id){ return document.getElementById(id); }
@@ -466,6 +579,82 @@ function markMessageBoardSeen(ts){
   const key = messageBoardSeenAtKey();
   if (!key) return;
   try { localStorage.setItem(key, String(ts || new Date().toISOString())); } catch (e) {}
+}
+
+function onPostKindChange(){
+  const kind = String(($('postKind') && $('postKind').value) || 'topic');
+  const topicInput = $('topicTitleInput');
+  const replySelect = $('replyTopicSelect');
+  if (!topicInput || !replySelect) return;
+  topicInput.classList.toggle('hidden', kind !== 'topic');
+  replySelect.classList.toggle('hidden', kind !== 'reply');
+}
+
+function beginReplyToTopic(threadId){
+  const select = $('replyTopicSelect');
+  const kind = $('postKind');
+  if (!select || !kind || !threadId) return;
+  kind.value = 'reply';
+  onPostKindChange();
+  select.value = String(threadId);
+  const composer = document.querySelector('.composer-grid');
+  if (composer && composer.scrollIntoView) {
+    composer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  const textArea = $('messageInput');
+  if (textArea && textArea.focus) textArea.focus();
+}
+
+function rowTimeMs(row){
+  return new Date(row && row.created_at ? row.created_at : 0).getTime() || 0;
+}
+
+function rowThreadId(row){
+  if (!row) return '';
+  return String(row.thread_root_id || row.parent_post_id || row.id || '');
+}
+
+function rowIsRoot(row){
+  if (!row) return false;
+  if (row.parent_post_id) return false;
+  const id = String(row.id || '');
+  const tid = rowThreadId(row);
+  return !tid || id === tid || !row.parent_post_id;
+}
+
+function topicTitleForRow(row){
+  const raw = String((row && row.thread_title) || '').trim();
+  return raw || 'Untitled topic';
+}
+
+function buildThreadBuckets(rows){
+  const buckets = new Map();
+  (rows || []).forEach(function(row){
+    const tid = rowThreadId(row);
+    const key = tid || String(row.id || '');
+    if (!buckets.has(key)) buckets.set(key, []);
+    buckets.get(key).push(row);
+  });
+  return Array.from(buckets.entries()).map(function(entry){
+    const threadId = entry[0];
+    const items = entry[1].slice().sort(function(a, b){ return rowTimeMs(a) - rowTimeMs(b); });
+    const root = items.find(rowIsRoot) || items[0] || null;
+    const title = topicTitleForRow(root || {});
+    const latestMs = items.length ? rowTimeMs(items[items.length - 1]) : 0;
+    return { threadId: threadId, title: title, root: root, items: items, latestMs: latestMs };
+  }).sort(function(a, b){ return b.latestMs - a.latestMs; });
+}
+
+function populateReplyTopicSelect(rows){
+  const select = $('replyTopicSelect');
+  if (!select) return;
+  const current = String(select.value || '');
+  const threads = buildThreadBuckets(rows || []).filter(function(thread){ return thread.items && thread.items.length; });
+  select.innerHTML = '<option value="">Select topic...</option>' + threads.map(function(thread){
+    const count = thread.items.length;
+    return '<option value="' + esc(thread.threadId) + '">' + esc(thread.title) + ' (' + count + ')</option>';
+  }).join('');
+  if (threads.some(function(thread){ return thread.threadId === current; })) select.value = current;
 }
 
 function inferDrawingThemeFromDataUrl(dataUrl){
@@ -712,7 +901,9 @@ async function loadMessages(){
       .order('created_at', { ascending: false })
       .limit(300);
     if (error) throw error;
-    renderMessages(data || []);
+    latestBoardRows = Array.isArray(data) ? data.slice() : [];
+    populateReplyTopicSelect(latestBoardRows);
+    renderMessages(latestBoardRows);
     if (Array.isArray(data) && data.length && data[0] && data[0].created_at) {
       markMessageBoardSeen(data[0].created_at);
     }
@@ -734,20 +925,60 @@ function renderMessages(rows, err){
     host.innerHTML = '<div class="empty">No messages yet. The board is clear.</div>';
     return;
   }
-  host.innerHTML = rows.map(function(row){
-    const left = formatExpiry(row.expires_at);
-    const leftClass = left === 'expired' ? 'bad' : (left.indexOf('0h') === 0 || left.indexOf('1h') === 0 ? 'warn' : '');
-    const hasDrawing = !!row.message_drawing;
-    const noteText = String(row.message_text || '');
-    const caption = (hasDrawing && noteText === '[Handwritten note]') ? '' : noteText;
-    return '<article class="note">'
-      + '<div class="note-meta"><span class="pill">Anonymous</span><span class="pill ' + leftClass + '">' + esc(left) + '</span></div>'
-      + (hasDrawing ? ('<img class="note-drawing" data-drawing-theme="' + esc(String(row.message_drawing_theme || '')) + '" src="' + esc(row.message_drawing) + '" alt="Handwritten anonymous note">') : '')
-      + (caption ? ('<div class="note-text">' + esc(caption) + '</div>') : '')
-      + '<div class="small">Posted ' + esc(formatAge(row.created_at)) + '</div>'
-      + '</article>';
+  const threads = buildThreadBuckets(rows || []);
+  host.innerHTML = threads.map(function(thread){
+    const count = thread.items.length;
+    const latestLeft = thread.root && thread.root.expires_at ? formatExpiry(thread.root.expires_at) : '';
+    const leftClass = latestLeft === 'expired' ? 'bad' : (String(latestLeft).indexOf('0h') === 0 || String(latestLeft).indexOf('1h') === 0 ? 'warn' : '');
+    return '<details class="thread-group" open>'
+      + '<summary>'
+      + '<div class="thread-group-header"><div class="thread-group-title"><div class="thread-group-name">' + esc(thread.title) + '</div><div class="thread-group-sub">' + count + ' post' + (count === 1 ? '' : 's') + '</div></div></div>'
+      + '<div class="thread-group-actions">'
+      + '<button type="button" class="thread-reply-btn" onclick="event.preventDefault();event.stopPropagation();beginReplyToTopic(\'' + esc(thread.threadId) + '\')">Reply</button>'
+      + '<span class="pill ' + leftClass + '">' + esc(latestLeft || 'active') + '</span>'
+      + '<span class="thread-group-arrow" aria-hidden="true"></span>'
+      + '</div>'
+      + '</summary>'
+      + '<div class="thread-group-body">' + thread.items.map(renderThreadPost).join('') + '</div>'
+      + '</details>';
   }).join('');
   refreshDrawingThemeFilters(host);
+}
+
+function renderThreadPost(row){
+  const left = formatExpiry(row.expires_at);
+  const leftClass = left === 'expired' ? 'bad' : (left.indexOf('0h') === 0 || left.indexOf('1h') === 0 ? 'warn' : '');
+  const hasDrawing = !!row.message_drawing;
+  const noteText = String(row.message_text || '');
+  const caption = (hasDrawing && noteText === '[Handwritten note]') ? '' : noteText;
+  const canDelete = !!(currentUser && currentUser.id && row && row.author_user_id && String(row.author_user_id) === String(currentUser.id));
+  return '<article class="note">'
+    + '<div class="note-meta"><span class="pill">Anonymous</span><span class="pill ' + leftClass + '">' + esc(left) + '</span></div>'
+    + (hasDrawing ? ('<img class="note-drawing" data-drawing-theme="' + esc(String(row.message_drawing_theme || '')) + '" src="' + esc(row.message_drawing) + '" alt="Handwritten anonymous note">') : '')
+    + (caption ? ('<div class="note-text">' + esc(caption) + '</div>') : '')
+    + '<div class="small">Posted ' + esc(formatAge(row.created_at)) + '</div>'
+    + (canDelete ? ('<div class="note-own-actions"><button class="note-delete" type="button" onclick="deleteOwnMessage(\'' + esc(row.id) + '\')">Delete my post</button></div>') : '')
+    + '</article>';
+}
+
+async function deleteOwnMessage(id){
+  if (!id || !currentUser || !currentUser.id) return;
+  if (!confirm('Delete this post?')) return;
+  try {
+    updateStatusDot('Database reconnecting');
+    const res = await sb.from(MESSAGE_TABLE).delete().eq('id', id).eq('author_user_id', currentUser.id);
+    if (res && res.error) throw res.error;
+    setToast('Post deleted.');
+    await loadMessages();
+  } catch (err) {
+    const msg = String(err && (err.message || err || '')).toLowerCase();
+    if (msg.indexOf('author_user_id') >= 0 || msg.indexOf('schema cache') >= 0) {
+      setToast('Run the Message Board SQL update to enable deleting your own posts.');
+      return;
+    }
+    setToast('Could not delete post.');
+    updateStatusDot('Database fault');
+  }
 }
 
 async function submitMessage(){
@@ -755,7 +986,12 @@ async function submitMessage(){
   const btn = $('postBtn');
   if (!textarea || !btn) return;
   const text = String(textarea.value || '').trim();
+  const kind = String(($('postKind') && $('postKind').value) || 'topic');
+  const topicTitle = String(($('topicTitleInput') && $('topicTitleInput').value) || '').trim();
+  const replyThreadId = String(($('replyTopicSelect') && $('replyTopicSelect').value) || '').trim();
   const drawingData = composeMode === 'hand' ? getHandwriteDataUrl() : '';
+  if (kind === 'topic' && !topicTitle) { setToast('Add a topic title first.'); return; }
+  if (kind === 'reply' && !replyThreadId) { setToast('Choose a topic to reply to.'); return; }
   if (!text && !drawingData) { setToast('Write or draw a message first.'); return; }
   if (text.length > 2000) { setToast('Message is too long.'); return; }
   try {
@@ -766,13 +1002,26 @@ async function submitMessage(){
       message_text: text || (drawingData ? '[Handwritten note]' : ''),
       expires_at: expiresAt
     };
+    if (currentUser && currentUser.id) payload.author_user_id = currentUser.id;
+    if (kind === 'topic') {
+      payload.thread_title = topicTitle;
+    } else if (kind === 'reply') {
+      payload.parent_post_id = replyThreadId;
+      payload.thread_root_id = replyThreadId;
+    }
     if (drawingData) {
       payload.message_drawing = drawingData;
       payload.message_drawing_theme = getBoardTheme();
     }
-    const { data: insertedRows, error } = await sb.from(MESSAGE_TABLE).insert(payload).select('created_at').limit(1);
+    const { data: insertedRows, error } = await sb.from(MESSAGE_TABLE).insert(payload).select('id,created_at').limit(1);
     if (error) throw error;
+    if (kind === 'topic' && insertedRows && insertedRows[0] && insertedRows[0].id) {
+      try {
+        await sb.from(MESSAGE_TABLE).update({ thread_root_id: insertedRows[0].id }).eq('id', insertedRows[0].id);
+      } catch (e) {}
+    }
     textarea.value = '';
+    if ($('topicTitleInput')) $('topicTitleInput').value = '';
     clearHandwritePad();
     updateCharCount();
     if (insertedRows && insertedRows[0] && insertedRows[0].created_at) {
@@ -784,7 +1033,7 @@ async function submitMessage(){
     await loadMessages();
   } catch (err) {
     const msg = String(err && (err.message || err || '')).toLowerCase();
-    if (drawingData && /message_drawing_theme|schema cache/i.test(msg)) {
+    if (/thread_|parent_post_id|author_user_id|message_drawing_theme|schema cache/i.test(msg)) {
       try {
         const fallbackPayload = {
           message_text: text || '[Handwritten note]',
@@ -794,13 +1043,14 @@ async function submitMessage(){
         const retry = await sb.from(MESSAGE_TABLE).insert(fallbackPayload);
         if (retry && retry.error) throw retry.error;
         textarea.value = '';
+        if ($('topicTitleInput')) $('topicTitleInput').value = '';
         clearHandwritePad();
         updateCharCount();
         setToast('Posted anonymously.');
         await loadMessages();
         return;
       } catch (retryErr) {
-        setToast('Run the Message Board SQL update to enable handwriting posts.');
+        setToast('Run the Message Board SQL update to enable threads and self-delete.');
         return;
       }
     }
@@ -826,6 +1076,7 @@ function setComposeMode(mode){
   $('modeTypeBtn').classList.toggle('active', !isHand);
   $('modeHandBtn').classList.toggle('active', isHand);
   $('handwriteWrap').classList.toggle('hidden', !isHand);
+  if ($('postBtn')) $('postBtn').classList.toggle('hidden', !isHand);
   $('typeMeta').classList.toggle('hidden', isHand);
   $('handMeta').classList.toggle('hidden', !isHand);
   if (isHand) initHandwritePad();
@@ -1013,6 +1264,7 @@ document.addEventListener('DOMContentLoaded', async function(){
   await applySuiteLogos();
   const input = $('messageInput');
   if (input) input.addEventListener('input', updateCharCount);
+  onPostKindChange();
   setComposeMode('type');
   await bootstrap();
 });
