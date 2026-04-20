@@ -2075,6 +2075,7 @@ const DEFAULT_DAY_WORKDAY_HOURS = 8;
 const DEFAULT_SHIFT_ANNUAL_ALLOWANCE_DAYS = 6;
 const DEFAULT_DAY_ANNUAL_ALLOWANCE_DAYS = 35;
 const SHIFT_HOURS = DEFAULT_SHIFT_WORKDAY_HOURS;
+const LEGACY_HOLIDAY_ALLOWANCE_HOURS = 100;
 
 function $(id) { return document.getElementById(id); }
 function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
@@ -2889,6 +2890,28 @@ function profileEventsForUser(userId){
     .filter(e => String(e.profile_user_id || '') === String(userId || ''))
     .sort((a,b) => String(b.created_at || '').localeCompare(String(a.created_at || '')));
 }
+function hasAllowanceOverrideForUser(userId){
+  return profileEventsForUser(userId).some(function(ev){
+    return typeof ev.new_annual_allowance_days !== 'undefined';
+  });
+}
+function isLegacyAllowanceDaysForRole(days, roleType){
+  const n = num(days, NaN);
+  if (!Number.isFinite(n) || n <= 0) return false;
+  const roleHours = workDayHoursForRoleType(roleType);
+  const legacyDays = LEGACY_HOLIDAY_ALLOWANCE_HOURS / roleHours;
+  return Math.abs(n - legacyDays) <= 0.05;
+}
+function effectiveAnnualAllowanceDaysForUser(userId, profile){
+  const roleType = workRoleTypeForUserId(userId);
+  const fallback = defaultAnnualAllowanceDaysForRoleType(roleType);
+  const raw = num(profile && profile.annual_allowance_days, fallback);
+  if (raw <= 0) return fallback;
+  if (!hasAllowanceOverrideForUser(userId) && isLegacyAllowanceDaysForRole(raw, roleType)) {
+    return fallback;
+  }
+  return raw;
+}
 function assignedHolidayStaffForCurrentUser(){
   if (!currentUser) return [];
   return allPwProfiles.filter(function(p){
@@ -2918,7 +2941,7 @@ function renderRequestAuditItem(req){
 function statsForUser(userId, year){
   const profile = holidayProfileFor(userId);
   const workDayHours = workDayHoursForUserId(userId);
-  const allowanceDays = num(profile && profile.annual_allowance_days, defaultAnnualAllowanceDaysForUserId(userId));
+  const allowanceDays = effectiveAnnualAllowanceDaysForUser(userId, profile);
   const carryover = num(profile && profile.carryover_days, 0);
   const extrasDays = holidayExtrasDays(profile);
   const allowanceHours = allowanceDays * workDayHours;
@@ -3096,7 +3119,7 @@ function renderTeamOverviewCards(){
   const selectedDisplayName = personDisplayNameFromRecords(selectedProfile, selectedKu, 'Unknown');
   const selectedManagerName = holidayManagerDisplayNameForUser(selectedProfile.id);
   const selectedEditable = canEditAllowanceFor(selectedProfile);
-  const selectedEntitlementValue = num(selectedHp && selectedHp.annual_allowance_days, defaultAnnualAllowanceDaysForUserId(selectedProfile.id));
+  const selectedEntitlementValue = effectiveAnnualAllowanceDaysForUser(selectedProfile.id, selectedHp);
   const selectedCarryoverValue = num(selectedHp && selectedHp.carryover_days, 0);
   const selectedExtrasValue = num(selectedHp && selectedHp.entitlement_extras_days, 0);
   const selectedRemainingDays = selectedStats.remaining / selectedStats.workDayHours;
@@ -3391,7 +3414,7 @@ function renderAllowanceList(){
         '<div class="staff-section">'+
           '<div class="staff-section-title">Entitlement adjustment</div>'+
           '<div class="staff-section-sub">Add or remove holiday entitlement and carryover for this staff member. Every save is written to the audit trail.</div>'+
-          '<div class="field"><label class="small" style="margin-bottom:4px">Annual entitlement</label><input class="input" style="height:30px;font-size:11px" type="number" min="0" step="0.5" id="allow_'+esc(p.id)+'" value="'+esc(num(hp && hp.annual_allowance_days, defaultAnnualAllowanceDaysForUserId(p.id)))+'"'+(editable ? '' : ' disabled')+'><div class="field-note">Base holiday allowance for the year.</div></div>'+
+          '<div class="field"><label class="small" style="margin-bottom:4px">Annual entitlement</label><input class="input" style="height:30px;font-size:11px" type="number" min="0" step="0.5" id="allow_'+esc(p.id)+'" value="'+esc(effectiveAnnualAllowanceDaysForUser(p.id, hp))+'"'+(editable ? '' : ' disabled')+'><div class="field-note">Base holiday allowance for the year.</div></div>'+
           '<div class="field"><label class="small" style="margin-bottom:4px">Carryover after 31 Dec</label><input class="input" style="height:30px;font-size:11px" type="number" min="0" step="0.5" id="carry_'+esc(p.id)+'" value="'+esc(num(hp && hp.carryover_days, 0))+'"'+((editable && carryoverOpen) ? '' : ' disabled')+' title="'+esc(carryoverOpen ? 'Carryover can be adjusted now' : 'Carryover can only be adjusted after 31 December')+'"><div class="field-note">Extra holiday moved over into the new year.</div></div>'+
           '<div class="field"><label class="small" style="margin-bottom:4px">Extras</label><div class="row" style="gap:8px;align-items:flex-end">'+
             '<select class="select" id="extrasUnit_'+esc(p.id)+'" style="width:120px;height:30px;font-size:11px" data-hours-per-day="'+esc(stats.workDayHours)+'" onchange="syncExtrasUnit(\'extrasUnit_'+esc(p.id)+'\', \'extras_'+esc(p.id)+'\')"'+(editable ? '' : ' disabled')+'>'+

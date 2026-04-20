@@ -2757,7 +2757,7 @@ function refreshMessageBoardCardCopy(){
   const profile = _platformProfile || null;
   const hasAccess = !!(profile && profile.approved !== false && profile.disabled !== true && profile.role !== 'none' && profile.message_board_access !== false);
   if (hasAccess) {
-    title.textContent = 'Abuse Area.... enter at your own risk';
+    title.textContent = 'Abusive Banter...';
     desc.textContent = 'Post anonymous messages to a shared whiteboard, reply by topic, or open private 1-to-1 chats with timer controls.';
   } else {
     title.textContent = 'Message Board';
