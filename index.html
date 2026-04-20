@@ -1248,7 +1248,7 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
           </div>
         </div>
         <div class="card-title">Padeswood Logs</div>
-        <div class="card-desc">Role-based shift logging for burners, shift managers, electricians, mechanical teams and cement analysts, with overview reporting, search, AI summaries, feedback tracking and print-ready handovers.</div>
+        <div class="card-desc">Role-based shift logging with expandable day and night sections, overview reporting, search, AI summaries, feedback tracking and print-ready handovers.</div>
         <div class="card-footer">
           <div class="card-foot-label">Open app</div>
           <div class="card-arrow">→</div>
@@ -1275,7 +1275,7 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
           </div>
         </div>
         <div class="card-title">Holiday Requests</div>
-        <div class="card-desc">Request leave, track balance, review approvals and keep a clean per-person audit trail with manager decisions.</div>
+        <div class="card-desc">Request leave, track entitlement by role, review approvals and keep a clean per-person audit trail with manager decisions.</div>
         <div class="card-footer">
           <div class="card-foot-label">Open app</div>
           <div class="card-arrow">→</div>
@@ -1300,7 +1300,7 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
           </div>
         </div>
         <div class="card-title">Credit Hours</div>
-        <div class="card-desc">Submit credit-hours and overtime claims, route them to the assigned shift manager, and keep a per-person approval and audit trail.</div>
+        <div class="card-desc">Submit credit-hours and overtime claims, route them to the assigned manager, and keep a per-person approval and audit trail.</div>
         <div class="card-footer">
           <div class="card-foot-label">Open app</div>
           <div class="card-arrow">→</div>
@@ -1327,7 +1327,7 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
           </div>
         </div>
         <div class="card-title">Shift Tracker</div>
-        <div class="card-desc">Shift rotation lookup for A, B, C, D and E teams, with date search, calendar view and quick shift summaries.</div>
+        <div class="card-desc">Shift rotation lookup for A, B, C, D and E teams, with date-linked cards, calendar view and quick shift summaries.</div>
         <div class="card-footer">
           <div class="card-foot-label">Open app</div>
           <div class="card-arrow">→</div>
@@ -1352,7 +1352,7 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
           </div>
         </div>
         <div class="card-title">Message Board</div>
-        <div class="card-desc">Post anonymous messages to a shared whiteboard. Every note stays live for 24 hours and then expires automatically.</div>
+        <div class="card-desc">Post anonymous messages to a shared whiteboard, reply by topic, or open private 1-to-1 chats with timer controls.</div>
         <div class="card-footer">
           <div class="card-foot-label">Open app</div>
           <div class="card-arrow">→</div>
@@ -1378,7 +1378,7 @@ body.basic-mode :is(.overlay,.palette-overlay,.manager-requests-overlay) {
           </div>
         </div>
         <div class="card-title">User Management</div>
-        <div class="card-desc">Admin-only user management app with role, access, manager assignment and account status controls in a dedicated workspace.</div>
+        <div class="card-desc">Admin-only workspace for user roles, app access, manager assignment, queueing and account status controls.</div>
         <div class="card-footer">
           <div class="card-foot-label">Open app</div>
           <div class="card-arrow">→</div>
@@ -2576,6 +2576,7 @@ async function showAppSelector(user, opts) {
       ? sessionFullName
       : getSuiteDisplayName(data || null, null, (user && user.email) ? user.email : '—');
     document.getElementById('headerEmail').textContent = displayName;
+    refreshMessageBoardCardCopy();
     if (data && data.role === 'admin') {
       if (userMgmtCard) userMgmtCard.style.display = '';
       loadPendingBadge();
@@ -2746,6 +2747,22 @@ function markMessageBoardSeen(ts){
 function clearMessageBoardCardAlert(){
   const card = document.getElementById('messageBoardAppCard');
   if (card) card.classList.remove('has-new-message');
+}
+function refreshMessageBoardCardCopy(){
+  const card = document.getElementById('messageBoardAppCard');
+  if (!card) return;
+  const title = card.querySelector('.card-title');
+  const desc = card.querySelector('.card-desc');
+  if (!title || !desc) return;
+  const profile = _platformProfile || null;
+  const hasAccess = !!(profile && profile.approved !== false && profile.disabled !== true && profile.role !== 'none' && profile.message_board_access !== false);
+  if (hasAccess) {
+    title.textContent = 'Abuse Area.... enter at your own risk';
+    desc.textContent = 'Post anonymous messages to a shared whiteboard, reply by topic, or open private 1-to-1 chats with timer controls.';
+  } else {
+    title.textContent = 'Message Board';
+    desc.textContent = 'Post anonymous messages to a shared whiteboard, reply by topic, or open private 1-to-1 chats with timer controls.';
+  }
 }
 async function refreshMessageBoardCardAlert(){
   const profile = _platformProfile || null;
@@ -4567,7 +4584,10 @@ function isPlatformManagedDisabled(m) {
 
 function isPlatformManagedProtected(m) {
   const ku = m && m.kiln;
-  return isPlatformManagedAdmin(m) || !!(ku && ku.username === PLATFORM_PROTECTED_USERNAME);
+  return isPlatformManagedAdmin(m) || !!(
+    (ku && ku.username === PLATFORM_PROTECTED_USERNAME) ||
+    isSharedOperatorAccount(m && m.prof || null, ku || null, null)
+  );
 }
 
 function isBulkEligibleManagedUser(m) {
@@ -4874,7 +4894,10 @@ function renderUserCard(m, DS, LS, RS, rc) {
   const canManageUsers = _platformProfile && _platformProfile.role === 'admin';
   const profileId = p ? p.id : (ku && ku.auth_user_id ? ku.auth_user_id : null);
   const isSelf = _platformProfile && profileId && profileId === _platformProfile.id;
-  const isProtectedKiln = ku && ku.username === PLATFORM_PROTECTED_USERNAME;
+  const isProtectedKiln = !!(
+    (ku && ku.username === PLATFORM_PROTECTED_USERNAME) ||
+    isSharedOperatorAccount(p || null, ku || null, null)
+  );
   const isDisabledEverywhere = isPlatformManagedDisabled(m);
   const displayName = getSuiteDisplayName(p || null, ku || null, '?');
   const email = (p&&p.email)||(ku&&ku.email)||'\u2014';
@@ -5260,9 +5283,14 @@ async function removeUser(userId, email, username) {
     showPlatformToast('Admin only');
     return;
   }
-  if (!confirm('Remove '+email+'? This will revoke their platform access immediately.')) return;
   const profileMatch = _usersCache.find(function(x){ return x.id === userId; }) || null;
   const kilnMatch = _kilnUsersCache.find(function(x){ return x.auth_user_id === userId || (username && x.username === username); }) || null;
+  const isSharedOperatorTarget = isSharedOperatorAccount(profileMatch, kilnMatch, null) || isSharedOperatorValue(username);
+  if (isSharedOperatorTarget) {
+    showPlatformToast('Operator is a shared role account and cannot be removed.');
+    return;
+  }
+  if (!confirm('Remove '+email+'? This will revoke their platform access immediately.')) return;
   if (profileMatch) {
     const {error} = await sb.from('pw_profiles').delete().eq('id', userId);
     if (error) { showPlatformToast('Failed: '+error.message); return; }

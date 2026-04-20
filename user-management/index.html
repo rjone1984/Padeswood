@@ -1777,6 +1777,22 @@ function displayNameFor(user){
   if (k && k.username) return k.username;
   return 'User';
 }
+function isSharedOperatorValue(value){
+  const raw = String(value || '').trim().toLowerCase();
+  if (!raw) return false;
+  return raw.split('@')[0] === 'operator';
+}
+function isSharedOperatorRow(row){
+  const p = row && row.profile ? row.profile : null;
+  const k = row && row.kiln ? row.kiln : null;
+  return [
+    p && p.full_name,
+    p && p.email,
+    k && k.username,
+    k && k.locked_name,
+    k && k.email
+  ].some(isSharedOperatorValue);
+}
 function isManagerApproverKilnUser(ku){
   return !!(ku && (ku.is_shift_manager || ku.is_day_manager));
 }
@@ -2107,6 +2123,7 @@ function userRoleGroup(user){
 }
 function groupMetaLabel(key){
   const map = {
+    shared_accounts: 'Shared Accounts',
     admin: 'Admins',
     managers: 'Managers',
     shift_role: 'Shift role users',
@@ -2118,6 +2135,7 @@ function groupMetaLabel(key){
 }
 function groupColor(key){
   const map = {
+    shared_accounts: 'var(--ac3)',
     admin: 'var(--ac3)',
     managers: 'var(--pur)',
     shift_role: 'var(--grn)',
@@ -3196,14 +3214,26 @@ function renderApp(){
   const search = $('searchInput').value || '';
   const roleFilter = $('roleFilter').value || 'all';
   filteredUsers = usersMerged.filter(function(row){ return rowMatchesFilter(row, search, roleFilter); });
-  const groups = groupUsers(filteredUsers);
-  const order = ['admin', 'managers', 'shift_role', 'day_role', 'disabled'];
+  const sharedRows = usersMerged.filter(function(row){
+    return isSharedOperatorRow(row) && rowMatchesFilter(row, search, 'all');
+  });
+  const sharedKeys = new Set(sharedRows.map(function(row){ return row && row.key ? String(row.key) : ''; }).filter(Boolean));
+  const nonSharedRows = filteredUsers.filter(function(row){
+    const key = row && row.key ? String(row.key) : '';
+    return !sharedKeys.has(key);
+  });
+  const groups = groupUsers(nonSharedRows);
+  const order = ['admin', 'shared_accounts', 'managers', 'shift_role', 'day_role', 'disabled'];
   let html = '';
   html += '<div class="stack">';
   order.forEach(function(key){
+    if (key === 'shared_accounts') {
+      html += renderGroupSection(key, sharedRows || []);
+      return;
+    }
     html += renderGroupSection(key, groups[key] || []);
   });
-  const shiftTeams = groupShiftTeams(filteredUsers);
+  const shiftTeams = groupShiftTeams(nonSharedRows);
   const shiftTeamsTotal = SHIFT_TEAM_OPTIONS.reduce(function(sum, team){ return sum + (shiftTeams[team] || []).length; }, 0);
   const shiftTeamKeys = SHIFT_TEAM_OPTIONS.reduce(function(acc, team){
     (shiftTeams[team] || []).forEach(function(row){ if (row && row.key) acc.push(row.key); });
