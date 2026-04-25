@@ -2747,7 +2747,7 @@ function initHandwritePad(){
   const start = function(e){
     if (!handCtx) return;
     handUserInteracted = true;
-    stopHandAutoDoodle(true);
+    stopHandAutoDoodle(!!handAutoDoodleActive);
     handDrawing = true;
     const p = getPadPoint(e);
     handCtx.beginPath();
